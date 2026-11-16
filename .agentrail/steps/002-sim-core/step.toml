@@ -1,6 +1,6 @@
 number = 2
 slug = "sim-core"
-status = "pending"
+status = "in-progress"
 description = "foundations step 2: the shared core in X_eTaL. lib/Rng.xtl: a seeded generato..."
 role = "production"
 context_files = []

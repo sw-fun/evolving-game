@@ -1,0 +1,15 @@
+tick 0.05
+tick 0.05
+key space
+key build-archer
+tick 0.05
+click 3.0 4.0
+what is this
+tick
+choose 1.0 2.0
+tick 0.05
+tick 0.05
+tick 0.05
+(6, 300, 12)
+(2026, 6, 30, 3)
+Total 30; 3 lines were not events and changed nothing.

@@ -1,0 +1,6 @@
+l:s_eed : Int -> Int
+l:a_fter : Int -> Int -> Int
+l:w_ords : (Int, Int) -> Int -> Int
+l:u_nit : (Int, Int) -> Int -> Float
+l:b_elow : Int -> Int -> Int
+l:o_rder : Ord a => a -> Int

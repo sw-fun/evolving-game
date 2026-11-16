@@ -1,0 +1,7 @@
+key g
+tick 0.05
+tick 0.05
+key a
+tick fast
+click 10 0
+tick 0.05

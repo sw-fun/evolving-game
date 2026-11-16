@@ -1,0 +1,24 @@
+#!/usr/bin/env xetal
+## The event loop by itself (lib/Sim, lib/Rng), as a game uses it: a
+## die is rolled on every tick and the rolls are added up; a click adds
+## its x; a line that is no event is counted and reported, not a crash; the
+## game is over at 30. Run on the events in expected/sim-loop.in, it
+## prints the event log (a script that replays the same game), then the
+## clock (ticks, milliseconds, events) and the state (seed, rolls, total,
+## bad lines) and what the bad lines were worth. The same events and
+## seed always print the same.
+"sm:" u_se< "Sim"
+"rg:" u_se< "Rng"
+
+u:s_tep := { (seed, drawn, total, bad) e ->
+  e sm:i_s "tick" ? (seed, drawn + 1, total + f_irst ((seed, 1) rg:w_ords drawn + 1) rg:b_elow 6, bad)
+  e sm:i_s "click" ? (seed, drawn, total + f_loor f_irst sm:n_umbers e, bad)
+  e sm:i_s "bad" ? (seed, drawn, total, bad + 1)
+  (seed, drawn, total, bad)
+}
+u:o_ver := { (_, _, total, _) -> total >= 30 }
+(clock, state) := 'u:o_ver 'u:s_tep sm:t_race (rg:s_eed 2026, 0, 0, 0)
+(_, _, total, bad) := state
+clock
+state
+@ f_ormat< "Total {total}; {bad} lines were not events and changed nothing."

@@ -10,6 +10,12 @@ library of X_eTaL-libraries at `LIBRARIES_COMMIT`).
 | Library | What it gives |
 | ------- | ------------- |
 | `Game.xtl` | the game's name, written once (`g:name`), and a game's title under it (`g:t_itle`) |
+| `Rng.xtl` | chance from a seed, the same everywhere: a word or a fraction for each count of a key `(seed, stream)` (`rg:w_ords`, `rg:u_nit`), a whole number from 1 to k (`rg:b_elow`), an order (`rg:o_rder`), the next counts (`rg:a_fter`). Over X_eTaL-libraries' `Random` (Philox); nothing is remembered, so a game saves only how many it has drawn |
+| `Sim.xtl` | the event loop every game runs in: events as tuples (`sm:t_ick`, `sm:c_lick`, `sm:k_ey`, `sm:c_hoose`, `sm:end`, `sm:b_ad`), their lines written and read back (`sm:l_ine`, `sm:p_arse`), the host's next event with a bad line as an event (`sm:n_ext`), the clock in whole milliseconds (`sm:start`, `sm:a_dvance`), and the loop over a step function on the host's events (`sm:r_un`, `sm:t_race` with the event log) or on a script (`sm:r_eplay`) |
+
+`sim-loop.xtl` is the loop as a game uses it, on the event script
+`expected/sim-loop.in` (malformed lines included); the log it prints
+replays the same game.
 
 From X_eTaL-games, by pin (see
 [its `lib/README.md`](https://github.com/softwarewrighter/X_eTaL-games/blob/main/lib/README.md)):

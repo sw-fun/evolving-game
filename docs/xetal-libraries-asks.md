@@ -16,5 +16,7 @@ section below it.
 
 | Status | Kind | Ask | Needed by | Workaround |
 | ------ | ---- | --- | --------- | ---------- |
+| open | performance | `Random`'s Philox words are slow in bulk: `seed r:s_ampleKeys ids` for 6000 identities takes 1.1 s at c7e812e on X_eTaL 8c49bd8 (about 180 microseconds a word). Repro: `"r:" u_se< "Random"` then `t_ally 1 r:s_ampleKeys o_\ 4 6000 r_eshape (r_ange 6000) c_at 18000 r_eshape 0`. A game draws a few numbers a tick, so nothing waits on this; terrain made from a seed (thousands of tiles at once) will | `lib/Rng` (world generation, later) | none needed yet; draws are made in one call a tick, not one call a number |
 
-None yet.
+X_eTaL-manifolds' ask GL8 (seeded draws in `Random`) is answered for
+this repository by `Random`'s Philox functions, which `lib/Rng` uses.

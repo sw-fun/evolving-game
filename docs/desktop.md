@@ -43,7 +43,7 @@ Chromium Embedded Framework), or offer Linux the browser version only.
 
 ## What the browser game must do from the first page on
 
-These are rules for Saga 1 step 7 (web-shell) and after, so the wrap
+These are rules for Saga 1 step 6 (web-shell) and after, so the wrap
 is cheap later.
 
 1. **Self-contained.** Every file the page needs is in the built

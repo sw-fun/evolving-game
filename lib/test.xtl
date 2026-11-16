@@ -7,3 +7,89 @@
 # Game: the name, and a game's title under it.
 g:name
 g:t_itle "Castle Defense"
+
+# Rng: words for a key (seed, stream) and counts; the same again; the
+# next three after three drawn; one count alone is the second of three.
+"rg:" u_se< "Rng"
+(2026, 1) rg:w_ords 1 2 3
+(2026, 1) rg:w_ords 1 2 3
+(2026, 1) rg:w_ords 3 rg:a_fter 3
+(2026, 1) rg:w_ords 2
+# Another stream and another seed give other numbers; none asked, none.
+(2026, 2) rg:w_ords 1 2 3
+(2027, 1) rg:w_ords 1 2 3
+t_ally (2026, 1) rg:w_ords 0 rg:a_fter 0
+# A seed from any whole number.
+rg:s_eed 0 1 -1 4294967296 4294967297
+# Dice: six thousand rolls, how many of each face (all from 1 to 6).
+dice := ((2026, 1) rg:w_ords r_ange 6000) rg:b_elow 6
+'+ r_/_2 (r_ange 6) '= t_able dice
+'+ r_/ '+ r_/_2 (r_ange 6) '= t_able dice
+# Fractions stay inside 0 to 1; an order of five is each of 1 to 5 once.
+units := (2026, 1) rg:u_nit r_ange 6000
+(0 < 'm_in r_/ units) & 1 > 'm_ax r_/ units
+order := rg:o_rder (2026, 3) rg:w_ords r_ange 5
+order
+(r_ange 5) m_atch order s_elect g_rade order
+
+# Sim: an event's line, and the line read back as the same event.
+"sm:" u_se< "Sim"
+sm:l_ine sm:t_ick 0.05
+sm:l_ine sm:c_lick 384 192
+sm:l_ine sm:k_ey " "
+sm:l_ine sm:k_ey "UP"
+sm:l_ine sm:c_hoose 2 3
+sm:l_ine sm:end
+sm:p_arse "tick 0.05"
+sm:p_arse "click 384 192"
+sm:p_arse "key space"
+sm:p_arse "key up"
+sm:p_arse "choose 2 3"
+sm:p_arse "end"
+# Lines that are no event are bad events holding the line: an unknown
+# word, a word that is not a number, too few, too many, nothing.
+sm:p_arse "jump 3"
+sm:p_arse "tick soon"
+sm:p_arse "click 3"
+sm:p_arse "tick 1 2"
+sm:k_ind sm:p_arse ""
+sm:l_ine sm:p_arse "tick soon"
+# Kinds, numbers, text; a tick's whole milliseconds, none for a click.
+sm:k_ind sm:c_lick 3 4
+sm:n_umbers sm:c_lick 3 4
+sm:t_ext sm:k_ey "a"
+(sm:t_ick 0.05) sm:i_s "tick"
+(sm:t_ick 0.05) sm:i_s "key"
+sm:m_illis sm:t_ick 0.05
+sm:m_illis sm:t_ick 0.016
+sm:m_illis sm:c_lick 3 4
+# The clock: twenty ticks of 0.05 are one second exactly; a key is an
+# event and no time.
+u:t_icks := { n clock -> n = 0 ? clock; (n - 1) u:t_icks clock sm:a_dvance sm:t_ick 0.05 }
+20 u:t_icks sm:start
+(20 u:t_icks sm:start) sm:a_dvance sm:k_ey "a"
+# A game to run: the state is (seed, rolls drawn, total, messages). A
+# tick rolls a die; a click adds its x; a bad line is a message; the
+# game is over at a total of 100 or more.
+u:s_tep := { (seed, drawn, total, said) e ->
+  e sm:i_s "tick" ? (seed, drawn + 1, total + f_irst ((seed, 1) rg:w_ords drawn + 1) rg:b_elow 6, said)
+  e sm:i_s "click" ? (seed, drawn, total + f_loor f_irst sm:n_umbers e, said)
+  e sm:i_s "bad" ? (seed, drawn, total, said + 1)
+  (seed, drawn, total, said)
+}
+u:o_ver := { (_, _, total, _) -> total >= 100 }
+script := "tick 0.05" "tick 0.05" "key a" "tick fast" "click 10 0" "tick 0.05" "end" "tick 0.05"
+# A script replayed: the same seed twice gives the same; another seed
+# does not; the end stops it; an empty script changes nothing.
+'u:o_ver 'u:s_tep sm:r_eplay (script, (2026, 0, 0, 0))
+'u:o_ver 'u:s_tep sm:r_eplay (script, (2026, 0, 0, 0))
+'u:o_ver 'u:s_tep sm:r_eplay (script, (2028, 0, 0, 0))
+'u:o_ver 'u:s_tep sm:r_eplay (0 d_rop 0 t_ake script, (2026, 0, 0, 0))
+# Over stops it before the script ends: two clicks of 60 are enough.
+'u:o_ver 'u:s_tep sm:r_eplay ("click 60 0" "click 60 0" "click 60 0", (2026, 0, 0, 0))
+# The host's events (expected/test.in holds the script above, a line the
+# host refuses, and more): one read, then the game run on the rest, with
+# its log; the result is the replay's. With no more lines, the end.
+sm:n_ext @
+'u:o_ver 'u:s_tep sm:t_race (2026, 0, 0, 0)
+sm:n_ext @

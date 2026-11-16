@@ -1,0 +1,63 @@
+## Rng: chance from a seed, so the same seed gives the same game on
+## every machine and in the browser (docs/plan.md D6). The numbers are
+## X_eTaL-libraries' Random: its Philox generator, which is written in
+## X_eTaL with whole numbers only and is counter-based: a draw is a
+## function of a key and a count, and nothing is remembered. Never
+## r_oll! or Random's ! draws, whose numbers are the host's.
+##
+## A key is a pair (seed, stream) of whole numbers: the seed is the
+## game's, and a stream is one use of chance (1 the waves, 2 the hits
+## ...), so drawing more for one use never changes another's numbers. A
+## count is which draw of that stream: 1, 2, 3 ... A game keeps, in its
+## state, how many it has drawn from each stream; that number is all
+## there is to save.
+## Import: "rg:" u_se< "Rng"
+
+"r:" u_se< "Random"
+
+h:span := 4294967296
+
+## An n by 4 table of identities for Random: the count, the stream, 0 0.
+h:i_ds := { stream counts ->
+  n := t_ally counts
+  o_\ (4 c_at n) r_eshape counts c_at (n r_eshape stream) c_at (2 * n) r_eshape 0
+}
+
+# :: Int -> Int
+## A seed from any whole number (a level's number, a typed one): the
+## number modulo 2 ^ 32, which is what a key holds.
+## >> "rg:" u_se< "Rng"
+## >> rg:s_eed 0 1 -1 4294967296
+## 0 1 4294967295 0
+l:s_eed := { n -> n m_od h:span }
+# :: Int -> Int -> Int
+## The counts of the next n draws after the first `drawn`: what to hand
+## w_ords or u_nit; the game then keeps drawn + n.
+## >> "rg:" u_se< "Rng"
+## >> 3 rg:a_fter 4
+## 4 5 6 7
+l:a_fter := { drawn n -> drawn + r_ange n }
+# :: (Int, Int) -> Int -> Int
+## A word (a whole number from 0 to 2 ^ 32 - 1) for each count, from the
+## key (seed, stream).
+## >> "rg:" u_se< "Rng"
+## >> (2026, 1) rg:w_ords 1 2 3
+## 3308159654 1448975164 1955318268
+l:w_ords := { (seed, stream) counts -> seed r:s_ampleKeys stream h:i_ds r_avel counts }
+# :: (Int, Int) -> Int -> Float
+## A fraction strictly between 0 and 1 for each count, from the key.
+l:u_nit := { (seed, stream) counts -> seed r:s_amples stream h:i_ds r_avel counts }
+# :: Int -> Int -> Int
+## A whole number from 1 to k for each word (k one number, or one for
+## each word): a die, a tile, a choice among k.
+## >> "rg:" u_se< "Rng"
+## >> 0 2147483648 4294967295 rg:b_elow 6
+## 1 4 6
+l:b_elow := { words k -> 1 + (words * k) d_iv h:span }
+# :: Ord a => a -> Int
+## The numbers 1 to n in the order the n words give: a shuffle of
+## anything n long is a selection by it.
+## >> "rg:" u_se< "Rng"
+## >> rg:o_rder 30 10 20
+## 2 3 1
+l:o_rder := { words -> g_rade words }

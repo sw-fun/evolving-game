@@ -44,7 +44,8 @@ five waves.
 
 Early. There is nothing to play yet: the repository holds the plan,
 the process, the tooling (the pinned X_eTaL, the tests, the gate) and
-the first shared library.
+the first shared libraries (seeded chance and the event loop every
+game runs in).
 [`docs/plan.md`](docs/plan.md) has the goal, the decisions made so
 far, the questions still open, and the roadmap.
 

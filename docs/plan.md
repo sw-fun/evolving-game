@@ -97,7 +97,17 @@ defaults drawn from the repositories above.
 - D6. Deterministic: the same scenario, seed and events give the same
   output, text for text. Time enters only as `tick` events, chance
   only through a seeded generator written in X_eTaL, so a list of
-  events is a replay, a test and a save.
+  events is a replay, a test and a save. The generator is `lib/Rng`
+  over X_eTaL-libraries' `Random`: its Philox functions only
+  (`s_ampleKeys`, `s_amples`), which use whole-number arithmetic and
+  are counter-based (a draw is a function of seed, stream and count;
+  the state to save is a count). Rules may not use `r_oll!`, `Random`'s
+  `!` draws, `[]TS` or any other clock: their numbers are the host's.
+  Time is kept in whole milliseconds (`lib/Sim`), never summed as
+  fractions. A printed event log is itself a script (`sm:l_ine`,
+  `sm:p_arse`), and a line that is no event is a `bad` event the game
+  answers, never a crash (pinned by `lib/expected/test.out` and
+  `sim-loop.out`).
 - D7. The rules are 2D with height: a grid of tiles with elevation,
   kept as arrays. The picture is 3D: the same state described as a
   scene and drawn by the Three.js player with the pieces' models,
@@ -280,9 +290,9 @@ demo is published; the gate is in place.
 | 3  | world-map          | `lib/World.xtl`: tiles with kind and elevation, zones, maps and named roads read from TOML and checked with named errors, the road found by a flood; the 16 by 10 or 20 by 20 bridge-and-gate map; a text drawing of a map as a golden |
 | 4  | mode-contract      | `lib/Mode.xtl`: the protocol, scenarios, world state, outcomes; `games/walk` (one unit follows the road to the gate); scripted and played from an event script; a replay golden; stub puzzle and turn-based modes proving the protocol fits them |
 | 5  | view-and-iso       | `lib/View.xtl`: the isometric linear map and its inverse (click to tile, with elevation), the SVG picture, and the scene (the player's calls) from the same state; goldens of both texts for the bridge map with a walker |
-| 6  | castle-assets      | `assets/Castle.xtl` on the blender extension's `Bpy.xtl`: the first pieces (ground, water, bridge, wall and gate tiles; a walker with idle and walk clips), `just assets` making each `.glb`, previews and `manifest.toml`; the written script and the clips read back as goldens |
-| 7  | web-shell          | `web/`: the page running `games/walk/play.xtl` unmodified as WebAssembly, events from the page, the picture, and the Three.js player drawing the scene with the pieces behind it; `just serve`; a browser test |
-| 8  | pages              | `scripts/build-pages.sh`, the footer (copyright, license, repository, build host, commit and time, the pins), the live demo published and linked from the README |
+| 6  | web-shell          | `web/`: the page running `games/walk/play.xtl` unmodified as WebAssembly, events from the page, the picture, and the Three.js player drawing the scene, each piece a plain shape until the models of step 8 exist; `just serve`; a browser test |
+| 7  | pages              | `scripts/build-pages.sh`, the footer (copyright, license, repository, build host, commit and time, the pins), the live demo published and linked from the README; `images/screencapture.png` inline early in the README as a thumbnail that links to it |
+| 8  | castle-assets      | `assets/Castle.xtl` on the blender extension's `Bpy.xtl`: the first pieces (ground, water, bridge, wall and gate tiles; a walker with idle and walk clips), `just assets` making each `.glb`, previews and `manifest.toml`; the written script and the clips read back as goldens; the page then draws the pieces, and the demo is published again |
 | 9  | foundations-docs   | `docs/architecture.md`, README current with every command a golden, the saga retrospective in this file |
 
 ## Saga 2 -- defend-the-bridge (Castle Defense, first playable)
@@ -418,7 +428,7 @@ and the desktop build packed (D17).
 Still open:
 
 1. The art reference file: `docs/images/castle-siege.png` is not in
-   the repository yet; the user is to add it (Saga 1 step 6 reads it).
+   the repository yet; the user is to add it (Saga 1 step 8 reads it).
 2. The GitHub repository `sw-fun/evolving-game` does not exist yet;
    the user is to create it (or say so, and it is created with `gh`).
    Until then the work is committed locally and not pushed.

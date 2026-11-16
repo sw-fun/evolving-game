@@ -1,0 +1,19 @@
+l:t_ick : Num a => a -> (Char, Float, Char)
+l:c_lick : Num a => a -> (Char, Float, Char)
+l:k_ey : Any a => a -> (Char, Float, a)
+l:c_hoose : Num a => a -> (Char, Float, Char)
+l:end : (Char, Float, Char)
+l:b_ad : Any a => a -> (Char, Float, a)
+l:k_ind : (Any a, Any b, Any c) => (a, b, c) -> a
+l:n_umbers : (Any a, Any b, Any c) => (a, b, c) -> b
+l:t_ext : (Any a, Any b, Any c) => (a, b, c) -> c
+l:i_s : (Match a, Any b, Any c, Truthy d) => (a, b, c) -> a -> d
+l:m_illis : Any a => (Char, Float, a) -> Int
+l:l_ine : (Char, a, Char) -> Char
+l:p_arse : Char -> (Char, Float, Char)
+l:n_ext : Unit -> (Char, Float, Char)
+l:start : (Int, Int, Int)
+l:a_dvance : (Num a, Truthy a, Num b, Any c) => (a, Int, b) -> (Char, Float, c) -> (a, Int, b)
+l:r_un : (Any a, Truthy b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> a -> ((Int, Int, Int), a)
+l:t_race : (Any a, Truthy b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> a -> ((Int, Int, Int), a)
+l:r_eplay : (Any a, Truthy b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (Box Char, a) -> ((Int, Int, Int), a)

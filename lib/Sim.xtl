@@ -1,0 +1,191 @@
+## Sim: the one event loop every game runs in (docs/plan.md D6, and the
+## rule that a game never has a loop of its own). A game is a state and
+## a step function; everything that happens to it is an event, and time
+## is one of them: a game moves only when a tick event says how long has
+## passed. So a list of events is a replay, a test and a save.
+##
+## An event is a tuple (kind, numbers, text):
+##   tick    the seconds since the last tick
+##   click   x y (and down, move, up, the pointer's other events)
+##   key     the key's name as text: a, 1, space, UP, ENTER
+##   choose  two numbers, a command: which list and which item
+##   end     no more events
+##   bad     a line that is none of these, kept as text: a message for
+##           the game to show, never a crash
+## Its line is the text the host reads it from ("tick 0.05", "click 384
+## 192", "key space", "choose 2 3"): l_ine writes it and p_arse reads it
+## back, so a printed log of events is a script that replays them.
+## Import: "sm:" u_se< "Sim"
+
+"st:" u_se< "Strings"
+
+h:none := 0 r_eshape 0.0
+h:kinds := "tick" "down" "move" "up" "click" "choose"
+h:counts := 1 2 2 2 2 2
+
+### Events
+
+# :: Num a => a -> (Char, Float, Char)
+## A tick of so many seconds.
+## >> "sm:" u_se< "Sim"
+## >> sm:l_ine sm:t_ick 0.05
+## tick 0.05
+l:t_ick := { seconds -> ("tick", 1 r_eshape f_loat seconds, "") }
+# :: Num a => a -> (Char, Float, Char)
+## A click at x y.
+## >> "sm:" u_se< "Sim"
+## >> sm:l_ine sm:c_lick 384 192
+## click 384.0 192.0
+l:c_lick := { xy -> ("click", f_loat xy, "") }
+# :: Any a => a -> (Char, Float, a)
+## A key, by name.
+## >> "sm:" u_se< "Sim"
+## >> sm:l_ine sm:k_ey " "
+## key space
+l:k_ey := { name -> ("key", h:none, name) }
+# :: Num a => a -> (Char, Float, Char)
+## A command: item n of list a, as a script or the page's controls give.
+## >> "sm:" u_se< "Sim"
+## >> sm:l_ine sm:c_hoose 2 3
+## choose 2.0 3.0
+l:c_hoose := { which -> ("choose", f_loat which, "") }
+# :: (Char, Float, Char)
+## The end of the events.
+l:end := ("end", h:none, "")
+# :: Any a => a -> (Char, Float, a)
+## A line that is not an event, kept as it was.
+l:b_ad := { line -> ("bad", h:none, line) }
+
+# :: (Any a, Any b, Any c) => (a, b, c) -> a
+## An event's kind, as text.
+l:k_ind := { (kind, _, _) -> kind }
+# :: (Any a, Any b, Any c) => (a, b, c) -> b
+## An event's numbers (none for a key, the end or a bad line).
+l:n_umbers := { (_, at, _) -> at }
+# :: (Any a, Any b, Any c) => (a, b, c) -> c
+## An event's text: a key's name, a bad line; empty otherwise.
+l:t_ext := { (_, _, text) -> text }
+# :: (Match a, Any b, Any c, Truthy d) => (a, b, c) -> a -> d
+## Is the event of this kind? e sm:i_s "tick".
+## >> "sm:" u_se< "Sim"
+## >> (sm:t_ick 0.05) sm:i_s "tick"
+## 1
+l:i_s := { e kind -> kind m_atch l:k_ind e }
+# :: Any a => (Char, Float, a) -> Int
+## The whole milliseconds a tick is (0 for another event). Time is kept
+## as whole numbers so that it adds up the same everywhere.
+## >> "sm:" u_se< "Sim"
+## >> sm:m_illis sm:t_ick 0.05
+## 50
+l:m_illis := { e -> n_ot e l:i_s "tick" ? 0; f_loor 0.5 + 1000 * f_irst l:n_umbers e }
+
+### Lines
+
+# :: (Char, a, Char) -> Char
+## The event as the line a host reads: a log of these is a script.
+l:l_ine := { e ->
+  (kind, at, text) := e
+  "bad" m_atch kind ? text
+  "end" m_atch kind ? kind
+  "key" m_atch kind ? "key " c_at h:k_eyName text
+  kind c_at " " c_at f_ormat at
+}
+h:k_eyName := { name -> " " m_atch name ? "space"; name }
+## The numbers of a line's words after the first, or none when a word
+## is not a number.
+h:r_est := { words ->
+  '{ @ -> f_loat n_umbers " " st:j_oin 1 d_rop words } []T_RAP '{ err -> []R_ECOVER h:none }
+}
+# :: Char -> (Char, Float, Char)
+## The event a line says, as the host reads it; a line that says none is
+## a bad event holding the line.
+## >> "sm:" u_se< "Sim"
+## >> sm:k_ind sm:p_arse "tick 0.05"
+## tick
+## >> sm:k_ind sm:p_arse "tick soon"
+## bad
+l:p_arse := { line ->
+  words := st:w_ords line
+  0 = t_ally words ? l:b_ad line
+  kind := d_isclose f_irst words
+  ("end" m_atch kind) & 1 = t_ally words ? l:end
+  ("key" m_atch kind) & 2 = t_ally words ? l:k_ey h:k_eyText d_isclose f_irst 1 d_rop words
+  which := h:kinds i_ndexOf e_nclose kind
+  which > t_ally h:kinds ? l:b_ad line
+  at := h:r_est words
+  n_ot (t_ally at) = which s_elect h:counts ? l:b_ad line
+  n_ot (t_ally at) = (t_ally words) - 1 ? l:b_ad line
+  (kind, at, "")
+}
+h:k_eyText := { name -> "space" m_atch st:l_ower name ? " "; 1 = t_ally name ? name; st:u_pper name }
+
+### The host's events
+
+h:f_rom := { e ->
+  kind := []E_KIND e
+  "key" m_atch kind ? l:k_ey f_ormat []E_KEY e
+  (kind, []E_AT e, "")
+}
+## The line inside the host's message: not an event: "LINE" (...).
+h:q_uoted := { message ->
+  q := w_here message = f_irst "\""
+  2 > t_ally q ? message
+  (f_irst q) d_rop ((f_irst -1 t_ake q) - 1) t_ake message
+}
+# :: Unit -> (Char, Float, Char)
+## The next event from the host (standard input at the command line, the
+## page in a browser). A line the host cannot read is a bad event, not
+## an error.
+l:n_ext := { @ ->
+  '{ @ -> h:f_rom []E_VENT @ } []T_RAP '{ err ->
+    n_ot "bad-event" m_atch []E_CODE err ? []H_ALT err
+    []R_ECOVER l:b_ad h:q_uoted []E_MESSAGE err
+  }
+}
+
+### The clock
+
+# :: (Int, Int, Int)
+## A clock before anything has happened: ticks, milliseconds, events.
+l:start := (0, 0, 0)
+# :: (Num a, Truthy a, Num b, Any c) => (a, Int, b) -> (Char, Float, c) -> (a, Int, b)
+## The clock after an event: one more event, and for a tick one more
+## tick and its milliseconds.
+## >> "sm:" u_se< "Sim"
+## >> sm:start sm:a_dvance sm:t_ick 0.05
+## (1, 50, 1)
+l:a_dvance := { (ticks, ms, events) e ->
+  (ticks + e l:i_s "tick", ms + l:m_illis e, events + 1)
+}
+
+### The loop
+
+h:e_cho := { echo e -> n_ot echo ? 0; _ := p_rint! l:l_ine e; 1 }
+h:l_oop := { step_ over_ (echo, clock, s) ->
+  over_ s ? (clock, s)
+  e := l:n_ext @
+  _ := echo h:e_cho e
+  e l:i_s "end" ? (clock, s)
+  'over_ 'step_ h:l_oop (echo, clock l:a_dvance e, s step_ e)
+}
+# :: (Any a, Truthy b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> a -> ((Int, Int, Int), a)
+## Run a game on the host's events: 'over 'step sm:r_un state. Each
+## event but the end goes to step (state step event, the new state),
+## until the events end or over says the state is final. The clock and
+## the last state.
+l:r_un := { step_ over_ s -> 'over_ 'step_ h:l_oop (0, l:start, s) }
+# :: (Any a, Truthy b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> a -> ((Int, Int, Int), a)
+## The same, printing each event's line as it is read: the event log.
+l:t_race := { step_ over_ s -> 'over_ 'step_ h:l_oop (1, l:start, s) }
+h:r_eplay := { step_ over_ (lines, clock, s) ->
+  over_ s ? (clock, s)
+  0 = t_ally lines ? (clock, s)
+  e := l:p_arse d_isclose f_irst lines
+  e l:i_s "end" ? (clock, s)
+  'over_ 'step_ h:r_eplay (1 d_rop lines, clock l:a_dvance e, s step_ e)
+}
+# :: (Any a, Truthy b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (Box Char, a) -> ((Int, Int, Int), a)
+## Run a game on a script instead of the host: 'over 'step sm:r_eplay
+## (lines, state), the lines a list of boxed texts (a log, a save). The
+## same as r_un on a host given those lines.
+l:r_eplay := { step_ over_ (lines, s) -> 'over_ 'step_ h:r_eplay (lines, l:start, s) }
