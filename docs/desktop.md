@@ -1,7 +1,8 @@
 # Desktop version -- design
 
 Designed now so the browser game is built ready for it; implemented
-in Saga 12 (`docs/plan.md`, decisions D16 and D17). Nothing here
+in Saga 12 (`docs/plan.md`, decisions D16 and D17), which runs after
+several iterations of the games. Nothing here
 exists yet.
 
 ## What it is
@@ -164,8 +165,6 @@ Rules for the packing, so it cannot change the game:
 
 ## Open
 
-- When Saga 12 runs (plan, Open questions).
 - Signing: which certificates the user has or wants.
-- Whether the published site is packed too, or only the desktop
-  build (the design above packs both; a plain site shows its sources
-  more easily).
+- A good reason not to pack the published site, should one appear
+  (decided: both are packed).

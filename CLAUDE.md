@@ -383,6 +383,8 @@ Read before working:
   extensions (from Saga 1 step 1).
 - `docs/architecture.md` -- the libraries and the flow as built
   (written at the end of Saga 1).
+- `docs/agentrail-asks.md` -- what this repository needs from
+  agentrail.
 - `docs/desktop.md` -- the desktop version's design (built later);
   its seven rules for the page apply from the first page on.
 - `docs/research.txt` -- the archival design conversation, NOT
@@ -500,8 +502,9 @@ with `.venv/bin/python` (or `uv run`); never the system `python3`.
 4. for any Rust under `web/`: `cargo fmt --check`, `cargo clippy
    --all-targets -- -D warnings` (zero warnings; fix, never
    `#[allow]`), `cargo test`, and `sw-checklist`
-5. `sw-markdown-checker` on the docs (ASCII-only markdown) and the
-   American spelling check
+5. `sw-markdown-checker` on `README.md` and `docs/*.md` (ASCII-only
+   markdown; not `CLAUDE.md`, whose generated briefing is not ASCII:
+   `docs/agentrail-asks.md`) and the American spelling check
 6. docs updated if behavior changed (README, the game's README,
    `docs/plan.md`, `docs/xetal-asks.md`)
 7. a detailed commit message; commit `.agentrail/` changes too

@@ -176,7 +176,9 @@ defaults drawn from the repositories above.
 - D17. Shipped builds deter casual game hacks only (the user,
   2026-11-15; the source is public, so this is not secrecy): programs
   and data are packed rather than left as readable files, and saves
-  and scores carry a check so an edited one is noticed. The packing
+  and scores carry a check so an edited one is noticed. Both the
+  published site and the desktop build are packed, unless a good
+  reason not to appears. The packing
   is a build step over unchanged sources; the goldens run on the
   plain sources and again on the packed build.
 - D18. The art reference is the castle siege picture the research
@@ -365,7 +367,8 @@ save check), saves in the user's data directory through the storage
 interface, window and full-screen behavior, an installer a system
 built by a workflow, signing and notarization where a system asks for
 it, and the goldens and the browser test run against the packed
-build. May be moved earlier once one game is worth installing.
+build. Runs after several iterations of the games (the user,
+2026-11-15), not before.
 
 ## Later
 
@@ -389,7 +392,9 @@ Answered on 2026-11-15 and recorded above: the title (D14), the
 repository (D14), the order (Castle Defense first), the player (D7),
 tiles not voxels (D8), X_eTaL-games' libraries by pin for now with a
 move to the libraries repository later (D11, D12), tracked pieces
-(D13), the art reference (D18), Tauri (D16).
+(D13), the art reference (D18), Tauri (D16), the desktop saga later,
+after several iterations of the games (Saga 12), and both the site
+and the desktop build packed (D17).
 
 Still open:
 
@@ -398,5 +403,3 @@ Still open:
 2. The GitHub repository `sw-fun/evolving-game` does not exist yet;
    the user is to create it (or say so, and it is created with `gh`).
    Until then the work is committed locally and not pushed.
-3. When Saga 12 (desktop) runs: after the campaign shell (Saga 4), or
-   last.
