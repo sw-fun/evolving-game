@@ -27,7 +27,7 @@ impl Game {
     pub fn start(program: &str, seed: u64) -> Game {
         let session = Arc::new(Session::default());
         xetal_store::install(session.clone());
-        let src = crate::files::text(program).unwrap_or_default();
+        let src = crate::about::text(program).unwrap_or_default();
         let (run, error) = match Interactive::start(src, seed, Box::new(Out(session.clone()))) {
             Ok(run) => (Some(run), String::new()),
             Err(r) => (None, r.err.trim().to_string()),

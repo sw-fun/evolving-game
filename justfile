@@ -88,6 +88,14 @@ serve port="8480":
 browser-test *flags:
     scripts/browser-test.mjs {{flags}}
 
+# Build the site into pages/ (ignored), as GitHub Pages will serve it
+pages:
+    scripts/build-pages.sh
+
+# Publish pages/ (the gh-pages branch, then the pages workflow); from a clean, pushed main
+publish:
+    scripts/publish-pages.sh
+
 # The pre-commit gate: pins, spelling, tooling, libraries, types, docs, goldens, markdown, the page's Rust
 gate:
     scripts/gate.sh

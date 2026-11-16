@@ -498,6 +498,8 @@ just test-lib             # the shared libraries: types, tests, examples
 just web                  # build the page (web/dist); --dev for a quicker build
 just serve                # serve it on port 8480 until Ctrl-C (never in the background)
 just browser-test         # the page in headless Chrome; writes images/screencapture.png
+just pages                # build the site into pages/ (ignored)
+just publish              # pages/ to the gh-pages branch, then the pages workflow deploys it
 scripts/write-types.py    # after a bless: the `# ::` comments from the type goldens
 just gate                 # the pre-commit gate
 ```

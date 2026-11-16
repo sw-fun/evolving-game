@@ -1,6 +1,6 @@
 number = 7
 slug = "pages"
-status = "pending"
+status = "in-progress"
 description = "foundations step 7: the live demo. scripts/build-pages.sh builds the site loc..."
 role = "production"
 context_files = []

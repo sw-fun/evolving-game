@@ -6,26 +6,36 @@
 // walker; a real click on the bridge reaches the program, which names
 // the tile; a real space bar stops the walker; the flat picture alone
 // (?flat) takes the same click; nothing is asked of another site; the
-// page fits its window at three sizes. Then a screen capture of the
-// walker on the bridge is written to images/screencapture.png.
-//   scripts/browser-test.mjs [--no-capture]
+// page fits its window at three sizes; the footer names the build and
+// the four pins; the sources pane shows the game's own files. Then a
+// screen capture of the walker on the bridge is written to
+// images/screencapture.png.
+//   scripts/browser-test.mjs [--no-capture] [--dir pages] [--url https://...]
+// --dir tests another built directory (pages/, as it will be served);
+// --url a deployed site instead (no local server).
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
-import { existsSync, mkdtempSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, mkdtempSync, rmSync, writeFileSync, mkdirSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const dist = join(root, "web/dist");
-if (!existsSync(join(dist, "index.html"))) { console.error("browser-test: no web/dist (just web)"); process.exit(1); }
+const arg = (name) => { const i = process.argv.indexOf(name); return i >= 0 ? process.argv[i + 1] : null; };
+const dist = join(root, arg("--dir") || "web/dist");
+const live = arg("--url") ? arg("--url").replace(/\/?$/, "/") : null;
+if (!live && !existsSync(join(dist, "index.html"))) { console.error(`browser-test: no ${dist} (just web, or just pages)`); process.exit(1); }
 const chrome = process.env.CHROME || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-const capture = !process.argv.includes("--no-capture");
+const capture = !process.argv.includes("--no-capture") && !arg("--url");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const freePort = () => new Promise((r) => { const s = createServer(); s.listen(0, "127.0.0.1", () => { const p = s.address().port; s.close(() => r(p)); }); });
 const webPort = await freePort(), cdpPort = await freePort();
-const base = `http://127.0.0.1:${webPort}/`;
-const server = spawn(join(root, ".venv/bin/python"), ["-m", "http.server", String(webPort), "--bind", "127.0.0.1", "--directory", dist], { stdio: "ignore" });
+// Served under a path, as GitHub Pages serves it: the site must not
+// assume it is at the root.
+const base = live || `http://127.0.0.1:${webPort}/evolving-game/`;
+const served = mkdtempSync(join(tmpdir(), "evolving-game-site-"));
+if (!live) (await import("node:fs")).symlinkSync(dist, join(served, "evolving-game"));
+const server = live ? { kill() {} } : spawn(join(root, ".venv/bin/python"), ["-m", "http.server", String(webPort), "--bind", "127.0.0.1", "--directory", served], { stdio: "ignore" });
 const profile = mkdtempSync(join(tmpdir(), "evolving-game-chrome-"));
 const browser = spawn(chrome, ["--headless=new", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--hide-scrollbars",
   `--remote-debugging-port=${cdpPort}`, `--user-data-dir=${profile}`, "--window-size=1280,800", "about:blank"], { stdio: "ignore" });
@@ -36,6 +46,7 @@ const done = async (code) => {
   browser.kill();
   await exited;
   rmSync(profile, { recursive: true, force: true });
+  rmSync(served, { recursive: true, force: true });
   process.exit(code);
 };
 const check = (ok, what) => { console.log(`${ok ? "ok" : "FAIL"}: ${what}`); if (!ok) failed += 1; };
@@ -102,6 +113,25 @@ check((await caption()).includes("Pointing at row 10, column 7: bridge."), "a cl
 await space();
 check((await caption()).includes("Stopped."), "the space bar stops the walker");
 check(await page("getComputedStyle(document.querySelector('#flat .flat')).display === 'none'"), "the flat board is hidden behind the 3D one");
+
+// The footer: whose it is, the license, the repository, the build and
+// the four pinned commits it was built from.
+const footer = await page("document.querySelector('footer').textContent.replace(/\\s+/g, ' ')");
+check(/Copyright \(c\) 2026 Michael A Wright/.test(footer) && footer.includes("MIT License"), "the footer says whose it is and its license");
+check(await page("document.querySelector('footer a').href === 'https://github.com/sw-fun/evolving-game' && document.querySelector('footer a').target === '_blank'"), "it links to the repository, as an external link");
+check(/build [0-9a-f]{7} on \S+ at 20\d\d-/.test(footer), "it names the build: commit, host and time");
+for (const pin of ["XETAL", "EXTENSIONS", "GAMES", "LIBRARIES"]) {
+  const sha = readFileSync(join(root, `${pin}_COMMIT`), "utf8").slice(0, 7);
+  check(footer.includes(sha), `it names the pin ${pin}_COMMIT (${sha})`);
+}
+// The sources: the game's own files, shown as they are.
+await page("document.getElementById('sources').open = true, 1");
+await sleep(100);
+const names = await page("[...document.querySelectorAll('#files button')].map((b) => b.textContent)");
+check(["play.xtl", "Walking.xtl", "Mode.xtl", "View.xtl", "bridge.toml"].every((n) => names.includes(n)), `the sources pane lists the game's files (${names.length})`);
+await page("[...document.querySelectorAll('#files button')].find((b) => b.textContent === 'play.xtl').click(), 1");
+check((await page("document.getElementById('source').textContent")) === readFileSync(join(root, "games/walk/play.xtl"), "utf8"), "play.xtl is shown as it is in the repository");
+await page("document.getElementById('sources').open = false, 1");
 
 // The page fits its window at three sizes: nothing scrolls.
 for (const [w, h] of [[1280, 800], [800, 600], [420, 760]]) {

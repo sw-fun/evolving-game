@@ -5,7 +5,7 @@
 //! hands the page what it printed and the picture it showed. No rule,
 //! number or picture of the game is worked out here.
 
-pub mod files;
+pub mod about;
 pub mod game;
 pub mod shown;
 pub mod store;

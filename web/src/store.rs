@@ -6,7 +6,7 @@ use std::sync::{Arc, Mutex};
 
 use xetal_store::Store;
 
-use crate::files;
+use crate::about as files;
 
 /// What the program has printed and shown.
 #[derive(Default)]

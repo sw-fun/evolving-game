@@ -24,6 +24,13 @@
   details { padding: 0 16px 8px; }
   summary { cursor: pointer; color: #c3c8d4; padding: 6px 0; }
   #printed { margin: 0; max-height: 9.5em; overflow: auto; background: #101116; padding: 8px 10px; border-radius: 6px; font: 13px/1.35 ui-monospace, Menlo, monospace; white-space: pre; }
+  #files { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-bottom: 6px; }
+  #files button { font: 13px ui-monospace, Menlo, monospace; padding: 2px 8px; border-radius: 5px; border: 1px solid #3a4052; background: #1a1f2e; color: #c3c8d4; cursor: pointer; }
+  #files button.on { background: #e8e6df; color: #14151c; }
+  #source { margin: 0; max-height: 40vh; overflow: auto; background: #101116; padding: 8px 10px; border-radius: 6px; font: 13px/1.4 ui-monospace, Menlo, monospace; white-space: pre; }
+  footer { display: flex; flex-wrap: wrap; gap: 2px 16px; padding: 6px 16px 8px; color: #8d919a; font-size: 13px; border-top: 1px solid #262936; }
+  footer a { color: #8fb0ff; }
+  #build { display: contents; }
   #err { color: #ff9a9a; white-space: pre-wrap; padding: 0 16px; }
 </style>
 <script type="importmap">{ "imports": { "three": "./ext/vendor/three/three.module.min.js" } }</script>
@@ -37,6 +44,13 @@
 <div id="stage" tabindex="0"><div id="view"></div><div id="flat"></div></div>
 <div id="err"></div>
 <details id="log"><summary>What the program printed</summary><pre id="printed"></pre></details>
+<details id="sources"><summary>The game's sources (X_eTaL and its data)</summary><div id="files"></div><pre id="source"></pre></details>
+<footer>
+  <span>Copyright (c) 2026 Michael A Wright</span>
+  <span>MIT License</span>
+  <a class="external" href="https://github.com/sw-fun/evolving-game" target="_blank" rel="noopener">Repository</a>
+  <span id="build"></span>
+</footer>
 <script type="module" src="./static/app.js"></script>
 </body>
 </html>

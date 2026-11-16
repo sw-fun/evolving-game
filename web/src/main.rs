@@ -1,5 +1,7 @@
 //! The page's side of the game: what static/app.js calls.
 
+mod sources;
+
 use std::cell::RefCell;
 
 use evolving_web::{Game, PROGRAM};

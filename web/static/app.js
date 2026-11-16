@@ -86,8 +86,28 @@ function start() {
 }
 el('again').addEventListener('click', (e) => { e.currentTarget.blur(); start(); });
 
+// The game's sources, shown as they are when their pane is opened.
+function sources() {
+  const files = el('files'), source = el('source');
+  if (files.children.length) return;
+  for (const name of wasm.sources().split('\n')) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = name;
+    b.addEventListener('click', () => {
+      for (const o of files.children) o.classList.toggle('on', o === b);
+      source.textContent = wasm.source(name);
+      source.scrollTop = 0;
+    });
+    files.append(b);
+  }
+  files.querySelector('button')?.click();
+}
+el('sources').addEventListener('toggle', (e) => { if (e.target.open) sources(); });
+
 const ready = () => {
   wasm = window.wasmBindings;
+  el('build').innerHTML = wasm.build();
   const title = wasm.title();
   el('title').textContent = title;
   window.game = { feed, start, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player };

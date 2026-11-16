@@ -29,6 +29,46 @@ fn main() {
     files.extend(SIBLINGS.iter().map(|p| named(&root.join(p))));
     files.extend(DATA.iter().map(|(k, p)| ((*k).to_string(), root.join(p))));
     write(&files);
+    provenance(&root);
+}
+
+/// The build's facts for the page's footer: this repository's commit,
+/// the host and the time, and the four pins.
+fn provenance(root: &Path) {
+    let said = |cmd: &str, args: &[&str]| {
+        let out = std::process::Command::new(cmd).args(args).output().ok();
+        let text = out.map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string());
+        text.filter(|s| !s.is_empty())
+            .unwrap_or_else(|| "unknown".into())
+    };
+    println!(
+        "cargo:rustc-env=BUILD_SHA={}",
+        said("git", &["rev-parse", "--short", "HEAD"])
+    );
+    println!("cargo:rustc-env=BUILD_HOST={}", said("hostname", &["-s"]));
+    println!(
+        "cargo:rustc-env=BUILD_TIMESTAMP={}",
+        said("date", &["-u", "+%Y-%m-%dT%H:%MZ"])
+    );
+    for pin in ["XETAL", "EXTENSIONS", "GAMES", "LIBRARIES"] {
+        let file = root.join(format!("{pin}_COMMIT"));
+        let sha: String = std::fs::read_to_string(&file)
+            .unwrap_or_default()
+            .trim()
+            .chars()
+            .take(7)
+            .collect();
+        println!("cargo:rustc-env={pin}_SHA={sha}");
+        println!("cargo:rerun-if-changed={}", file.display());
+    }
+    println!(
+        "cargo:rerun-if-changed={}",
+        root.join(".git/HEAD").display()
+    );
+    println!(
+        "cargo:rerun-if-changed={}",
+        root.join(".git/refs/heads/main").display()
+    );
 }
 
 /// A file under its own name.

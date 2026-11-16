@@ -30,3 +30,29 @@ fn the_page_plays_the_walk_as_the_command_line_does() {
     // after the game, not in a test of its own running beside it.
     assert_eq!(evolving_web::title(), "Evolving Game: Walk");
 }
+
+#[test]
+fn the_footer_names_the_build_and_the_four_pins() {
+    let build = evolving_web::about::build();
+    for pin in ["XETAL", "EXTENSIONS", "GAMES", "LIBRARIES"] {
+        let file = format!("{}/../{pin}_COMMIT", env!("CARGO_MANIFEST_DIR"));
+        let sha: String = std::fs::read_to_string(file)
+            .unwrap()
+            .chars()
+            .take(7)
+            .collect();
+        assert!(build.contains(&sha), "{pin} {sha} in {build}");
+    }
+    assert!(build.starts_with("<span>build "));
+}
+
+#[test]
+fn the_sources_are_the_games_own() {
+    let names = evolving_web::about::sources();
+    for name in ["play.xtl", "Walking.xtl", "Mode.xtl", "bridge.toml"] {
+        assert!(names.lines().any(|l| l == name), "{name} in {names}");
+    }
+    let play = evolving_web::about::source("play.xtl");
+    assert_eq!(play, include_str!("../../games/walk/play.xtl"));
+    assert_eq!(evolving_web::about::source("nothing"), "");
+}
