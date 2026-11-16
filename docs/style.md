@@ -53,6 +53,8 @@ pieces.
 - X_eTaL-games' shared libraries (`Ecs`, `Svg`, `State`, `Board`,
   `Text`, `Play`) are on `XETAL_PATH` after this repository's own, at
   `GAMES_COMMIT`. Import them; do not copy them.
+- X_eTaL-libraries' libraries (`Random`, `Bits`, `Strings` ...) come
+  after those, at `LIBRARIES_COMMIT`. Import them the same way.
 
 ## What a game may not do
 

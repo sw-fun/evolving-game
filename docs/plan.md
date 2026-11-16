@@ -137,9 +137,14 @@ defaults drawn from the repositories above.
   `.in` event scripts, as in X_eTaL-games.
 - D11. X_eTaL and its sibling repositories are used at known-good
   commits recorded in tracked one-line files (`XETAL_COMMIT`,
-  `EXTENSIONS_COMMIT`, `GAMES_COMMIT`), cloned into the ignored
-  `work/` by scripts, moved only at a saga start or when an ask has
-  landed, in a commit of their own with the goldens run again.
+  `EXTENSIONS_COMMIT`, `GAMES_COMMIT`, `LIBRARIES_COMMIT`), cloned
+  into the ignored `work/` by scripts, moved only at a saga start or
+  when an ask has landed, in a commit of their own with the goldens
+  run again. The four are kept on one X_eTaL: a sibling is pinned
+  only at a commit whose own `XETAL_COMMIT` is ours (the user,
+  2026-11-15: bring the siblings forward first; all four moved to
+  X_eTaL 8c49bd8 that day, and X_eTaL-libraries was added for its
+  seeded `Random`).
 - D12. What a sibling repository lacks is asked of it, not fixed from
   here, and a workaround is never hidden (status, kind, why, a minimal
   repro, the workaround). Three files, in the order of how likely the
@@ -235,7 +240,7 @@ keep them.
 ## Layout (planned)
 
 ```
-XETAL_COMMIT EXTENSIONS_COMMIT GAMES_COMMIT   the pins (D11)
+XETAL_COMMIT EXTENSIONS_COMMIT GAMES_COMMIT LIBRARIES_COMMIT   the pins (D11)
 lib/           shared X_eTaL libraries (.xtl) and macro libraries (.xtlm):
                Game, Sim, Rng, World, Mode, View, Campaign
 games/<slug>/  one game: <Name>.xtl (rules), <slug>.xtl (scripted),

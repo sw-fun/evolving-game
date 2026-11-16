@@ -4,7 +4,8 @@ X_eTaL libraries (`.xtl`) and macro libraries (`.xtlm`) the games
 share, so no game copies a helper from another. A program imports one
 under a short alias, `"g:" u_se< "Game"`; the scripts find them through
 `XETAL_PATH` (`scripts/libs.sh`: this directory first, then
-X_eTaL-games' `lib/` at the commit in `GAMES_COMMIT`).
+X_eTaL-games' `lib/` at the commit in `GAMES_COMMIT`, then every
+library of X_eTaL-libraries at `LIBRARIES_COMMIT`).
 
 | Library | What it gives |
 | ------- | ------------- |

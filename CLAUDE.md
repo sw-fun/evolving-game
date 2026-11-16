@@ -454,8 +454,10 @@ at their pins; never edit them from here):
    (a winning event script) or a solver.
 10. Everything playable in the browser runs at the command line from
     the same program and data.
-11. X_eTaL, X_eTaL-extensions and X_eTaL-games are used only at the
-    commits in `XETAL_COMMIT`, `EXTENSIONS_COMMIT` and `GAMES_COMMIT`
+11. X_eTaL, X_eTaL-extensions, X_eTaL-games and X_eTaL-libraries are
+    used only at the
+    commits in `XETAL_COMMIT`, `EXTENSIONS_COMMIT`, `GAMES_COMMIT` and
+    `LIBRARIES_COMMIT`, all four on one X_eTaL
     (plan D11), cloned into the ignored `work/`; every script uses
     `bin/xetal`, never a `xetal` on the PATH. Move a pin at a saga
     start or when an ask has landed, never mid-step, in a commit of
@@ -497,9 +499,9 @@ just gate                 # the pre-commit gate
 ```
 
 Every script runs `bin/xetal` with `XETAL_PATH` from `scripts/libs.sh`
-(this repository's `lib/`, then X_eTaL-games' at its pin). `xetal-x`
-is built against the X_eTaL the extensions are pinned to, which may
-differ from `XETAL_COMMIT`; say so in an ask if it matters.
+(this repository's `lib/`, then X_eTaL-games' and X_eTaL-libraries'
+at their pins). `xetal-x` is built against the X_eTaL the extensions
+are pinned to, which is kept the same as `XETAL_COMMIT` (plan D11).
 
 Rewrite a golden (`just bless`) only after the output has been
 reviewed, and only when the change is intended (a rule change, a
@@ -539,7 +541,7 @@ by a golden or the gate.
 ## Layout
 
 ```
-XETAL_COMMIT EXTENSIONS_COMMIT GAMES_COMMIT   the pins
+XETAL_COMMIT EXTENSIONS_COMMIT GAMES_COMMIT LIBRARIES_COMMIT   the pins
 lib/           shared X_eTaL libraries (.xtl) and macro libraries (.xtlm)
 games/<slug>/  one game: <Name>.xtl (rules), <slug>.xtl (scripted),
                play.xtl, *.toml, expected/, README.md

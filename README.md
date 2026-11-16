@@ -103,8 +103,9 @@ The games run a known-good X_eTaL, recorded as one commit in
 `XETAL_COMMIT`: `just xetal` clones X_eTaL into `work/xetal` (not
 tracked), checks that commit out, builds it and links the binary as
 `bin/xetal`, which every recipe uses (never a `xetal` on your `PATH`).
-`GAMES_COMMIT` and `EXTENSIONS_COMMIT` pin X_eTaL-games (its shared
-libraries) and X_eTaL-extensions the same way; `just extensions`
+`GAMES_COMMIT`, `LIBRARIES_COMMIT` and `EXTENSIONS_COMMIT` pin
+X_eTaL-games (its shared libraries), X_eTaL-libraries and
+X_eTaL-extensions the same way, all four on one X_eTaL; `just extensions`
 builds `bin/xetal-x`, the X_eTaL that loads the blender, digest and
 three extensions (needed to make the 3D models, not to test).
 
