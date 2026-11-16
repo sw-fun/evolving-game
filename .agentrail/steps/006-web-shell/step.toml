@@ -1,8 +1,9 @@
 number = 6
 slug = "web-shell"
-status = "in-progress"
+status = "completed"
 description = "foundations step 6: the browser, the product (plan D15). web/: a page in whic..."
 role = "production"
 context_files = []
 created_at = "2026-11-15T15:23:53"
-commits = []
+completed_at = "2026-11-15T23:09:14"
+commits = ["ccee86ff85c2ffa9403bcaf669528fcaf53850f0"]
