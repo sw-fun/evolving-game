@@ -2,7 +2,8 @@
 // Test the built page (web/dist; run scripts/web.sh first) in headless
 // Chrome, over the DevTools protocol with Node's own WebSocket (no
 // packages): the page starts and says so; the scene is drawn in 3D by
-// the board player (a canvas, 400 tiles, the walker); ticks move the
+// the board player (a canvas: terrain, water, light, the built tiles,
+// the walker); ticks move the
 // walker; a real click on the bridge reaches the program, which names
 // the tile; a real space bar stops the walker; the flat picture alone
 // (?flat) takes the same click; nothing is asked of another site; the
@@ -50,8 +51,11 @@ const done = async (code) => {
   const exited = new Promise((r) => browser.once("exit", r));
   browser.kill();
   await exited;
-  rmSync(profile, { recursive: true, force: true });
-  rmSync(served, { recursive: true, force: true });
+  // Chrome may still be writing its profile as it goes: try again, and
+  // a temporary directory left behind is not a failed test
+  for (const dir of [profile, served]) {
+    try { rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }); } catch { /* left for the system to clear */ }
+  }
   process.exit(code);
 };
 const check = (ok, what) => { console.log(`${ok ? "ok" : "FAIL"}: ${what}`); if (!ok) failed += 1; };
@@ -109,7 +113,8 @@ check((await page("document.title")) === "Evolving Game: Walk: ready", "its titl
 check(await page("!!document.querySelector('#view canvas')"), "the board player made a canvas");
 await sleep(300);
 const count = await page("window.game.player().count()");
-check(count && count.tiles === 400 && count.pieces === 1, `the scene is drawn: ${JSON.stringify(count)}`);
+check(count && count.terrains === 2 && count.terrainTriangles > 1600 && count.water === 1 && count.beyond === 1 && count.lights === 3 && count.tiles === 22 && count.pieces === 1,
+  `the scene is drawn: the ground and the band round it, ground beyond, the river, the light, 22 built tiles, the walker (${JSON.stringify(count)})`);
 check(await until("window.game.player().count().models === 1", 8000), "the walker is its model (models/walker.glb), not a plain shape");
 check((await caption()).startsWith("Row 20, column 4; 37 steps to walk, 0 walked. Space stops and starts"), "the walker starts at the entrance, and the program says how to play");
 await page("window.game.feed('tick 1'), window.game.feed('tick 1'), 1");

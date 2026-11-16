@@ -386,3 +386,19 @@ washed := vw:p_icture atnight
 # A scenario may say a time or not.
 "../games/walk/evening.toml" md:h_as "time"
 "../games/walk/bridge.toml" md:h_as "time"
+
+# Terrain beyond the map: the band of ground round the small map, three
+# tiles wide (42 corners, two triangles for each of 18 pieces of edge and
+# corner, counted from 1), its four far corners level with the world
+# beyond; how worn each corner of the map's own mesh is (1 on a road or
+# the river's bed, 0 on grass); and the river's surface, a piece a wet
+# tile, a little under the banks.
+(rc, rt, rk) := tr:a_round (small, 3)
+(s_hape rc) c_at (s_hape rt) c_at s_hape rk
+(1 7 36 42) s_elect rc
+2 t_ake rt
+tr:w_orn small
+(wc, wt) := tr:w_ater (small, 0)
+(s_hape wc) c_at s_hape wt
+4 t_ake wc
+2 t_ake wt

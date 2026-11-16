@@ -140,6 +140,22 @@ The scene is text, a call a line, that names no renderer
   before and after is to be measured when shadows are drawn; before,
   on real hardware, it is what the page's corner shows.
 
+- **Switched on** (2026-11-16, when X_eTaL-extensions landed its
+  light, terrain, water and `beyond`): the walk's stage is the smooth
+  one and its scenario says an hour (14.5). The scene is the terrain
+  under grass, worn to dirt on the road (`tr:w_orn`), a band of
+  ground 24 tiles wide round the map (`tr:a_round`) and ground to the
+  horizon (`beyond`), so the board no longer floats; the river as a
+  water surface that flows and foams (`tr:w_ater`); the sun, the sky
+  and a haze, with shadows; and tiles only for the wall, gate and
+  bridge. Before and after: `images/look/board-before.png`,
+  `images/look/board-lit.png`.
+  Known, and next: the river stops at the map's edge (a dry ditch
+  goes on through the band); the wall does too; the walker is small
+  and still boxes; a tick's picture is now 120 KB (the scene twice the
+  size, written every tick), 18 ms an event at the command line where
+  it was 11: the scene's unchanging lines should be sent once.
+
 ## What exists to build on
 
 - **The board player** (`board.js`, X_eTaL-extensions): the four calls

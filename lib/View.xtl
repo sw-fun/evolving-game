@@ -192,12 +192,22 @@ l:s_tage := { map ->
 }
 # :: (Any a, Num b, Num c) => (a, Int, b) -> ((a, Int, b), Float, Box Char, Float, Char, c)
 ## The same with its ground smooth (lib/Terrain): the scene's ground is
-## one terrain mesh, with tiles only for the water and the built
-## kinds, and a piece stands on the surface, not on a step. The flat
+## one terrain mesh under grass, worn to dirt on roads; round it a band
+## of ground 24 tiles wide and then ground to the horizon, so the map
+## does not float; the river is a water surface that flows; tiles are
+## left only for the built kinds. A piece stands on the surface, not
+## on a step. The flat
 ## picture and the click's way back to a tile are a stage's.
 l:s_mooth := { map ->
   (frame, tiles, depths, calls) := h:p_arts map
-  (map, frame, tiles, depths, (tr:c_all map) c_at t:j_oin 2 3 5 7 s_elect calls, 1)
+  rc := w:s_ize map
+  far := 24
+  edge := "nums('" c_at (f_ormat 0.0 0.0 c_at f_loat r_ev rc) c_at "', 4)[0]"
+  land := (tr:c_all map) c_at "ground('ground', 'grass', 'dirt', nums('" c_at (f_ormat tr:w_orn map) c_at "', 1))\n"
+  round := (tr:c_allAround (map, far)) c_at "ground('around', 'grass', 'dirt', nums('" c_at (f_ormat ((3 + f_irst rc) * 3 + 2 s_elect rc) r_eshape 0.0) c_at "', 1))\n"
+  beyond := "beyond(0.0, 'grass', '" c_at (d_isclose f_irst h:tops) c_at "', nums('" c_at (f_ormat (0.0 - f_loat far) c_at (0.0 - f_loat far) c_at (f_loat far + 2 s_elect rc) c_at f_loat far + f_irst rc) c_at "', 4)[0])\n"
+  river := tr:c_allWater (map, 0, 0.35 0.0, "#3f6f8f")
+  (map, frame, tiles, depths, land c_at round c_at beyond c_at river c_at t:j_oin 3 5 7 s_elect calls, 1)
 }
 # :: (Any a, Any c, Any d, Any e, Any f, Any g, Any h) => ((a, b, c), d, e, f, g, h) -> Int
 ## The places of a stage's tiles in the order they are drawn, far to

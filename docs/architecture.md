@@ -87,7 +87,9 @@ rules), `bridge.toml` (the scenario), `walk.xtl` (scripted),
   `tiles` (a kind a call; a built kind, bridge, wall or gate, with its
   model), `piece` (model, place, heading, clip, time, and where it
   will be, so a player moves it between ticks), and on a smooth stage
-  `terrain` (the ground as one mesh).
+  `terrain` and `ground` (the ground as one mesh and its textures),
+  `beyond` (ground to the horizon), `water`, and, lit, `sun`, `sky`
+  and `fog`.
 
 The scene travels inside the picture (`<metadata id="scene">`), and
 what 3D replaces is in a group of class `flat`: a page that can draw

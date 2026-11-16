@@ -33,6 +33,8 @@ h:built := 5 7
 h:colors := 8 3 r_eshape 0.37 0.58 0.31  0.3 0.28 0.22  0.3 0.28 0.22  0.72 0.64 0.48  0.45 0.42 0.36  0.48 0.5 0.45  0.45 0.42 0.36  0.79 0.7 0.5
 ## More than any height.
 h:far := 1000000.0
+## A number to a thousandth, as a scene writes it.
+h:f_ine := { v -> (f_loat f_loor 0.5 + 1000.0 * v) / 1000.0 }
 
 ### The ground under every tile
 
@@ -92,7 +94,7 @@ l:c_orners := { map ->
 ## The surface as a mesh: (corners, triangles, colors). Corners are
 ## rows of x z y: first the grid's corners, row by row, then the tiles'
 ## middles, row by row. Triangles are rows of three corner numbers from
-## 0, four a tile, each facing up. Colors are a row a corner, red green
+## 1 (the first corner is 1), four a tile, each facing up. Colors are a row a corner, red green
 ## blue: a middle has its kind's color and a grid corner the mean of
 ## the tiles' round it, so a road's edge is soft.
 l:m_esh := { map ->
@@ -119,7 +121,7 @@ l:m_esh := { map ->
   one := 1.0 + 0.0 * f_loat kinds
   mean := '{ k -> e_nclose (r_avel h:g_ather rc r_eshape k s_elect_2 own) / r_avel h:g_ather one } e_ach 1 2 3
   shade := o_\ (3 c_at n) r_eshape (d_isclose f_irst mean) c_at (d_isclose 2 s_elect mean) c_at d_isclose 3 s_elect mean
-  (corners, ((4 * r * c) c_at 3) r_eshape fan, shade c_at own)
+  (corners, 1 + ((4 * r * c) c_at 3) r_eshape fan, shade c_at own)
 }
 
 ### Standing on it
@@ -167,13 +169,103 @@ l:s_tand := { map xy ->
   (on * 0.5 * f_loat i s_elect r_avel w:h_eights map) + (1.0 - on) * map l:h_eight xy
 }
 
+# :: (Any a, Num b, Any c) => (a, b, c) -> Float
+## How worn the ground is at every corner of tr:m_esh's, 0 to 1: 1 in
+## the middle of a road, an entrance or the river's bed, 0 on grass and
+## rock, between at a grid corner by the tiles round it. A scene blends
+## two textures by it (grass and dirt).
+l:w_orn := { map ->
+  kinds := w:t_iles map
+  bare := f_loat kinds m_ember? 2 3 4 8
+  one := 1.0 + 0.0 * bare
+  h:f_ine (r_avel (h:g_ather bare) / h:g_ather one) c_at r_avel bare
+}
+
+### Beyond the map
+
+# :: (Any a, Num b) => ((a, Int, b), Int) -> (Float, Int, Float)
+## The ground round the map, so that it does not end in the air: a band
+## `far` tiles wide from the map's edge out to a rectangle, as a mesh
+## (corners, triangles, colors) like tr:m_esh's. Its inner corners are
+## the map's own edge corners; an outer corner is level with the world
+## beyond (0), or as low as the edge where the edge is lower (the river
+## going out, so its bed carries on to the band's rim). Two triangles
+## for each tile of edge and for each of the four corner pieces.
+l:a_round := { (map, far) ->
+  rc := w:s_ize map
+  r := f_irst rc
+  c := 2 s_elect rc
+  cs := l:c_orners map
+  l_ow := { v -> 0.0 m_in v }
+  mid := (((r + 1) c_at 1) r_eshape l_ow f_irst_2 cs) c_at_2 cs c_at_2 ((r + 1) c_at 1) r_eshape l_ow (c + 1) s_elect_2 cs
+  r_im := { v -> (1 c_at c + 3) r_eshape 0.0 c_at (l_ow v) c_at 0.0 }
+  ys := r_avel (r_im f_irst cs) c_at mid c_at r_im (r + 1) s_elect cs
+  xs := (0.0 - f_loat far) c_at (f_loat (r_ange c + 1) - 1) c_at f_loat c + far
+  zs := (0.0 - f_loat far) c_at (f_loat (r_ange r + 1) - 1) c_at f_loat r + far
+  n := (r + 3) * c + 3
+  i := (r_ange n) - 1
+  corners := o_\ (3 c_at n) r_eshape ((1 + i m_od c + 3) s_elect xs) c_at ((1 + i d_iv c + 3) s_elect zs) c_at ys
+  cells := (r_ange (r + 2) * c + 2) - 1
+  row := cells d_iv c + 2
+  col := cells m_od c + 2
+  edge := (row = 0) | (row = r + 1) | (col = 0) | col = c + 1
+  tl := edge r_eplicate 1 + col + row * c + 3
+  tr := tl + 1
+  bl := tl + c + 3
+  br := bl + 1
+  both := o_\ (6 c_at t_ally tl) r_eshape tl c_at bl c_at tr c_at tr c_at bl c_at br
+  wet := f_loat ys < 0.0
+  colors := (wet '* t_able 2 s_elect h:colors) + (1.0 - wet) '* t_able f_irst h:colors
+  (corners, ((2 * t_ally tl) c_at 3) r_eshape both, colors)
+}
+# :: (Any a, Num b, Num c) => ((a, Int, b), c) -> (Float, Int)
+## The river as a surface: (corners, triangles), a flat piece over every
+## water and bridge tile a little under the tile's own elevation (so a
+## bank at that elevation stands out of it), and, where the water
+## reaches the map's edge, a piece going on `far` tiles past it. Four
+## corners and two triangles a piece; the corners are rows of x z y.
+l:w_ater := { (map, far) ->
+  rc := w:s_ize map
+  r := f_irst rc
+  c := 2 s_elect rc
+  kinds := r_avel w:t_iles map
+  wet := w_here kinds m_ember? h:wet
+  col := f_loat (wet - 1) m_od c
+  row := f_loat (wet - 1) d_iv c
+  level := ('+ r_/ (0.5 * f_loat (r_avel w:h_eights map)) * f_loat kinds = 2) / 1.0 m_ax f_loat '+ r_/ kinds = 2
+  out := f_loat far
+  west := (col = 0.0) r_eplicate row
+  east := (col = f_loat c - 1) r_eplicate row
+  north := (row = 0.0) r_eplicate col
+  south := (row = f_loat r - 1) r_eplicate col
+  x0 := col c_at ((t_ally west) r_eshape 0.0 - out) c_at ((t_ally east) r_eshape f_loat c) c_at north c_at south
+  x1 := (col + 1.0) c_at ((t_ally west) r_eshape 0.0) c_at ((t_ally east) r_eshape out + f_loat c) c_at (north + 1.0) c_at south + 1.0
+  z0 := row c_at west c_at east c_at ((t_ally north) r_eshape 0.0 - out) c_at (t_ally south) r_eshape f_loat r
+  z1 := (row + 1.0) c_at (west + 1.0) c_at (east + 1.0) c_at ((t_ally north) r_eshape 0.0) c_at (t_ally south) r_eshape out + f_loat r
+  n := t_ally x0
+  y := n r_eshape level - 0.06
+  corners := ((4 * n) c_at 3) r_eshape r_avel o_\ (12 c_at n) r_eshape x0 c_at z0 c_at y c_at x1 c_at z0 c_at y c_at x1 c_at z1 c_at y c_at x0 c_at z1 c_at y
+  k := 4 * (r_ange n) - 1
+  (corners, ((2 * n) c_at 3) r_eshape r_avel o_\ (6 c_at n) r_eshape (k + 1) c_at (k + 2) c_at (k + 3) c_at (k + 1) c_at (k + 3) c_at k + 4)
+}
+
 ### The scene's call
 
-h:f_ine := { v -> (f_loat f_loor 0.5 + 1000.0 * v) / 1000.0 }
 # :: (Any a, Num b) => (a, Int, b) -> Char
 ## The mesh as a scene call, a line: terrain('ground', nums('x z y
 ## ...', 3), ints('a b c ...', 3), nums('r g b ...', 3)).
-l:c_all := { map ->
-  (corners, triangles, colors) := l:m_esh map
-  "terrain('ground', nums('" c_at (f_ormat h:f_ine r_avel corners) c_at "', 3), ints('" c_at (f_ormat r_avel triangles) c_at "', 3), nums('" c_at (f_ormat h:f_ine r_avel colors) c_at "', 3))\n"
+l:c_all := { map -> "ground" h:t_errain l:m_esh map }
+h:t_errain := { name (corners, triangles, colors) ->
+  "terrain('" c_at name c_at "', nums('" c_at (f_ormat h:f_ine r_avel corners) c_at "', 3), ints('" c_at (f_ormat r_avel triangles) c_at "', 3), nums('" c_at (f_ormat h:f_ine r_avel colors) c_at "', 3))\n"
+}
+# :: (Any a, Num b) => ((a, Int, b), Int) -> Char
+## The ground round the map as a scene call, the terrain 'around'.
+l:c_allAround := { (map, far) -> "around" h:t_errain l:a_round (map, far) }
+# :: (Any a, Num b, Num c) => ((a, Int, b), c, Float, Char) -> Char
+## The river as a scene call, a line: water(nums('x z y ...', 3),
+## ints('a b c ...', 3), nums('fx fz', 2)[0], 'color'): its surface,
+## its flow in tiles a second along x and z, and its color.
+l:c_allWater := { (map, far, flow, color) ->
+  (corners, triangles) := l:w_ater (map, far)
+  "water(nums('" c_at (f_ormat h:f_ine r_avel corners) c_at "', 3), ints('" c_at (f_ormat r_avel triangles) c_at "', 3), nums('" c_at (f_ormat h:f_ine flow) c_at "', 2)[0], '" c_at color c_at "')\n"
 }
