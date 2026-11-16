@@ -295,10 +295,11 @@ keep them.
   picture's map draws), `tiles` (every tile of a kind in one call, to
   be instanced) and `piece`. The scene travels as the picture's
   `<metadata id="scene">`, and what 3D replaces is in a group of class
-  `flat`, as X_eTaL-games' tower defense does. Neither sibling's
-  player draws this vocabulary yet (the extensions' is the city
-  film's, the games' reads JSON): the page's player is step 6's, and
-  an ask (`docs/xetal-extensions-asks.md`).
+  `flat`, as X_eTaL-games' tower defense does. The three
+  extension's board player draws this vocabulary (asked for and
+  landed on 2026-11-15, X_eTaL-extensions 4fd5d87): `th:p_age!` of
+  the walk's scene is the battlefield in 3D, the walker a plain shape
+  until its model exists.
 - **Save.** The world state, the campaign position and, for a level
   in progress, the scenario, seed and events so far.
 
