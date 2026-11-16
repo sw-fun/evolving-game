@@ -1,0 +1,1 @@
+docs/architecture.md; scripts/check-readme.py in the gate; README Status and Architecture current; docs/plan.md: Saga 1 retrospective and DONE, Saga 2 the-look with ten steps (the user's decision), later sagas renumbered. Next: archive this saga and init the-look.
