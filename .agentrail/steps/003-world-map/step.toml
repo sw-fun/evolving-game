@@ -1,8 +1,9 @@
 number = 3
 slug = "world-map"
-status = "in-progress"
+status = "completed"
 description = "foundations step 3: the world, lib/World.xtl. Tiles with a kind (ground, wate..."
 role = "production"
 context_files = []
 created_at = "2026-11-15T15:23:53"
-commits = []
+completed_at = "2026-11-15T22:07:00"
+commits = ["cab91e6e265f44fd913f6815621db6ed3309b820"]
