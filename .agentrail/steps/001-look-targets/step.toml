@@ -1,8 +1,9 @@
 number = 1
 slug = "look-targets"
-status = "in-progress"
+status = "completed"
 description = "the-look step 1: the targets. Write docs/look.md: the look wanted in the user..."
 role = "production"
 context_files = []
 created_at = "2026-11-16T09:04:34"
-commits = []
+completed_at = "2026-11-16T09:14:44"
+commits = ["d3599045e3b02a80e7e39a2717bbada938ba68f0"]
