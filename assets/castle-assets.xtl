@@ -1,0 +1,44 @@
+#!/usr/bin/env xetal
+## The castle's pieces, made: X_eTaL writes the Python (the launcher and
+## the bpy script Castle.xtl describes), Python runs Blender, Blender
+## runs the script: each piece is written as NAME.glb with its clips and
+## rendered alone as NAME.png. Then X_eTaL hashes every file (the digest
+## extension) into manifest.toml. All of it into work/assets (not
+## tracked); scripts/assets.sh copies the small files into assets/pieces.
+## Run with xetal-x from the repository's root: just assets (Blender
+## needed; about half a minute).
+"bl:" u_se< "Blender"
+"bp:" u_se< "Bpy"
+"cs:" u_se< "Castle"
+"dg:" u_se< "Digest"
+"st:" u_se< "Strings"
+"t:" u_se< "Text"
+
+out := "work/assets"
+script := (bp:head c_at cs:all c_at bp:report c_at ((0.2 0.22 0.27, 1.6) bp:l_ights 0) c_at ((256, 256, 30) bp:s_etup 0) c_at cs:s_tills 256)
+_ := (out c_at "/run.py") bl:w_rite! bp:launcher
+_ := (out c_at "/castle.py") bl:w_rite! script
+"making the pieces with Blender ..."
+r := (out c_at "/run.py") bl:r_un! out c_at "/castle.py " c_at out c_at "/pieces"
+"the run, and the error lines in Blender's log:"
+lines := (n_ot r = f_irst "\n") p_artition r
+d_isclose 1 s_elect lines
+d_isclose 2 s_elect lines
+"each piece's clips, read back from its .glb:"
+bl:r_ead out c_at "/pieces/clips.txt"
+
+## A piece's entry in the manifest: its files, their SHA-256s, its clips.
+u:c_lip := { c -> e_nclose "\"" c_at (d_isclose c) c_at "\"" }
+u:c_lips := { name -> "[" c_at (", " st:j_oin 'u:c_lip e_ach cs:c_lips name) c_at "]" }
+u:e_ntry := { name ->
+  file := out c_at "/pieces/" c_at name
+  (("\n[pieces." c_at name c_at "]\nglb = \"" c_at name c_at ".glb\"\nglb-sha256 = \"" c_at (dg:s_ha256File file c_at ".glb") c_at "\"\n") c_at
+    ("preview = \"" c_at name c_at ".png\"\npreview-sha256 = \"" c_at (dg:s_ha256File file c_at ".png") c_at "\"\n") c_at
+    "clips = " c_at (u:c_lips name) c_at "\n")
+}
+head := ("# The castle's pieces, made by X_eTaL driving Blender (assets/Castle.xtl,\n# assets/castle-assets.xtl; just assets). Do not edit: it is written.\ntitle = \"Evolving Game: the castle's pieces\"\nlibrary = \"assets/Castle.xtl\"\nlicense = \"MIT\"\n" c_at
+  "blender = \"" c_at (bl:v_ersion @) c_at "\"\nformat = \"glTF 2.0, binary (.glb)\"\nunits = \"meters: one tile is 1 by 1; the origin at the middle of the base, on the ground\"\nup = \"+Y in glTF (+Z in Blender)\"\nfront = \"+Z in glTF (-Y in Blender)\"\nclip-rate = 30\npreview = \"PIECE.png: 256 by 256, RGBA, transparent, every piece at one scale\"\nmost-bytes = 262144\n")
+manifest := head c_at t:j_oin '{ n -> e_nclose u:e_ntry d_isclose n } e_ach cs:list
+_ := (out c_at "/pieces/manifest.toml") bl:w_rite! manifest
+"the files (bytes, path):"
+bl:f_iles out c_at "/pieces"

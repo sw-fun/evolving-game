@@ -107,6 +107,7 @@ check(await page("!!document.querySelector('#view canvas')"), "the board player 
 await sleep(300);
 const count = await page("window.game.player().count()");
 check(count && count.tiles === 400 && count.pieces === 1, `the scene is drawn: ${JSON.stringify(count)}`);
+check(await until("window.game.player().count().models === 1", 8000), "the walker is its model (models/walker.glb), not a plain shape");
 check((await caption()).startsWith("Row 20, column 4; 37 steps to walk, 0 walked. Space stops and starts"), "the walker starts at the entrance, and the program says how to play");
 await page("window.game.feed('tick 1'), window.game.feed('tick 1'), 1");
 check((await caption()).includes("5 walked"), "two seconds of ticks walk it five tiles");

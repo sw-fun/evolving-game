@@ -481,8 +481,7 @@ at their pins; never edit them from here):
 ## Build / Test
 
 `just` is the entry point; each recipe calls a script in `scripts/`.
-Modeled on X_eTaL-games'. (`just assets` arrives with the step that
-makes it.)
+Modeled on X_eTaL-games'.
 
 ```bash
 just                      # list the recipes
@@ -495,6 +494,7 @@ just play SLUG            # play it at the terminal (play.xtl)
 just test-game SLUG       # check its output against expected/
 just bless SLUG           # rewrite its expected output (review the diff!)
 just test-lib             # the shared libraries: types, tests, examples
+just assets               # make the pieces with Blender into assets/pieces (needs just extensions)
 just web                  # build the page (web/dist); --dev for a quicker build
 just serve                # serve it on port 8480 until Ctrl-C (never in the background)
 just browser-test         # the page in headless Chrome; writes images/screencapture.png

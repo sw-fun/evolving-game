@@ -324,6 +324,19 @@ keep them.
   do: the user, 2026-11-15, after the first version showed them as
   typed, in one color, in a pane squeezed to four lines), plain until
   the packed build of D17.
+  The pieces (step 8): `assets/Castle.xtl` describes a walker (idle
+  and walk clips) and five tiles (ground, water, bridge, wall, gate)
+  as Blender parts; `just assets` has X_eTaL write the bpy script,
+  runs Blender through the blender extension, and copies each `.glb`
+  (2 to 54 KB) with its preview and `manifest.toml` (SHA-256s) into
+  `assets/pieces`. The gate needs no Blender: the script's text is a
+  golden (`assets/expected/pieces.out`), and the tracked files must
+  match the manifest (`scripts/check-assets.py`); the clips read back
+  from the files are a golden checked when the pieces are made. The
+  colors are the board's, chosen without the art reference (the user
+  said to go on, 2026-11-16), all in one place in `Castle.xtl`. The
+  page draws the walker's model; the tiles are still the player's own
+  columns, which take a color and no model (an ask).
 - **Save.** The world state, the campaign position and, for a level
   in progress, the scenario, seed and events so far.
 
@@ -480,6 +493,50 @@ it, and the goldens and the browser test run against the packed
 build. Runs after several iterations of the games (the user,
 2026-11-15), not before.
 
+## The look (asked for by the user, 2026-11-16; proposed as the next saga)
+
+The user, of the first live demo: "when will the quality of the game
+be improved? better graphics? less sims-like, more realistic, better
+textures, particle systems". Nothing in the sagas below does that:
+they build games on the look Saga 1 ends with, which is the sibling
+repositories' (flat colors, boxes, no light to speak of). The honest
+answer is a saga of its own, and the proposal is to run it next,
+before Saga 2, on the one scene there is (the bridge and the walk), so
+every game after it is built on the better look and not repainted
+later. What it would hold, each a step with its own measure:
+
+- **Art direction first.** The reference picture (D18), or a few
+  pictures of the look wanted, and one sentence of it. Without it
+  "realistic" has no test.
+- **Ground that is not boxes.** The map's heights as one smooth
+  terrain (a mesh worked out in X_eTaL from the height matrix, slopes
+  and banks, a river bed), the tiles still the rules' grid; walls and
+  cliffs as built masonry and rock, not columns.
+- **Materials.** Textures made in Blender from X_eTaL's descriptions
+  (stone, wood, grass, cloth: procedural, baked into the `.glb`),
+  with roughness and normals, so pieces are lit as surfaces. The
+  256 KB limit a piece has (D13) goes up, or textures are shared
+  files; a size budget for the whole site is set and tested.
+- **Light.** A sun with shadows, sky light, ambient occlusion, tone
+  mapping, fog with distance; a time of day in the scene.
+- **Water.** A surface that moves and reflects, foam at the banks and
+  the bridge's piers.
+- **Particles.** A `particles` call in the scene (dust at feet,
+  splashes, torch fire and smoke, later arrows' trails and impacts),
+  described by the program, drawn by the player.
+- **Figures.** People with proportions, a rig and clips made in
+  Blender (walk cycles with weight), not five boxes.
+- **A camera that can come down.** The isometric view stays the
+  board; a nearer, perspective view shows the work.
+
+Most of this is the player's (X_eTaL-extensions' board player: asks,
+`docs/xetal-extensions-asks.md`) and the asset library's (Bpy.xtl:
+bevels, textures, baking, rigs), with the scene vocabulary growing in
+`lib/View`; the rules do not change, and the flat picture stays. The
+measures: the frame rate on a middling laptop, the site's size, and a
+capture the user compares with the reference. Open: whether it runs
+next, and how far "realistic" goes (Open questions).
+
 ## Idler (asked for by the user, 2026-11-15; not in the research)
 
 An idle game: the castle earns while you do something else, or
@@ -537,6 +594,10 @@ Still open:
    game in the background of the others, or several of these; what
    it earns and what spends it; its name; and where it comes in the
    order.
+
+3. The look (see its section): whether that saga runs next, before
+   Castle Defense; and what "realistic" is to mean here (a reference
+   picture decides it).
 
 Settled since: the repository exists and is public, and GitHub Pages
 is enabled on it, deploying from GitHub Actions (the user,

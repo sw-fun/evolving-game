@@ -1,0 +1,8 @@
+walker
+clip walk 0.00-1.00 s: walker arm left rotation, walker arm right rotation, walker body translation, walker leg left rotation, walker leg right rotation
+clip idle 0.00-2.00 s: walker body scale
+ground
+water
+bridge
+wall
+gate

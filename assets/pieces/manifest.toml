@@ -1,0 +1,55 @@
+# The castle's pieces, made by X_eTaL driving Blender (assets/Castle.xtl,
+# assets/castle-assets.xtl; just assets). Do not edit: it is written.
+title = "Evolving Game: the castle's pieces"
+library = "assets/Castle.xtl"
+license = "MIT"
+blender = "Blender 5.1.2"
+format = "glTF 2.0, binary (.glb)"
+units = "meters: one tile is 1 by 1; the origin at the middle of the base, on the ground"
+up = "+Y in glTF (+Z in Blender)"
+front = "+Z in glTF (-Y in Blender)"
+clip-rate = 30
+preview = "PIECE.png: 256 by 256, RGBA, transparent, every piece at one scale"
+most-bytes = 262144
+
+[pieces.walker]
+glb = "walker.glb"
+glb-sha256 = "58296008dcce6d93302c57ba032b6beab4edd52290cb9cd023dd20f12c28ddab"
+preview = "walker.png"
+preview-sha256 = "b3b8264465a6c182802e2e9f385bbbd32ae6f274be15bae23471b398b0d60b12"
+clips = ["idle 2.0", "walk 1.0"]
+
+[pieces.ground]
+glb = "ground.glb"
+glb-sha256 = "0e966c893e6e6c5a7f245d8d3683517fc2224b6e046b78b20f9d76784eea30b9"
+preview = "ground.png"
+preview-sha256 = "b734c35b54ce3471b39a457afd281f59e1f5266f89fc720b467d327436683388"
+clips = []
+
+[pieces.water]
+glb = "water.glb"
+glb-sha256 = "3076ab68fde5928c7028e13aa7ac020545bf957bda0bdd9ee5ee89e86e5fc7ff"
+preview = "water.png"
+preview-sha256 = "703038de52df6cc3786755178efd88437417a59c0262d65a4f4b5b4ef0db2cc6"
+clips = []
+
+[pieces.bridge]
+glb = "bridge.glb"
+glb-sha256 = "33617e6b1ce951b8804c4730753c550f92b347ae927d313c5f538c26083dac07"
+preview = "bridge.png"
+preview-sha256 = "2f15bd0901533718d3460c639f25bef401e191be2f94c3a4c4b5275662ee66c1"
+clips = []
+
+[pieces.wall]
+glb = "wall.glb"
+glb-sha256 = "2f654a239f43fa0300afa028dd855d14a36bba1fa4fa0f9da6a80c6031457583"
+preview = "wall.png"
+preview-sha256 = "6b3c1c81c24c75e65795c96c20658dcbc4c9b1976290474ee1406be8ee1f1d6c"
+clips = []
+
+[pieces.gate]
+glb = "gate.glb"
+glb-sha256 = "4ba500871c88fda970708f8d7961b48367ef0ee4955d2d2517b439c33f436bf1"
+preview = "gate.png"
+preview-sha256 = "afa558402923609ca3f62e76c3f807ae6fb6da0c576a48ec97e0f5129850d415"
+clips = []

@@ -1,0 +1,139 @@
+## Castle: the game's first pieces, described in X_eTaL as Blender parts
+## (X_eTaL-extensions' Bpy.xtl, as its Td.xtl describes the tower
+## defense pieces): a walker with its clips, and the battlefield's
+## tiles. Each piece stands on a 1 by 1 tile, its base at z 0, its front
+## toward -y (glTF's +z); flat colors, low-poly, what a game shows small.
+## A part that moves in a clip hangs in a group, so it turns about its
+## own pivot. Clips: idle (2 s, a loop) and walk (1 s, a loop).
+##
+## The colors are in one place, below. They are the board's own (lib/
+## View's), chosen without the art reference (docs/plan.md D18, which is
+## not in the repository yet): change them here and run just assets.
+## Import: "cs:" u_se< "Castle"
+
+"bp:" u_se< "Bpy"
+
+### Colors (red green blue, 0 to 1)
+
+grass := 0.37 0.58 0.31
+river := 0.25 0.5 0.75
+plank := 0.61 0.48 0.3
+beam := 0.4 0.3 0.18
+stone := 0.6 0.63 0.67
+darkstone := 0.42 0.44 0.48
+door := 0.36 0.27 0.19
+iron := 0.25 0.25 0.28
+tunic := 0.75 0.22 0.17
+hose := 0.3 0.24 0.2
+skin := 0.95 0.79 0.65
+hair := 0.3 0.2 0.12
+flat := 0.0 0.0 0.0
+one := 1.0 1.0 1.0
+
+### Keys
+
+## A clip's times and how far along each key is: idle breathes once in
+## 2 s; walk swings one way and the other in 1 s, and bobs twice.
+slow := 0.0 1.0 2.0
+breathe := 0.0 1.0 0.0
+walk := 0.0 0.25 0.5 0.75 1.0
+swing := 0.0 1.0 0.0 -1.0 0.0
+bob := 0.0 1.0 0.0 1.0 0.0
+## Keys from a part's rest: each key is rest + k * delta, for the k of
+## each time.
+h:k_ey := { (part, clip, what, rest, delta, times, ks) z ->
+  n := t_ally ks
+  (part, clip, what, times, ((n c_at 3) r_eshape rest) + ks '* t_able delta) bp:k_eys 0
+}
+
+### The walker
+
+## A limb in a group at its joint: it hangs down from there, and swings
+## about the joint in walk (deg degrees each way, about x).
+h:l_imb := { (name, joint, size, rgb, deg) z ->
+  drop := 0.0 0.0 c_at -0.5 * 3 s_elect size
+  (((("walker " c_at name, joint, flat) bp:g_roup 0) c_at (("walker " c_at name c_at " part", drop, size, flat, rgb, 0.0) bp:b_ox 0) c_at bp:ungroup) c_at
+    ("walker " c_at name, "walk", "rotation", flat, deg c_at 0.0 0.0, walk, swing) h:k_ey 0)
+}
+h:w_alker := { z ->
+  body := (((bp:p_iece "walker") c_at (("walker body", 0.0 0.0 0.26, flat) bp:g_roup 0)) c_at
+    ((("walker tunic", 0.0 0.0 0.11, 0.2 0.13 0.24, flat, tunic, 0.0) bp:b_ox 0) c_at (("walker belt", 0.0 0.0 0.02, 0.21 0.14 0.03, flat, iron, 0.0) bp:b_ox 0)) c_at
+    ((("walker head", 0.0 0.0 0.31, 0.075 0.075 0.08, flat, skin, 0.0) bp:s_phere 0) c_at (("walker hair", 0.0 0.012 0.345, 0.078 0.078 0.055, flat, hair, 0.0) bp:s_phere 0)) c_at
+    ((("walker nose", 0.0 -0.075 0.305, 0.02 0.02 0.02, flat, skin, 0.0) bp:s_phere 0) c_at bp:ungroup))
+  limbs := (((("leg left", -0.055 0.0 0.26, 0.075 0.085 0.26, hose, 28.0) h:l_imb 0) c_at (("leg right", 0.055 0.0 0.26, 0.075 0.085 0.26, hose, -28.0) h:l_imb 0)) c_at
+    (("arm left", -0.135 0.0 0.46, 0.055 0.065 0.2, tunic, -22.0) h:l_imb 0) c_at ("arm right", 0.135 0.0 0.46, 0.055 0.065 0.2, tunic, 22.0) h:l_imb 0)
+  keys := (("walker body", "idle", "scale", one, 0.0 0.0 0.04, slow, breathe) h:k_ey 0) c_at ("walker body", "walk", "location", 0.0 0.0 0.26, 0.0 0.0 0.015, walk, bob) h:k_ey 0
+  body c_at limbs c_at keys
+}
+
+### The tiles
+
+h:g_round := { z -> (bp:p_iece "ground") c_at ("ground slab", 0.0 0.0 0.05, 1.0 1.0 0.1, flat, grass, 0.0) bp:b_ox 0 }
+h:w_ater := { z -> (bp:p_iece "water") c_at ("water slab", 0.0 0.0 0.03, 1.0 1.0 0.06, flat, river, 0.0) bp:b_ox 0 }
+## A bridge's deck on two beams, a rail each side: walked along y.
+h:b_ridge := { z ->
+  r_ail := { (n, x) z1 ->
+    ((("bridge rail " c_at n, x c_at 0.0 0.66, 0.05 1.0 0.05, flat, beam, 0.0) bp:b_ox 0) c_at
+      (("bridge post " c_at n c_at " a", x c_at -0.4 0.58, 0.06 0.06 0.2, flat, beam, 0.0) bp:b_ox 0) c_at
+      ("bridge post " c_at n c_at " b", x c_at 0.4 0.58, 0.06 0.06 0.2, flat, beam, 0.0) bp:b_ox 0)
+  }
+  (((bp:p_iece "bridge") c_at (("bridge deck", 0.0 0.0 0.46, 1.0 1.0 0.08, flat, plank, 0.0) bp:b_ox 0)) c_at
+    ((("bridge beam 1", -0.38 0.0 0.21, 0.1 1.0 0.42, flat, beam, 0.0) bp:b_ox 0) c_at (("bridge beam 2", 0.38 0.0 0.21, 0.1 1.0 0.42, flat, beam, 0.0) bp:b_ox 0)) c_at
+    (("1", -0.46) r_ail 0) c_at ("2", 0.46) r_ail 0)
+}
+## A length of wall two tiles' steps high, its walk on top, a merlon at
+## each end of its outer face.
+h:w_all := { z ->
+  m_erlon := { (n, x) z1 -> ("wall merlon " c_at n, x c_at -0.38 2.12, 0.3 0.24 0.24, flat, stone, 0.0) bp:b_ox 0 }
+  (((bp:p_iece "wall") c_at (("wall block", 0.0 0.0 1.0, 1.0 1.0 2.0, flat, stone, 0.0) bp:b_ox 0)) c_at
+    ((("wall course", 0.0 0.0 1.96, 1.04 1.04 0.08, flat, darkstone, 0.0) bp:b_ox 0)) c_at
+    (("1", -0.33) m_erlon 0) c_at ("2", 0.33) m_erlon 0)
+}
+## The gate: two stone posts, a lintel, and the doors between them.
+h:g_ate := { z ->
+  (((bp:p_iece "gate") c_at (("gate post 1", -0.4 0.0 1.0, 0.2 1.0 2.0, flat, stone, 0.0) bp:b_ox 0)) c_at
+    ((("gate post 2", 0.4 0.0 1.0, 0.2 1.0 2.0, flat, stone, 0.0) bp:b_ox 0) c_at (("gate lintel", 0.0 0.0 1.8, 0.6 1.0 0.4, flat, darkstone, 0.0) bp:b_ox 0)) c_at
+    ((("gate doors", 0.0 0.1 0.8, 0.6 0.08 1.6, flat, door, 0.0) bp:b_ox 0) c_at (("gate bar", 0.0 0.05 0.8, 0.6 0.03 0.08, flat, iron, 0.0) bp:b_ox 0)) c_at
+    ("gate sill", 0.0 0.0 0.02, 0.6 1.0 0.04, flat, darkstone, 0.0) bp:b_ox 0)
+}
+
+### The pieces
+
+# :: Char
+## The pieces' names, a space between: the files are NAME.glb.
+l:names := "walker ground water bridge wall gate"
+# :: Box Char
+## The same, a text each.
+l:list := "walker" "ground" "water" "bridge" "wall" "gate"
+# :: Char -> Char
+## Python making the piece NAME and keying its clips; "" for another
+## name.
+l:m_odel := { name ->
+  name m_atch "walker" ? h:w_alker 0
+  name m_atch "ground" ? h:g_round 0
+  name m_atch "water" ? h:w_ater 0
+  name m_atch "bridge" ? h:b_ridge 0
+  name m_atch "wall" ? h:w_all 0
+  name m_atch "gate" ? h:g_ate 0
+  ""
+}
+# :: Char -> Box Char
+## A piece's clips, by name: "idle 2.0" "walk 1.0" for the walker (a
+## name and its seconds), none for a tile.
+l:c_lips := { name -> name m_atch "walker" ? "idle 2.0" "walk 1.0"; 0 t_ake "idle 2.0" "walk 1.0" }
+# :: Char -> Char
+## Python making the piece NAME, writing it as out/NAME.glb with its
+## clips, and reading its clips back into out/NAME-clips.txt.
+l:e_xport := { name -> (l:m_odel name) c_at (bp:e_xportPiece name) c_at bp:c_lips name }
+# :: Char
+## Python making and exporting every piece, then writing out/clips.txt:
+## each piece's name and, under it, its clips as read back from its
+## file.
+l:all := (l:e_xport "walker") c_at (l:e_xport "ground") c_at (l:e_xport "water") c_at (l:e_xport "bridge") c_at (l:e_xport "wall") c_at (l:e_xport "gate") c_at "with open(os.path.join(out, \"clips.txt\"), \"w\") as f:\n    for n in \"" c_at l:names c_at "\".split():\n        f.write(n + \"\\n\" + open(os.path.join(out, n + \"-clips.txt\")).read())\n"
+# :: Int -> Char
+## Python rendering each piece alone as out/NAME.png, size pixels
+## square on a transparent ground, from the front a little to the right
+## and above, every piece at one scale.
+l:s_tills := { size ->
+  "cam = bpy.data.cameras.new(\"still\")\ncam.type = \"ORTHO\"\ncam.ortho_scale = 2.6\neye = bpy.data.objects.new(\"still\", cam)\nscene.collection.objects.link(eye)\neye.location = (1.6, -3.2, 2.6)\naim = bpy.data.objects.new(\"aim\", None)\nscene.collection.objects.link(aim)\naim.location = (0.0, 0.0, 0.9)\nlook = eye.constraints.new(\"TRACK_TO\")\nlook.target = aim\nlook.track_axis = \"TRACK_NEGATIVE_Z\"\nlook.up_axis = \"UP_Y\"\nscene.camera = eye\nscene.render.film_transparent = True\nscene.render.resolution_x = scene.render.resolution_y = " c_at (f_ormat size) c_at "\nfor n in \"" c_at l:names c_at "\".split():\n    for m in \"" c_at l:names c_at "\".split():\n        o = bpy.data.objects[m]\n        for p in [o] + list(o.children_recursive):\n            p.hide_render = m != n\n    scene.render.image_settings.file_format = \"PNG\"\n    scene.render.image_settings.color_mode = \"RGBA\"\n    scene.render.filepath = os.path.join(out, n + \".png\")\n    bpy.ops.render.render(write_still=True)\n"
+}

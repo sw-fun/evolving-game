@@ -39,3 +39,5 @@ __pycache__/
 
 # the board player and Three.js, copied from the extensions clone (scripts/web.sh)
 web/ext/
+# the pieces, copied from assets/pieces for the page (scripts/web.sh)
+web/models/

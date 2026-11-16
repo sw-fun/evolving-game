@@ -1,0 +1,7 @@
+l:names : Char
+l:list : Box Char
+l:m_odel : Char -> Char
+l:c_lips : Char -> Box Char
+l:e_xport : Char -> Char
+l:all : Char
+l:s_tills : a -> Char

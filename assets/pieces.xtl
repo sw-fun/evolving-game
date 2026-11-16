@@ -1,0 +1,11 @@
+#!/usr/bin/env xetal
+## The castle's pieces as they are written for Blender, without
+## Blender: the names, each piece's clips, and the whole bpy script
+## Castle.xtl describes them with. Its output is the golden
+## assets/expected/pieces.out: a piece changed is a line changed here.
+"cs:" u_se< "Castle"
+"t:" u_se< "Text"
+cs:names
+_ := t:l_ines '{ n -> e_nclose (d_isclose n) c_at ": " c_at f_ormat t_ally cs:c_lips d_isclose n } e_ach cs:list
+cs:all
+cs:s_tills 256

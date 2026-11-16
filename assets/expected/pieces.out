@@ -1,0 +1,203 @@
+walker ground water bridge wall gate
+walker: 2
+ground: 0
+water: 0
+bridge: 0
+wall: 0
+gate: 0
+pc = piece("walker")
+top = pc
+pc = group("walker body", pc, nums("0.0 0.0 0.26", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("walker tunic")
+o.scale = nums("0.2 0.13 0.24", 3)[0]
+attach(o, pc, material("walker tunic", nums("0.75 0.22 0.17", 3)[0], 0.0), nums("0.0 0.0 0.11", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("walker belt")
+o.scale = nums("0.21 0.14 0.03", 3)[0]
+attach(o, pc, material("walker belt", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 0.0 0.02", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=1.0)
+o = made("walker head")
+o.scale = nums("0.075 0.075 0.08", 3)[0]
+attach(o, pc, material("walker head", nums("0.95 0.79 0.65", 3)[0], 0.0), nums("0.0 0.0 0.31", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=1.0)
+o = made("walker hair")
+o.scale = nums("0.078 0.078 0.055", 3)[0]
+attach(o, pc, material("walker hair", nums("0.3 0.2 0.12", 3)[0], 0.0), nums("0.0 0.012 0.345", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=1.0)
+o = made("walker nose")
+o.scale = nums("0.02 0.02 0.02", 3)[0]
+attach(o, pc, material("walker nose", nums("0.95 0.79 0.65", 3)[0], 0.0), nums("0.0 -0.075 0.305", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+pc = group("walker leg left", pc, nums("-0.055 0.0 0.26", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("walker leg left part")
+o.scale = nums("0.075 0.085 0.26", 3)[0]
+attach(o, pc, material("walker leg left part", nums("0.3 0.24 0.2", 3)[0], 0.0), nums("0.0 0.0 -0.13", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("walker leg left", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 28.0 0.0 0.0 0.0 0.0 0.0 -28.0 0.0 0.0 0.0 0.0 0.0""", 3))
+pc = group("walker leg right", pc, nums("0.055 0.0 0.26", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("walker leg right part")
+o.scale = nums("0.075 0.085 0.26", 3)[0]
+attach(o, pc, material("walker leg right part", nums("0.3 0.24 0.2", 3)[0], 0.0), nums("0.0 0.0 -0.13", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("walker leg right", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 -28.0 0.0 0.0 0.0 0.0 0.0 28.0 0.0 0.0 0.0 0.0 0.0""", 3))
+pc = group("walker arm left", pc, nums("-0.135 0.0 0.46", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("walker arm left part")
+o.scale = nums("0.055 0.065 0.2", 3)[0]
+attach(o, pc, material("walker arm left part", nums("0.75 0.22 0.17", 3)[0], 0.0), nums("0.0 0.0 -0.1", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("walker arm left", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 -22.0 0.0 0.0 0.0 0.0 0.0 22.0 0.0 0.0 0.0 0.0 0.0""", 3))
+pc = group("walker arm right", pc, nums("0.135 0.0 0.46", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("walker arm right part")
+o.scale = nums("0.055 0.065 0.2", 3)[0]
+attach(o, pc, material("walker arm right part", nums("0.75 0.22 0.17", 3)[0], 0.0), nums("0.0 0.0 -0.1", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("walker arm right", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 22.0 0.0 0.0 0.0 0.0 0.0 -22.0 0.0 0.0 0.0 0.0 0.0""", 3))
+keys("walker body", "idle", "scale", nums("0.0 1.0 2.0", 3)[0], nums("""1.0 1.0 1.0 1.0 1.0 1.04 1.0 1.0 1.0""", 3))
+keys("walker body", "walk", "location", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.26 0.0 0.0 0.275 0.0 0.0 0.26 0.0 0.0 0.275 0.0 0.0 0.26""", 3))
+export_piece(bpy.data.objects["walker"], os.path.join(out, "walker.glb"))
+with open(os.path.join(out, "walker-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "walker.glb"))))
+pc = piece("ground")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("ground slab")
+o.scale = nums("1.0 1.0 0.1", 3)[0]
+attach(o, pc, material("ground slab", nums("0.37 0.58 0.31", 3)[0], 0.0), nums("0.0 0.0 0.05", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["ground"], os.path.join(out, "ground.glb"))
+with open(os.path.join(out, "ground-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "ground.glb"))))
+pc = piece("water")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("water slab")
+o.scale = nums("1.0 1.0 0.06", 3)[0]
+attach(o, pc, material("water slab", nums("0.25 0.5 0.75", 3)[0], 0.0), nums("0.0 0.0 0.03", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["water"], os.path.join(out, "water.glb"))
+with open(os.path.join(out, "water-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "water.glb"))))
+pc = piece("bridge")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("bridge deck")
+o.scale = nums("1.0 1.0 0.08", 3)[0]
+attach(o, pc, material("bridge deck", nums("0.61 0.48 0.3", 3)[0], 0.0), nums("0.0 0.0 0.46", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("bridge beam 1")
+o.scale = nums("0.1 1.0 0.42", 3)[0]
+attach(o, pc, material("bridge beam 1", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("-0.38 0.0 0.21", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("bridge beam 2")
+o.scale = nums("0.1 1.0 0.42", 3)[0]
+attach(o, pc, material("bridge beam 2", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.38 0.0 0.21", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("bridge rail 1")
+o.scale = nums("0.05 1.0 0.05", 3)[0]
+attach(o, pc, material("bridge rail 1", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("-0.46 0.0 0.66", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("bridge post 1 a")
+o.scale = nums("0.06 0.06 0.2", 3)[0]
+attach(o, pc, material("bridge post 1 a", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("-0.46 -0.4 0.58", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("bridge post 1 b")
+o.scale = nums("0.06 0.06 0.2", 3)[0]
+attach(o, pc, material("bridge post 1 b", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("-0.46 0.4 0.58", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("bridge rail 2")
+o.scale = nums("0.05 1.0 0.05", 3)[0]
+attach(o, pc, material("bridge rail 2", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.46 0.0 0.66", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("bridge post 2 a")
+o.scale = nums("0.06 0.06 0.2", 3)[0]
+attach(o, pc, material("bridge post 2 a", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.46 -0.4 0.58", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("bridge post 2 b")
+o.scale = nums("0.06 0.06 0.2", 3)[0]
+attach(o, pc, material("bridge post 2 b", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.46 0.4 0.58", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["bridge"], os.path.join(out, "bridge.glb"))
+with open(os.path.join(out, "bridge-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "bridge.glb"))))
+pc = piece("wall")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("wall block")
+o.scale = nums("1.0 1.0 2.0", 3)[0]
+attach(o, pc, material("wall block", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("0.0 0.0 1.0", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("wall course")
+o.scale = nums("1.04 1.04 0.08", 3)[0]
+attach(o, pc, material("wall course", nums("0.42 0.44 0.48", 3)[0], 0.0), nums("0.0 0.0 1.96", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("wall merlon 1")
+o.scale = nums("0.3 0.24 0.24", 3)[0]
+attach(o, pc, material("wall merlon 1", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("-0.33 -0.38 2.12", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("wall merlon 2")
+o.scale = nums("0.3 0.24 0.24", 3)[0]
+attach(o, pc, material("wall merlon 2", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("0.33 -0.38 2.12", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["wall"], os.path.join(out, "wall.glb"))
+with open(os.path.join(out, "wall-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "wall.glb"))))
+pc = piece("gate")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("gate post 1")
+o.scale = nums("0.2 1.0 2.0", 3)[0]
+attach(o, pc, material("gate post 1", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("-0.4 0.0 1.0", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("gate post 2")
+o.scale = nums("0.2 1.0 2.0", 3)[0]
+attach(o, pc, material("gate post 2", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("0.4 0.0 1.0", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("gate lintel")
+o.scale = nums("0.6 1.0 0.4", 3)[0]
+attach(o, pc, material("gate lintel", nums("0.42 0.44 0.48", 3)[0], 0.0), nums("0.0 0.0 1.8", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("gate doors")
+o.scale = nums("0.6 0.08 1.6", 3)[0]
+attach(o, pc, material("gate doors", nums("0.36 0.27 0.19", 3)[0], 0.0), nums("0.0 0.1 0.8", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("gate bar")
+o.scale = nums("0.6 0.03 0.08", 3)[0]
+attach(o, pc, material("gate bar", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 0.05 0.8", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("gate sill")
+o.scale = nums("0.6 1.0 0.04", 3)[0]
+attach(o, pc, material("gate sill", nums("0.42 0.44 0.48", 3)[0], 0.0), nums("0.0 0.0 0.02", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["gate"], os.path.join(out, "gate.glb"))
+with open(os.path.join(out, "gate-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "gate.glb"))))
+with open(os.path.join(out, "clips.txt"), "w") as f:
+    for n in "walker ground water bridge wall gate".split():
+        f.write(n + "\n" + open(os.path.join(out, n + "-clips.txt")).read())
+
+cam = bpy.data.cameras.new("still")
+cam.type = "ORTHO"
+cam.ortho_scale = 2.6
+eye = bpy.data.objects.new("still", cam)
+scene.collection.objects.link(eye)
+eye.location = (1.6, -3.2, 2.6)
+aim = bpy.data.objects.new("aim", None)
+scene.collection.objects.link(aim)
+aim.location = (0.0, 0.0, 0.9)
+look = eye.constraints.new("TRACK_TO")
+look.target = aim
+look.track_axis = "TRACK_NEGATIVE_Z"
+look.up_axis = "UP_Y"
+scene.camera = eye
+scene.render.film_transparent = True
+scene.render.resolution_x = scene.render.resolution_y = 256
+for n in "walker ground water bridge wall gate".split():
+    for m in "walker ground water bridge wall gate".split():
+        o = bpy.data.objects[m]
+        for p in [o] + list(o.children_recursive):
+            p.hide_render = m != n
+    scene.render.image_settings.file_format = "PNG"
+    scene.render.image_settings.color_mode = "RGBA"
+    scene.render.filepath = os.path.join(out, n + ".png")
+    bpy.ops.render.render(write_still=True)
+

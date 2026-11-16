@@ -76,6 +76,10 @@ test-lib:
 bless-lib:
     XETAL_BLESS=1 scripts/test-lib.sh
 
+# Make the castle's pieces with Blender into assets/pieces (needs just extensions and Blender)
+assets:
+    scripts/assets.sh
+
 # Build the page (web/dist): the game as WebAssembly, the 3D player beside it
 web *flags:
     scripts/web.sh {{flags}}

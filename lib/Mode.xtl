@@ -233,14 +233,14 @@ h:a_pply := { legal_ step_ (clock, s) e ->
 h:n_ext := { (host, lines) -> host ? sm:n_ext @; sm:p_arse d_isclose f_irst lines }
 h:l_oop := { step_ status_ legal_ view_ (host, lines, last, clock, s) ->
   shown := 'view_ h:s_how (host, last, s)
-  0 != status_ s ? (clock, s)
+  l:playing != status_ s ? (clock, s)
   (n_ot host) & 0 = t_ally lines ? (clock, s)
   e := h:n_ext (host, lines)
   e sm:i_s "end" ? (clock, s)
   (c2, s2) := (clock, s) 'step_ 'legal_ h:a_pply e
   'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2)
 }
-# :: (Any a, Num b, Any c, Num d, Truthy d) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (a -> (((c, Int, d), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char)) -> a -> ((Int, Int, Int), a)
+# :: (Any a, Any b, Num c, Truthy c) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char)) -> a -> ((Int, Int, Int), a)
 ## Play a mode on the host's events, from a state its n_ew gave:
 ## 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep md:p_lay state. The view's
 ## text is printed at the start and whenever it changes, and its
@@ -249,18 +249,18 @@ h:l_oop := { step_ status_ legal_ view_ (host, lines, last, clock, s) ->
 l:p_lay := { step_ status_ legal_ view_ s ->
   'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s)
 }
-# :: (Any a, Num b, Any c, Num d, Truthy d) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (a -> (((c, Int, d), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char)) -> (Box Char, a) -> ((Int, Int, Int), a)
+# :: (Any a, Any b, Num c, Truthy c) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char)) -> (Box Char, a) -> ((Int, Int, Int), a)
 ## The same on a script, a list of event lines (a log, a save): ...
 ## md:r_eplay (lines, state).
 l:r_eplay := { step_ status_ legal_ view_ (lines, s) ->
   'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s)
 }
-# :: (Any a, Num b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (Box Char, a) -> ((Int, Int, Int), a)
+# :: Any a => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (Box Char, a) -> ((Int, Int, Int), a)
 ## The same on a script, shown nowhere: for a result alone. No view is
 ## made.
 l:r_esult := { step_ status_ legal_ (lines, s) -> 'legal_ 'status_ 'step_ h:r_un (lines, sm:start, s) }
 h:r_un := { step_ status_ legal_ (lines, clock, s) ->
-  0 != status_ s ? (clock, s)
+  l:playing != status_ s ? (clock, s)
   0 = t_ally lines ? (clock, s)
   e := sm:p_arse d_isclose f_irst lines
   e sm:i_s "end" ? (clock, s)

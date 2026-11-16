@@ -16,7 +16,7 @@ logs="$root/work/gate"; rm -rf "$logs"; mkdir -p "$logs"
 
 # ASCII-only markdown: the README and the documents we write (not
 # CLAUDE.md, whose generated briefing is not ASCII: docs/agentrail-asks.md).
-md=(README.md lib/README.md)
+md=(README.md lib/README.md assets/README.md)
 for f in docs/*.md games/*/README.md; do [ -e "$f" ] && md+=("$f"); done
 markdown() { for f in "${md[@]}"; do sw-markdown-checker -f "$f" >/dev/null || { sw-markdown-checker -f "$f"; return 1; }; done; echo "markdown: ok (${#md[@]} files)"; }
 names=(); pids=()
@@ -29,6 +29,7 @@ job types scripts/check-types.py
 job docs scripts/check-docs.py
 job markdown markdown
 job web scripts/check-web.sh
+job assets scripts/test-assets.sh
 while IFS= read -r slug; do
   [ -n "$slug" ] && job "game-$slug" scripts/test-games.sh "$slug"
 done < <(scripts/games.sh)
