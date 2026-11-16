@@ -5,6 +5,9 @@ The game's 3D pieces, described in X_eTaL and made by Blender.
 - [`Castle.xtl`](Castle.xtl): each piece as parts (boxes, spheres) and
   named clips, written as the Python Blender runs
   (X_eTaL-extensions' `Bpy.xtl`). The colors are at its top.
+- [`skins.py`](skins.py): how Blender bakes a texture (courses of
+  stone, boards) and lays it over a part; `Castle.xtl` says which
+  textures there are and which part wears which.
 - [`castle-assets.xtl`](castle-assets.xtl): runs Blender on that
   script and hashes what it made into the manifest.
 - [`pieces.xtl`](pieces.xtl): the same script printed, for the test

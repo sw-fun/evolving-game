@@ -111,6 +111,21 @@ The scene is text, a call a line, that names no renderer
   demo draws the wall with its merlons, the gate and the bridge with
   its rails.
 
+- **Materials** (step 3): five textures described in X_eTaL
+  (`assets/Castle.xtl`: dressed stone in courses, darker stone, deck
+  boards, timber, door planks; each a kind, three colors, a size and
+  a roughness) and baked by Blender from its own nodes
+  (`assets/skins.py`) into a color picture and a normal picture, 256
+  pixels and a meter square, laid over each part's faces at the
+  world's scale, so a wall's stones are the size of a gate post's.
+  The wall, gate and bridge wear them; the `.glb` carries them
+  (131 to 192 KB each, inside D13's 256 KB, which stays and is
+  enforced by `scripts/check-assets.py`); the player draws them with
+  no change. Baking takes Blender about ten seconds for all of them.
+  Not done here, waiting on asks: the ground's own texture (terrain),
+  bevels, and light that shows the surfaces' relief (they read pale
+  and flat under the player's two plain lights).
+
 ## What exists to build on
 
 - **The board player** (`board.js`, X_eTaL-extensions): the four calls

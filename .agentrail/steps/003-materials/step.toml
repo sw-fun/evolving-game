@@ -1,6 +1,6 @@
 number = 3
 slug = "materials"
-status = "pending"
+status = "in-progress"
 description = "the-look step 3: materials. Stone, wood, grass, cloth and water described in ..."
 role = "production"
 context_files = []

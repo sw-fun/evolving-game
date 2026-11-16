@@ -1,3 +1,5 @@
+l:skins : Char
+l:textures : Char
 l:names : Char
 l:list : Box Char
 l:m_odel : Char -> Char

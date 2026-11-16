@@ -30,6 +30,37 @@ hair := 0.3 0.2 0.12
 flat := 0.0 0.0 0.0
 one := 1.0 1.0 1.0
 
+### Materials
+
+## The Python that bakes a texture and lays it over a part (skins.py,
+## beside this file): put in the script after bp:head.
+# :: Char
+## Blender's side of the textures: texture(...) and skin(...).
+l:skins := @ i_nclude< "skins.py"
+## (name, kind, a, b, c, cells, rough) h:t_exture 0: Python baking a
+## texture a meter square, 256 pixels: kind is bricks (courses of
+## blocks colored a and b, mortar c, cells courses a meter), boards
+## (boards a and b, gaps c, cells boards a meter) or grain (a and b
+## mixed, cells its scale); rough is how dull the surface is (0 to 1).
+h:t_exture := { (name, kind, a, b, c, cells, rough) z ->
+  "texture(\"" c_at name c_at "\", \"" c_at kind c_at "\", " c_at (h:r_gb a) c_at ", " c_at (h:r_gb b) c_at ", " c_at (h:r_gb c) c_at ", " c_at (f_ormat cells) c_at ", " c_at (f_ormat rough) c_at ", 256)\n"
+}
+h:r_gb := { v -> "(" c_at (f_ormat f_irst v) c_at ", " c_at (f_ormat 2 s_elect v) c_at ", " c_at (f_ormat 3 s_elect v) c_at ")" }
+## (part, texture) h:s_kin 0: Python laying a texture over a part, a
+## meter of the world to a picture; h:t_urned lays it the other way
+## round (boards along a face, not across it).
+h:s_kin := { (part, name) z -> "skin(\"" c_at part c_at "\", \"" c_at name c_at "\")\n" }
+h:t_urned := { (part, name) z -> "skin(\"" c_at part c_at "\", \"" c_at name c_at "\", True)\n" }
+# :: Char
+## Python baking the textures the pieces wear: dressed stone in
+## courses, darker stone for lintels and copings, boards for a deck,
+## darker timber, and a door's planks.
+l:textures := ((("stone", "bricks", stone, 0.52 0.55 0.6, 0.33 0.34 0.36, 4.0, 0.92) h:t_exture 0) c_at
+  (("darkstone", "bricks", darkstone, 0.36 0.38 0.42, 0.25 0.26 0.28, 5.0, 0.95) h:t_exture 0) c_at
+  (("planks", "boards", plank, 0.52 0.4 0.24, 0.2 0.15 0.09, 5.0, 0.8) h:t_exture 0) c_at
+  (("timber", "boards", beam, 0.33 0.24 0.14, 0.14 0.1 0.06, 8.0, 0.85) h:t_exture 0) c_at
+  ("doorwood", "boards", door, 0.3 0.22 0.15, 0.1 0.07 0.05, 6.0, 0.75) h:t_exture 0)
+
 ### Keys
 
 ## A clip's times and how far along each key is: idle breathes once in
@@ -79,7 +110,9 @@ h:b_ridge := { z ->
   }
   (((bp:p_iece "bridge") c_at (("bridge deck", 0.0 0.0 0.46, 1.0 1.0 0.08, flat, plank, 0.0) bp:b_ox 0)) c_at
     ((("bridge beam 1", -0.38 0.0 0.21, 0.1 1.0 0.42, flat, beam, 0.0) bp:b_ox 0) c_at (("bridge beam 2", 0.38 0.0 0.21, 0.1 1.0 0.42, flat, beam, 0.0) bp:b_ox 0)) c_at
-    (("1", -0.46) r_ail 0) c_at ("2", 0.46) r_ail 0)
+    (("1", -0.46) r_ail 0) c_at (("2", 0.46) r_ail 0) c_at
+    ((("bridge deck", "planks") h:s_kin 0) c_at (("bridge beam 1", "timber") h:t_urned 0) c_at (("bridge beam 2", "timber") h:t_urned 0)) c_at
+    ((("bridge rail 1", "timber") h:s_kin 0) c_at ("bridge rail 2", "timber") h:s_kin 0))
 }
 ## A length of wall two tiles' steps high, its walk on top, a merlon at
 ## each end of its outer face.
@@ -87,14 +120,18 @@ h:w_all := { z ->
   m_erlon := { (n, x) z1 -> ("wall merlon " c_at n, x c_at -0.38 2.12, 0.3 0.24 0.24, flat, stone, 0.0) bp:b_ox 0 }
   (((bp:p_iece "wall") c_at (("wall block", 0.0 0.0 1.0, 1.0 1.0 2.0, flat, stone, 0.0) bp:b_ox 0)) c_at
     ((("wall course", 0.0 0.0 1.96, 1.04 1.04 0.08, flat, darkstone, 0.0) bp:b_ox 0)) c_at
-    (("1", -0.33) m_erlon 0) c_at ("2", 0.33) m_erlon 0)
+    (("1", -0.33) m_erlon 0) c_at (("2", 0.33) m_erlon 0) c_at
+    ((("wall block", "stone") h:s_kin 0) c_at (("wall course", "darkstone") h:s_kin 0)) c_at
+    (("wall merlon 1", "stone") h:s_kin 0) c_at ("wall merlon 2", "stone") h:s_kin 0)
 }
 ## The gate: two stone posts, a lintel, and the doors between them.
 h:g_ate := { z ->
   (((bp:p_iece "gate") c_at (("gate post 1", -0.4 0.0 1.0, 0.2 1.0 2.0, flat, stone, 0.0) bp:b_ox 0)) c_at
     ((("gate post 2", 0.4 0.0 1.0, 0.2 1.0 2.0, flat, stone, 0.0) bp:b_ox 0) c_at (("gate lintel", 0.0 0.0 1.8, 0.6 1.0 0.4, flat, darkstone, 0.0) bp:b_ox 0)) c_at
     ((("gate doors", 0.0 0.1 0.8, 0.6 0.08 1.6, flat, door, 0.0) bp:b_ox 0) c_at (("gate bar", 0.0 0.05 0.8, 0.6 0.03 0.08, flat, iron, 0.0) bp:b_ox 0)) c_at
-    ("gate sill", 0.0 0.0 0.02, 0.6 1.0 0.04, flat, darkstone, 0.0) bp:b_ox 0)
+    (("gate sill", 0.0 0.0 0.02, 0.6 1.0 0.04, flat, darkstone, 0.0) bp:b_ox 0) c_at
+    ((("gate post 1", "stone") h:s_kin 0) c_at (("gate post 2", "stone") h:s_kin 0) c_at (("gate lintel", "darkstone") h:s_kin 0)) c_at
+    ((("gate doors", "doorwood") h:t_urned 0) c_at ("gate sill", "darkstone") h:s_kin 0))
 }
 
 ### The pieces
@@ -126,10 +163,11 @@ l:c_lips := { name -> name m_atch "walker" ? "idle 2.0" "walk 1.0"; 0 t_ake "idl
 ## clips, and reading its clips back into out/NAME-clips.txt.
 l:e_xport := { name -> (l:m_odel name) c_at (bp:e_xportPiece name) c_at bp:c_lips name }
 # :: Char
-## Python making and exporting every piece, then writing out/clips.txt:
+## Python baking the textures, then making and exporting every piece,
+## then writing out/clips.txt:
 ## each piece's name and, under it, its clips as read back from its
 ## file.
-l:all := (l:e_xport "walker") c_at (l:e_xport "ground") c_at (l:e_xport "water") c_at (l:e_xport "bridge") c_at (l:e_xport "wall") c_at (l:e_xport "gate") c_at "with open(os.path.join(out, \"clips.txt\"), \"w\") as f:\n    for n in \"" c_at l:names c_at "\".split():\n        f.write(n + \"\\n\" + open(os.path.join(out, n + \"-clips.txt\")).read())\n"
+l:all := l:skins c_at l:textures c_at (l:e_xport "walker") c_at (l:e_xport "ground") c_at (l:e_xport "water") c_at (l:e_xport "bridge") c_at (l:e_xport "wall") c_at (l:e_xport "gate") c_at "with open(os.path.join(out, \"clips.txt\"), \"w\") as f:\n    for n in \"" c_at l:names c_at "\".split():\n        f.write(n + \"\\n\" + open(os.path.join(out, n + \"-clips.txt\")).read())\n"
 # :: Int -> Char
 ## Python rendering each piece alone as out/NAME.png, size pixels
 ## square on a transparent ground, from the front a little to the right
