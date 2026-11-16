@@ -1,6 +1,6 @@
 number = 5
 slug = "view-and-iso"
-status = "pending"
+status = "in-progress"
 description = "foundations step 5: what a mode shows, lib/View.xtl, in two forms from one st..."
 role = "production"
 context_files = []

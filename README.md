@@ -35,6 +35,7 @@ level starts with; a wall lost in a siege is a ruin to explore later.
 | Siege Engineer | physics puzzle | topple a tower or break a wall's support with limited shots |
 | The Shattered Kingdom | exploration | the same castle before, during and after the siege |
 | Siege Commander | real-time strategy | attack or defend across several elevations |
+| An idler (not named yet) | idle game | the castle earns while you play something else, or nothing |
 
 The first to be built is Castle Defense, starting with one level,
 Defend the Bridge: one map, one road, three towers, three enemies,
@@ -113,11 +114,14 @@ builds `bin/xetal-x`, the X_eTaL that loads the blender, digest and
 three extensions (needed to make the 3D models, not to test).
 
 One game runs so far, at the terminal: a walker follows the road over
-the bridge to the castle gate ([`games/walk`](games/walk)).
+the bridge to the castle gate ([`games/walk`](games/walk)). Playing it
+also writes each moment as a picture, `work/draw/walk/play-N.svg`,
+which a browser opens.
 
 ```bash
 just run walk                        # the scripted walk
 just play walk                       # play it: type tick 1, key space; Ctrl-D leaves
+just run walk picture.xtl            # the scene and the SVG picture, as text
 just test-game walk                  # check it against its expected output
 ```
 

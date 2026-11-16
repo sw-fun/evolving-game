@@ -15,8 +15,14 @@ section below it.
 
 | Status | Kind | Ask | Needed by | Workaround |
 | ------ | ---- | --- | --------- | ---------- |
+| open | feature | A board player for the three extension: its player (`web/static/player.js`) draws the city film's calls (`stage`, `boxes`, `fleet`, `fly` ...) with a flying perspective camera. A game board needs a few more calls, drawn the same way (text that names no renderer): `view(w, h, background)`, `camera(target, direction, scale)` without perspective, `tiles(kind, color, nums(x z y ..., 3))` instanced, and `piece(model, nums(x z y hx hz, 5)[0], clip, t, nums(x z y, 3)[0], dt)`: a `.glb` by name, its clip at a time, moved to the second place over dt seconds between the program's ticks. `lib/View.xtl` writes these (`games/walk/expected/picture.out` has two whole scenes) | every game's 3D view, from Saga 1 step 6 | to be chosen in step 6: a small player in this repository's page defining those four calls |
 
-None yet.
+X_eTaL-games' page already draws a scene carried in a picture's
+`<metadata id="scene">` (JSON: camera, tiles, pieces with model,
+place, heading, clip and time; `shared/microscope/scene.js`), and
+gives the program its events; the extensions' page gives neither
+events nor a board. Which of the two this repository's page is built
+on is step 6's decision.
 
 ## Notes for whoever files the first ask
 

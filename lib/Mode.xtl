@@ -11,13 +11,15 @@
 ##                    "click X Y", "key space", "choose 1 N"; a capital
 ##                    word stands for any value
 ##   s_tatus state    0 playing, 1 won, 2 lost, 3 left
-##   v_iew state      what to show, as text
+##   v_iew state      what to show: a view (lib/View), which this loop
+##                    turns into text, a picture and a scene
 ##   o_utcome state   (status, changes, rewards): how it ended, what it
 ##                    changed in the world, what the player gets
 ##
 ## The loop is here, not in the mode: md:p_lay on the host's events,
 ## md:r_eplay on a script. An event the mode does not list as legal
-## never reaches its s_tep; the view is printed when it changes; the
+## never reaches its s_tep; the view is printed as text when that
+## changes, and p_lay shows its picture ([]S_HOW) after every event; the
 ## loop ends when the status is no longer playing or the events end.
 ## A program chooses a mode by importing its library and handing its
 ## functions over:
@@ -39,6 +41,7 @@
 
 "sm:" u_se< "Sim"
 "st:" u_se< "Strings"
+"vw:" u_se< "View"
 "w:" u_se< "World"
 
 ### Status
@@ -210,12 +213,17 @@ l:a_llows := { legal e -> 0 < '+ r_/ 0 c_at '{ line -> e h:t_akes d_isclose line
 
 ### The loop
 
-h:s_how := { view_ (last, s) ->
+## Show a state: its picture to the host (when asked), and its text
+## when that is not what was last printed. The text.
+h:s_how := { view_ (host, last, s) ->
   v := view_ s
-  v m_atch last ? v
-  _ := p_rint! v
-  v
+  _ := host h:d_raw v
+  text := vw:t_ext v
+  text m_atch last ? text
+  _ := p_rint! text
+  text
 }
+h:d_raw := { host v -> n_ot host ? 0; _ := []S_HOW vw:p_icture v; 1 }
 ## One event applied: the clock moves on; the state only if the mode
 ## takes the event.
 h:a_pply := { legal_ step_ (clock, s) e ->
@@ -224,7 +232,7 @@ h:a_pply := { legal_ step_ (clock, s) e ->
 }
 h:n_ext := { (host, lines) -> host ? sm:n_ext @; sm:p_arse d_isclose f_irst lines }
 h:l_oop := { step_ status_ legal_ view_ (host, lines, last, clock, s) ->
-  shown := 'view_ h:s_how (last, s)
+  shown := 'view_ h:s_how (host, last, s)
   0 != status_ s ? (clock, s)
   (n_ot host) & 0 = t_ally lines ? (clock, s)
   e := h:n_ext (host, lines)
@@ -232,22 +240,30 @@ h:l_oop := { step_ status_ legal_ view_ (host, lines, last, clock, s) ->
   (c2, s2) := (clock, s) 'step_ 'legal_ h:a_pply e
   'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2)
 }
-# :: (Any a, Num b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (a -> Char) -> a -> ((Int, Int, Int), a)
+# :: (Any a, Num b, Any c, Num d, Truthy d) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (a -> (((c, Int, d), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char)) -> a -> ((Int, Int, Int), a)
 ## Play a mode on the host's events, from a state its n_ew gave:
-## 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep md:p_lay state. The view is
-## printed at the start and whenever it changes. The clock and the last
+## 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep md:p_lay state. The view's
+## text is printed at the start and whenever it changes, and its
+## picture is shown at the start and after every event. The clock and the last
 ## state; its o_utcome says how it ended.
 l:p_lay := { step_ status_ legal_ view_ s ->
   'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s)
 }
-# :: (Any a, Num b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (a -> Char) -> (Box Char, a) -> ((Int, Int, Int), a)
+# :: (Any a, Num b, Any c, Num d, Truthy d) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (a -> (((c, Int, d), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char)) -> (Box Char, a) -> ((Int, Int, Int), a)
 ## The same on a script, a list of event lines (a log, a save): ...
 ## md:r_eplay (lines, state).
 l:r_eplay := { step_ status_ legal_ view_ (lines, s) ->
   'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s)
 }
 # :: (Any a, Num b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (Box Char, a) -> ((Int, Int, Int), a)
-## The same on a script without printing the views: for a result alone.
-l:r_esult := { step_ status_ legal_ (lines, s) ->
-  '{ s -> "" } 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s)
+## The same on a script, shown nowhere: for a result alone. No view is
+## made.
+l:r_esult := { step_ status_ legal_ (lines, s) -> 'legal_ 'status_ 'step_ h:r_un (lines, sm:start, s) }
+h:r_un := { step_ status_ legal_ (lines, clock, s) ->
+  0 != status_ s ? (clock, s)
+  0 = t_ally lines ? (clock, s)
+  e := sm:p_arse d_isclose f_irst lines
+  e sm:i_s "end" ? (clock, s)
+  (c2, s2) := (clock, s) 'step_ 'legal_ h:a_pply e
+  'legal_ 'status_ 'step_ h:r_un (1 d_rop lines, c2, s2)
 }

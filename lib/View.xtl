@@ -1,0 +1,264 @@
+## View: what a mode shows, in three forms from one value (docs/plan.md
+## D7): a drawing in text (the terminal, the goldens), a flat picture
+## (SVG, an isometric view: always there, the fallback where there is no
+## 3D), and a scene (the calls of a 3D player: the camera that sees the
+## board exactly as the picture does, the tiles, and each piece's model,
+## place, heading, clip and time, and where it is going). A mode never
+## writes SVG or a scene: it says what is where, and this library draws.
+##
+## A stage is a map made ready to draw, once: (map, numbers, tiles,
+## depths, ground): the picture's numbers, each tile's SVG far to near,
+## each tile's depth, and the scene's tiles. A mode keeps its stage.
+## A view is (stage, models, clips, pieces, caption): a model name and a
+## clip name a piece, and a row of numbers a piece:
+##   x y     where it is on the board: x east and y south, in tiles from
+##           the map's north-west corner, so tile (row r, column c) has
+##           its middle at x = c - 0.5, y = r - 0.5
+##   hx hy   the way it faces
+##   t       how far into its clip it is, in seconds
+##   x2 y2   where it will be dt seconds from now (the player moves it
+##   dt      there between ticks; the same place for one standing)
+## A piece stands on the tile under it, at that tile's elevation.
+##
+## The picture's map: a board point (x, y, height) is drawn at
+##   px = ox + tw * (x - y),  py = oy + th * (x + y) - zh * height
+## and a click goes back through its inverse to the nearest tile whose
+## top is under it.
+## Import: "vw:" u_se< "View"
+
+"t:" u_se< "Text"
+"st:" u_se< "Strings"
+"w:" u_se< "World"
+
+### The picture's numbers
+
+## Half a tile's width and height in the picture, and the rise of one
+## step of elevation (half a tile's width of the world, seen from 30
+## degrees up).
+h:tw := 20.0
+h:th := 10.0
+h:zh := 0.5 * 20.0 * 0.8660254 * 2.0 ^ 0.5
+h:edge := 24.0
+## A map's picture: ox, oy (where the board's north-west corner is
+## drawn), width and height.
+h:f_rame := { map ->
+  rc := f_loat w:s_ize map
+  up := h:zh * f_loat 'm_ax r_/ r_avel w:h_eights map
+  (h:edge + h:tw * f_irst rc) c_at (h:edge + up) c_at ((2.0 * h:edge) + h:tw * '+ r_/ rc) c_at (2.0 * h:edge) + up + 30.0 + h:th * '+ r_/ rc
+}
+## Numbers for a picture: whole; for a scene: to a thousandth.
+h:w_hole := { v -> f_loor 0.5 + v }
+h:f_ine := { v -> (f_loat f_loor 0.5 + 1000.0 * v) / 1000.0 }
+
+### The map and its inverse
+
+h:t_o := { frame p ->
+  x := f_irst_2 p
+  y := 2 s_elect_2 p
+  z := 3 s_elect_2 p
+  o_\ (2 c_at t_ally x) r_eshape ((f_irst frame) + h:tw * x - y) c_at ((2 s_elect frame) + h:th * x + y) - h:zh * z
+}
+# :: (Any a, Any b, Any c, Any d) => (a, Float, b, c, d) -> Float -> Float
+## Where board points are drawn: stage vw:t_o points, a row a point (x,
+## y, height in steps), giving a row a point (px, py).
+l:t_o := { (_, frame, _, _, _) p -> frame h:t_o p }
+# :: (Any a, Any b, Any c, Any d) => (a, Float, b, c, d) -> Float -> Float
+## The board point a picture point shows at a height: stage vw:b_ack
+## (px, py, height), giving (x, y). The inverse of t_o.
+l:b_ack := { (_, frame, _, _, _) p ->
+  a := ((f_irst p) - f_irst frame) / h:tw
+  b := (((2 s_elect p) - 2 s_elect frame) + h:zh * 3 s_elect p) / h:th
+  (0.5 * a + b) c_at 0.5 * b - a
+}
+# :: (Any a, Num c, Any d, Any e, Any f) => ((a, b, c), Float, d, e, f) -> Float -> Int
+## The tile under a picture point: stage vw:t_ile (px, py), a place (row,
+## column), or 0 0 off the board. Every tile is asked at once whether
+## its top, at its own elevation, is under the point; of those that are,
+## the nearest to the eye wins (it hides the others).
+l:t_ile := { (map, frame, _, _, _) p ->
+  heights := f_loat r_avel w:h_eights map
+  rc := w:s_ize map
+  n := t_ally heights
+  rows := 1 + ((r_ange n) - 1) d_iv 2 s_elect rc
+  cols := 1 + ((r_ange n) - 1) m_od 2 s_elect rc
+  a := ((f_irst p) - f_irst frame) / h:tw
+  b := (((2 s_elect p) - 2 s_elect frame) + h:zh * heights) / h:th
+  under := (cols = 1 + f_loor 0.5 * a + b) & rows = 1 + f_loor 0.5 * b - a
+  0 = '+ r_/ under ? 0 0
+  near := under * rows + cols
+  i := f_irst w_here near = 'm_ax r_/ near
+  (i s_elect rows) c_at i s_elect cols
+}
+## The elevation under board points (x, y a row), 0 off the board.
+h:u_nder := { map xy ->
+  heights := w:h_eights map
+  rc := w:s_ize map
+  r := 1 + f_loor 2 s_elect_2 xy
+  c := 1 + f_loor f_irst_2 xy
+  inside := (r >= 1) & (c >= 1) & (r <= f_irst rc) & c <= 2 s_elect rc
+  i := (1 m_ax c m_in 2 s_elect rc) + (2 s_elect rc) * (1 m_ax r m_in f_irst rc) - 1
+  f_loat inside * i s_elect r_avel heights
+}
+
+### A stage
+
+h:tops := "#5f9550" "#3f7fbf" "#9c7a4d" "#b9a37a" "#9aa0aa" "#7b8072" "#5b4630" "#c9b27f"
+h:lefts := "#4b773f" "#326699" "#7c613d" "#948261" "#7b8088" "#62665b" "#483826" "#a08e65"
+h:rights := "#3a5c31" "#274f77" "#604b2f" "#73654b" "#5f636a" "#4c4f46" "#382b1d" "#7c6e4e"
+h:p_oly := { fill pts -> "<polygon points=\"" c_at (f_ormat h:w_hole r_avel pts) c_at "\" fill=\"" c_at fill c_at "\"/>" }
+## One tile's SVG: its top, and its two sides toward the eye when it
+## stands above the ground.
+h:t_ileSvg := { frame (r, c, kind, z) ->
+  x := f_loat c
+  y := f_loat r
+  top := frame h:t_o 4 3 r_eshape (x - 1.0) c_at (y - 1.0) c_at z c_at x c_at (y - 1.0) c_at z c_at x c_at y c_at z c_at (x - 1.0) c_at y c_at z
+  face := (d_isclose kind s_elect h:tops) h:p_oly top
+  z <= 0.0 ? face
+  left := frame h:t_o 4 3 r_eshape (x - 1.0) c_at y c_at z c_at x c_at y c_at z c_at x c_at y c_at 0.0 c_at (x - 1.0) c_at y c_at 0.0
+  right := frame h:t_o 4 3 r_eshape x c_at (y - 1.0) c_at z c_at x c_at y c_at z c_at x c_at y c_at 0.0 c_at x c_at (y - 1.0) c_at 0.0
+  ((d_isclose kind s_elect h:lefts) h:p_oly left) c_at ((d_isclose kind s_elect h:rights) h:p_oly right) c_at face
+}
+## The scene's tiles of one kind: tiles('kind', 'color', nums('x z y
+## ...', 3)), the middle of each tile and its top, in the world's units
+## (a tile is 1 wide, a step of elevation 0.5).
+h:t_ilesCall := { (rows, cols, kinds, heights) k ->
+  is := w_here kinds = k
+  0 = t_ally is ? ""
+  xzy := r_avel o_\ (3 c_at t_ally is) r_eshape ((f_loat is s_elect cols) - 0.5) c_at ((f_loat is s_elect rows) - 0.5) c_at 0.5 * is s_elect heights
+  "tiles('" c_at (d_isclose k s_elect w:kinds) c_at "', '" c_at (d_isclose k s_elect h:tops) c_at "', nums('" c_at (f_ormat h:f_ine xzy) c_at "', 3))\n"
+}
+# :: (Any a, Num b) => (a, Int, b) -> ((a, Int, b), Float, Box Char, Float, Char)
+## A map made ready to draw, once. A mode makes it in its n_ew and keeps
+## it: drawing a tick then costs only the pieces.
+l:s_tage := { map ->
+  frame := h:f_rame map
+  rc := w:s_ize map
+  kinds := r_avel w:t_iles map
+  heights := f_loat r_avel w:h_eights map
+  n := t_ally kinds
+  rows := 1 + ((r_ange n) - 1) d_iv 2 s_elect rc
+  cols := 1 + ((r_ange n) - 1) m_od 2 s_elect rc
+  far := g_rade rows + cols
+  tiles := '{ i -> e_nclose frame h:t_ileSvg (i s_elect rows, i s_elect cols, i s_elect kinds, i s_elect heights) } e_ach far
+  ground := t:j_oin '{ k -> e_nclose (rows, cols, kinds, heights) h:t_ilesCall k } e_ach r_ange t_ally w:kinds
+  (map, frame, tiles, f_loat far s_elect rows + cols, ground)
+}
+# :: (Any a, Any c, Any d, Any e, Any f, Any g) => ((a, b, c), d, e, f, g) -> Int
+## The places of a stage's tiles in the order they are drawn, far to
+## near, a row each (row, column).
+l:f_arToNear := { (map, _, _, _, _) ->
+  rc := w:s_ize map
+  n := '* r_/ rc
+  rows := 1 + ((r_ange n) - 1) d_iv 2 s_elect rc
+  cols := 1 + ((r_ange n) - 1) m_od 2 s_elect rc
+  far := g_rade rows + cols
+  o_\ (2 c_at n) r_eshape (far s_elect rows) c_at far s_elect cols
+}
+
+### A view
+
+# :: (Any a, Any b) => (a, b) -> (a, Box Char, Box Char, Float, b)
+## A view with no pieces: (stage, caption).
+l:e_mpty := { (stage, caption) -> (stage, 0 t_ake e_nclose "", 0 t_ake e_nclose "", 0 8 r_eshape 0.0, caption) }
+# :: (Any a, Any b, Any c, Any e) => (a, b, c, d, e) -> (a, Box b, Box c, d, e)
+## A view of one piece: (stage, model, clip, its eight numbers, caption).
+l:o_ne := { (stage, model, clip, numbers, caption) -> (stage, 1 r_eshape e_nclose model, 1 r_eshape e_nclose clip, 1 8 r_eshape numbers, caption) }
+# :: (Any a, Any b, Any c, Any d, Any e) => (a, b, c, d, e) -> e
+## The view's caption: the line a mode says under its picture.
+l:c_aption := { (_, _, _, _, caption) -> caption }
+
+### The drawing in text
+
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i) => (((a, Int, b), c, d, e, f), g, h, i, Char) -> Char
+## The view as text: the map's letters, a row a line, each piece as @ on
+## the tile it stands on, and the caption under it.
+l:t_ext := { (stage, _, _, pieces, caption) ->
+  (map, _, _, _, _) := stage
+  drawing := w:d_raw map
+  k := 2 s_elect s_hape drawing
+  at := (1 + f_loor f_irst_2 pieces) + k * f_loor 2 s_elect_2 pieces
+  flat := r_avel drawing
+  on := (r_ange t_ally flat) m_ember? at
+  rows := (s_hape drawing) r_eshape (((n_ot on) * r_ange t_ally flat) + on * 1 + t_ally flat) s_elect flat c_at "@"
+  ("\n" st:j_oin '{ i -> e_nclose i s_elect rows } e_ach r_ange f_irst s_hape drawing) c_at "\n" c_at caption
+}
+
+### The picture
+
+h:colors := "#c0392b" "#7f8c8d"
+h:models := 1 r_eshape e_nclose "walker"
+## One piece's SVG: a shadow on the ground, a body and a head, where
+## the board point under it is drawn.
+h:p_ieceSvg := { (px, py) model ->
+  fill := d_isclose (h:models i_ndexOf e_nclose model) s_elect h:colors
+  x := f_ormat h:w_hole px
+  shadow := "<ellipse cx=\"" c_at x c_at "\" cy=\"" c_at (f_ormat h:w_hole py) c_at "\" rx=\"7\" ry=\"3\" fill=\"#000000\" fill-opacity=\"0.35\"/>"
+  body := "<rect x=\"" c_at (f_ormat h:w_hole px - 4.0) c_at "\" y=\"" c_at (f_ormat h:w_hole py - 15.0) c_at "\" width=\"8\" height=\"14\" rx=\"3\" fill=\"" c_at fill c_at "\"/>"
+  head := "<circle cx=\"" c_at x c_at "\" cy=\"" c_at (f_ormat h:w_hole py - 19.0) c_at "\" r=\"4\" fill=\"#f1c9a5\"/>"
+  shadow c_at body c_at head
+}
+## The pieces' SVG, and the depth each is drawn at: just after the tile
+## it stands on.
+h:p_iecesSvg := { (stage, models, pieces) ->
+  (map, frame, _, _, _) := stage
+  xy := (1 2) s_elect_2 pieces
+  p := frame h:t_o xy c_at_2 ((t_ally pieces) c_at 1) r_eshape map h:u_nder xy
+  '{ i -> e_nclose (f_irst i s_elect p, 2 s_elect i s_elect p) h:p_ieceSvg d_isclose f_irst (i - 1) d_rop models } e_ach r_ange t_ally pieces
+}
+h:d_epths := { pieces -> 2.5 + (f_loat f_loor f_irst_2 pieces) + f_loat f_loor 2 s_elect_2 pieces }
+# :: (Any a, Num c, Truthy c) => (((a, b, c), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char) -> Char
+## The flat picture: an SVG document. The tiles and the pieces are drawn
+## far to near (a piece just after the tile it stands on, so a wall
+## nearer the eye hides it), then the caption. What a 3D view replaces
+## is in a group of class "flat", and the scene is the picture's
+## metadata, so a page that can draw the scene does, and hides the flat
+## group; one that cannot shows the picture as it is.
+l:p_icture := { view ->
+  (stage, models, _, pieces, caption) := view
+  (_, frame, tiles, depths, _) := stage
+  all := tiles c_at h:p_iecesSvg (stage, models, pieces)
+  order := g_rade depths c_at h:d_epths pieces
+  w := f_ormat h:w_hole 3 s_elect frame
+  h := f_ormat h:w_hole 4 s_elect frame
+  head := "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 " c_at w c_at " " c_at h c_at "\" width=\"" c_at w c_at "\" height=\"" c_at h c_at "\" font-family=\"sans-serif\">"
+  back := "<rect class=\"flat\" width=\"" c_at w c_at "\" height=\"" c_at h c_at "\" fill=\"#1d1f2b\"/>"
+  words := "<text x=\"" c_at (f_ormat h:w_hole h:edge) c_at "\" y=\"" c_at (f_ormat h:w_hole (4 s_elect frame) - h:edge) c_at "\" font-size=\"16\" fill=\"#e8e6df\">" c_at caption c_at "</text>"
+  head c_at "<metadata id=\"scene\">" c_at (l:s_cene view) c_at "</metadata>" c_at back c_at "<g class=\"flat\">" c_at (t:j_oin order s_elect all) c_at "</g>" c_at words c_at "</svg>"
+}
+
+### The scene
+
+h:n_ums := { (v, k) -> "nums('" c_at (f_ormat h:f_ine v) c_at "', " c_at (f_ormat k) c_at ")" }
+## One piece's call: piece('model', nums('x z y hx hz', 5)[0], 'clip',
+## t, nums('x2 z2 y2', 3)[0], dt).
+h:p_ieceCall := { map (model, clip, n) ->
+  y := 0.5 * f_irst map h:u_nder 1 2 r_eshape 2 t_ake n
+  y2 := 0.5 * f_irst map h:u_nder 1 2 r_eshape 2 t_ake 5 d_rop n
+  from := (2 t_ake n) c_at y c_at 2 t_ake 2 d_rop n
+  to := (2 t_ake 5 d_rop n) c_at y2
+  "piece('" c_at model c_at "', " c_at (h:n_ums (from, 5)) c_at "[0], '" c_at clip c_at "', " c_at (f_ormat h:f_ine 5 s_elect n) c_at ", " c_at (h:n_ums (to, 3)) c_at "[0], " c_at (f_ormat h:f_ine 8 s_elect n) c_at ")\n"
+}
+# :: (Any a, Num c, Truthy c) => (((a, b, c), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char) -> Char
+## The scene: the calls of a 3D player, a line each, as X_eTaL-extensions
+## writes scenes (text that names no renderer).
+##   view(width, height, 'background')      the picture's size
+##   camera(target, direction, scale)       looking at the board point in
+##     the middle of the picture, from 30 degrees up along the board's
+##     diagonal, without perspective, scale picture units to a tile: it
+##     sees the board as the picture's map does
+##   tiles('kind', 'color', nums(.., 3))    every tile of a kind: x z y
+##   piece('model', from, 'clip', t, to, dt)  a piece: x z y hx hz now,
+##     its clip and the time into it, and x z y in dt seconds
+## x is east, z south, y up, in tiles.
+l:s_cene := { (stage, models, clips, pieces, _) ->
+  (map, frame, _, _, ground) := stage
+  w := 3 s_elect frame
+  h := 4 s_elect frame
+  a := ((0.5 * w) - f_irst frame) / h:tw
+  b := ((0.5 * h) - 2 s_elect frame) / h:th
+  target := (0.5 * a + b) c_at 0.0 c_at 0.5 * b - a
+  size := "view(" c_at (f_ormat h:w_hole w) c_at ", " c_at (f_ormat h:w_hole h) c_at ", '#1d1f2b')\n"
+  camera := "camera(" c_at (h:n_ums (target, 3)) c_at "[0], " c_at (h:n_ums (0.6124 0.5 0.6124, 3)) c_at "[0], " c_at (f_ormat h:f_ine h:tw * 2.0 ^ 0.5) c_at ")\n"
+  calls := '{ i -> e_nclose map h:p_ieceCall (d_isclose f_irst (i - 1) d_rop models, d_isclose f_irst (i - 1) d_rop clips, i s_elect pieces) } e_ach r_ange t_ally pieces
+  size c_at camera c_at ground c_at t:j_oin calls
+}

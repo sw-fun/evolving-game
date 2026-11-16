@@ -1,0 +1,25 @@
+#!/usr/bin/env xetal
+## Walk, shown: what lib/View makes of the walk at two moments, the
+## walker on the bridge and the walker at the gate. For each, the scene
+## (the calls of a 3D player: the camera, the battlefield's tiles, the
+## walker's model, place, heading, clip and time, and where it is going)
+## and the flat picture (SVG, the same view drawn without 3D; the scene
+## is its metadata). These texts are what a page is given to draw.
+"wk:" u_se< "Walking"
+"md:" u_se< "Mode"
+"vw:" u_se< "View"
+
+u:a_fter := { n ->
+  (_, s) := 'wk:l_egal 'wk:s_tatus 'wk:s_tep md:r_esult (n r_eshape e_nclose "tick 0.05", wk:n_ew ("bridge.toml", md:nothing, 1))
+  wk:v_iew s
+}
+# Ten and a half seconds in: on the bridge, walking north.
+bridge := u:a_fter 212
+vw:c_aption bridge
+vw:s_cene bridge
+vw:p_icture bridge
+# At the gate: standing, the walk won.
+gate := u:a_fter 296
+vw:c_aption gate
+vw:s_cene gate
+vw:p_icture gate

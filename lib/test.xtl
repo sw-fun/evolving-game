@@ -200,6 +200,45 @@ u:w_rong := { name -> e_nclose "lights" md:p_roblem "fixtures/" c_at (d_isclose 
 _ := t:l_ines 'u:w_rong e_ach "take" "bad-scenario-mode" "bad-scenario-title" "bad-scenario-zone" "bad-scenario-map" "nowhere"
 '{ @ -> f_ormat "fixtures/bad-scenario-rule.toml" md:r_ule ("loss", "moves") } []T_RAP '{ err -> []R_ECOVER []E_MESSAGE err }
 
+# View: a map made ready to draw (a stage); board points to the picture
+# and back (a round trip, at three elevations); the corners of the
+# small map's picture.
+"vw:" u_se< "View"
+ground := vw:s_tage small
+points := 4 3 r_eshape 0.0 0.0 0.0  4.0 0.0 0.0  2.5 1.5 1.0  3.5 2.5 2.0
+ground vw:t_o points
+'{ i -> e_nclose ground vw:b_ack ((i s_elect ground vw:t_o points) c_at 3 s_elect i s_elect points) } e_ach r_ange 4
+# A click back to a tile: the middle of each tile's top, at its own
+# elevation, in reading order. It is that tile, unless a raised tile
+# nearer the eye is drawn over it: the bridge (2 3) hides the middle of
+# (1 2), the gate (2 4) that of (1 3), and the cliff (3 4), two steps
+# up, that of the bridge. A click off the board is no tile.
+u:m_iddle := { (r, c) -> f_irst ground vw:t_o 1 3 r_eshape ((f_loat c) - 0.5) c_at ((f_loat r) - 0.5) c_at f_loat c s_elect r s_elect w:h_eights small }
+u:c_licked := { i -> ground vw:t_ile u:m_iddle (1 + (i - 1) d_iv 4, 1 + (i - 1) m_od 4) }
+'{ i -> e_nclose u:c_licked i } e_ach r_ange 12
+ground vw:t_ile 5.0 5.0
+# Where a raised tile hides a lower one, the click is the raised tile's:
+# the cliff (row 3, column 4, two steps up) is drawn over the ground
+# behind it, and a click there is the cliff.
+ground vw:t_ile (u:m_iddle (3, 4)) + 0.0 -6.0
+ground vw:t_ile (u:m_iddle (2, 4)) + 0.0 4.0
+# Tiles are drawn far to near: by row and column together.
+vw:f_arToNear ground
+# A view of the small map with a walker on the road, walking east: as
+# text, as a scene, as a picture (the scene is its metadata).
+seen := vw:o_ne (ground, "walker", "walk", 1.5 1.5 1.0 0.0 0.4 1.625 1.5 0.05, "A walker")
+vw:c_aption seen
+vw:t_ext seen
+vw:s_cene seen
+vw:p_icture seen
+# A piece is drawn after the tile it stands on and before the nearer
+# ones: in the picture the walker (the ellipse of its shadow) comes
+# after the 6 tiles no nearer than its own, row 2, column 2.
+u:b_efore := { (text, word) -> t_ally (word st:f_ind (f_irst "<ellipse" st:f_ind text) t_ake text) }
+u:b_efore (vw:p_icture seen, "<polygon")
+# A view with no pieces.
+vw:t_ext vw:e_mpty (ground, "Nobody")
+
 # The protocol on a game with no clock, written here as a stub: lights
 # in a row, a choice turns one over, won when all are lit, lost when
 # the moves run out. Its state is (lights, moves left, gold); ticks are
@@ -214,7 +253,7 @@ u:l_step := { (lit, moves, gold) e ->
 }
 u:l_legal := { s -> 1 r_eshape e_nclose "choose L N" }
 u:l_status := { (lit, moves, _) -> '& r_/ lit = 1 ? md:won; moves <= 0 ? md:lost; md:playing }
-u:l_view := { (lit, moves, _) -> ((1 + lit) s_elect ".*") c_at " " c_at (f_ormat moves) c_at " moves left" }
+u:l_view := { (lit, moves, _) -> vw:e_mpty (ground, ((1 + lit) s_elect ".*") c_at " " c_at (f_ormat moves) c_at " moves left") }
 u:l_outcome := { s ->
   (_, _, gold) := s
   status := u:l_status s
@@ -248,7 +287,7 @@ u:t_step := { s e ->
 }
 u:t_legal := { (_, turn, _, _) -> turn = 1 ? 1 r_eshape e_nclose "choose 1 N"; 1 r_eshape e_nclose "tick S" }
 u:t_status := { (_, _, last, _) -> last = 1 ? md:won; last = 2 ? md:lost; md:playing }
-u:t_view := { (pile, turn, last, _) -> (pile r_eshape "o") c_at " " c_at d_isclose turn s_elect "your turn" "the keep's turn" }
+u:t_view := { (pile, turn, last, _) -> vw:e_mpty (ground, (pile r_eshape "o") c_at " " c_at d_isclose turn s_elect "your turn" "the keep's turn") }
 u:t_outcome := { s ->
   (_, _, _, gold) := s
   status := u:t_status s

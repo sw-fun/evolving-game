@@ -1,0 +1,11 @@
+l:t_o : (Any a, Any b, Any c, Any d) => (a, Float, b, c, d) -> Float -> Float
+l:b_ack : (Any a, Any b, Any c, Any d) => (a, Float, b, c, d) -> Float -> Float
+l:t_ile : (Any a, Num c, Any d, Any e, Any f) => ((a, b, c), Float, d, e, f) -> Float -> Int
+l:s_tage : (Any a, Num b) => (a, Int, b) -> ((a, Int, b), Float, Box Char, Float, Char)
+l:f_arToNear : (Any a, Any c, Any d, Any e, Any f, Any g) => ((a, b, c), d, e, f, g) -> Int
+l:e_mpty : (Any a, Any b) => (a, b) -> (a, Box Char, Box Char, Float, b)
+l:o_ne : (Any a, Any b, Any c, Any e) => (a, b, c, d, e) -> (a, Box b, Box c, d, e)
+l:c_aption : (Any a, Any b, Any c, Any d, Any e) => (a, b, c, d, e) -> e
+l:t_ext : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i) => (((a, Int, b), c, d, e, f), g, h, i, Char) -> Char
+l:p_icture : (Any a, Num c, Truthy c) => (((a, b, c), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char) -> Char
+l:s_cene : (Any a, Num c, Truthy c) => (((a, b, c), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char) -> Char

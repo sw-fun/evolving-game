@@ -3,8 +3,8 @@
 ## at a speed from the scenario; the space bar stops and starts it. Won
 ## when it arrives; lost when the scenario's seconds run out first.
 ##
-## The state is (zone, drawing, road, numbers): the zone's name, the map
-## as text, the road's places (a row each), and the numbers speed
+## The state is (zone, stage, road, numbers): the zone's name, the map
+## made ready to draw (lib/View), the road's places (a row each), and the numbers speed
 ## (tiles a second), the limit and the time passed and the time walked
 ## (whole milliseconds), whether it is stopped, the gold for winning,
 ## and the seed. Where the walker is follows from the time walked, so
@@ -13,7 +13,7 @@
 
 "md:" u_se< "Mode"
 "sm:" u_se< "Sim"
-"st:" u_se< "Strings"
+"vw:" u_se< "View"
 "w:" u_se< "World"
 
 # :: Char
@@ -35,7 +35,7 @@ h:a_long := { s -> (h:s_teps s) m_in (h:s_peed s) * (h:w_alked s) / 1000.0 }
 
 ### The protocol
 
-# :: (Num a, Num b) => (Char, (Box Char, a), b) -> (Char, Char, Int, Float)
+# :: (Num a, Num b) => (Char, (Box Char, a), b) -> (Char, ((Char, Int, Int), Float, Box Char, Float, Char), Int, Float)
 ## A walk from a scenario's file, in a world, with a seed. Boots in the
 ## world (resource.boots) make the walker faster, half a tile a second
 ## a pair. A scenario that is wrong is the error bad-scenario.
@@ -45,17 +45,17 @@ l:n_ew := { (file, world, seed) ->
   n_ot speed > 0 ? "bad-scenario" []S_IGNAL file c_at ": speed: the walker must move"
   limit := 1000 * file md:r_ule ("loss", "seconds")
   gold := 0.0 m_ax file md:r_ule ("reward", "gold")
-  (file md:f_ield "zone", w:d_raw map, map w:r_oad 1, speed c_at limit c_at 0.0 c_at 0.0 c_at 0.0 c_at gold c_at f_loat seed)
+  (file md:f_ield "zone", vw:s_tage map, map w:r_oad 1, speed c_at limit c_at 0.0 c_at 0.0 c_at 0.0 c_at gold c_at f_loat seed)
 }
 # :: (Any a, Any b, Any c, Any d) => (a, b, c, Float) -> (Char, Float, d) -> (a, b, c, Float)
 ## The state after an event: a tick's time passes, and is walked unless
 ## stopped; the space bar stops and starts.
 l:s_tep := { s e ->
-  (zone, drawing, road, n) := s
+  (zone, stage, road, n) := s
   ms := f_loat sm:m_illis e
   going := 1.0 - 5 s_elect n
-  e sm:i_s "tick" ? (zone, drawing, road, n + ms * 0.0 0.0 1.0 0.0 0.0 0.0 0.0 + going * 0.0 0.0 0.0 1.0 0.0 0.0 0.0)
-  e sm:i_s "key" ? (zone, drawing, road, n + ((2.0 * going) - 1.0) * 0.0 0.0 0.0 0.0 1.0 0.0 0.0)
+  e sm:i_s "tick" ? (zone, stage, road, n + ms * 0.0 0.0 1.0 0.0 0.0 0.0 0.0 + going * 0.0 0.0 0.0 1.0 0.0 0.0 0.0)
+  e sm:i_s "key" ? (zone, stage, road, n + ((2.0 * going) - 1.0) * 0.0 0.0 0.0 0.0 1.0 0.0 0.0)
   s
 }
 # :: Any a => a -> Box Char
@@ -69,23 +69,35 @@ l:s_tatus := { s ->
   md:playing
 }
 # :: (Any a, Any b) => (a, b, c, Float) -> c
-## The walker's place, a row and a column: the road's tile it is on.
+## The walker's place, a row and a column: the road's tile it stands
+## on (it walks from the middle of one tile to the middle of the next).
 l:p_lace := { s ->
   (_, _, road, _) := s
-  (1 + f_loor h:a_long s) s_elect road
+  (1 + f_loor 0.5 + h:a_long s) s_elect road
 }
-# :: Any a => (a, Char, Int, Float) -> Char
-## The map with the walker on it (@), and a line saying where it is and
-## how it stands.
+## Where a walker so many tiles along the road is on the board, and the
+## way it faces: between the middles of two of the road's tiles (x is
+## the column less a half, y the row less a half).
+h:a_t := { road along ->
+  i := 1 + (f_loor along) m_in (t_ally road) - 2
+  from := f_loat i s_elect road
+  to := f_loat (i + 1) s_elect road
+  part := along - f_loat i - 1
+  yx := (from + part * to - from) - 0.5
+  (2 s_elect yx) c_at (f_irst yx) c_at (2 s_elect to - from) c_at f_irst to - from
+}
+# :: (Any a, Any b, Num c) => (a, b, c, Float) -> (b, Box Char, Box Char, Float, Char)
+## What to show (lib/View): the map with the walker on it, walking or
+## standing, where it will be a twentieth of a second on (so a player
+## can move it smoothly between ticks), and a line saying where it is
+## and how it stands.
 l:v_iew := { s ->
-  (_, drawing, _, _) := s
-  (r, c) := h:p_air l:p_lace s
-  k := 2 s_elect s_hape drawing
-  at := c + k * r - 1
-  flat := r_avel drawing
-  rows := (s_hape drawing) r_eshape ((at - 1) t_ake flat) c_at "@" c_at at d_rop flat
-  text := "\n" st:j_oin '{ i -> e_nclose i s_elect rows } e_ach r_ange f_irst s_hape drawing
-  text c_at "\n" c_at h:s_ays s
+  (_, stage, road, _) := s
+  going := (0 + (l:s_tatus s) = md:playing) * 1 - h:s_topped s
+  now := road h:a_t h:a_long s
+  soon := road h:a_t (h:s_teps s) m_in (h:a_long s) + 0.05 * (h:s_peed s) * f_loat going
+  clip := d_isclose (1 + going) s_elect "idle" "walk"
+  vw:o_ne (stage, "walker", clip, now c_at ((h:w_alked s) / 1000.0) c_at (2 t_ake soon) c_at 0.05, h:s_ays s)
 }
 h:p_air := { v -> (f_irst v, 2 s_elect v) }
 h:s_ays := { s ->

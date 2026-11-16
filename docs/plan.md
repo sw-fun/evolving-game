@@ -61,6 +61,7 @@ for the games after it.
 | 5  | Siege Engineer        | physics and engineering puzzle     | ballistics, structural damage, collapse          |
 | 6  | The Shattered Kingdom | exploration and adventure          | walking the world in the first person, secrets, the world over time |
 | 7  | Siege Commander       | real-time strategy                 | groups, formations, attacker and defender opponents |
+| 8  | Idler (name open)     | idle game, background game         | time away as one long tick, earnings into the world state, a game running beside another |
 
 Castle Defense is first because the research gives it a small, exact
 first milestone (Defend the Bridge) and X_eTaL-games already has a
@@ -281,6 +282,23 @@ keep them.
   piece's model, place, heading, clip and time, the camera). Modes
   give views through the shared library; hosts and players decide
   nothing.
+  As built (`lib/View`): a mode's `v_iew` gives a view value, the
+  stage (its map made ready to draw once) with a model name, a clip
+  name and eight numbers a piece (place, heading, time into the clip,
+  where it will be and in how many seconds) and a caption. The
+  library makes three things of it: text (the terminal and the
+  goldens), the flat picture (SVG, isometric, tiles and pieces far to
+  near, a click turned back into the tile whose top is under it,
+  raised tiles hiding lower ones) and the scene, calls a line each as
+  X_eTaL-extensions writes scenes: `view`, `camera` (no perspective,
+  30 degrees up along the board's diagonal, so it sees what the
+  picture's map draws), `tiles` (every tile of a kind in one call, to
+  be instanced) and `piece`. The scene travels as the picture's
+  `<metadata id="scene">`, and what 3D replaces is in a group of class
+  `flat`, as X_eTaL-games' tower defense does. Neither sibling's
+  player draws this vocabulary yet (the extensions' is the city
+  film's, the games' reads JSON): the page's player is step 6's, and
+  an ask (`docs/xetal-extensions-asks.md`).
 - **Save.** The world state, the campaign position and, for a level
   in progress, the scenario, seed and events so far.
 
@@ -437,6 +455,29 @@ it, and the goldens and the browser test run against the packed
 build. Runs after several iterations of the games (the user,
 2026-11-15), not before.
 
+## Idler (asked for by the user, 2026-11-15; not in the research)
+
+An idle game: the castle earns while you do something else, or
+nothing. It may be a mode of its own (a level you sit in), a side
+quest, a game that runs in the background while another mode is
+played, or several of these: to be decided with the user (Open
+questions). What the seams already give it:
+
+- Time enters only as tick events (D6), so time away is one long
+  tick: the idler's rules are asked what an hour did, in one step, as
+  a whole-array expression over its producers, not by replaying
+  72000 ticks. Its `s_tep` must give the same state for one tick of
+  an hour as for an hour of ticks (a golden).
+- What it earns is the world state (`resource.gold` and its kin), so
+  the other games spend it and their outcomes feed it.
+- What it needs that nothing has yet: the campaign giving a second
+  mode the events (or only the ticks) while the first is played, and
+  the page saying how long it was closed (an event, never the clock
+  read by rules).
+
+Where it goes in the order is open; it is small, and it would give
+the campaign shell (Saga 4) something to do between levels.
+
 ## Later
 
 - Two players comparing defense programs against identical waves.
@@ -467,6 +508,11 @@ Still open:
 
 1. The art reference file: `docs/images/castle-siege.png` is not in
    the repository yet; the user is to add it (Saga 1 step 8 reads it).
-2. The GitHub repository `sw-fun/evolving-game` does not exist yet;
-   the user is to create it (or say so, and it is created with `gh`).
-   Until then the work is committed locally and not pushed.
+2. The Idler (see its section): a mode of its own, a side quest, a
+   game in the background of the others, or several of these; what
+   it earns and what spends it; its name; and where it comes in the
+   order.
+
+Settled since: the repository exists and is public, and GitHub Pages
+is enabled on it, deploying from GitHub Actions (the user,
+2026-11-15).

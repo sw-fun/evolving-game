@@ -29,8 +29,14 @@ its entrance to its gate (`lib/World`).
 ```bash
 just run walk          # the scripted game: scripts of events, shown
 just play walk         # play it at the terminal
+just run walk picture.xtl   # the scene and the picture at two moments, as text
 just test-game walk    # compare with the expected output
 ```
+
+The walk is shown three ways from one description (`lib/View`): the
+text drawing in the terminal, a flat isometric picture (SVG), and a
+scene for a 3D view. `just play walk` writes the picture of each moment
+to `work/draw/walk/play-N.svg` (open one in a browser).
 
 At the terminal the events are lines you type, then Enter: `tick 1`
 lets a second pass, `key space` stops or starts the walker, and the end
