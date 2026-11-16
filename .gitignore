@@ -1,0 +1,38 @@
+# cargo (every workspace shares ./target via .cargo/config.toml)
+/target/
+**/target/
+**/*.rs.bk
+
+# trunk output; the published copy is pages/
+web/dist/
+
+# local scratch, the pinned clones (work/xetal ...), generated assets
+# before they are checked in (work/assets), game output
+/tmp/
+work/
+
+# the pinned X_eTaL binaries are linked here (scripts/xetal.sh)
+bin/xetal
+bin/xetal-x
+
+# the built site: published as the gh-pages branch, never tracked on main
+/pages/
+
+# the uv environment for the scripts (just venv)
+.venv/
+__pycache__/
+
+# agentrail raw session transcripts (large, local only)
+.agentrail/sessions/*.jsonl
+.agentrail-archive/*/sessions/*.jsonl
+
+# Claude Code local state (shared slash commands may live in .claude/commands/)
+.claude/*
+!.claude/commands/
+
+# editors and OS
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
