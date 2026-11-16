@@ -1,8 +1,9 @@
 number = 4
 slug = "mode-contract"
-status = "in-progress"
+status = "completed"
 description = "foundations step 4: the seam every game plugs into, lib/Mode.xtl. Extend X_eT..."
 role = "production"
 context_files = []
 created_at = "2026-11-15T15:23:53"
-commits = []
+completed_at = "2026-11-15T22:17:47"
+commits = ["61fb355de94685e4575fecbba3487b9cd3a19dc8"]
