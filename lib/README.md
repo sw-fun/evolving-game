@@ -22,7 +22,7 @@ library of X_eTaL-libraries at `LIBRARIES_COMMIT`).
 `ground-surface.xtl` shows the battlefield's (its output is the golden
 `expected/ground-surface.out`).
 
-A mode is a library exporting `mode`, `n_ew`, `s_tep`, `l_egal`,
+A mode is a library exporting `mode`, `help`, `n_ew`, `s_tep`, `l_egal`,
 `s_tatus`, `v_iew` and `o_utcome` (the head of `Mode.xtl` says what
 each is); [`games/walk`](../games/walk) is the first, and `test.xtl`
 holds two stubs, a puzzle with no clock and a game of turns.

@@ -49,11 +49,12 @@ X_eTaL-libraries' `Strings` and `Random`.
 
 ## A game is a mode
 
-One rules library (`games/<slug>/<Name>.xtl`) exporting seven names:
+One rules library (`games/<slug>/<Name>.xtl`) exporting eight names:
 
 | Name | What it is |
 | ---- | ---------- |
 | `mode` | its name, as scenarios say it |
+| `help` | how it is played, a few lines of text |
 | `n_ew` | (scenario file, world state, seed) to a state |
 | `s_tep` | a state and one event to the next state |
 | `l_egal` | the event lines it takes now; others never reach `s_tep` |
@@ -105,8 +106,11 @@ The walk's `play.xtl`, the file the command line runs, as WebAssembly.
   lines; after each event, the scene to the board player
   (X_eTaL-extensions' `board.js`, Three.js, copied from its pinned
   clone at build time), or the flat picture where there is no WebGL.
-- The Sources dialog shows the game's files drawn by X_eTaL's own
-  decorator, colored by token, in JuliaMono.
+- Round the game: Start again; Help (the mode's own `help`, asked of
+  the program); Sources (the game's files drawn by X_eTaL's own
+  decorator, colored by token, in JuliaMono); About (what runs here,
+  what draws it, thanks, links, the pins and the build); a one-line
+  footer. With a dialog open the game is given no keys.
 
 `just pages` builds the site; `just publish` pushes it as the
 `gh-pages` branch and starts a workflow that deploys that branch

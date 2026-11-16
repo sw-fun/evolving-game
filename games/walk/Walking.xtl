@@ -22,6 +22,10 @@
 ## The mode's name in scenarios.
 l:mode := "walk"
 
+# :: Char
+## How the walk is played, a line a thing to know.
+l:help := "A walker comes in at the bottom of the battlefield and follows the road over the bridge to the castle gate.\nIt walks by itself while time passes. Reach the gate before the time is up.\nSpace: stop the walker, or start it again.\nA click on a tile: the game says what the tile is."
+
 ### The numbers of a state
 
 h:s_peed := { (_, _, _, n) -> f_irst n }

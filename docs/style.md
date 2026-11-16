@@ -44,7 +44,7 @@ pieces.
   unlike the game (on a case-insensitive disk `Walk.xtl` is
   `walk.xtl`; the same holds in `lib/`: a program beside `Terrain.xtl`
   may not be `terrain.xtl`, and writing it replaces the library). It follows the mode protocol (`lib/Mode`, `docs/plan.md`,
-  The seams) and holds definitions only: `l:mode`, `l:n_ew`,
+  The seams) and holds definitions only: `l:mode`, `l:help`, `l:n_ew`,
   `l:s_tep`, `l:l_egal`, `l:s_tatus`, `l:v_iew`, `l:o_utcome`, as
   `games/walk/Walking.xtl` does. Keep what follows from the events
   out of the state (the walker's place is its speed times the time

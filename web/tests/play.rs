@@ -35,11 +35,15 @@ fn the_page_plays_the_walk_as_the_command_line_does() {
     // The store is one for the process, so the title is asked here,
     // after the game, not in a test of its own running beside it.
     assert_eq!(evolving_web::title(), "Evolving Game: Walk");
+    // How to play is the game's to say (the mode's help).
+    let help = evolving_web::help();
+    assert_eq!(help.lines().count(), 4, "{help}");
+    assert!(help.contains("Space: stop the walker"), "{help}");
 }
 
 #[test]
-fn the_footer_names_the_build_and_the_four_pins() {
-    let build = evolving_web::about::build();
+fn the_build_and_the_four_pins_are_named() {
+    let pins = evolving_web::about::pins();
     for pin in ["XETAL", "EXTENSIONS", "GAMES", "LIBRARIES"] {
         let file = format!("{}/../{pin}_COMMIT", env!("CARGO_MANIFEST_DIR"));
         let sha: String = std::fs::read_to_string(file)
@@ -47,9 +51,13 @@ fn the_footer_names_the_build_and_the_four_pins() {
             .chars()
             .take(7)
             .collect();
-        assert!(build.contains(&sha), "{pin} {sha} in {build}");
+        assert!(
+            pins.lines().any(|l| l.ends_with(&sha)),
+            "{pin} {sha} in {pins}"
+        );
     }
-    assert!(build.starts_with("<span>build "));
+    assert_eq!(pins.lines().count(), 4);
+    assert_eq!(evolving_web::about::build().split(' ').count(), 3);
 }
 
 #[test]

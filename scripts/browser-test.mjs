@@ -6,8 +6,9 @@
 // walker; a real click on the bridge reaches the program, which names
 // the tile; a real space bar stops the walker; the flat picture alone
 // (?flat) takes the same click; nothing is asked of another site; the
-// page fits its window at three sizes; the footer names the build and
-// the four pins; the Sources dialog shows the game's own files as
+// page fits its window at three sizes; the footer is one line naming
+// the build; Help says how to play in the game's words; About says what
+// this is and names the four pins; the Sources dialog shows the game's own files as
 // X_eTaL renders them, colored, in JuliaMono (the font is the one thing
 // taken from another site, and only then). Then a
 // screen capture of the walker on the bridge is written to
@@ -119,16 +120,39 @@ await space();
 check((await caption()).includes("Stopped."), "the space bar stops the walker");
 check(await page("getComputedStyle(document.querySelector('#flat .flat')).display === 'none'"), "the flat board is hidden behind the 3D one");
 
-// The footer: whose it is, the license, the repository, the build and
-// the four pinned commits it was built from.
+// The footer, a line: whose it is, the license, the repository, the
+// README, the build (host, commit, time).
 const footer = await page("document.querySelector('footer').textContent.replace(/\\s+/g, ' ')");
 check(/Copyright \(c\) 2026 Michael A Wright/.test(footer) && footer.includes("MIT License"), "the footer says whose it is and its license");
-check(await page("document.querySelector('footer a').href === 'https://github.com/sw-fun/evolving-game' && document.querySelector('footer a').target === '_blank'"), "it links to the repository, as an external link");
-check(/build [0-9a-f]{7} on \S+ at 20\d\d-/.test(footer), "it names the build: commit, host and time");
+const links = await page("[...document.querySelectorAll('footer a')].map((a) => [a.textContent, a.href, a.target])");
+check(links.length === 3 && links.every((l) => l[1].startsWith("https://github.com/sw-fun/evolving-game") && l[2] === "_blank"), `it links to the license, the repository and the README, as external links (${links.map((l) => l[0]).join(", ")})`);
+check(/Build: \S+ [0-9a-f]{7} 20\d\d-\d\d-\d\dT/.test(footer), "it names the build: host, commit and time");
+check(await page("document.querySelector('footer').getBoundingClientRect().height < 40"), "the footer is one line at this width");
+// Help: how to play, in the game's own words; Escape closes it, and a
+// key pressed while it is open is not the game's.
+const said = await caption();
+await page("document.getElementById('open-help').click(), 1");
+check(await page("document.getElementById('help').open"), "the Help button opens a dialog");
+const helped = await page("[...document.querySelectorAll('#help-text p')].map((p) => p.textContent)");
+check(helped.length === 4 && helped[2].startsWith("Space: stop the walker"), `it says how to play, as the game says it (${helped.length} lines)`);
+await space();
+check((await caption()) === said, "the space bar is not the game's while a dialog is open");
+await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+check(!(await page("document.getElementById('help').open")), "Escape closes it");
+// About: what this is, who draws it, thanks, links, the pins.
+await page("document.getElementById('open-about').click(), 1");
+check(await page("document.getElementById('about').open"), "the About button opens a dialog");
+const about = await page("document.getElementById('about').textContent.replace(/\\s+/g, ' ')");
+check(["X_eTaL", "WebAssembly", "Three.js", "Blender", "JuliaMono", "decides nothing"].every((w) => about.includes(w)), "it says what runs here, what draws it and whose work it stands on");
 for (const pin of ["XETAL", "EXTENSIONS", "GAMES", "LIBRARIES"]) {
   const sha = readFileSync(join(root, `${pin}_COMMIT`), "utf8").slice(0, 7);
-  check(footer.includes(sha), `it names the pin ${pin}_COMMIT (${sha})`);
+  check(about.includes(sha), `it names the pin ${pin}_COMMIT (${sha})`);
 }
+check(await page("[...document.querySelectorAll('#about a')].every((a) => a.target === '_blank' && a.rel.includes('noopener'))"), "its links are external links");
+check(await page("(() => { const d = document.getElementById('about'), r = d.getBoundingClientRect(), last = d.querySelector('.prose').lastElementChild.getBoundingClientRect(); return r.bottom <= innerHeight && r.bottom - last.bottom < 40; })()"), "it fits the window, and is as tall as what it says");
+await page("document.getElementById('about').close(), 1");
+
 // The sources: a dialog showing the game's own files, X_eTaL drawn as
 // X_eTaL renders it (decorated, colored by token, in JuliaMono), the
 // whole file.

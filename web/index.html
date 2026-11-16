@@ -13,7 +13,8 @@
   html, body { margin: 0; background: #14151c; color: #e8e6df; font: 16px/1.4 system-ui, sans-serif; }
   body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
   header, footer, details, #err { flex: none; }
-  header { display: flex; align-items: baseline; gap: 16px; padding: 8px 16px; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; padding: 8px 16px; }
+  header h1 { margin-right: 6px; }
   header h1 { font-size: 20px; margin: 0; font-weight: 600; }
   header button { font: inherit; padding: 4px 12px; border-radius: 6px; border: 1px solid #56607a; background: #1a1f2e; color: #e8e6df; cursor: pointer; }
   #stat { color: #a0a4ab; font-size: 14px; font-variant-numeric: tabular-nums; margin-left: auto; }
@@ -53,9 +54,17 @@
   .rendered-source .c-doc { color: #9fc3ad; font-style: italic; }
   .rendered-source .c-heading { color: #9fc3ad; font-weight: bold; }
   .rendered-source .c-error { color: #ff9999; }
-  footer { display: flex; flex-wrap: wrap; gap: 2px 16px; padding: 6px 16px 8px; color: #8d919a; font-size: 13px; border-top: 1px solid #262936; }
-  footer a { color: #8fb0ff; }
-  #build { display: contents; }
+  footer { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; padding: 5px 16px 7px; color: #8d919a; font-size: 13px; border-top: 1px solid #262936; }
+  footer a, dialog a { color: #8fb0ff; }
+  footer .sep { color: #4a4f5c; }
+  /* Help and About: smaller dialogs, as tall as what they say */
+  #help, #about { height: fit-content; max-height: 88vh; width: min(46em, 94vw); }
+  .prose { overflow: auto; }
+  .prose p, #help-text p { margin: 0 0 10px; max-width: 70ch; }
+  #help-text p:first-child { font-size: 17px; }
+  .links { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  .note { color: #8d919a; font-size: 13px; }
+  dialog code { font: 13px ui-monospace, Menlo, monospace; background: #101116; padding: 1px 5px; border-radius: 4px; }
   #err { color: #ff9a9a; white-space: pre-wrap; padding: 0 16px; }
 </style>
 <script type="importmap">{ "imports": { "three": "./ext/vendor/three/three.module.min.js" } }</script>
@@ -64,7 +73,9 @@
 <header>
   <h1 id="title">Evolving Game</h1>
   <button id="again" type="button">Start again</button>
+  <button id="open-help" type="button">Help</button>
   <button id="open-sources" type="button">Sources</button>
+  <button id="open-about" type="button">About</button>
   <span id="stat"></span>
 </header>
 <div id="stage" tabindex="0"><div id="view"></div><div id="flat"></div></div>
@@ -75,11 +86,29 @@
   <div id="files"></div>
   <pre id="source" class="rendered-source"></pre>
 </dialog>
-<footer>
-  <span>Copyright (c) 2026 Michael A Wright</span>
-  <span>MIT License</span>
-  <a class="external" href="https://github.com/sw-fun/evolving-game" target="_blank" rel="noopener">Repository</a>
-  <span id="build"></span>
+<dialog id="help">
+  <div class="top"><h2>How to play</h2><form method="dialog"><button>Close</button></form></div>
+  <div id="help-text"></div>
+  <p class="note">This is the game's own account of itself: the page asks the X_eTaL program and shows what it says.</p>
+</dialog>
+<dialog id="about">
+  <div class="top"><h2 id="about-title">Evolving Game</h2><form method="dialog"><button>Close</button></form></div>
+  <div class="prose">
+    <p>A family of small castle-siege games that share one world and grow into one larger game, written in <a class="external" href="https://github.com/softwarewrighter/X_eTaL" target="_blank" rel="noopener">X_eTaL</a>, the eXperimental Extensible Typed Array Language. This is its first, and smallest: a walk to the castle gate. (Evolving Game is a working title.)</p>
+    <p><strong>What runs here.</strong> One X_eTaL program, the same file a terminal runs, compiled with its language to WebAssembly and running in this page. Twenty times a second the page tells it how much time has passed; a key or a click is told to it as it happens. It answers with a picture and a scene. The page draws them and decides nothing: no rule, number or word of the game is in the page. <em>Sources</em> shows the program and its libraries.</p>
+    <p><strong>What draws it.</strong> The scene is drawn in 3D by the board player of <a class="external" href="https://github.com/softwarewrighter/X_eTaL-extensions" target="_blank" rel="noopener">X_eTaL-extensions</a>, with Three.js. Where a browser cannot draw 3D, or with <code>?flat</code> on the address, the program's own flat picture is shown. The wall, the gate, the bridge and the walker are models described in X_eTaL and made by it through Blender, their stone and wood baked from Blender's own textures.</p>
+    <p><strong>With thanks to.</strong> <a class="external" href="https://threejs.org/" target="_blank" rel="noopener">Three.js</a> 0.170.0 (MIT), kept with the page. <a class="external" href="https://www.blender.org/" target="_blank" rel="noopener">Blender</a>, which makes the models. <a class="external" href="https://juliamono.netlify.app/" target="_blank" rel="noopener">JuliaMono</a> (SIL Open Font License), the font of the sources, fetched when they are first opened.</p>
+    <p class="links"><a class="external" href="https://github.com/sw-fun/evolving-game" target="_blank" rel="noopener">Repository</a> <a class="external" href="https://github.com/sw-fun/evolving-game/blob/main/README.md" target="_blank" rel="noopener">README</a> <a class="external" href="https://github.com/sw-fun/evolving-game/blob/main/docs/plan.md" target="_blank" rel="noopener">The plan</a> <a class="external" href="https://software-wrighter-lab.github.io/" target="_blank" rel="noopener">Blog</a> <a class="external" href="https://discord.com/invite/Ctzk5uHggZ" target="_blank" rel="noopener">Discord</a> <a class="external" href="https://www.youtube.com/@SoftwareWrighter" target="_blank" rel="noopener">YouTube</a></p>
+    <p class="note">Built from: <span id="pins"></span>. Build: <span id="about-build"></span>.</p>
+    <p class="note">Copyright (c) 2026 Michael A Wright. MIT License.</p>
+  </div>
+</dialog>
+<footer aria-label="Project and build information">
+  <span>Copyright (c) 2026 Michael A Wright</span><span class="sep">&middot;</span>
+  <a class="external" href="https://github.com/sw-fun/evolving-game/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a><span class="sep">&middot;</span>
+  <a class="external" href="https://github.com/sw-fun/evolving-game" target="_blank" rel="noopener">Repository</a><span class="sep">&middot;</span>
+  <a class="external" href="https://github.com/sw-fun/evolving-game/blob/main/README.md" target="_blank" rel="noopener">README</a><span class="sep">&middot;</span>
+  <span id="build" title="Build host, source commit and UTC build time">Build: loading...</span>
 </footer>
 <script type="module" src="./static/app.js"></script>
 </body>

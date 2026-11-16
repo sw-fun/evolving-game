@@ -19,18 +19,24 @@ pub fn paths() -> Vec<&'static str> {
 /// Where the game's source is.
 pub const REPOSITORY: &str = "https://github.com/sw-fun/evolving-game";
 
-/// The build's facts as HTML spans: this repository's commit, the host
-/// and the time it was built, and the four pinned commits it was built
-/// from.
+/// The build, in a line: the host it was built on, this repository's
+/// commit and the time (UTC).
 #[must_use]
 pub fn build() -> String {
     format!(
-        "<span>build {} on {} at {}</span><span>X_eTaL {}</span>\
-         <span>X_eTaL-extensions {}</span><span>X_eTaL-games {}</span>\
-         <span>X_eTaL-libraries {}</span>",
-        env!("BUILD_SHA"),
+        "{} {} {}",
         env!("BUILD_HOST"),
-        env!("BUILD_TIMESTAMP"),
+        env!("BUILD_SHA"),
+        env!("BUILD_TIMESTAMP")
+    )
+}
+
+/// The four pinned commits it was built from, a line each: a
+/// repository's name and the commit.
+#[must_use]
+pub fn pins() -> String {
+    format!(
+        "X_eTaL {}\nX_eTaL-extensions {}\nX_eTaL-games {}\nX_eTaL-libraries {}",
         env!("XETAL_SHA"),
         env!("EXTENSIONS_SHA"),
         env!("GAMES_SHA"),

@@ -9,7 +9,8 @@
 //     board (class "flat") is hidden then, and is all there is to see
 //     where there is no WebGL
 //   - what the program printed, in a pane that opens when it ends
-// ?flat shows the flat picture only. ?sources opens the sources. ?hold
+// ?flat shows the flat picture only. ?sources, ?help and ?about open
+// those dialogs. ?hold
 // stops the clock (for tests: events are then given by window.game.feed).
 import { board } from '../ext/board.js';
 
@@ -68,7 +69,7 @@ flat.parentElement.addEventListener('click', (e) => {
 // Keys the game may be given; none is a browser's or a system's.
 const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter' };
 window.addEventListener('keydown', (e) => {
-  if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || el('sources').open) return;
+  if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || talking()) return;
   const name = NAMES[e.key] || (/^[a-z0-9]$/.test(e.key) ? e.key : '');
   if (!name) return;
   e.preventDefault();
@@ -123,14 +124,32 @@ function sources() {
 }
 el('open-sources').addEventListener('click', (e) => { e.currentTarget.blur(); sources(); });
 
+// Help: how to play, as the game says it (the mode's help), a
+// paragraph a line. About: what this is; its build facts are the
+// page's own.
+function help() {
+  const into = el('help-text');
+  into.replaceChildren(...wasm.help().split('\n').map((line) => Object.assign(document.createElement('p'), { textContent: line })));
+  el('help').showModal();
+}
+el('open-help').addEventListener('click', (e) => { e.currentTarget.blur(); help(); });
+el('open-about').addEventListener('click', (e) => { e.currentTarget.blur(); el('about').showModal(); });
+// With a dialog open the game is not given keys (Escape closes it).
+const talking = () => !!document.querySelector('dialog[open]');
+
 const ready = () => {
   wasm = window.wasmBindings;
-  el('build').innerHTML = wasm.build();
   const title = wasm.title();
   el('title').textContent = title;
+  el('about-title').textContent = title;
+  el('build').textContent = `Build: ${wasm.build()}`;
+  el('about-build').textContent = wasm.build();
+  el('pins').textContent = wasm.pins().split('\n').join(', ');
   window.game = { feed, start, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player };
   start();
   if (q.has('sources')) sources();
+  if (q.has('help')) help();
+  if (q.has('about')) el('about').showModal();
   document.title = `${title}: ready`;
 };
 if (window.wasmBindings) ready(); else window.addEventListener('TrunkApplicationStarted', ready, { once: true });

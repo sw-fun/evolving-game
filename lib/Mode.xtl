@@ -1,8 +1,10 @@
 ## Mode: the seam every game plugs into (docs/plan.md, The seams). A
-## game is a mode: one rules library exporting the same six names, so
+## game is a mode: one rules library exporting the same eight names, so
 ## one loop plays them all and their results combine in one campaign.
 ##
 ##   mode             its name, as scenarios say it ("walk")
+##   help             how it is played, in a few lines of text: what a
+##                    page or a terminal shows when asked
 ##   n_ew             (scenario, world, seed) -> state: the scenario's
 ##                    file, the world state it starts in, a seed
 ##   state s_tep e    the state after one event (lib/Sim: a tick, a
