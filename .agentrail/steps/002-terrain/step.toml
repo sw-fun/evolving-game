@@ -1,8 +1,9 @@
 number = 2
 slug = "terrain"
-status = "in-progress"
+status = "completed"
 description = "the-look step 2: terrain. The map's heights as one smooth ground worked out i..."
 role = "production"
 context_files = []
 created_at = "2026-11-16T09:04:34"
-commits = []
+completed_at = "2026-11-16T09:53:48"
+commits = ["30547c83ff1ddc139e0e9d06be33a98a95e95a4c"]
