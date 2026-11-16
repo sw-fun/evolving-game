@@ -156,3 +156,133 @@ t_ally field w:r_oad 1
 field w:d_rawRoad 1
 w:d_raw field
 w:d_rawHeights field
+
+"st:" u_se< "Strings"
+# Mode: statuses by name; the world state, names to whole numbers: the
+# empty world is valid and every name in it is 0; set, add, read.
+"md:" u_se< "Mode"
+'{ n -> e_nclose md:s_tatusName n } e_ach md:playing c_at md:won c_at md:lost c_at md:left
+t_ally md:l_ines md:nothing
+md:nothing md:g_et "resource.gold"
+world := ((md:nothing md:s_et ("resource.gold", 5)) md:a_dd ("resource.gold", 2)) md:s_et ("zone.courtyard.wall", 1)
+world md:g_et "resource.gold"
+_ := t:l_ines md:l_ines world
+# Changes are set and rewards are added; an outcome's changes are made
+# however it ended, its rewards gained only when it was won.
+change := md:nothing md:s_et ("zone.courtyard.wall", 0)
+gift := (md:nothing md:s_et ("resource.gold", 10)) md:s_et ("resource.keys", 1)
+_ := t:l_ines md:l_ines world md:m_erge change
+_ := t:l_ines md:l_ines world md:g_ain gift
+_ := t:l_ines md:l_ines world md:a_fter (md:won, change, gift)
+_ := t:l_ines md:l_ines world md:a_fter (md:lost, change, gift)
+# Legal lines and events: a capital word is any value; a key by name.
+legal := "tick S" "key space" "key K" "choose 1 N"
+'{ l -> ("tick S" "key space") md:a_llows sm:p_arse d_isclose l } e_ach "tick 0.05" "key space" "key a" "click 3 4" "jump"
+'{ l -> legal md:a_llows sm:p_arse d_isclose l } e_ach "key a" "choose 1 2" "click 3 4"
+(0 t_ake legal) md:a_llows sm:t_ick 0.05
+# A scenario's fields (fixtures/lights.toml): texts, lists, rules (a
+# word and a number; a word alone is 1; one not there is -1), its zones
+# file and its map.
+lights := "fixtures/lights.toml"
+lights md:f_ield "mode"
+lights md:f_ield "title"
+_ := t:l_ines lights md:l_ist "reward"
+lights md:r_ule ("loss", "moves")
+lights md:r_ule ("win", "all-lit")
+lights md:r_ule ("win", "moves")
+md:z_ones lights
+w:d_raw md:m_ap lights
+# A right scenario has no problem; wrong ones say the file and the
+# field: another mode's, no mode, no title, an unknown zone, a zone
+# whose map is wrong, no file; and a rule that is not a number.
+t_ally "lights" md:p_roblem lights
+u:w_rong := { name -> e_nclose "lights" md:p_roblem "fixtures/" c_at (d_isclose name) c_at ".toml" }
+_ := t:l_ines 'u:w_rong e_ach "take" "bad-scenario-mode" "bad-scenario-title" "bad-scenario-zone" "bad-scenario-map" "nowhere"
+'{ @ -> f_ormat "fixtures/bad-scenario-rule.toml" md:r_ule ("loss", "moves") } []T_RAP '{ err -> []R_ECOVER []E_MESSAGE err }
+
+# The protocol on a game with no clock, written here as a stub: lights
+# in a row, a choice turns one over, won when all are lit, lost when
+# the moves run out. Its state is (lights, moves left, gold); ticks are
+# not legal, so time passing changes nothing.
+u:l_new := { (file, world, seed) ->
+  (f_loor n_umbers " " st:j_oin file md:l_ist "lights", f_loor file md:r_ule ("loss", "moves"), f_loor file md:r_ule ("reward", "gold"))
+}
+u:l_step := { (lit, moves, gold) e ->
+  n := f_loor 2 s_elect sm:n_umbers e
+  (n < 1) | n > t_ally lit ? (lit, moves, gold)
+  ((lit + n = r_ange t_ally lit) m_od 2, moves - 1, gold)
+}
+u:l_legal := { s -> 1 r_eshape e_nclose "choose L N" }
+u:l_status := { (lit, moves, _) -> '& r_/ lit = 1 ? md:won; moves <= 0 ? md:lost; md:playing }
+u:l_view := { (lit, moves, _) -> ((1 + lit) s_elect ".*") c_at " " c_at (f_ormat moves) c_at " moves left" }
+u:l_outcome := { s ->
+  (_, _, gold) := s
+  status := u:l_status s
+  status = md:playing ? (md:left, md:nothing, md:nothing)
+  status = md:lost ? (md:lost, md:nothing, md:nothing)
+  (md:won, md:nothing md:s_et ("fact.lights-lit", 1), md:nothing md:s_et ("resource.gold", gold))
+}
+# Played on a script: the ticks and the click change nothing but the
+# clock; two choices light the row. Then a script that runs out of
+# moves, and one that ends undecided.
+(lclock, lit) := 'u:l_view 'u:l_legal 'u:l_status 'u:l_step md:r_eplay ("tick 0.05" "choose 1 1" "tick 0.05" "click 3 4" "choose 1 3" "choose 1 2", u:l_new (lights, md:nothing, 1))
+lclock
+(_, dark) := 'u:l_view 'u:l_legal 'u:l_status 'u:l_step md:r_eplay ("choose 1 2" "choose 1 2" "choose 1 2" "choose 1 2" "choose 1 2", u:l_new (lights, md:nothing, 1))
+md:s_tatusName u:l_status dark
+
+# The protocol on a turn-based game with two sides, a stub: a pile of
+# stones, each side takes 1 to 3 in turn, whoever takes the last wins.
+# Its state is (pile, whose turn: 1 the player, 2 the keep, who took
+# the last, gold). What is legal depends on the turn: the player
+# chooses; the keep takes on the next tick (as many as leave a multiple
+# of 4, or 1), and a choice made out of turn does nothing.
+u:t_new := { (file, world, seed) -> (f_loor file md:n_umber "pile", 1, 0, f_loor file md:r_ule ("reward", "gold")) }
+u:t_take := { (pile, turn, last, gold) n ->
+  (n < 1) | (n > 3) | n > pile ? (pile, turn, last, gold)
+  (pile - n, 3 - turn, turn * n = pile, gold)
+}
+u:t_step := { s e ->
+  (pile, turn, _, _) := s
+  e sm:i_s "tick" ? s u:t_take 1 m_ax pile m_od 4
+  s u:t_take f_loor 2 s_elect sm:n_umbers e
+}
+u:t_legal := { (_, turn, _, _) -> turn = 1 ? 1 r_eshape e_nclose "choose 1 N"; 1 r_eshape e_nclose "tick S" }
+u:t_status := { (_, _, last, _) -> last = 1 ? md:won; last = 2 ? md:lost; md:playing }
+u:t_view := { (pile, turn, last, _) -> (pile r_eshape "o") c_at " " c_at d_isclose turn s_elect "your turn" "the keep's turn" }
+u:t_outcome := { s ->
+  (_, _, _, gold) := s
+  status := u:t_status s
+  status = md:playing ? (md:left, md:nothing, md:nothing)
+  status = md:lost ? (md:lost, md:nothing md:s_et ("fact.keep-won", 1), md:nothing)
+  (md:won, md:nothing, md:nothing md:s_et ("resource.gold", gold))
+}
+take := "fixtures/take.toml"
+# From 7: you take 3, the keep (on its tick) 1, you take the last 3. A
+# choice in the keep's turn and a tick in yours do nothing.
+(tclock, taken) := 'u:t_view 'u:t_legal 'u:t_status 'u:t_step md:r_eplay ("tick 1" "choose 1 3" "choose 1 3" "tick 1" "choose 1 9" "choose 1 3", u:t_new (take, md:nothing, 1))
+tclock
+
+# Choosing a mode by name: a program holding several modes reads the
+# scenario's mode and plays that one; every mode's outcome is the same
+# kind of thing, so the result is too. An unknown mode is a message.
+u:l_ast := { (_, s) -> s }
+u:r_un := { (file, lines) ->
+  mode := file md:f_ield "mode"
+  mode m_atch "lights" ? u:l_outcome u:l_ast 'u:l_legal 'u:l_status 'u:l_step md:r_esult (lines, u:l_new (file, md:nothing, 1))
+  mode m_atch "take" ? u:t_outcome u:l_ast 'u:t_legal 'u:t_status 'u:t_step md:r_esult (lines, u:t_new (file, md:nothing, 1))
+  "bad-scenario" []S_IGNAL file c_at ": mode: there is no mode " c_at mode
+}
+u:s_ay := { (status, changes, rewards) ->
+  _ := p_rint! "outcome: " c_at md:s_tatusName status
+  _ := t:l_ines '{ l -> e_nclose "  changes " c_at d_isclose l } e_ach md:l_ines changes
+  t_ally t:l_ines '{ l -> e_nclose "  brings " c_at d_isclose l } e_ach md:l_ines rewards
+}
+# The lights won; the stones won, lost (you take 1, the keep 2, you 1,
+# the keep the last 3) and left undecided; a scenario for a mode this
+# program does not hold.
+_ := u:s_ay u:r_un (lights, "choose 1 1" "choose 1 3")
+_ := u:s_ay u:r_un (take, "choose 1 3" "tick 1" "choose 1 3")
+_ := u:s_ay u:r_un (take, "choose 1 1" "tick 1" "choose 1 1" "tick 1")
+_ := u:s_ay u:r_un (take, "choose 1 1" "tick 1")
+u:h_ow := { (status, _, _) -> md:s_tatusName status }
+'{ @ -> u:h_ow u:r_un ("../games/walk/bridge.toml", 0 t_ake "tick 1" "tick 1") } []T_RAP '{ err -> []R_ECOVER []E_MESSAGE err }

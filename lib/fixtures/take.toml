@@ -1,0 +1,8 @@
+mode = ["take"]
+title = ["Take the last stone"]
+zones = ["zones-small.toml"]
+zone = ["battlefield"]
+win = ["last"]
+loss = ["last"]
+reward = ["gold 3"]
+pile = ["7"]

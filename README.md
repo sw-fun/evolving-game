@@ -42,7 +42,8 @@ five waves.
 
 ## Status
 
-Early. There is nothing to play yet: the repository holds the plan,
+Early. There is one small game to play, at the terminal only (a walk
+to the castle gate, below); otherwise the repository holds the plan,
 the process, the tooling (the pinned X_eTaL, the tests, the gate) and
 the first shared libraries (seeded chance, the event loop every game
 runs in, and the world: the battlefield's map with its road found
@@ -111,7 +112,14 @@ X_eTaL-extensions the same way, all four on one X_eTaL; `just extensions`
 builds `bin/xetal-x`, the X_eTaL that loads the blender, digest and
 three extensions (needed to make the 3D models, not to test).
 
-There is no game to run yet.
+One game runs so far, at the terminal: a walker follows the road over
+the bridge to the castle gate ([`games/walk`](games/walk)).
+
+```bash
+just run walk                        # the scripted walk
+just play walk                       # play it: type tick 1, key space; Ctrl-D leaves
+just test-game walk                  # check it against its expected output
+```
 
 ## Documentation
 

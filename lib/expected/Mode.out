@@ -1,0 +1,24 @@
+l:playing : Int
+l:won : Int
+l:lost : Int
+l:left : Int
+l:s_tatusName : Int -> Char
+l:nothing : (Box Char, Int)
+l:g_et : (Eq a, Num b) => (Box a, b) -> a -> b
+l:s_et : Eq a => (Box a, b) -> (a, b) -> (Box a, b)
+l:a_dd : (Eq a, Num b) => (Box a, b) -> (a, b) -> (Box a, b)
+l:m_erge : Eq a => (Box a, b) -> (Box a, b) -> (Box a, b)
+l:g_ain : (Eq a, Num b) => (Box a, b) -> (Box a, b) -> (Box a, b)
+l:l_ines : (Box Char, a) -> Box Char
+l:a_fter : (Eq a, Num b) => (Box a, b) -> (Int, (Box a, b), (Box a, b)) -> (Box a, b)
+l:l_ist : Char -> Char -> Box Char
+l:f_ield : Char -> Char -> Char
+l:r_ule : Char -> (Char, Char) -> Float
+l:n_umber : Char -> Char -> Float
+l:z_ones : Char -> Char
+l:m_ap : Char -> (Char, Int, Int)
+l:p_roblem : Char -> Char -> Char
+l:a_llows : Truthy b => Box Char -> (Char, a, Char) -> b
+l:p_lay : (Any a, Num b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (a -> Char) -> a -> ((Int, Int, Int), a)
+l:r_eplay : (Any a, Num b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (a -> Char) -> (Box Char, a) -> ((Int, Int, Int), a)
+l:r_esult : (Any a, Num b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (Box Char, a) -> ((Int, Int, Int), a)

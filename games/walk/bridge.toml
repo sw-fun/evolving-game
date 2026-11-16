@@ -1,0 +1,19 @@
+# A walk to the gate: the first scenario, and the smallest. One walker
+# comes in at the battlefield's entrance and follows its road over the
+# bridge to the castle gate. Read by Walk.xtl through lib/Mode; every
+# value is a list of strings.
+mode = ["walk"]
+title = ["A walk to the gate"]
+
+# Where: the castle's zones (a path from this file) and the zone.
+zones = ["../../world/zones.toml"]
+zone = ["battlefield"]
+
+# The walker's speed, in tiles a second.
+speed = ["2.5"]
+
+# Won when the walker arrives at the gate; lost when so many seconds
+# have passed first. Winning brings gold.
+win = ["arrive"]
+loss = ["seconds 30"]
+reward = ["gold 5"]

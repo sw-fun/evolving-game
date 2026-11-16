@@ -43,7 +43,14 @@ pieces.
 - `games/<slug>/<Name>.xtl`: one game's rules, one library, named
   unlike the game (on a case-insensitive disk `Walk.xtl` is
   `walk.xtl`). It follows the mode protocol (`lib/Mode`, `docs/plan.md`,
-  The seams) and holds definitions only.
+  The seams) and holds definitions only: `l:mode`, `l:n_ew`,
+  `l:s_tep`, `l:l_egal`, `l:s_tatus`, `l:v_iew`, `l:o_utcome`, as
+  `games/walk/Walking.xtl` does. Keep what follows from the events
+  out of the state (the walker's place is its speed times the time
+  walked); read the scenario only in `l:n_ew`, through `lib/Mode`;
+  return what the world gains in `l:o_utcome` and write it nowhere
+  else. A mode has no loop: programs play it with `md:p_lay` or
+  `md:r_eplay`.
 - `games/<slug>/<slug>.xtl` and `play.xtl`: the scripted game and the
   played game. Programs: they import the rules and define no `l:`
   names.

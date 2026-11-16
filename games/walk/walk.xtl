@@ -1,0 +1,69 @@
+#!/usr/bin/env xetal
+## Walk, scripted: the first mode played through lib/Mode's loop on
+## scripts of events, with no keyboard. The scenario is checked; a short
+## script is played and shown (the view is printed when it changes); a
+## whole walk is played for its result alone; the same script played
+## again ends the same; a walk stopped until the time runs out is lost;
+## and the world decides things: boots make the walker faster, and what
+## a won walk brings changes the world.
+"wk:" u_se< "Walking"
+"md:" u_se< "Mode"
+"t:" u_se< "Text"
+
+scenario := "bridge.toml"
+u:r_epeat := { n line -> n r_eshape e_nclose line }
+## An outcome in words: how it ended, then what it changes in the world
+## and what it brings, a line each.
+u:s_ay := { (status, changes, rewards) ->
+  _ := p_rint! "outcome: " c_at md:s_tatusName status
+  _ := t:l_ines '{ l -> e_nclose "  changes " c_at d_isclose l } e_ach md:l_ines changes
+  t_ally t:l_ines '{ l -> e_nclose "  brings " c_at d_isclose l } e_ach md:l_ines rewards
+}
+u:w_orld := { world -> t:l_ines md:l_ines world }
+
+# The scenario is right for this mode (no message), and not for another.
+t_ally wk:mode md:p_roblem scenario
+"puzzle" md:p_roblem scenario
+
+# Two seconds of walking, a stop, a click (not legal: nothing happens),
+# and on again.
+start := wk:n_ew (scenario, md:nothing, 1)
+_ := t:l_ines wk:l_egal start
+short := "tick 1" "tick 1" "key space" "tick 1" "click 3 4" "key space" "tick 1"
+(clock, state) := 'wk:v_iew 'wk:l_egal 'wk:s_tatus 'wk:s_tep md:r_eplay (short, start)
+# The clock (ticks, milliseconds, events), where the walker is, and the
+# outcome of a walk left unfinished.
+clock
+wk:p_lace state
+_ := u:s_ay wk:o_utcome state
+
+# A whole walk, twenty ticks a second: 37 steps at 2.5 tiles a second
+# are 14.8 seconds, 296 ticks. The script is longer; the loop stops when
+# the walk is won.
+whole := 400 u:r_epeat "tick 0.05"
+(clock2, won) := 'wk:l_egal 'wk:s_tatus 'wk:s_tep md:r_esult (whole, start)
+clock2
+md:s_tatusName wk:s_tatus won
+wk:p_lace won
+_ := u:s_ay wk:o_utcome won
+# The world after it: the gate open, the gold.
+_ := u:w_orld md:nothing md:a_fter wk:o_utcome won
+
+# The same script again ends the same (a replay).
+(clock3, again) := 'wk:l_egal 'wk:s_tatus 'wk:s_tep md:r_esult (whole, start)
+(clock2 m_atch clock3) & (wk:v_iew won) m_atch wk:v_iew again
+
+# Stopped at once and left standing: lost when the 30 seconds are up,
+# and a walk lost brings nothing.
+(clock4, late) := 'wk:l_egal 'wk:s_tatus 'wk:s_tep md:r_esult ((e_nclose "key space") c_at 40 u:r_epeat "tick 1", start)
+clock4
+md:s_tatusName wk:s_tatus late
+_ := u:s_ay wk:o_utcome late
+t_ally md:l_ines md:nothing md:a_fter wk:o_utcome late
+
+# A world with two pairs of boots: a tile a second faster, so the walk
+# is won sooner (37 steps at 3.5 are 212 ticks).
+boots := md:nothing md:s_et ("resource.boots", 2)
+(clock5, fast) := 'wk:l_egal 'wk:s_tatus 'wk:s_tep md:r_esult (whole, wk:n_ew (scenario, boots, 1))
+clock5
+_ := u:w_orld boots md:a_fter wk:o_utcome fast

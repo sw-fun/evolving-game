@@ -1,0 +1,4 @@
+mode = ["lights"]
+title = ["T"]
+zones = ["bad-zones.toml"]
+zone = ["moat"]

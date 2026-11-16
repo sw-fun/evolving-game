@@ -1,0 +1,3 @@
+mode = ["lights"]
+zones = ["zones-small.toml"]
+zone = ["battlefield"]

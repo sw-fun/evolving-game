@@ -194,3 +194,69 @@ Battlefield
 00000000000000000000
 00000000000000000000
 00000000000000000000
+┌→──────────────────────────────┐
+│ ┌→──────┐ ┌→──┐ ┌→───┐ ┌→───┐ │
+│ │playing│ │won│ │lost│ │left│ │
+│ └───────┘ └───┘ └────┘ └────┘ │
+└∊──────────────────────────────┘
+0
+0
+7
+resource.gold 7
+zone.courtyard.wall 1
+resource.gold 7
+zone.courtyard.wall 0
+zone.courtyard.wall 1
+resource.gold 17
+resource.keys 1
+zone.courtyard.wall 0
+resource.gold 17
+resource.keys 1
+resource.gold 7
+zone.courtyard.wall 0
+1 1 0 0 0
+1 1 0
+0
+lights
+Three lights
+gold 2
+keys 1
+4.0
+1.0
+-1.0
+fixtures/zones-small.toml
+S:~.
+.:=G
+..~^
+0
+fixtures/take.toml: mode: this scenario is for the mode take, not lights
+fixtures/bad-scenario-mode.toml: mode: no such list at the top level
+fixtures/bad-scenario-title.toml: title: no such list at the top level
+fixtures/bad-scenario-zone.toml: zone: fixtures/zones-small.toml: zones: there is no zone moat
+fixtures/bad-scenario-map.toml: zone: fixtures/bad-road.toml: tiles: the entrance at row 1, column 1 has no road to the gate
+[]T_ABLE: fixtures/nowhere.toml: No such file or directory (os error 2)
+fixtures/bad-scenario-rule.toml: loss: many is not a number
+.*. 4 moves left
+**. 3 moves left
+*** 2 moves left
+(2, 100, 5)
+.*. 4 moves left
+... 3 moves left
+.*. 2 moves left
+... 1 moves left
+.*. 0 moves left
+lost
+ooooooo your turn
+oooo the keep's turn
+ooo your turn
+ the keep's turn
+(2, 2000, 6)
+outcome: won
+  changes fact.lights-lit 1
+  brings resource.gold 2
+outcome: won
+  brings resource.gold 3
+outcome: lost
+  changes fact.keep-won 1
+outcome: left
+../games/walk/bridge.toml: mode: there is no mode walk

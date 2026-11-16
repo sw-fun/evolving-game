@@ -1,0 +1,25 @@
+#!/usr/bin/env xetal
+## Walk: one walker comes in at the bottom of the battlefield and
+## follows the road over the bridge to the castle gate. It walks while
+## time passes; the space bar stops it and starts it again. Arrive
+## before the 30 seconds are up. The events come from the host: on a
+## page, the clock's ticks and your keys; at the command line, lines on
+## standard input such as "tick 0.05" and "key space". The map is shown
+## whenever the walker has moved; at the end, how it went and what the
+## world gains. The rules are Walking.xtl's, played by lib/Mode's loop.
+"wk:" u_se< "Walking"
+"md:" u_se< "Mode"
+"t:" u_se< "Text"
+
+u:s_ay := { outcome ->
+  (status, _, _) := outcome
+  _ := p_rint! "The walk was " c_at (md:s_tatusName status) c_at "."
+  t_ally t:l_ines md:l_ines md:nothing md:a_fter outcome
+}
+u:p_lay := { file ->
+  wrong := wk:mode md:p_roblem file
+  0 < t_ally wrong ? t_ally t:l_ines e_nclose wrong
+  (_, state) := 'wk:v_iew 'wk:l_egal 'wk:s_tatus 'wk:s_tep md:p_lay wk:n_ew (file, md:nothing, 1)
+  u:s_ay wk:o_utcome state
+}
+_ := u:p_lay "bridge.toml"

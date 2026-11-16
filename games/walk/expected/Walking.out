@@ -1,0 +1,8 @@
+l:mode : Char
+l:n_ew : (Num a, Num b) => (Char, (Box Char, a), b) -> (Char, Char, Int, Float)
+l:s_tep : (Any a, Any b, Any c, Any d) => (a, b, c, Float) -> (Char, Float, d) -> (a, b, c, Float)
+l:l_egal : Any a => a -> Box Char
+l:s_tatus : (Any a, Any b) => (a, b, c, Float) -> Int
+l:p_lace : (Any a, Any b) => (a, b, c, Float) -> c
+l:v_iew : Any a => (a, Char, Int, Float) -> Char
+l:o_utcome : Any a => (Char, a, b, Float) -> (Int, (Box Char, Int), (Box Char, Int))

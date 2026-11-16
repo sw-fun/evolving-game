@@ -13,6 +13,12 @@ library of X_eTaL-libraries at `LIBRARIES_COMMIT`).
 | `Rng.xtl` | chance from a seed, the same everywhere: a word or a fraction for each count of a key `(seed, stream)` (`rg:w_ords`, `rg:u_nit`), a whole number from 1 to k (`rg:b_elow`), an order (`rg:o_rder`), the next counts (`rg:a_fter`). Over X_eTaL-libraries' `Random` (Philox); nothing is remembered, so a game saves only how many it has drawn |
 | `Sim.xtl` | the event loop every game runs in: events as tuples (`sm:t_ick`, `sm:c_lick`, `sm:k_ey`, `sm:c_hoose`, `sm:end`, `sm:b_ad`), their lines written and read back (`sm:l_ine`, `sm:p_arse`), the host's next event with a bad line as an event (`sm:n_ext`), the clock in whole milliseconds (`sm:start`, `sm:a_dvance`), and the loop over a step function on the host's events (`sm:r_un`, `sm:t_race` with the event log) or on a script (`sm:r_eplay`) |
 | `World.xtl` | the castle's ground as arrays: a map read from TOML and checked (`w:r_ead`; `w:p_roblem` gives the message for a wrong one, naming the file and the field), its tiles' kinds and elevations as matrices (`w:t_iles`, `w:h_eights`, `w:kinds`, `w:letters`), places (`w:p_laces`, `w:g_ate`, `w:e_ntrances`), the steps to the gate by a flood and the road from each entrance (`w:s_teps`, `w:r_oad`), text drawings (`w:d_raw`, `w:d_rawRoad`, `w:d_rawHeights`), and the zones and their maps (`w:z_ones`, `w:z_oneTitle`, `w:z_oneFile`, `w:z_oneMap`, `w:z_oneProblems`) |
+| `Mode.xtl` | the protocol every game follows and the loop that plays it: statuses (`md:playing`, `md:won`, `md:lost`, `md:left`), the world state as names to whole numbers (`md:nothing`, `md:g_et`, `md:s_et`, `md:a_dd`, `md:m_erge`, `md:g_ain`, `md:l_ines`), an outcome applied to it (`md:a_fter`), a scenario's fields, rules, zone map and problems (`md:f_ield`, `md:l_ist`, `md:n_umber`, `md:r_ule`, `md:z_ones`, `md:m_ap`, `md:p_roblem`), legal events (`md:a_llows`), and the loop on the host's events or a script (`md:p_lay`, `md:r_eplay`, `md:r_esult`) |
+
+A mode is a library exporting `mode`, `n_ew`, `s_tep`, `l_egal`,
+`s_tatus`, `v_iew` and `o_utcome` (the head of `Mode.xtl` says what
+each is); [`games/walk`](../games/walk) is the first, and `test.xtl`
+holds two stubs, a puzzle with no clock and a game of turns.
 
 The maps are in [`world/`](../world): `zones.toml` (the five zones)
 and a file a map (`battlefield.toml`, where Defend the Bridge is

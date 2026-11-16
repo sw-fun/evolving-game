@@ -1,0 +1,6 @@
+mode = ["lights"]
+title = ["T"]
+zones = ["zones-small.toml"]
+zone = ["battlefield"]
+loss = ["moves many"]
+lights = ["0"]

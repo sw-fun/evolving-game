@@ -1,0 +1,109 @@
+## Walking: the first mode, walk, and the smallest (lib/Mode's protocol). One
+## walker comes in at a map's entrance and follows its road to the gate
+## at a speed from the scenario; the space bar stops and starts it. Won
+## when it arrives; lost when the scenario's seconds run out first.
+##
+## The state is (zone, drawing, road, numbers): the zone's name, the map
+## as text, the road's places (a row each), and the numbers speed
+## (tiles a second), the limit and the time passed and the time walked
+## (whole milliseconds), whether it is stopped, the gold for winning,
+## and the seed. Where the walker is follows from the time walked, so
+## the same events always put it in the same place.
+## Import: "wk:" u_se< "Walking"
+
+"md:" u_se< "Mode"
+"sm:" u_se< "Sim"
+"st:" u_se< "Strings"
+"w:" u_se< "World"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "walk"
+
+### The numbers of a state
+
+h:s_peed := { (_, _, _, n) -> f_irst n }
+h:l_imit := { (_, _, _, n) -> 2 s_elect n }
+h:p_assed := { (_, _, _, n) -> 3 s_elect n }
+h:w_alked := { (_, _, _, n) -> 4 s_elect n }
+h:s_topped := { (_, _, _, n) -> f_loor 5 s_elect n }
+h:g_old := { (_, _, _, n) -> f_loor 6 s_elect n }
+## How many steps the road has, and how far along it the walker is, in
+## tiles: its speed times the seconds walked, no farther than the gate.
+h:s_teps := { (_, _, road, _) -> f_loat (t_ally road) - 1 }
+h:a_long := { s -> (h:s_teps s) m_in (h:s_peed s) * (h:w_alked s) / 1000.0 }
+
+### The protocol
+
+# :: (Num a, Num b) => (Char, (Box Char, a), b) -> (Char, Char, Int, Float)
+## A walk from a scenario's file, in a world, with a seed. Boots in the
+## world (resource.boots) make the walker faster, half a tile a second
+## a pair. A scenario that is wrong is the error bad-scenario.
+l:n_ew := { (file, world, seed) ->
+  map := md:m_ap file
+  speed := (file md:n_umber "speed") + 0.5 * f_loat world md:g_et "resource.boots"
+  n_ot speed > 0 ? "bad-scenario" []S_IGNAL file c_at ": speed: the walker must move"
+  limit := 1000 * file md:r_ule ("loss", "seconds")
+  gold := 0.0 m_ax file md:r_ule ("reward", "gold")
+  (file md:f_ield "zone", w:d_raw map, map w:r_oad 1, speed c_at limit c_at 0.0 c_at 0.0 c_at 0.0 c_at gold c_at f_loat seed)
+}
+# :: (Any a, Any b, Any c, Any d) => (a, b, c, Float) -> (Char, Float, d) -> (a, b, c, Float)
+## The state after an event: a tick's time passes, and is walked unless
+## stopped; the space bar stops and starts.
+l:s_tep := { s e ->
+  (zone, drawing, road, n) := s
+  ms := f_loat sm:m_illis e
+  going := 1.0 - 5 s_elect n
+  e sm:i_s "tick" ? (zone, drawing, road, n + ms * 0.0 0.0 1.0 0.0 0.0 0.0 0.0 + going * 0.0 0.0 0.0 1.0 0.0 0.0 0.0)
+  e sm:i_s "key" ? (zone, drawing, road, n + ((2.0 * going) - 1.0) * 0.0 0.0 0.0 0.0 1.0 0.0 0.0)
+  s
+}
+# :: Any a => a -> Box Char
+## The events a walk takes: time, and the space bar.
+l:l_egal := { s -> "tick S" "key space" }
+# :: (Any a, Any b) => (a, b, c, Float) -> Int
+## Won at the gate; lost when the time is up first; playing until then.
+l:s_tatus := { s ->
+  (h:a_long s) >= h:s_teps s ? md:won
+  ((h:l_imit s) > 0.0) & (h:p_assed s) >= h:l_imit s ? md:lost
+  md:playing
+}
+# :: (Any a, Any b) => (a, b, c, Float) -> c
+## The walker's place, a row and a column: the road's tile it is on.
+l:p_lace := { s ->
+  (_, _, road, _) := s
+  (1 + f_loor h:a_long s) s_elect road
+}
+# :: Any a => (a, Char, Int, Float) -> Char
+## The map with the walker on it (@), and a line saying where it is and
+## how it stands.
+l:v_iew := { s ->
+  (_, drawing, _, _) := s
+  (r, c) := h:p_air l:p_lace s
+  k := 2 s_elect s_hape drawing
+  at := c + k * r - 1
+  flat := r_avel drawing
+  rows := (s_hape drawing) r_eshape ((at - 1) t_ake flat) c_at "@" c_at at d_rop flat
+  text := "\n" st:j_oin '{ i -> e_nclose i s_elect rows } e_ach r_ange f_irst s_hape drawing
+  text c_at "\n" c_at h:s_ays s
+}
+h:p_air := { v -> (f_irst v, 2 s_elect v) }
+h:s_ays := { s ->
+  (r, c) := h:p_air l:p_lace s
+  where := @ f_ormat< "Row {r}, column {c}; {f_loor h:s_teps s} steps to walk, {f_loor h:a_long s} walked."
+  md:won = l:s_tatus s ? where c_at " At the gate."
+  md:lost = l:s_tatus s ? where c_at " Out of time."
+  0 < h:s_topped s ? where c_at " Stopped."
+  where
+}
+# :: Any a => (Char, a, b, Float) -> (Int, (Box Char, Int), (Box Char, Int))
+## How it ended, what it changed and what it brings: a walk still going
+## was left; a walk won opens the zone's gate and brings the scenario's
+## gold.
+l:o_utcome := { s ->
+  (zone, _, _, _) := s
+  status := l:s_tatus s
+  status = md:playing ? (md:left, md:nothing, md:nothing)
+  status = md:lost ? (md:lost, md:nothing, md:nothing)
+  (md:won, md:nothing md:s_et ("zone." c_at zone c_at ".gate-open", 1), md:nothing md:s_et ("resource.gold", h:g_old s))
+}

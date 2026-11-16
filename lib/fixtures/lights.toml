@@ -1,0 +1,8 @@
+mode = ["lights"]
+title = ["Three lights"]
+zones = ["zones-small.toml"]
+zone = ["battlefield"]
+win = ["all-lit"]
+loss = ["moves 4"]
+reward = ["gold 2", "keys 1"]
+lights = ["0", "1", "0"]

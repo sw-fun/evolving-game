@@ -1,0 +1,253 @@
+## Mode: the seam every game plugs into (docs/plan.md, The seams). A
+## game is a mode: one rules library exporting the same six names, so
+## one loop plays them all and their results combine in one campaign.
+##
+##   mode             its name, as scenarios say it ("walk")
+##   n_ew             (scenario, world, seed) -> state: the scenario's
+##                    file, the world state it starts in, a seed
+##   state s_tep e    the state after one event (lib/Sim: a tick, a
+##                    click, a key, a command)
+##   l_egal state     the events it takes now, as lines: "tick S",
+##                    "click X Y", "key space", "choose 1 N"; a capital
+##                    word stands for any value
+##   s_tatus state    0 playing, 1 won, 2 lost, 3 left
+##   v_iew state      what to show, as text
+##   o_utcome state   (status, changes, rewards): how it ended, what it
+##                    changed in the world, what the player gets
+##
+## The loop is here, not in the mode: md:p_lay on the host's events,
+## md:r_eplay on a script. An event the mode does not list as legal
+## never reaches its s_tep; the view is printed when it changes; the
+## loop ends when the status is no longer playing or the events end.
+## A program chooses a mode by importing its library and handing its
+## functions over:
+##   "m:" u_se< "Walk"
+##   'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep md:p_lay m:n_ew (file, world, seed)
+## Every mode's o_utcome has one type, so a program holding several
+## modes picks by a scenario's mode name and gets the same thing back.
+##
+## A world state is what lasts between scenarios: whole numbers under
+## names, (names, values). The names say what they are by their first
+## part: zone.battlefield.gate, resource.gold, fact.bridge-held. A name
+## never set is 0, and the world with nothing set is valid.
+##
+## A scenario is a TOML file of lists of strings: mode, title, zones (a
+## zones file, beside or relative to the scenario), zone, win, loss,
+## reward, and the mode's own tables. What is wrong with one is the
+## error "bad-scenario", its message naming the file and the field.
+## Import: "md:" u_se< "Mode"
+
+"sm:" u_se< "Sim"
+"st:" u_se< "Strings"
+"w:" u_se< "World"
+
+### Status
+
+# :: Int
+## Still being played.
+l:playing := 0
+# :: Int
+## Won.
+l:won := 1
+# :: Int
+## Lost.
+l:lost := 2
+# :: Int
+## Left: the events ended, or the player went, before it was decided.
+l:left := 3
+# :: Int -> Char
+## A status as a word.
+## >> "md:" u_se< "Mode"
+## >> md:s_tatusName 1
+## won
+l:s_tatusName := { n -> d_isclose (1 + n) s_elect "playing" "won" "lost" "left" }
+
+### The world state
+
+# :: (Box Char, Int)
+## The world with nothing set.
+l:nothing := (0 t_ake e_nclose "", 0 r_eshape 0)
+# :: (Eq a, Num b) => (Box a, b) -> a -> b
+## The number under a name, 0 when it was never set.
+## >> "md:" u_se< "Mode"
+## >> (md:nothing md:s_et ("resource.gold", 5)) md:g_et "resource.gold"
+## 5
+## >> md:nothing md:g_et "resource.gold"
+## 0
+l:g_et := { (names, values) name -> f_irst (((names i_ndexOf e_nclose name) = r_ange t_ally names) r_eplicate values) c_at 0 }
+# :: Eq a => (Box a, b) -> (a, b) -> (Box a, b)
+## The world with a name set to a number.
+l:s_et := { (names, values) (name, value) ->
+  keep := n_ot (r_ange t_ally names) = names i_ndexOf e_nclose name
+  ((keep r_eplicate names) c_at e_nclose name, (keep r_eplicate values) c_at value)
+}
+# :: (Eq a, Num b) => (Box a, b) -> (a, b) -> (Box a, b)
+## The world with a number added to a name.
+l:a_dd := { world (name, value) -> world l:s_et (name, value + world l:g_et name) }
+h:e_ach := { f_ world (names, values) ->
+  0 = t_ally names ? world
+  (world f_ (d_isclose f_irst names, f_irst values)) 'f_ h:e_ach (1 d_rop names, 1 d_rop values)
+}
+# :: Eq a => (Box a, b) -> (Box a, b) -> (Box a, b)
+## The world with every name of another set as it is there: changes.
+l:m_erge := { world changes -> world 'l:s_et h:e_ach changes }
+# :: (Eq a, Num b) => (Box a, b) -> (Box a, b) -> (Box a, b)
+## The world with every number of another added: rewards.
+l:g_ain := { world rewards -> world 'l:a_dd h:e_ach rewards }
+# :: (Box Char, a) -> Box Char
+## The world as lines, "name value", in the order the names were last
+## set: what is printed, compared and saved.
+l:l_ines := { (names, values) ->
+  '{ i -> e_nclose (d_isclose f_irst (i - 1) d_rop names) c_at " " c_at f_ormat i s_elect values } e_ach r_ange t_ally names
+}
+
+### Outcomes
+
+# :: (Eq a, Num b) => (Box a, b) -> (Int, (Box a, b), (Box a, b)) -> (Box a, b)
+## The world after an outcome (status, changes, rewards): the changes
+## are made however it ended (a wall lost is lost); the rewards are
+## gained only when it was won.
+l:a_fter := { world (status, changes, rewards) ->
+  changed := world l:m_erge changes
+  n_ot status = l:won ? changed
+  changed l:g_ain rewards
+}
+
+### Scenarios
+
+h:f_ail := { (file, field) what -> "bad-scenario" []S_IGNAL file c_at ": " c_at field c_at ": " c_at what }
+# :: Char -> Char -> Box Char
+## A list of a scenario: file md:l_ist "win". A missing list is the
+## error.
+l:l_ist := { file field ->
+  '{ @ -> file []L_IST field } []T_RAP '{ err -> "bad-scenario" []S_IGNAL []E_MESSAGE err }
+}
+# :: Char -> Char -> Char
+## A scenario's field of one text: file md:f_ield "mode".
+l:f_ield := { file field ->
+  list := file l:l_ist field
+  n_ot 1 = t_ally list ? (file, field) h:f_ail @ f_ormat< "one text is wanted, there are {t_ally list}"
+  d_isclose f_irst list
+}
+## The number a text is, or the error for the field.
+h:n_umber := { (file, field) text ->
+  n := '{ @ -> f_loat n_umbers text } []T_RAP '{ err -> []R_ECOVER 0 r_eshape 0.0 }
+  n_ot 1 = t_ally n ? (file, field) h:f_ail text c_at " is not a number"
+  f_irst n
+}
+# :: Char -> (Char, Char) -> Float
+## The number of a rule in a list of rules, each a word and a number
+## ("seconds 60", "gold 5"): file md:r_ule ("loss", "seconds"). A rule
+## that is not there is -1; a rule alone ("arrive") is 1.
+l:r_ule := { file (field, word) ->
+  rules := '{ r -> e_nclose st:w_ords d_isclose r } e_ach file l:l_ist field
+  named := '{ r -> word m_atch d_isclose f_irst d_isclose r } e_ach rules
+  0 = '+ r_/ named c_at 0 ? -1.0
+  rule := d_isclose f_irst named r_eplicate rules
+  1 = t_ally rule ? 1.0
+  (file, field) h:n_umber d_isclose 2 s_elect rule
+}
+# :: Char -> Char -> Float
+## A scenario's field that is one number.
+l:n_umber := { file field -> (file, field) h:n_umber file l:f_ield field }
+## The directory part of a path, with its last slash.
+h:d_ir := { file -> ('m_ax r_/ 0 c_at w_here file = f_irst "/") t_ake file }
+# :: Char -> Char
+## The scenario's zones file, as a path from where the program runs (in
+## the scenario it is written from the scenario's own directory).
+l:z_ones := { file -> (h:d_ir file) c_at file l:f_ield "zones" }
+# :: Char -> (Char, Int, Int)
+## The map a scenario is played on: its zone's, read and checked. A
+## wrong map is the scenario's error.
+l:m_ap := { file ->
+  zones := l:z_ones file
+  zone := file l:f_ield "zone"
+  '{ @ -> zones w:z_oneMap zone } []T_RAP '{ err ->
+    n_ot "bad-map" m_atch []E_CODE err ? []H_ALT err
+    (file, "zone") h:f_ail []E_MESSAGE err
+  }
+}
+# :: Char -> Char -> Char
+## What is wrong with a scenario for a mode, as a message, or the empty
+## text: mode md:p_roblem file. It must name that mode, have a title,
+## and a zone with a good map.
+l:p_roblem := { mode file ->
+  '{ @ ->
+    named := file l:f_ield "mode"
+    n_ot mode m_atch named ? (file, "mode") h:f_ail "this scenario is for the mode " c_at named c_at ", not " c_at mode
+    _ := file l:f_ield "title"
+    _ := l:m_ap file
+    ""
+  } []T_RAP '{ err ->
+    n_ot "bad-scenario" m_atch []E_CODE err ? []H_ALT err
+    []R_ECOVER []E_MESSAGE err
+  }
+}
+
+### Legal events
+
+## Does a legal line take the event? Its first word is the kind; a key's
+## second word is its name, unless it is a capital word (any key).
+h:t_akes := { e line ->
+  words := st:w_ords line
+  0 = t_ally words ? 0 = 1
+  n_ot e sm:i_s d_isclose f_irst words ? 0 = 1
+  n_ot e sm:i_s "key" ? 0 = 0
+  1 = t_ally words ? 0 = 0
+  name := d_isclose 2 s_elect words
+  (f_irst name) m_ember? []A ? 0 = 0
+  (sm:l_ine e) m_atch "key " c_at name
+}
+# :: Truthy b => Box Char -> (Char, a, Char) -> b
+## Is the event one of the legal lines? legal md:a_llows event.
+## >> "md:" u_se< "Mode"
+## >> "sm:" u_se< "Sim"
+## >> ("tick S" "key space") md:a_llows sm:k_ey " "
+## 1
+## >> ("tick S" "key space") md:a_llows sm:c_lick 3 4
+## 0
+l:a_llows := { legal e -> 0 < '+ r_/ 0 c_at '{ line -> e h:t_akes d_isclose line } e_ach legal }
+
+### The loop
+
+h:s_how := { view_ (last, s) ->
+  v := view_ s
+  v m_atch last ? v
+  _ := p_rint! v
+  v
+}
+## One event applied: the clock moves on; the state only if the mode
+## takes the event.
+h:a_pply := { legal_ step_ (clock, s) e ->
+  n_ot (legal_ s) l:a_llows e ? (clock sm:a_dvance e, s)
+  (clock sm:a_dvance e, s step_ e)
+}
+h:n_ext := { (host, lines) -> host ? sm:n_ext @; sm:p_arse d_isclose f_irst lines }
+h:l_oop := { step_ status_ legal_ view_ (host, lines, last, clock, s) ->
+  shown := 'view_ h:s_how (last, s)
+  0 != status_ s ? (clock, s)
+  (n_ot host) & 0 = t_ally lines ? (clock, s)
+  e := h:n_ext (host, lines)
+  e sm:i_s "end" ? (clock, s)
+  (c2, s2) := (clock, s) 'step_ 'legal_ h:a_pply e
+  'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2)
+}
+# :: (Any a, Num b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (a -> Char) -> a -> ((Int, Int, Int), a)
+## Play a mode on the host's events, from a state its n_ew gave:
+## 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep md:p_lay state. The view is
+## printed at the start and whenever it changes. The clock and the last
+## state; its o_utcome says how it ended.
+l:p_lay := { step_ status_ legal_ view_ s ->
+  'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s)
+}
+# :: (Any a, Num b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (a -> Char) -> (Box Char, a) -> ((Int, Int, Int), a)
+## The same on a script, a list of event lines (a log, a save): ...
+## md:r_eplay (lines, state).
+l:r_eplay := { step_ status_ legal_ view_ (lines, s) ->
+  'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s)
+}
+# :: (Any a, Num b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (a -> Box Char) -> (Box Char, a) -> ((Int, Int, Int), a)
+## The same on a script without printing the views: for a result alone.
+l:r_esult := { step_ status_ legal_ (lines, s) ->
+  '{ s -> "" } 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s)
+}

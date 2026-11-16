@@ -238,6 +238,24 @@ keep them.
   say what is legal; report status; give its view; and at the end
   give an outcome. The shared loop owns events and time; the mode
   owns only its rules.
+  As built (`lib/Mode`, `games/walk`): a mode's library exports
+  `mode` (its name), `n_ew` ((scenario file, world state, seed) to a
+  state), `s_tep` (state and one `lib/Sim` event to a state),
+  `l_egal` (the event lines it takes now, a capital word for any
+  value), `s_tatus` (0 playing, 1 won, 2 lost, 3 left), `v_iew` (text
+  for now; a picture and a scene from Saga 1 step 5) and `o_utcome`
+  ((status, changes, rewards)). The loop is `md:p_lay` (the host's
+  events) or `md:r_eplay` (a script): an event that is not legal never
+  reaches `s_tep`, the view is shown when it changes, and it stops
+  when the status is not playing or the events end. X_eTaL is typed
+  and states differ, so there is no table of modes at run time: a
+  program imports a mode's library and hands its functions to the
+  loop, and a program holding several picks by the scenario's `mode`
+  name; every `o_utcome` has one type, so what comes back is the same
+  whichever was played (pinned in `lib/test.xtl` with a puzzle that
+  has no clock and a two-sided game of turns). A rules library is
+  named unlike its game's program (`Walking.xtl` beside `walk.xtl`):
+  the two names are one file on a disk that ignores case.
 - **Scenario.** A TOML file naming a mode, a zone map, the mode's own
   tables (waves, puzzle wiring, squads) and the win and loss
   conditions. A level is a scenario; a mini-game is a small scenario.
@@ -246,6 +264,12 @@ keep them.
   powered, towers built and how they are programmed), the player's
   inventory and resources, and the facts quests test. A mode reads
   the world state it is given and returns the changes it made.
+  As built: whole numbers under names, `(names, values)`; the first
+  part of a name says what it is (`zone.battlefield.gate-open`,
+  `resource.gold`, `fact.keep-won`); a name never set is 0 and the
+  empty world is valid. Changes are set, rewards are added
+  (`md:a_fter`): changes however the scenario ended, rewards only
+  when it was won.
 - **Outcome.** Won, lost or left, plus the world-state changes and
   the rewards. The campaign applies it; a mode played alone discards
   it.
