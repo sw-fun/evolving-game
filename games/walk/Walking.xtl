@@ -13,6 +13,7 @@
 ## Import: "wk:" u_se< "Walking"
 
 "md:" u_se< "Mode"
+"sk:" u_se< "Sky"
 "sm:" u_se< "Sim"
 "vw:" u_se< "View"
 "w:" u_se< "World"
@@ -34,19 +35,27 @@ h:g_old := { (_, _, _, n) -> f_loor 6 s_elect n }
 h:s_teps := { (_, _, road, _) -> f_loat (t_ally road) - 1 }
 h:a_long := { s -> (h:s_teps s) m_in (h:s_peed s) * (h:w_alked s) / 1000.0 }
 
+## A scenario's stage in its light: the hour its `time` says (lib/Sky),
+## or as it is, unlit, when the scenario says no time.
+h:l_it := { (file, stage) z ->
+  n_ot file md:h_as "time" ? stage
+  vw:l_it (stage, sk:a_t file md:n_umber "time")
+}
+
 ### The protocol
 
 # :: (Num a, Num b, Num c) => (Char, (Box Char, a), b) -> (Char, ((Char, Int, Int), Float, Box Char, Float, Char, c), Int, Float)
 ## A walk from a scenario's file, in a world, with a seed. Boots in the
 ## world (resource.boots) make the walker faster, half a tile a second
-## a pair. A scenario that is wrong is the error bad-scenario.
+## a pair. A scenario with a time (an hour of the day) is lit as that
+## hour is. A scenario that is wrong is the error bad-scenario.
 l:n_ew := { (file, world, seed) ->
   map := md:m_ap file
   speed := (file md:n_umber "speed") + 0.5 * f_loat world md:g_et "resource.boots"
   n_ot speed > 0 ? "bad-scenario" []S_IGNAL file c_at ": speed: the walker must move"
   limit := 1000 * file md:r_ule ("loss", "seconds")
   gold := 0.0 m_ax file md:r_ule ("reward", "gold")
-  (file md:f_ield "zone", vw:s_tage map, map w:r_oad 1, speed c_at limit c_at 0.0 c_at 0.0 c_at 0.0 c_at gold c_at (f_loat seed) c_at 0.0 0.0)
+  (file md:f_ield "zone", (file, vw:s_tage map) h:l_it 0, map w:r_oad 1, speed c_at limit c_at 0.0 c_at 0.0 c_at 0.0 c_at gold c_at (f_loat seed) c_at 0.0 0.0)
 }
 # :: (Any a, Any b, Num c, Any d, Any e, Any f, Num g, Any h, Any i) => (a, ((b, Int, c), Float, d, e, f, g), h, Float) -> (Char, Float, i) -> (a, ((b, Int, c), Float, d, e, f, g), h, Float)
 ## The state after an event: a tick's time passes, and is walked unless

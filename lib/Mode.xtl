@@ -125,6 +125,10 @@ h:f_ail := { (file, field) what -> "bad-scenario" []S_IGNAL file c_at ": " c_at 
 l:l_ist := { file field ->
   '{ @ -> file []L_IST field } []T_RAP '{ err -> "bad-scenario" []S_IGNAL []E_MESSAGE err }
 }
+# :: Truthy a => Char -> Char -> a
+## Does a scenario have a list? file md:h_as "time". For a field a
+## scenario may leave out.
+l:h_as := { file field -> '{ @ -> _ := file []L_IST field; 0 = 0 } []T_RAP '{ err -> []R_ECOVER 0 = 1 } }
 # :: Char -> Char -> Char
 ## A scenario's field of one text: file md:f_ield "mode".
 l:f_ield := { file field ->

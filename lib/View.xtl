@@ -29,6 +29,7 @@
 ## Import: "vw:" u_se< "View"
 
 "t:" u_se< "Text"
+"sk:" u_se< "Sky"
 "st:" u_se< "Strings"
 "tr:" u_se< "Terrain"
 "w:" u_se< "World"
@@ -208,6 +209,23 @@ l:f_arToNear := { (map, _, _, _, _, _) ->
   cols := 1 + ((r_ange n) - 1) m_od 2 s_elect rc
   far := g_rade rows + cols
   o_\ (2 c_at n) r_eshape (far s_elect rows) c_at far s_elect cols
+}
+
+### Light
+
+# :: (Any a, Any b) => ((a, Float, Box Char, Float, Char, b), Float) -> (a, Float, Box Char, Float, Char, b)
+## A stage lit by a light (lib/Sky: an hour's sun, sky and haze):
+## (stage, light) to a stage. Its scene begins with the light's three
+## calls, for a player to light it and cast its shadows by; its flat
+## picture is washed over, tiles and pieces alike, with the sky's color
+## as strongly as the hour is dark.
+l:l_it := { (stage, light) ->
+  (map, frame, tiles, depths, ground, smooth) := stage
+  (color, wash) := sk:t_int light
+  w := f_ormat h:w_hole 3 s_elect frame
+  h := f_ormat h:w_hole 4 s_elect frame
+  over := "<rect width=\"" c_at w c_at "\" height=\"" c_at h c_at "\" fill=\"" c_at color c_at "\" fill-opacity=\"" c_at (f_ormat wash) c_at "\"/>"
+  (map, frame, tiles c_at e_nclose over, depths c_at 1000000.0, (sk:c_alls light) c_at ground, smooth)
 }
 
 ### A view

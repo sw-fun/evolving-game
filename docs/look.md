@@ -126,6 +126,20 @@ The scene is text, a call a line, that names no renderer
   bevels, and light that shows the surfaces' relief (they read pale
   and flat under the player's two plain lights).
 
+- **Light** (step 4), the X_eTaL side: `lib/Sky` works an hour of the
+  day out into a light: the direction to the sun (east at 6, south
+  and 35 degrees up at noon, west at 18; the moon by night), its
+  color (warm when low) and strength, the sky's colors overhead and
+  at the horizon, the haze. `vw:l_it` puts its three calls at the
+  head of a stage's scene and washes the flat picture with the sky's
+  color as the hour darkens. A scenario says its hour (`time`);
+  `games/walk/evening.toml` is the walk at a quarter past five, and
+  its scene and picture are goldens. **Not drawn yet**: the player
+  has no light module (the ask), and stops on a call it does not know
+  (a second ask), so the published walk says no time. The frame rate
+  before and after is to be measured when shadows are drawn; before,
+  on real hardware, it is what the page's corner shows.
+
 ## What exists to build on
 
 - **The board player** (`board.js`, X_eTaL-extensions): the four calls

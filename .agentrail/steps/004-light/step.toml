@@ -1,6 +1,6 @@
 number = 4
 slug = "light"
-status = "pending"
+status = "in-progress"
 description = "the-look step 4: light. A sun with shadows, sky light, ambient occlusion, ton..."
 role = "production"
 context_files = []

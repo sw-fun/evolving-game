@@ -1,0 +1,6 @@
+l:e_levation : Float -> Float
+l:d_aylight : Float -> Float
+l:a_t : Float -> Float
+l:h_ex : Float -> Char
+l:c_alls : Float -> Char
+l:t_int : Float -> (Char, Float)

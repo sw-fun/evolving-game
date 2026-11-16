@@ -351,3 +351,38 @@ small tr:s_tand 3 2 r_eshape 2.5 1.5  3.5 1.5  3.5 2.5
 # only for the water and the built kinds (with their models).
 tr:c_all small
 vw:s_cene vw:e_mpty (vw:s_mooth small, "Smooth")
+
+# Sky: how high the sun is through a day (midnight, dawn, mid-morning,
+# noon, late afternoon, dusk, evening), and how much of the day's light
+# there is.
+"sk:" u_se< "Sky"
+sk:e_levation 0.0 6.0 9.0 12.0 16.5 18.0 20.0
+sk:d_aylight 0.0 6.0 9.0 12.0 16.5 18.0 20.0
+# The light of noon, its 18 numbers: the sun in the south, 35 degrees
+# up (x y z), nearly white, strong; the sky's blue overhead and its
+# paler horizon; a thin pale haze.
+sk:a_t 12.0
+# The direction to the sun is a unit at every hour, and by night the
+# moon is above the horizon.
+hours := 0.0 3.0 6.0 9.0 12.0 15.0 18.0 21.0
+'{ h -> f_loor 0.5 + 1000.0 * '+ r_/ (3 t_ake sk:a_t h) * 3 t_ake sk:a_t h } e_ach hours
+'{ h -> 0.0 <= 2 s_elect sk:a_t h } e_ach hours
+# A color as a page writes it; the scene's calls at noon, toward dusk
+# and at night; the flat picture's wash at those hours (none by day).
+sk:h_ex 1.0 0.5 0.0
+sk:c_alls sk:a_t 12.0
+sk:c_alls sk:a_t 17.25
+sk:c_alls sk:a_t 22.0
+sk:t_int sk:a_t 12.0
+sk:t_int sk:a_t 17.25
+sk:t_int sk:a_t 22.0
+# A stage lit: its scene begins with the light, and its picture ends
+# (before the caption) with the wash over everything.
+atnight := vw:e_mpty (vw:l_it (ground, sk:a_t 22.0), "Night")
+vw:s_cene atnight
+washed := vw:p_icture atnight
+1 = t_ally "fill-opacity=\"0.55\"" st:f_ind washed
+(f_irst "fill-opacity=\"0.55\"" st:f_ind washed) > 'm_ax r_/ "<polygon" st:f_ind washed
+# A scenario may say a time or not.
+"../games/walk/evening.toml" md:h_as "time"
+"../games/walk/bridge.toml" md:h_as "time"

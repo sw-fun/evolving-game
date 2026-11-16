@@ -38,6 +38,7 @@ draws; it works out nothing about the game.
 | `Sim` | events as tuples, their lines written and read back, the host's next event (a bad line is an event, not a crash), a clock in whole milliseconds |
 | `World` | maps as two matrices (kinds, heights) read from TOML and checked; the road found by a flood from the gate; zones |
 | `Mode` | the protocol every game follows, the loop that plays any of them, the world state (names to whole numbers), outcomes, scenarios |
+| `Sky` | the light of an hour of the day (sun, sky, haze) as numbers, the scene's `sun`, `sky` and `fog` calls, the flat picture's wash |
 | `Terrain` | a map's ground as one smooth mesh (slopes, banks, the river's bed), the height under a point, the scene's `terrain` call |
 | `View` | a view made into text, an isometric SVG picture (with the click's way back to a tile) and a scene; a stage of tiles or a smooth one |
 

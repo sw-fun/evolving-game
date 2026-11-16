@@ -16,7 +16,11 @@ for f in *.xtl; do
   name="${f%.xtl}"; exp="expected/$name"
   input=/dev/null; [ -f "$exp.in" ] && input="$exp.in"
   "$xetal" run --seed 1 "$f" <"$input" >"$tmp/out" 2>"$tmp/err" || true
-  if [ "${XETAL_BLESS:-}" = 1 ]; then cp "$tmp/out" "$exp.out"; echo "blessed: lib/$name"; continue; fi
+  if [ "${XETAL_BLESS:-}" = 1 ]; then
+    # an error is never blessed: the golden would be what was printed before it
+    if [ -s "$tmp/err" ]; then echo "FAIL: lib/$name (not blessed)"; cat "$tmp/err"; fail=1; continue; fi
+    cp "$tmp/out" "$exp.out"; echo "blessed: lib/$name"; continue
+  fi
   if [ -s "$tmp/err" ]; then echo "FAIL: lib/$name"; cat "$tmp/err"; fail=1
   elif [ ! -f "$exp.out" ]; then echo "FAIL: lib/$name: no $exp.out (XETAL_BLESS=1 to create)"; fail=1
   elif diff -u "$exp.out" "$tmp/out"; then echo "ok: lib/$name"

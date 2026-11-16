@@ -1,0 +1,95 @@
+## Sky: the light of a time of day, worked out as numbers (docs/look.md):
+## where the sun is and what color it has, the sky's two colors, the
+## haze, and how dark the flat picture should be. A scene's three calls
+## (sun, sky, fog) are written from them, and nothing here is drawn: a
+## player lights the scene by them, and casts the shadows.
+##
+## The time is an hour of the day, 0 to 24. The sun rises in the east
+## at 6, stands in the south at 12 (a northern castle, in winter: it
+## climbs to 35 degrees and no higher) and sets in the west at 18;
+## below the horizon the moon lights the scene from the other side,
+## dimly. x is east, z south, y up, as in every scene.
+##
+## A light is 18 numbers: the direction to the sun (x y z, a unit), its
+## color (red green blue, 0 to 1) and strength; the sky's color
+## overhead, its color at the horizon, and its strength; the haze's
+## color and how thick it is (the part of the light lost in a tile).
+## Import: "sk:" u_se< "Sky"
+
+## The highest the sun climbs, in degrees.
+h:noon := 35.0
+h:d_eg := { a -> a * (p_i @) / 180.0 }
+## A number kept between 0 and 1.
+h:u_nit := { v -> 0.0 m_ax 1.0 m_in v }
+## Between two rows of numbers, t of the way from a to b.
+h:m_ix := { (a, b) t -> a + t * b - a }
+
+### Colors (red green blue)
+
+h:low := 1.0 0.62 0.35
+h:high := 1.0 0.97 0.9
+h:moon := 0.55 0.65 0.9
+h:day := 2 3 r_eshape 0.35 0.52 0.8  0.74 0.8 0.86
+h:dusk := 2 3 r_eshape 0.22 0.24 0.42  0.93 0.6 0.42
+h:night := 2 3 r_eshape 0.02 0.03 0.08  0.06 0.08 0.14
+
+### The light
+
+# :: Float -> Float
+## How high the sun is at an hour, in degrees: 0 at 6 and 18, 35 at
+## noon, as far below the horizon at midnight.
+## >> "sk:" u_se< "Sky"
+## >> sk:e_levation 12.0
+## 35.0
+l:e_levation := { hour -> h:noon * s_in h:d_eg 15.0 * hour - 6.0 }
+# :: Float -> Float
+## How much of the day's light there is at an hour, 0 (night) to 1
+## (the sun well up): it grows from 6 degrees under the horizon to 12
+## over it.
+l:d_aylight := { hour -> h:u_nit (6.0 + l:e_levation hour) / 18.0 }
+# :: Float -> Float
+## The light of an hour: 18 numbers (the head of this file says which).
+l:a_t := { hour ->
+  el := l:e_levation hour
+  up := el >= 0.0
+  az := h:d_eg 15.0 * hour - 6.0
+  e := h:d_eg a_bs el
+  side := (2.0 * f_loat up) - 1.0
+  to := (side * (c_os e) * c_os az) c_at (s_in e) c_at side * (c_os e) * s_in az
+  warm := (h:low, h:high) h:m_ix h:u_nit el / 30.0
+  color := ((f_loat up) * warm) + (f_loat n_ot up) * h:moon
+  strength := ((f_loat up) * 0.6 + 2.4 * h:u_nit el / 15.0) + (f_loat n_ot up) * 0.25
+  d := l:d_aylight hour
+  full := h:u_nit (el - 12.0) / 18.0
+  sky := (((h:night, h:dusk) h:m_ix d), h:day) h:m_ix full
+  top := f_irst sky
+  horizon := 2 s_elect sky
+  to c_at color c_at strength c_at top c_at horizon c_at (0.25 + 0.75 * d) c_at (0.9 * horizon) c_at 0.014 - 0.008 * full
+}
+
+### The scene's calls
+
+h:f_ine := { v -> (f_loat f_loor 0.5 + 1000.0 * v) / 1000.0 }
+# :: Float -> Char
+## A color (red green blue, 0 to 1) as a page writes it.
+## >> "sk:" u_se< "Sky"
+## >> sk:h_ex 1.0 0.5 0.0
+## #ff8000
+l:h_ex := { rgb -> "#" c_at (1 + r_avel o_\ 2 3 r_eshape ((f_loor 0.5 + 255.0 * h:u_nit rgb) d_iv 16) c_at (f_loor 0.5 + 255.0 * h:u_nit rgb) m_od 16) s_elect "0123456789abcdef" }
+# :: Float -> Char
+## A light as a scene's calls, a line each:
+##   sun(nums('x y z', 3)[0], 'color', strength)   the direction to it
+##   sky('overhead', 'horizon', strength)
+##   fog('color', thickness)
+l:c_alls := { light ->
+  sun := "sun(nums('" c_at (f_ormat h:f_ine 3 t_ake light) c_at "', 3)[0], '" c_at (l:h_ex 3 t_ake 3 d_rop light) c_at "', " c_at (f_ormat h:f_ine 7 s_elect light) c_at ")\n"
+  sky := "sky('" c_at (l:h_ex 3 t_ake 7 d_rop light) c_at "', '" c_at (l:h_ex 3 t_ake 10 d_rop light) c_at "', " c_at (f_ormat h:f_ine 14 s_elect light) c_at ")\n"
+  sun c_at sky c_at "fog('" c_at (l:h_ex 3 t_ake 14 d_rop light) c_at "', " c_at (f_ormat h:f_ine 18 s_elect light) c_at ")\n"
+}
+
+### The flat picture
+
+# :: Float -> (Char, Float)
+## What the flat picture is washed with to match: the sky's color
+## overhead, and how strongly (0 by day, most of half at night).
+l:t_int := { light -> (l:h_ex 3 t_ake 7 d_rop light, h:f_ine 0.55 * 1.0 - h:u_nit ((14 s_elect light) - 0.25) / 0.75) }

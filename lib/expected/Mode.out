@@ -12,6 +12,7 @@ l:g_ain : (Eq a, Num b) => (Box a, b) -> (Box a, b) -> (Box a, b)
 l:l_ines : (Box Char, a) -> Box Char
 l:a_fter : (Eq a, Num b) => (Box a, b) -> (Int, (Box a, b), (Box a, b)) -> (Box a, b)
 l:l_ist : Char -> Char -> Box Char
+l:h_as : Truthy a => Char -> Char -> a
 l:f_ield : Char -> Char -> Char
 l:r_ule : Char -> (Char, Char) -> Float
 l:n_umber : Char -> Char -> Float

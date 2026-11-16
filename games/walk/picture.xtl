@@ -23,3 +23,9 @@ gate := u:a_fter 296
 vw:c_aption gate
 vw:s_cene gate
 vw:p_icture gate
+# The same walk toward evening (evening.toml says the hour, 17.25): the
+# scene's light, low and warm from the south-west, before its ground,
+# and the flat picture washed with the sky's color.
+late := wk:v_iew wk:n_ew ("evening.toml", md:nothing, 1)
+vw:s_cene late
+vw:p_icture late

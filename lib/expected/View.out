@@ -4,6 +4,7 @@ l:t_ile : (Any a, Num b, Any c, Any d, Any e, Num f) => ((a, Int, b), Float, c, 
 l:s_tage : (Any a, Num b, Num c) => (a, Int, b) -> ((a, Int, b), Float, Box Char, Float, Char, c)
 l:s_mooth : (Any a, Num b, Num c) => (a, Int, b) -> ((a, Int, b), Float, Box Char, Float, Char, c)
 l:f_arToNear : (Any a, Any c, Any d, Any e, Any f, Any g, Any h) => ((a, b, c), d, e, f, g, h) -> Int
+l:l_it : (Any a, Any b) => ((a, Float, Box Char, Float, Char, b), Float) -> (a, Float, Box Char, Float, Char, b)
 l:e_mpty : (Any a, Any b) => (a, b) -> (a, Box Char, Box Char, Float, b)
 l:o_ne : (Any a, Any b, Any c, Any e) => (a, b, c, d, e) -> (a, Box b, Box c, d, e)
 l:c_aption : (Any a, Any b, Any c, Any d, Any e) => (a, b, c, d, e) -> e
