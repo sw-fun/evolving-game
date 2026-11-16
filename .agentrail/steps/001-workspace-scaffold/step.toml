@@ -1,0 +1,8 @@
+number = 1
+slug = "workspace-scaffold"
+status = "pending"
+description = "foundations step 1: scaffold the repository as X_eTaL-games does (read its sc..."
+role = "production"
+context_files = []
+created_at = "2026-11-15T15:23:53"
+commits = []

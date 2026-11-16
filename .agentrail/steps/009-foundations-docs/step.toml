@@ -1,0 +1,8 @@
+number = 9
+slug = "foundations-docs"
+status = "pending"
+description = "foundations step 9: close the saga. Read CLAUDE.md and docs/plan.md first. TD..."
+role = "production"
+context_files = []
+created_at = "2026-11-15T15:28:36"
+commits = []

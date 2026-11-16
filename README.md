@@ -1,0 +1,161 @@
+# Evolving Game
+
+(A working title.)
+
+Evolving Game is a family of small castle-siege games that share one
+world and grow into one larger game: what would a tower defense, a
+logic puzzle, a tactics game and an explorer look like if they were
+all the same castle, written in an array language, where every tower
+against every creep is one table?
+
+It is written in
+[X_eTaL](https://github.com/softwarewrighter/X_eTaL), the
+eXperimental Extensible Typed Array Language, and meant to be played
+in a browser: X_eTaL compiled to WebAssembly, the castle drawn in 3D
+by a Three.js player through
+[X_eTaL-extensions](https://github.com/softwarewrighter/X_eTaL-extensions).
+The rules, the world, the pictures and even the descriptions of the
+3D models are X_eTaL; nothing about the game is computed in another
+language.
+
+Each game is small and playable by itself. Each is also a level or a
+mini-game of one campaign, with a world map, levels and quests, in
+which what you do in one game changes the castle the others are
+played in: a puzzle solved in the keep powers the towers a defense
+level starts with; a wall lost in a siege is a ruin to explore later.
+
+## The games
+
+| Game | Kind | What is distinctive |
+| ---- | ---- | ------------------- |
+| Castle Defense | tower defense, resources | enemies can destroy walls, opening new invasion routes |
+| Rune Keep | logic puzzle | rune networks work like logic circuits: gates, state, timing |
+| Dragonfire Tactics | turn-based squad tactics | fire spreads, ice blocks, lightning chains, wind bends shots |
+| Siege Automata | programmable defenses | you program the towers: by hand, by rules, or in X_eTaL |
+| Siege Engineer | physics puzzle | topple a tower or break a wall's support with limited shots |
+| The Shattered Kingdom | exploration | the same castle before, during and after the siege |
+| Siege Commander | real-time strategy | attack or defend across several elevations |
+
+The first to be built is Castle Defense, starting with one level,
+Defend the Bridge: one map, one road, three towers, three enemies,
+five waves.
+
+## Status
+
+Planning. There is nothing to play yet: the repository holds the
+plan, the process and the first saga's steps, and no code.
+[`docs/plan.md`](docs/plan.md) has the goal, the decisions made so
+far, the questions still open, and the roadmap.
+
+## How it is made
+
+- **Rules in X_eTaL.** A game is one rules library and its data
+  (TOML): entities are rows of a matrix, components its columns, and
+  a rule is one expression over all of them.
+- **One world.** The castle is five zones (battlefield, outer walls,
+  courtyard, inner keep, cliffs and tunnels) kept as arrays: a grid
+  of tiles with heights, with larger terrain worked out from a seed.
+- **Assets from X_eTaL.** Each tower, creature and tile is described
+  in X_eTaL as parts and named clips (idle, walk, fire, hit); the
+  program drives [Blender](https://www.blender.org) in batch and gets
+  back a 3D model a piece, as the
+  [tower defense pieces](https://softwarewrighter.github.io/X_eTaL-extensions/blender/td/)
+  of X_eTaL-extensions were made.
+- **Drawn twice from one state.** A flat picture (SVG) and a 3D
+  scene, both written by the game; the page's player draws the scene
+  and decides nothing, as in the
+  [live procedural city](https://softwarewrighter.github.io/X_eTaL-extensions/three/live/).
+- **Repeatable.** The same level, seed and events always give the
+  same game, so a list of events is a replay, a test and a save.
+
+## Prerequisites
+
+- [Rust](https://rustup.rs) (stable, via rustup) and
+  [`just`](https://github.com/casey/just) (`brew install just` or
+  `cargo install just`): to build the pinned X_eTaL the games run on.
+- For the browser: the WebAssembly target and
+  [trunk](https://trunkrs.dev):
+  `rustup target add wasm32-unknown-unknown`, then `brew install trunk`
+  or `cargo install trunk`.
+- For the scripts: [uv](https://docs.astral.sh/uv/) (the Python
+  environment is made with `uv venv`).
+- To make the 3D models (optional; not needed to play or to test):
+  [Blender](https://www.blender.org) 5.1.
+- For the pre-commit gate (maintainers): `sw-checklist` and
+  `sw-markdown-checker`.
+
+## Quick Start
+
+There is nothing to run yet. The `just` recipes (build X_eTaL, run
+and play a game, serve the page, the gate) come with the first step
+of the plan, and this section will list them with what each shows.
+
+## Documentation
+
+- [`docs/plan.md`](docs/plan.md) -- the goal, what the project builds
+  on, the decisions, how the games combine, the layout, the roadmap
+  and the open questions.
+- [`docs/desktop.md`](docs/desktop.md) -- the design of the desktop
+  version (installers for Linux, macOS and Windows; not built yet).
+- [`docs/research.txt`](docs/research.txt) -- the design conversation
+  the game ideas came from (archival, not normative).
+- [`CLAUDE.md`](CLAUDE.md) (also `AGENTS.md`) -- the rules the code is
+  written by and the agent workflow.
+
+## Architecture
+
+```
+TOML data, events -> rules (a mode) -> state -> picture (SVG) and scene -> the page
+```
+
+Shared X_eTaL libraries in `lib/` (the event loop and seeded chance,
+the world, the mode protocol every game follows, views, the
+campaign); one directory a game under `games/`; the combined game in
+`campaign/`; the asset descriptions in `assets/`; the page in `web/`.
+X_eTaL, X_eTaL-extensions and X_eTaL-games are used at pinned,
+known-good commits. See [`docs/plan.md`](docs/plan.md) (Layout, The
+seams that make the games one game).
+
+## Development
+
+Development is test-driven and tracked with agentrail sagas; see
+[`CLAUDE.md`](CLAUDE.md) (also `AGENTS.md`) for the agent workflow and
+rules.
+
+```bash
+agentrail status          # the active saga and its steps
+agentrail next            # the current step and its context
+agentrail plan            # the saga's plan
+```
+
+## Related Projects
+
+- [X_eTaL](https://github.com/softwarewrighter/X_eTaL) -- the
+  language: a terse, statically typed, functional array language in
+  the APL tradition, implemented in Rust.
+- [X_eTaL-games](https://github.com/softwarewrighter/X_eTaL-games) --
+  small games written in X_eTaL, each teaching one array-programming
+  lesson; its tower defense is where Castle Defense starts from
+  ([live catalog](https://softwarewrighter.github.io/X_eTaL-games/)).
+- [X_eTaL-extensions](https://github.com/softwarewrighter/X_eTaL-extensions)
+  -- native and browser extensions for X_eTaL: Blender in batch,
+  interactive 3D with Three.js, voxel worlds, sound.
+- [snowflow_demo-fork](https://github.com/softwarewrighter/snowflow_demo-fork)
+  -- an endless snowy world in the browser whose terrain and gameplay
+  are X_eTaL.
+- [avoxelgame-fork](https://github.com/softwarewrighter/avoxelgame-fork)
+  -- reading notes on a voxel game written in Dyalog APL.
+
+## Links
+
+- Blog: [Software Wrighter Lab](https://software-wrighter-lab.github.io/)
+- Discord: [Join the community](https://discord.com/invite/Ctzk5uHggZ)
+- YouTube: [Software Wrighter](https://www.youtube.com/@SoftwareWrighter)
+
+## Copyright
+
+Copyright (c) 2026 Michael A Wright
+
+## License
+
+MIT. See [`LICENSE`](LICENSE) and [`COPYRIGHT`](COPYRIGHT).
