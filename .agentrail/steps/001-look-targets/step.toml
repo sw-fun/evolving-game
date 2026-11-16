@@ -1,6 +1,6 @@
 number = 1
 slug = "look-targets"
-status = "pending"
+status = "in-progress"
 description = "the-look step 1: the targets. Write docs/look.md: the look wanted in the user..."
 role = "production"
 context_files = []

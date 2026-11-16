@@ -12,7 +12,9 @@
 // taken from another site, and only then). Then a
 // screen capture of the walker on the bridge is written to
 // images/screencapture.png.
-//   scripts/browser-test.mjs [--no-capture] [--dir pages] [--url https://...]
+//   scripts/browser-test.mjs [--no-capture] [--dir pages] [--url https://...] [--look NAME]
+// --look NAME writes the capture to images/look/NAME.png instead (the
+// look's before and after pictures, docs/look.md).
 // --dir tests another built directory (pages/, as it will be served);
 // --url a deployed site instead (no local server).
 import { spawn } from "node:child_process";
@@ -167,8 +169,9 @@ if (capture) {
   await page("(() => { for (let i = 0; i < 212; i++) window.game.feed('tick 0.05'); return 1; })()");
   await sleep(600);
   const shot = await send("Page.captureScreenshot", { format: "png" });
-  mkdirSync(join(root, "images"), { recursive: true });
-  writeFileSync(join(root, "images/screencapture.png"), Buffer.from(shot.data, "base64"));
+  const to = arg("--look") ? `images/look/${arg("--look")}.png` : "images/screencapture.png";
+  mkdirSync(join(root, dirname(to)), { recursive: true });
+  writeFileSync(join(root, to), Buffer.from(shot.data, "base64"));
   check((await caption()).startsWith("Row 10, column 7"), "the capture shows the walker on the bridge (images/screencapture.png)");
 }
 

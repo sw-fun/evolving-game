@@ -10,7 +10,7 @@ import re
 import sys
 
 root = pathlib.Path(__file__).resolve().parent.parent
-DOCS = ["README.md", "lib/README.md", "assets/README.md", "docs/architecture.md"]
+DOCS = ["README.md", "lib/README.md", "assets/README.md", "docs/architecture.md", "docs/look.md"]
 
 
 def recipes(justfile):

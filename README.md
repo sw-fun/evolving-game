@@ -161,6 +161,8 @@ it, and a click on a tile makes the game say what the tile is. Add
 - [`docs/architecture.md`](docs/architecture.md) -- what exists and how
   it fits together: the flow, the libraries, a game as a mode, the
   page, the assets, the tests.
+- [`docs/look.md`](docs/look.md) -- what the game is to look like, how
+  that is measured, and what has to be added to get there.
 - [`docs/desktop.md`](docs/desktop.md) -- the design of the desktop
   version (installers for Linux, macOS and Windows; not built yet).
 - [`docs/style.md`](docs/style.md) -- how the game's X_eTaL is

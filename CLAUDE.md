@@ -385,6 +385,8 @@ Read before working:
   (unlikely).
 - `docs/architecture.md` -- the libraries and the flow as built
   (written at the end of Saga 1).
+- `docs/look.md` -- the look wanted, its test scenes and budgets, the
+  scene calls to add (Saga 2).
 - `docs/agentrail-asks.md` -- what this repository needs from
   agentrail.
 - `docs/desktop.md` -- the desktop version's design (built later);
