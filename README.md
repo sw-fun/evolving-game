@@ -2,6 +2,12 @@
 
 (A working title.)
 
+[![The walk: a walker on the bridge of an isometric battlefield, the castle wall and gate beyond](images/screencapture.png)](https://sw-fun.github.io/evolving-game/)
+
+Play it in a browser: the
+[live demo](https://sw-fun.github.io/evolving-game/) (the picture
+above is a link to it).
+
 Evolving Game is a family of small castle-siege games that share one
 world and grow into one larger game: what would a tower defense, a
 logic puzzle, a tactics game and an explorer look like if they were
@@ -43,8 +49,11 @@ five waves.
 
 ## Status
 
-Early. There is one small game to play, at the terminal and in a
-browser (a walk to the castle gate, below); otherwise the repository holds the plan,
+Early. There is one small game to play, in the
+[live demo](https://sw-fun.github.io/evolving-game/), at the terminal
+and in a browser of your own (a walk to the castle gate, below): the
+walker follows the road by itself, the space bar stops and starts it,
+and a click on a tile makes the game say what the tile is; otherwise the repository holds the plan,
 the process, the tooling (the pinned X_eTaL, the tests, the gate) and
 the first shared libraries (seeded chance, the event loop every game
 runs in, and the world: the battlefield's map with its road found
@@ -133,6 +142,7 @@ just extensions                      # once: the pinned X_eTaL-extensions (its 3
 just web                             # build the page into web/dist
 just serve                           # http://127.0.0.1:8480/ until Ctrl-C
 just browser-test                    # the page tested in headless Chrome
+just pages                           # the site as it is published, into pages/
 ```
 
 The walker follows the road by itself; the space bar stops and starts

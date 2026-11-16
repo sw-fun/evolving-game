@@ -310,6 +310,16 @@ keep them.
   most of it is writing the picture's 56 KB of SVG, which a later step
   can skip when the 3D view is the one shown. A real browser's frame
   rate is to be read from the page's corner when the user tries it.
+  The live demo (step 7), https://sw-fun.github.io/evolving-game/:
+  `just pages` builds the site into the ignored `pages/` and
+  `scripts/browser-test.mjs --dir pages` tests it served under a path;
+  `just publish` pushes it as the only commit of `gh-pages` and starts
+  `.github/workflows/pages.yml`, which deploys that branch unchanged
+  (the repository's Pages source is GitHub Actions; nothing is built
+  on GitHub; the actions are pinned to full commits);
+  `scripts/browser-test.mjs --url` tests the deployed site. The footer
+  names the build (commit, host, time) and the four pins; a pane shows
+  the game's sources as they are, plain until the packed build of D17.
 - **Save.** The world state, the campaign position and, for a level
   in progress, the scenario, seed and events so far.
 
