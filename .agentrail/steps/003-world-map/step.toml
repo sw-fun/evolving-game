@@ -1,6 +1,6 @@
 number = 3
 slug = "world-map"
-status = "pending"
+status = "in-progress"
 description = "foundations step 3: the world, lib/World.xtl. Tiles with a kind (ground, wate..."
 role = "production"
 context_files = []

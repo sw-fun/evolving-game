@@ -1,0 +1,3 @@
+name = ["Heights digit"]
+tiles = ["S:~.", ".:=G", "..~^"]
+heights = ["0000", "00x1", "0002"]

@@ -44,8 +44,9 @@ five waves.
 
 Early. There is nothing to play yet: the repository holds the plan,
 the process, the tooling (the pinned X_eTaL, the tests, the gate) and
-the first shared libraries (seeded chance and the event loop every
-game runs in).
+the first shared libraries (seeded chance, the event loop every game
+runs in, and the world: the battlefield's map with its road found
+from the gate).
 [`docs/plan.md`](docs/plan.md) has the goal, the decisions made so
 far, the questions still open, and the roadmap.
 
@@ -135,7 +136,8 @@ TOML data, events -> rules (a mode) -> state -> picture (SVG) and scene -> the p
 Shared X_eTaL libraries in `lib/` (the event loop and seeded chance,
 the world, the mode protocol every game follows, views, the
 campaign); one directory a game under `games/`; the combined game in
-`campaign/`; the asset descriptions in `assets/`; the page in `web/`.
+`campaign/`; the castle's maps in `world/`; the asset descriptions in
+`assets/`; the page in `web/`.
 X_eTaL, X_eTaL-extensions and X_eTaL-games are used at pinned,
 known-good commits. See [`docs/plan.md`](docs/plan.md) (Layout, The
 seams that make the games one game).

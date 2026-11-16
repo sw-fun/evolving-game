@@ -52,7 +52,8 @@ Decided (docs/plan.md):
   Outcome, so the games combine into one campaign later. This saga
   defines those seams with a minimal walk mode.
 - X_eTaL, the extensions and the games repository at pinned commits
-  (XETAL_COMMIT, EXTENSIONS_COMMIT, GAMES_COMMIT), cloned into work/.
+  (XETAL_COMMIT, EXTENSIONS_COMMIT, GAMES_COMMIT, LIBRARIES_COMMIT),
+  all on one X_eTaL, cloned into work/.
 
 Rules: strict TDD, goldens are the spec, a bad input is a message
 never a crash, docs ASCII-only, American spellings, gate before
@@ -63,7 +64,7 @@ commit, commit .agentrail with the work.
 1. workspace-scaffold -- the pins, scripts/xetal.sh, bin/xetal and
    xetal-x, justfile, gate, games/_template, a first golden,
    docs/style.md, .gitignore.
-2. sim-core -- lib/Rng.xtl, lib/Sim.xtl (state, the event loop over
+2. sim-core -- lib/Rng.xtl (over X_eTaL-libraries' Random), lib/Sim.xtl (state, the event loop over
    []E_VENT, the event log), lib/test.xtl; determinism goldens.
 3. world-map -- lib/World.xtl: tiles, elevation, zones, maps and
    roads from TOML with named errors, the road by a flood, the bridge
@@ -72,12 +73,15 @@ commit, commit .agentrail with the work.
    outcome; games/walk; replay golden; stub puzzle and turn modes.
 5. view-and-iso -- lib/View.xtl: the isometric map and its inverse,
    the SVG picture and the scene from one state; goldens of both.
-6. castle-assets -- assets/Castle.xtl on Bpy.xtl: first tiles and a
-   walker with clips; just assets; manifest; script and clips goldens.
-7. web-shell -- web/: games/walk/play.xtl as WebAssembly in the page,
-   the Three.js player drawing the scene with the pieces; just serve;
-   a browser test.
-8. pages -- scripts/build-pages.sh, the footer with build info and
-   pins, the live demo published and linked from the README.
+6. web-shell -- web/: games/walk/play.xtl as WebAssembly in the page,
+   the Three.js player drawing the scene with plain shapes until the
+   pieces exist; just serve; a browser test; images/screencapture.png.
+7. pages -- scripts/build-pages.sh, the footer with build info and
+   pins, the live demo published (Pages deploys by an Actions workflow
+   that ships the locally built gh-pages branch unchanged), the
+   screen capture as a thumbnail early in the README linking to it.
+8. castle-assets -- assets/Castle.xtl on Bpy.xtl: first tiles and a
+   walker with clips; just assets; manifest; script and clips goldens;
+   the page then draws the pieces and the demo is published again.
 9. foundations-docs -- docs/architecture.md, README current, the
    retrospective in docs/plan.md.

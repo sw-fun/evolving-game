@@ -1,0 +1,247 @@
+## World: the castle's ground as arrays (docs/plan.md D7, D8). A map is
+## a grid of tiles, north at the top; a tile has a kind and an elevation
+## (a whole number, in steps of half a tile's width). Maps are TOML
+## files of rows of text, read and checked here: a file that is wrong is
+## a named error ("bad-map") whose message says the file, the field and
+## what is wrong, for a game to show; it is never a crash and never
+## quietly repaired.
+##
+## A map is a tuple (name, kinds, heights): kinds and heights are
+## matrices of the same shape, a row a row of tiles, a kind a number
+## into w:letters and w:kinds. Every rule over a map is an expression
+## over those matrices. A zone that needs depth later (tunnels, a wall
+## breached cell by cell) puts layers in front: the same matrices with a
+## leading axis, this grid its ground layer; nothing here is a second
+## representation of it.
+##
+## A place is a row and a column, counted from 1. A road is the places
+## from an entrance to the gate, a row each, found by a flood: every
+## walked tile's steps to the gate, all tiles at once, until nothing
+## changes.
+## Import: "w:" u_se< "World"
+
+"st:" u_se< "Strings"
+"t:" u_se< "Text"
+
+# :: Char
+## A kind's letter in a map file, in the order of w:kinds.
+l:letters := ".~=:#^GS"
+# :: Box Char
+## The kinds of tile, by number.
+l:kinds := "ground" "water" "bridge" "road" "wall" "cliff" "gate" "entrance"
+h:gate := 7
+h:entrance := 8
+## The kinds a road runs over: bridge, road, gate, entrance.
+h:walked := 3 4 7 8
+## More steps than any road has.
+h:far := 1000000
+
+### Reading a map
+
+h:f_ail := { (file, field) what -> "bad-map" []S_IGNAL file c_at ": " c_at field c_at ": " c_at what }
+## A field of a file, a list of texts; missing or not a list is ours to
+## report.
+h:l_ist := { file field ->
+  '{ @ -> file []L_IST field } []T_RAP '{ err -> "bad-map" []S_IGNAL []E_MESSAGE err }
+}
+## The rows of a field as a matrix of characters, checked to be rows of
+## one length.
+h:r_ows := { file field ->
+  rows := file h:l_ist field
+  0 = t_ally rows ? (file, field) h:f_ail "no rows"
+  lengths := '{ r -> t_ally d_isclose r } e_ach rows
+  odd := w_here lengths != f_irst lengths
+  0 < t_ally odd ? (file, field) h:f_ail @ f_ormat< "row {f_irst odd} is {(f_irst odd) s_elect lengths} long, row 1 is {f_irst lengths}"
+  0 = f_irst lengths ? (file, field) h:f_ail "the rows are empty"
+  ((t_ally rows) c_at f_irst lengths) r_eshape t:j_oin rows
+}
+## Where in a matrix (row and column of the first 1), as text.
+h:s_pot := { mask ->
+  c := 2 s_elect s_hape mask
+  i := (f_irst w_here r_avel mask) - 1
+  @ f_ormat< "row {1 + i d_iv c}, column {1 + i m_od c}"
+}
+# :: Char -> (Char, Int, Int)
+## The map in a file (a path from where the program runs), checked: the
+## rows of tiles of one length and of known letters, the heights of the
+## same shape and digits, exactly one gate, an entrance, and a road from
+## every entrance to the gate. Anything else is the error "bad-map".
+l:r_ead := { file ->
+  name := d_isclose f_irst (file h:l_ist "name") c_at e_nclose ""
+  tiles := file h:r_ows "tiles"
+  kinds := l:letters i_ndexOf tiles
+  unknown := kinds > t_ally l:letters
+  '| r_/ r_avel unknown ? (file, "tiles") h:f_ail (h:s_pot unknown) c_at ": the letter " c_at ((r_avel unknown) r_eplicate r_avel tiles) c_at " is no tile (" c_at l:letters c_at ")"
+  digits := file h:r_ows "heights"
+  n_ot (s_hape digits) m_atch s_hape tiles ? (file, "heights") h:f_ail @ f_ormat< "{s_hape digits} rows and columns, the tiles have {s_hape tiles}"
+  heights := ([]D i_ndexOf digits) - 1
+  wrong := heights > 9
+  '| r_/ r_avel wrong ? (file, "heights") h:f_ail (h:s_pot wrong) c_at ": " c_at ((r_avel wrong) r_eplicate r_avel digits) c_at " is not a digit"
+  gates := '+ r_/ r_avel kinds = h:gate
+  0 = gates ? (file, "tiles") h:f_ail "no gate (G)"
+  1 < gates ? (file, "tiles") h:f_ail @ f_ormat< "{gates} gates (G), a map has one"
+  0 = '+ r_/ r_avel kinds = h:entrance ? (file, "tiles") h:f_ail "no entrance (S)"
+  map := (name, kinds, heights)
+  lost := (kinds = h:entrance) & h:far <= l:s_teps map
+  '| r_/ r_avel lost ? (file, "tiles") h:f_ail "the entrance at " c_at (h:s_pot lost) c_at " has no road to the gate"
+  map
+}
+# :: Char -> Char
+## What is wrong with the map in a file, as a message, or the empty text
+## when nothing is: for a game to say before it reads the map.
+l:p_roblem := { file ->
+  '{ @ -> _ := l:r_ead file; "" } []T_RAP '{ err ->
+    n_ot "bad-map" m_atch []E_CODE err ? []H_ALT err
+    []R_ECOVER []E_MESSAGE err
+  }
+}
+
+### A map's parts
+
+# :: (Any a, Any b, Any c) => (a, b, c) -> a
+## The map's name.
+l:n_ame := { (name, _, _) -> name }
+# :: (Any a, Any b, Any c) => (a, b, c) -> b
+## The kinds of its tiles, a matrix of numbers into w:kinds.
+l:t_iles := { (_, kinds, _) -> kinds }
+# :: (Any a, Any b, Any c) => (a, b, c) -> c
+## The elevations of its tiles, a matrix.
+l:h_eights := { (_, _, heights) -> heights }
+# :: (Any a, Any c) => (a, b, c) -> Int
+## Rows and columns.
+l:s_ize := { (_, kinds, _) -> s_hape kinds }
+# :: (Any a, Any b) => (a, Int, b) -> Int -> Int
+## The places of the tiles of a kind, a row each (row, column), in
+## reading order: map w:p_laces 7 is the gate.
+l:p_laces := { (_, kinds, _) kind ->
+  c := 2 s_elect s_hape kinds
+  i := (w_here r_avel kinds = kind) - 1
+  o_\ (2 c_at t_ally i) r_eshape (1 + i d_iv c) c_at 1 + i m_od c
+}
+# :: (Any a, Any b) => (a, Int, b) -> Int
+## The gate's place.
+l:g_ate := { map -> f_irst map l:p_laces h:gate }
+# :: (Any a, Any b) => (a, Int, b) -> Int
+## The entrances' places, a row each, in reading order.
+l:e_ntrances := { map -> map l:p_laces h:entrance }
+# :: Truthy a => (Char, Int, Int) -> a
+## Which tiles a road can run over, a matrix of 1s and 0s.
+l:w_alked := { (_, kinds, _) -> kinds m_ember? h:walked }
+
+### Roads
+
+## A matrix moved one row up or down, or one column left or right, the
+## far value coming in at the edge.
+h:u_p := { d -> (1 d_rop d) c_at (1 c_at 2 s_elect s_hape d) r_eshape h:far }
+h:d_own := { d -> ((1 c_at 2 s_elect s_hape d) r_eshape h:far) c_at -1 d_rop d }
+h:l_eft := { d -> o_\ h:u_p o_\ d }
+h:r_ight := { d -> o_\ h:d_own o_\ d }
+h:f_lood := { walked d ->
+  near := (h:u_p d) m_in (h:d_own d) m_in (h:l_eft d) m_in h:r_ight d
+  e := (h:far * n_ot walked) m_ax d m_in 1 + near
+  e m_atch d ? d
+  walked h:f_lood e
+}
+# :: (Char, Int, Int) -> Int
+## Every tile's steps to the gate along walked tiles, a matrix: 0 at the
+## gate, 1000000 where no road leads.
+l:s_teps := { map ->
+  (_, kinds, _) := map
+  (l:w_alked map) h:f_lood h:far * kinds != h:gate
+}
+## The tiles from tile i to the gate, as numbers along the raveled
+## map: each step to the first neighbor (north, east, south, west) that
+## is one step nearer.
+h:w_alk := { (flat, c) (path, i) ->
+  n := i s_elect flat
+  0 = n ? path c_at i
+  to := i + (n_eg c) c_at 1 c_at c c_at -1
+  inside := (i > c) c_at (0 != i m_od c) c_at (i <= (t_ally flat) - c) c_at 1 != i m_od c
+  there := ((1 m_ax to m_in t_ally flat) s_elect flat) + h:far * n_ot inside
+  (flat, c) h:w_alk (path c_at i, (f_irst w_here there = n - 1) s_elect to)
+}
+## The road from entrance n as numbers along the raveled map.
+h:r_oad := { map n ->
+  (_, kinds, _) := map
+  c := 2 s_elect s_hape kinds
+  (r, k) := h:p_air n s_elect l:e_ntrances map
+  (r_avel l:s_teps map, c) h:w_alk (0 r_eshape 0, k + c * r - 1)
+}
+h:p_air := { v -> (f_irst v, 2 s_elect v) }
+# :: (Char, Int, Int) -> Int -> Int
+## The road from an entrance (1 the first in reading order) to the gate:
+## the places along it, a row each, the entrance first.
+l:r_oad := { map n ->
+  (_, kinds, _) := map
+  c := 2 s_elect s_hape kinds
+  i := (map h:r_oad n) - 1
+  o_\ (2 c_at t_ally i) r_eshape (1 + i d_iv c) c_at 1 + i m_od c
+}
+
+### Drawing
+
+# :: (Any a, Any b) => (a, Int, b) -> Char
+## The map as text, a row a row of tiles: each tile's letter.
+l:d_raw := { (_, kinds, _) -> kinds s_elect l:letters }
+# :: (Char, Int, Int) -> Int -> Char
+## The map with a road marked: the tiles' letters, with the road's tiles
+## as the last digit of their step from the entrance (0 the entrance),
+## so the way along it can be read.
+l:d_rawRoad := { map n ->
+  (_, kinds, _) := map
+  road := map h:r_oad n
+  flat := r_avel kinds s_elect l:letters
+  marks := (1 + ((r_ange t_ally road) - 1) m_od 10) s_elect []D
+  step := road i_ndexOf r_ange t_ally flat
+  on := step <= t_ally road
+  (s_hape kinds) r_eshape (((n_ot on) * r_ange t_ally flat) + on * step + t_ally flat) s_elect flat c_at marks
+}
+# :: (Any a, Any b) => (a, b, Int) -> Char
+## The elevations as text, a digit a tile.
+l:d_rawHeights := { (_, _, heights) -> (1 + heights) s_elect []D }
+
+### Zones
+
+## The directory part of a path, with its last slash (empty for a bare
+## name): a zone's map is a file beside the zones file.
+h:d_ir := { file -> ('m_ax r_/ 0 c_at w_here file = f_irst "/") t_ake file }
+## The zones table of a file: a row a zone, its title and its map.
+h:z_ones := { file ->
+  '{ @ -> ((e_nclose file) c_at e_nclose "zone") []T_ABLE ("zones" "zone-fields") } []T_RAP '{ err -> "bad-map" []S_IGNAL []E_MESSAGE err }
+}
+# :: Char -> Box Char
+## The names of the zones in a zones file, in its order.
+l:z_ones := { file -> file h:l_ist "zones" }
+## Which row of the zones a name is, or the error.
+h:z_one := { file zone ->
+  n := (l:z_ones file) i_ndexOf e_nclose zone
+  n > t_ally l:z_ones file ? (file, "zones") h:f_ail "there is no zone " c_at zone
+  n
+}
+# :: Char -> Char -> Char
+## A zone's title: "world/zones.toml" w:z_oneTitle "battlefield".
+l:z_oneTitle := { file zone -> d_isclose f_irst (file h:z_one zone) s_elect h:z_ones file }
+# :: Char -> Char -> Char
+## The path of a zone's map file (beside the zones file), or the empty
+## text for a zone whose map is not drawn yet.
+l:z_oneFile := { file zone ->
+  name := d_isclose 2 s_elect (file h:z_one zone) s_elect h:z_ones file
+  0 = t_ally name ? name
+  (h:d_ir file) c_at name
+}
+# :: Char -> Char -> (Char, Int, Int)
+## A zone's map, read and checked; the error "bad-map" for a zone that
+## has none yet, as for a map that is wrong.
+l:z_oneMap := { file zone ->
+  path := file l:z_oneFile zone
+  0 = t_ally path ? (file, "zone." c_at zone) h:f_ail "this zone has no map yet"
+  l:r_ead path
+}
+# :: Char -> Box Char
+## What is wrong with the maps the zones of a file name, a message each
+## (none when all are right): every zone with a map is read.
+l:z_oneProblems := { file ->
+  files := '{ z -> e_nclose file l:z_oneFile d_isclose z } e_ach l:z_ones file
+  said := '{ f -> 0 = t_ally d_isclose f ? f; e_nclose l:p_roblem d_isclose f } e_ach files
+  ('{ s -> 0 < t_ally d_isclose s } e_ach said) r_eplicate said
+}

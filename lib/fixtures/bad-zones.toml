@@ -1,0 +1,8 @@
+zones = ["battlefield", "moat"]
+zone-fields = ["title", "map"]
+[zone.battlefield]
+title = "B"
+map = "small.toml"
+[zone.moat]
+title = "M"
+map = "bad-road.toml"

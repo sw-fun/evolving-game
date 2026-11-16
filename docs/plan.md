@@ -138,6 +138,19 @@ defaults drawn from the repositories above.
   rows of text anyone can edit, and nothing is meshed. A zone that
   needs depth (tunnels, a wall breached cell by cell) adds layers to
   its own grid, as the voxel demos keep a chunk; the rest stay flat.
+  As built (`lib/World`, `world/`): a map is a TOML file of two lists
+  of rows, `tiles` (a letter a tile: `.` ground, `~` water, `=`
+  bridge, `:` road, `#` wall, `^` cliff, `G` the one gate, `S` an
+  entrance) and `heights` (a digit a tile, 0 to 9, in steps of half a
+  tile's width), read into two matrices. A road is found, not drawn:
+  the shortest way from an entrance to the gate over road, bridge,
+  entrance and gate tiles, by a flood from the gate; a map with
+  several entrances has a road for each, numbered in reading order
+  (names for roads wait for a level that needs them). The battlefield
+  is 20 by 20, as the research proposed: the river, the bridge and
+  the castle wall each read as a full line across it, and the road of
+  38 tiles has room to turn. `world/zones.toml` names the five zones
+  and each one's map; only the battlefield's is drawn so far.
 - D9. Data-driven: maps, zones, towers, units, waves, puzzles, levels
   and quests are TOML read by X_eTaL (`[]L_IST`, `[]T_ABLE`), checked
   when read, with messages naming the file and the field.
@@ -255,6 +268,7 @@ lib/           shared X_eTaL libraries (.xtl) and macro libraries (.xtlm):
                Game, Sim, Rng, World, Mode, View, Campaign
 games/<slug>/  one game: <Name>.xtl (rules), <slug>.xtl (scripted),
                play.xtl, *.toml (data and levels), expected/, README.md
+world/         the castle: zones.toml and a TOML map a zone (tiles, heights)
 campaign/      the combined game: its library, levels, quests, world map
 assets/        X_eTaL describing the pieces and the castle; pieces/ (the
                small .glb files and previews) and manifest.toml

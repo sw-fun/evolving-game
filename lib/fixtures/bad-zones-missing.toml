@@ -1,0 +1,5 @@
+zones = ["battlefield"]
+zone-fields = ["title", "map"]
+[zone.battlefield]
+title = "B"
+map = "nowhere.toml"

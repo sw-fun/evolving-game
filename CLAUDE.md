@@ -545,6 +545,7 @@ XETAL_COMMIT EXTENSIONS_COMMIT GAMES_COMMIT LIBRARIES_COMMIT   the pins
 lib/           shared X_eTaL libraries (.xtl) and macro libraries (.xtlm)
 games/<slug>/  one game: <Name>.xtl (rules), <slug>.xtl (scripted),
                play.xtl, *.toml, expected/, README.md
+world/         the castle's zones and their maps (TOML)
 campaign/      the combined game
 assets/        X_eTaL describing the pieces and the castle; pieces/ (small
                .glb files and previews), manifest.toml

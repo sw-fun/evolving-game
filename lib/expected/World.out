@@ -1,0 +1,22 @@
+l:letters : Char
+l:kinds : Box Char
+l:r_ead : Char -> (Char, Int, Int)
+l:p_roblem : Char -> Char
+l:n_ame : (Any a, Any b, Any c) => (a, b, c) -> a
+l:t_iles : (Any a, Any b, Any c) => (a, b, c) -> b
+l:h_eights : (Any a, Any b, Any c) => (a, b, c) -> c
+l:s_ize : (Any a, Any c) => (a, b, c) -> Int
+l:p_laces : (Any a, Any b) => (a, Int, b) -> Int -> Int
+l:g_ate : (Any a, Any b) => (a, Int, b) -> Int
+l:e_ntrances : (Any a, Any b) => (a, Int, b) -> Int
+l:w_alked : Truthy a => (Char, Int, Int) -> a
+l:s_teps : (Char, Int, Int) -> Int
+l:r_oad : (Char, Int, Int) -> Int -> Int
+l:d_raw : (Any a, Any b) => (a, Int, b) -> Char
+l:d_rawRoad : (Char, Int, Int) -> Int -> Char
+l:d_rawHeights : (Any a, Any b) => (a, b, Int) -> Char
+l:z_ones : Char -> Box Char
+l:z_oneTitle : Char -> Char -> Char
+l:z_oneFile : Char -> Char -> Char
+l:z_oneMap : Char -> Char -> (Char, Int, Int)
+l:z_oneProblems : Char -> Box Char

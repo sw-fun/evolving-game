@@ -1,0 +1,25 @@
+# The castle's zones (docs/plan.md D8), read by lib/World.xtl. Each zone
+# names its map, a file beside this one; a zone whose map is not drawn
+# yet has none ("").
+zones = ["battlefield", "outer-walls", "courtyard", "inner-keep", "cliffs-and-tunnels"]
+zone-fields = ["title", "map"]
+
+[zone.battlefield]
+title = "The battlefield"
+map = "battlefield.toml"
+
+[zone.outer-walls]
+title = "The outer walls"
+map = ""
+
+[zone.courtyard]
+title = "The courtyard"
+map = ""
+
+[zone.inner-keep]
+title = "The inner keep"
+map = ""
+
+[zone.cliffs-and-tunnels]
+title = "The cliffs and tunnels"
+map = ""

@@ -93,3 +93,66 @@ script := "tick 0.05" "tick 0.05" "key a" "tick fast" "click 10 0" "tick 0.05" "
 sm:n_ext @
 'u:o_ver 'u:s_tep sm:t_race (2026, 0, 0, 0)
 sm:n_ext @
+
+# World: a small map read from TOML (fixtures/small.toml): its name, its
+# tiles and elevations drawn back, its size, gate and entrance.
+"w:" u_se< "World"
+"t:" u_se< "Text"
+small := w:r_ead "fixtures/small.toml"
+w:n_ame small
+w:d_raw small
+w:d_rawHeights small
+w:s_ize small
+w:g_ate small
+w:e_ntrances small
+# Kinds are numbers into w:kinds; the walked tiles; where the water is.
+w:t_iles small
+w:h_eights small
+w:w_alked small
+small w:p_laces 2
+(f_irst w:t_iles small) s_elect w:kinds
+# Steps to the gate by the flood, and the road: the places from the
+# entrance to the gate, and drawn.
+w:s_teps small
+small w:r_oad 1
+small w:d_rawRoad 1
+# Two entrances, two roads to one gate, each the shortest.
+two := w:r_ead "fixtures/two-roads.toml"
+two w:d_rawRoad 1
+two w:d_rawRoad 2
+# A good map has no problem; each kind of wrong map is a message naming
+# the file and the field: rows of unequal length, an unknown letter, no
+# gate, two gates, no entrance, a road that does not reach the gate,
+# heights of another shape, a height that is no digit, no rows, no
+# tiles at all, no file.
+t_ally w:p_roblem "fixtures/small.toml"
+u:p_roblem := { name -> e_nclose w:p_roblem "fixtures/" c_at (d_isclose name) c_at ".toml" }
+t:l_ines 'u:p_roblem e_ach "bad-ragged" "bad-tile" "bad-no-gate" "bad-two-gates" "bad-no-entrance" "bad-road" "bad-heights-shape" "bad-heights-digit" "bad-empty" "bad-no-tiles" "nowhere"
+# Reading a wrong map is the error bad-map, for a program to trap.
+'{ @ -> w:n_ame w:r_ead "fixtures/bad-road.toml" } []T_RAP '{ err -> []R_ECOVER []E_CODE err }
+# The castle's zones (../world/zones.toml): their names, a title, the
+# battlefield's file; the courtyard has no map yet, which asking for it
+# says; an unknown zone; and no zone's map is wrong.
+zones := "../world/zones.toml"
+t:l_ines w:z_ones zones
+zones w:z_oneTitle "inner-keep"
+zones w:z_oneFile "battlefield"
+t_ally zones w:z_oneFile "courtyard"
+'{ @ -> w:n_ame zones w:z_oneMap "courtyard" } []T_RAP '{ err -> []R_ECOVER []E_MESSAGE err }
+'{ @ -> zones w:z_oneTitle "moat" } []T_RAP '{ err -> []R_ECOVER []E_MESSAGE err }
+t_ally w:z_oneProblems zones
+# Zones whose maps are wrong, or missing, say which.
+t:l_ines w:z_oneProblems "fixtures/bad-zones.toml"
+t:l_ines w:z_oneProblems "fixtures/bad-zones-missing.toml"
+# The battlefield, where Defend the Bridge is played: 20 by 20, the
+# gate, the entrance, the road of 38 tiles over the bridge, drawn, and
+# the elevations.
+field := zones w:z_oneMap "battlefield"
+w:n_ame field
+w:s_ize field
+w:g_ate field
+w:e_ntrances field
+t_ally field w:r_oad 1
+field w:d_rawRoad 1
+w:d_raw field
+w:d_rawHeights field
