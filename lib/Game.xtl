@@ -1,0 +1,16 @@
+## Game: the game's name, said once. Every program, page and footer
+## takes the name from here, so a new title is a change to one line
+## (docs/plan.md D14).
+
+# :: Char
+## The game's display name (a working title).
+## >> "g:" u_se< "Game"
+## >> g:name
+## Evolving Game
+l:name := "Evolving Game"
+# :: Char -> Char
+## The title of one of the games, the family's name before it.
+## >> "g:" u_se< "Game"
+## >> g:t_itle "Castle Defense"
+## Evolving Game: Castle Defense
+l:t_itle := { game -> l:name c_at ": " c_at game }

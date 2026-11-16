@@ -1,0 +1,8 @@
+# One game's description: read by the scripts for the tests and, later,
+# the site.
+slug = "__SLUG__"            # the directory name, games/<slug>/
+title = "__TITLE__"
+summary = "One sentence: what you play and what is distinctive."
+mode = "__SLUG__"            # the mode's name in scenarios (docs/plan.md, The seams)
+status = "draft"             # draft | live
+needs = []                   # asks in docs/xetal-asks.md it waits on or works around

@@ -140,11 +140,22 @@ defaults drawn from the repositories above.
   `EXTENSIONS_COMMIT`, `GAMES_COMMIT`), cloned into the ignored
   `work/` by scripts, moved only at a saga start or when an ask has
   landed, in a commit of their own with the goldens run again.
-- D12. What X_eTaL or an extension lacks goes in `docs/xetal-asks.md`
-  (status, kind, why, a minimal repro, the workaround) for the owning
-  repository; it is not fixed from here and a workaround is never
-  hidden. A helper a second game needs moves to `lib/`; one another
-  repository would need is asked of the libraries repository.
+- D12. What a sibling repository lacks is asked of it, not fixed from
+  here, and a workaround is never hidden (status, kind, why, a minimal
+  repro, the workaround). Three files, in the order of how likely the
+  user expects each to be needed: `docs/xetal-libraries-asks.md` (a
+  library change: most likely), `docs/xetal-extensions-asks.md` (an
+  extension change: possible), `docs/xetal-asks.md` (a language
+  change: unlikely). `docs/agentrail-asks.md` is the same for
+  agentrail.
+- D19. The language is extended with macro libraries (`.xtlm`), not
+  by asking for syntax (the user, 2026-11-15): where a game wants a
+  form X_eTaL does not have (a component list, a rule table, a mode's
+  declaration), it is a macro in `lib/`, as X_eTaL-games' `Ecs.xtlm`
+  is. A library or macro library starts here; when it is general
+  enough to serve other repositories it moves to X_eTaL-libraries
+  (asked in `docs/xetal-libraries-asks.md`) and is used from there by
+  pin. A helper a second game needs moves from the game to `lib/`.
 - D13. Generated pieces are tracked while they stay small (the user):
   a `.glb` of at most 256 KB and its preview picture are committed
   under `assets/pieces/` beside `manifest.toml` (every file's
@@ -225,7 +236,8 @@ keep them.
 
 ```
 XETAL_COMMIT EXTENSIONS_COMMIT GAMES_COMMIT   the pins (D11)
-lib/           shared X_eTaL libraries: Sim, Rng, World, Mode, View, Campaign
+lib/           shared X_eTaL libraries (.xtl) and macro libraries (.xtlm):
+               Game, Sim, Rng, World, Mode, View, Campaign
 games/<slug>/  one game: <Name>.xtl (rules), <slug>.xtl (scripted),
                play.xtl, *.toml (data and levels), expected/, README.md
 campaign/      the combined game: its library, levels, quests, world map
@@ -234,7 +246,9 @@ assets/        X_eTaL describing the pieces and the castle; pieces/ (the
 web/           the page: the extensions' WebAssembly evaluator and Three.js
                player, put together for this game (as little as can be)
 scripts/       what the just recipes call
-docs/          plan.md, style.md, xetal-asks.md, architecture.md, desktop.md
+docs/          plan.md, style.md, architecture.md, desktop.md, the asks
+               (xetal-asks.md, xetal-libraries-asks.md,
+               xetal-extensions-asks.md, agentrail-asks.md)
 work/ bin/     ignored: the clones, the built xetal, generated assets
 pages/         ignored: the local build of the site
 ```

@@ -42,8 +42,9 @@ five waves.
 
 ## Status
 
-Planning. There is nothing to play yet: the repository holds the
-plan, the process and the first saga's steps, and no code.
+Early. There is nothing to play yet: the repository holds the plan,
+the process, the tooling (the pinned X_eTaL, the tests, the gate) and
+the first shared library.
 [`docs/plan.md`](docs/plan.md) has the goal, the decisions made so
 far, the questions still open, and the roadmap.
 
@@ -86,9 +87,28 @@ far, the questions still open, and the roadmap.
 
 ## Quick Start
 
-There is nothing to run yet. The `just` recipes (build X_eTaL, run
-and play a game, serve the page, the gate) come with the first step
-of the plan, and this section will list them with what each shows.
+With [`just`](https://github.com/casey/just) installed (`just` alone
+lists the tasks):
+
+```bash
+just venv                            # the scripts' Python (uv), once
+just xetal                           # build the pinned X_eTaL (bin/xetal)
+just eval "'+ r_/_2 2 3 r_eshape r_ange 6"   # try it: row sums, 6 15
+just test-lib                        # the shared libraries: types, tests, examples
+just new-game walk "Walk"            # start a game from games/_template
+just gate                            # the pre-commit gate
+```
+
+The games run a known-good X_eTaL, recorded as one commit in
+`XETAL_COMMIT`: `just xetal` clones X_eTaL into `work/xetal` (not
+tracked), checks that commit out, builds it and links the binary as
+`bin/xetal`, which every recipe uses (never a `xetal` on your `PATH`).
+`GAMES_COMMIT` and `EXTENSIONS_COMMIT` pin X_eTaL-games (its shared
+libraries) and X_eTaL-extensions the same way; `just extensions`
+builds `bin/xetal-x`, the X_eTaL that loads the blender, digest and
+three extensions (needed to make the 3D models, not to test).
+
+There is no game to run yet.
 
 ## Documentation
 
@@ -97,6 +117,8 @@ of the plan, and this section will list them with what each shows.
   and the open questions.
 - [`docs/desktop.md`](docs/desktop.md) -- the design of the desktop
   version (installers for Linux, macOS and Windows; not built yet).
+- [`docs/style.md`](docs/style.md) -- how the game's X_eTaL is
+  written; [`lib/README.md`](lib/README.md) -- the shared libraries.
 - [`docs/research.txt`](docs/research.txt) -- the design conversation
   the game ideas came from (archival, not normative).
 - [`CLAUDE.md`](CLAUDE.md) (also `AGENTS.md`) -- the rules the code is

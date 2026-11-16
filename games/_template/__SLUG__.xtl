@@ -1,0 +1,12 @@
+#!/usr/bin/env xetal
+# __TITLE__: replace this program. Each top-level lower-case *.xtl in
+# the game's directory is run by `just test` (with --seed 1, standard
+# input from expected/<name>.in when there is one) and its output
+# compared with expected/<name>.out (and .err when it has one).
+#
+# The rules go in a library beside this file, <Name>.xtl (named unlike
+# the game), following the mode protocol (docs/plan.md, The seams; the
+# shared libraries are in lib/); this program is the scripted game and
+# play.xtl the played one, both importing the rules.
+"g:" u_se< "Game"
+g:t_itle "__TITLE__"

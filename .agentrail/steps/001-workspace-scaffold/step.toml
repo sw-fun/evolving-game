@@ -1,6 +1,6 @@
 number = 1
 slug = "workspace-scaffold"
-status = "pending"
+status = "in-progress"
 description = "foundations step 1: scaffold the repository as X_eTaL-games does (read its sc..."
 role = "production"
 context_files = []

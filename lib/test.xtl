@@ -1,0 +1,9 @@
+#!/usr/bin/env xetal
+# The shared libraries tested together: each function on a small case
+# whose answer can be checked by eye. Run by scripts/test-lib.sh against
+# lib/expected/test.out (and test.in for the keyboard).
+"g:" u_se< "Game"
+
+# Game: the name, and a game's title under it.
+g:name
+g:t_itle "Castle Defense"

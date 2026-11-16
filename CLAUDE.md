@@ -379,8 +379,10 @@ Read before working:
   and the saga roadmap. Normative.
 - `docs/style.md` -- how this repository's X_eTaL is written (from
   Saga 1 step 1; follow it).
-- `docs/xetal-asks.md` -- what the games need from X_eTaL and its
-  extensions (from Saga 1 step 1).
+- `docs/xetal-libraries-asks.md`, `docs/xetal-extensions-asks.md`,
+  `docs/xetal-asks.md` -- what the games need from X_eTaL-libraries
+  (most likely), X_eTaL-extensions (possible) and the language
+  (unlikely).
 - `docs/architecture.md` -- the libraries and the flow as built
   (written at the end of Saga 1).
 - `docs/agentrail-asks.md` -- what this repository needs from
@@ -418,10 +420,12 @@ at their pins; never edit them from here):
    show what it draws. No browser dialogs (alert/prompt), ever.
 2. It is a browser game through X_eTaL-extensions (plan D15). Add as
    little host code here as can be. X_eTaL runs at a fixed tick,
-   never once a frame; the player animates between ticks (plan D7). What X_eTaL or an extension lacks
-   goes in `docs/xetal-asks.md` (status, kind, why, a minimal repro,
-   the workaround) for the owning repository: do not fix a sibling
-   from here and do not hide a workaround.
+   never once a frame; the player animates between ticks (plan D7). What a sibling lacks is an ask
+   (status, kind, why, a minimal repro, the workaround) in the file
+   for its repository -- `docs/xetal-libraries-asks.md` (a library),
+   `docs/xetal-extensions-asks.md` (an extension, the page's host
+   side), `docs/xetal-asks.md` (the language; unlikely): do not fix a
+   sibling from here and do not hide a workaround.
 3. Goldens define the games: each game's `expected/` (with `.in`
    event scripts), the libraries' `lib/expected/`, and the written
    asset scripts. Do not add a rule, unit, tower or mechanic without
@@ -465,27 +469,37 @@ at their pins; never edit them from here):
     fetch script with the source, license and checksum.
 13. A helper a second game needs moves to `lib/`. Write array-style
     X_eTaL: every tower against every creep is a table, not a loop.
+    Extend the language with a macro library (`lib/<Name>.xtlm`, as
+    X_eTaL-games' `Ecs.xtlm`), not by asking for syntax (plan D19); a
+    library general enough for other repositories is asked to move to
+    X_eTaL-libraries, after it has proved itself here.
 14. When a golden pins or changes a design decision, update the
     decisions register in `docs/plan.md` in the same commit.
 
 ## Build / Test
 
 `just` is the entry point; each recipe calls a script in `scripts/`.
-The recipes arrive with Saga 1 step 1 (workspace-scaffold), modeled
-on X_eTaL-games'; until then there is nothing to build.
+Modeled on X_eTaL-games'. (`just assets` and `just serve` arrive with
+the steps that make them.)
 
 ```bash
 just                      # list the recipes
 just venv                 # the scripts' Python (uv), once
-just xetal                # build the pinned X_eTaL (bin/xetal) and extensions
+just xetal                # build the pinned X_eTaL (bin/xetal)
+just extensions           # build xetal-x and the extensions used (bin/xetal-x)
+just new-game SLUG "Title"  # start a game from games/_template
 just run SLUG             # a game's scripted program
 just play SLUG            # play it at the terminal (play.xtl)
 just test-game SLUG       # check its output against expected/
 just bless SLUG           # rewrite its expected output (review the diff!)
-just assets               # make the pieces with Blender (work/assets)
-just serve                # the game in the browser, locally
+just test-lib             # the shared libraries: types, tests, examples
 just gate                 # the pre-commit gate
 ```
+
+Every script runs `bin/xetal` with `XETAL_PATH` from `scripts/libs.sh`
+(this repository's `lib/`, then X_eTaL-games' at its pin). `xetal-x`
+is built against the X_eTaL the extensions are pinned to, which may
+differ from `XETAL_COMMIT`; say so in an ask if it matters.
 
 Rewrite a golden (`just bless`) only after the output has been
 reviewed, and only when the change is intended (a rule change, a
@@ -506,7 +520,7 @@ with `.venv/bin/python` (or `uv run`); never the system `python3`.
    markdown; not `CLAUDE.md`, whose generated briefing is not ASCII:
    `docs/agentrail-asks.md`) and the American spelling check
 6. docs updated if behavior changed (README, the game's README,
-   `docs/plan.md`, `docs/xetal-asks.md`)
+   `docs/plan.md`, the asks files)
 7. a detailed commit message; commit `.agentrail/` changes too
 8. then `agentrail complete`, commit the `.agentrail/` change it
    makes, push (once a remote exists)
@@ -526,7 +540,7 @@ by a golden or the gate.
 
 ```
 XETAL_COMMIT EXTENSIONS_COMMIT GAMES_COMMIT   the pins
-lib/           shared X_eTaL libraries: Sim, Rng, World, Mode, View, Campaign
+lib/           shared X_eTaL libraries (.xtl) and macro libraries (.xtlm)
 games/<slug>/  one game: <Name>.xtl (rules), <slug>.xtl (scripted),
                play.xtl, *.toml, expected/, README.md
 campaign/      the combined game
