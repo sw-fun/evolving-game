@@ -1,0 +1,8 @@
+number = 6
+slug = "particles"
+status = "pending"
+description = "the-look step 6: particles. A particles call (docs/look.md): an emitter's pla..."
+role = "production"
+context_files = []
+created_at = "2026-11-16T09:04:34"
+commits = []

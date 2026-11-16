@@ -1,0 +1,8 @@
+number = 3
+slug = "materials"
+status = "pending"
+description = "the-look step 3: materials. Stone, wood, grass, cloth and water described in ..."
+role = "production"
+context_files = []
+created_at = "2026-11-16T09:04:34"
+commits = []

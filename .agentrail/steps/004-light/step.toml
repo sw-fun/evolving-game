@@ -1,0 +1,8 @@
+number = 4
+slug = "light"
+status = "pending"
+description = "the-look step 4: light. A sun with shadows, sky light, ambient occlusion, ton..."
+role = "production"
+context_files = []
+created_at = "2026-11-16T09:04:34"
+commits = []
