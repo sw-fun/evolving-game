@@ -1,0 +1,16 @@
+[package]
+name = "evolving-web"
+description = "Evolving Game in a browser: the game's X_eTaL program run as WebAssembly, given the page's events, its picture and scene handed to the page"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+
+[dependencies]
+xetal-play = { path = "../work/xetal/components/web/crates/xetal-play" }
+xetal-store = { path = "../work/xetal/components/base/crates/xetal-store" }
+wasm-bindgen = "0.2"
+
+# Its own workspace: it builds for the browser, against the pinned
+# X_eTaL clone (just xetal).
+[workspace]

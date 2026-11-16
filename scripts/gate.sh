@@ -28,6 +28,7 @@ job libraries scripts/test-lib.sh
 job types scripts/check-types.py
 job docs scripts/check-docs.py
 job markdown markdown
+job web scripts/check-web.sh
 while IFS= read -r slug; do
   [ -n "$slug" ] && job "game-$slug" scripts/test-games.sh "$slug"
 done < <(scripts/games.sh)

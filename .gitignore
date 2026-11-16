@@ -36,3 +36,6 @@ __pycache__/
 *.swp
 *~
 .DS_Store
+
+# the board player and Three.js, copied from the extensions clone (scripts/web.sh)
+web/ext/

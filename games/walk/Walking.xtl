@@ -7,7 +7,8 @@
 ## made ready to draw (lib/View), the road's places (a row each), and the numbers speed
 ## (tiles a second), the limit and the time passed and the time walked
 ## (whole milliseconds), whether it is stopped, the gold for winning,
-## and the seed. Where the walker is follows from the time walked, so
+## the seed, and the tile last pointed at (a row and a column, 0 0 for
+## none). Where the walker is follows from the time walked, so
 ## the same events always put it in the same place.
 ## Import: "wk:" u_se< "Walking"
 
@@ -45,22 +46,24 @@ l:n_ew := { (file, world, seed) ->
   n_ot speed > 0 ? "bad-scenario" []S_IGNAL file c_at ": speed: the walker must move"
   limit := 1000 * file md:r_ule ("loss", "seconds")
   gold := 0.0 m_ax file md:r_ule ("reward", "gold")
-  (file md:f_ield "zone", vw:s_tage map, map w:r_oad 1, speed c_at limit c_at 0.0 c_at 0.0 c_at 0.0 c_at gold c_at f_loat seed)
+  (file md:f_ield "zone", vw:s_tage map, map w:r_oad 1, speed c_at limit c_at 0.0 c_at 0.0 c_at 0.0 c_at gold c_at (f_loat seed) c_at 0.0 0.0)
 }
-# :: (Any a, Any b, Any c, Any d) => (a, b, c, Float) -> (Char, Float, d) -> (a, b, c, Float)
+# :: (Any a, Any b, Num d, Any e, Any f, Any g, Any h, Any i) => (a, ((b, c, d), Float, e, f, g), h, Float) -> (Char, Float, i) -> (a, ((b, c, d), Float, e, f, g), h, Float)
 ## The state after an event: a tick's time passes, and is walked unless
-## stopped; the space bar stops and starts.
+## stopped; the space bar stops and starts; a click points at the tile
+## under it (lib/View works out which), and the walk says what it is.
 l:s_tep := { s e ->
   (zone, stage, road, n) := s
   ms := f_loat sm:m_illis e
   going := 1.0 - 5 s_elect n
-  e sm:i_s "tick" ? (zone, stage, road, n + ms * 0.0 0.0 1.0 0.0 0.0 0.0 0.0 + going * 0.0 0.0 0.0 1.0 0.0 0.0 0.0)
-  e sm:i_s "key" ? (zone, stage, road, n + ((2.0 * going) - 1.0) * 0.0 0.0 0.0 0.0 1.0 0.0 0.0)
+  e sm:i_s "tick" ? (zone, stage, road, n + ms * 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 + going * 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0)
+  e sm:i_s "key" ? (zone, stage, road, n + ((2.0 * going) - 1.0) * 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0)
+  e sm:i_s "click" ? (zone, stage, road, (7 t_ake n) c_at f_loat stage vw:t_ile 2 t_ake sm:n_umbers e)
   s
 }
 # :: Any a => a -> Box Char
-## The events a walk takes: time, and the space bar.
-l:l_egal := { s -> "tick S" "key space" }
+## The events a walk takes: time, the space bar, and a click.
+l:l_egal := { s -> "tick S" "key space" "click X Y" }
 # :: (Any a, Any b) => (a, b, c, Float) -> Int
 ## Won at the gate; lost when the time is up first; playing until then.
 l:s_tatus := { s ->
@@ -86,7 +89,7 @@ h:a_t := { road along ->
   yx := (from + part * to - from) - 0.5
   (2 s_elect yx) c_at (f_irst yx) c_at (2 s_elect to - from) c_at f_irst to - from
 }
-# :: (Any a, Any b, Num c) => (a, b, c, Float) -> (b, Box Char, Box Char, Float, Char)
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Num h) => (a, ((b, Int, c), d, e, f, g), h, Float) -> (((b, Int, c), d, e, f, g), Box Char, Box Char, Float, Char)
 ## What to show (lib/View): the map with the walker on it, walking or
 ## standing, where it will be a twentieth of a second on (so a player
 ## can move it smoothly between ticks), and a line saying where it is
@@ -105,8 +108,19 @@ h:s_ays := { s ->
   where := @ f_ormat< "Row {r}, column {c}; {f_loor h:s_teps s} steps to walk, {f_loor h:a_long s} walked."
   md:won = l:s_tatus s ? where c_at " At the gate."
   md:lost = l:s_tatus s ? where c_at " Out of time."
-  0 < h:s_topped s ? where c_at " Stopped."
-  where
+  0 < h:s_topped s ? where c_at " Stopped." c_at h:p_ointed s
+  0.0 = h:p_assed s ? where c_at " Space stops and starts the walker; a click names a tile." c_at h:p_ointed s
+  where c_at h:p_ointed s
+}
+## What the last click pointed at: the tile's place and kind, or nothing
+## said when there was no click or it was off the board.
+h:p_ointed := { (_, stage, _, n) ->
+  r := f_loor 8 s_elect n
+  c := f_loor 9 s_elect n
+  r < 1 ? ""
+  (map, _, _, _, _) := stage
+  kind := d_isclose (c s_elect r s_elect w:t_iles map) s_elect w:kinds
+  @ f_ormat< " Pointing at row {r}, column {c}: {kind}."
 }
 # :: Any a => (Char, a, b, Float) -> (Int, (Box Char, Int), (Box Char, Int))
 ## How it ended, what it changed and what it brings: a walk still going

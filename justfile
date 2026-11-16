@@ -76,6 +76,18 @@ test-lib:
 bless-lib:
     XETAL_BLESS=1 scripts/test-lib.sh
 
-# The pre-commit gate: pins, spelling, tooling, libraries, types, docs, goldens, markdown
+# Build the page (web/dist): the game as WebAssembly, the 3D player beside it
+web *flags:
+    scripts/web.sh {{flags}}
+
+# Serve the built page at http://127.0.0.1:8480/ until Ctrl-C (builds it first if needed)
+serve port="8480":
+    scripts/serve.sh {{port}}
+
+# Test the built page in headless Chrome and write images/screencapture.png (run just web first)
+browser-test *flags:
+    scripts/browser-test.mjs {{flags}}
+
+# The pre-commit gate: pins, spelling, tooling, libraries, types, docs, goldens, markdown, the page's Rust
 gate:
     scripts/gate.sh

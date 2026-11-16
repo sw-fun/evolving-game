@@ -481,8 +481,8 @@ at their pins; never edit them from here):
 ## Build / Test
 
 `just` is the entry point; each recipe calls a script in `scripts/`.
-Modeled on X_eTaL-games'. (`just assets` and `just serve` arrive with
-the steps that make them.)
+Modeled on X_eTaL-games'. (`just assets` arrives with the step that
+makes it.)
 
 ```bash
 just                      # list the recipes
@@ -495,6 +495,10 @@ just play SLUG            # play it at the terminal (play.xtl)
 just test-game SLUG       # check its output against expected/
 just bless SLUG           # rewrite its expected output (review the diff!)
 just test-lib             # the shared libraries: types, tests, examples
+just web                  # build the page (web/dist); --dev for a quicker build
+just serve                # serve it on port 8480 until Ctrl-C (never in the background)
+just browser-test         # the page in headless Chrome; writes images/screencapture.png
+scripts/write-types.py    # after a bless: the `# ::` comments from the type goldens
 just gate                 # the pre-commit gate
 ```
 

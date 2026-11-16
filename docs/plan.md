@@ -300,6 +300,16 @@ keep them.
   landed on 2026-11-15, X_eTaL-extensions 4fd5d87): `th:p_age!` of
   the walk's scene is the battlefield in 3D, the walker a plain shape
   until its model exists.
+  The page (`web/`, Saga 1 step 6): the walk's `play.xtl`, the same
+  file the command line runs, as WebAssembly; the page gives it
+  `tick 0.05` twenty times a second, keys and clicks as event lines,
+  and after each event hands the scene in its picture to the board
+  player, or shows the flat picture where there is no WebGL (`?flat`).
+  Measured in headless Chrome (software rendering) on the 20 by 20
+  battlefield: about 9 ms of X_eTaL a tick, of the 50 ms a tick has;
+  most of it is writing the picture's 56 KB of SVG, which a later step
+  can skip when the 3D view is the one shown. A real browser's frame
+  rate is to be read from the page's corner when the user tries it.
 - **Save.** The world state, the campaign position and, for a level
   in progress, the scenario, seed and events so far.
 

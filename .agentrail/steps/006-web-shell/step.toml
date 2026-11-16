@@ -1,6 +1,6 @@
 number = 6
 slug = "web-shell"
-status = "pending"
+status = "in-progress"
 description = "foundations step 6: the browser, the product (plan D15). web/: a page in whic..."
 role = "production"
 context_files = []

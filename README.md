@@ -43,8 +43,8 @@ five waves.
 
 ## Status
 
-Early. There is one small game to play, at the terminal only (a walk
-to the castle gate, below); otherwise the repository holds the plan,
+Early. There is one small game to play, at the terminal and in a
+browser (a walk to the castle gate, below); otherwise the repository holds the plan,
 the process, the tooling (the pinned X_eTaL, the tests, the gate) and
 the first shared libraries (seeded chance, the event loop every game
 runs in, and the world: the battlefield's map with its road found
@@ -86,6 +86,7 @@ far, the questions still open, and the roadmap.
   environment is made with `uv venv`).
 - To make the 3D models (optional; not needed to play or to test):
   [Blender](https://www.blender.org) 5.1.
+- For the browser test: Google Chrome and [Node.js](https://nodejs.org) 22 or newer.
 - For the pre-commit gate (maintainers): `sw-checklist` and
   `sw-markdown-checker`.
 
@@ -124,6 +125,19 @@ just play walk                       # play it: type tick 1, key space; Ctrl-D l
 just run walk picture.xtl            # the scene and the SVG picture, as text
 just test-game walk                  # check it against its expected output
 ```
+
+And in a browser, in 3D:
+
+```bash
+just extensions                      # once: the pinned X_eTaL-extensions (its 3D player)
+just web                             # build the page into web/dist
+just serve                           # http://127.0.0.1:8480/ until Ctrl-C
+just browser-test                    # the page tested in headless Chrome
+```
+
+The walker follows the road by itself; the space bar stops and starts
+it, and a click on a tile makes the game say what the tile is. Add
+`?flat` to the address for the flat picture without 3D.
 
 ## Documentation
 

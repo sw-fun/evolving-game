@@ -38,6 +38,11 @@ text drawing in the terminal, a flat isometric picture (SVG), and a
 scene for a 3D view. `just play walk` writes the picture of each moment
 to `work/draw/walk/play-N.svg` (open one in a browser).
 
+In a browser (`just web`, then `just serve`) the same `play.xtl` runs
+as WebAssembly: the page's clock, keys and clicks are its events, and
+the scene is drawn in 3D. A click on a tile makes the walk say what
+the tile is.
+
 At the terminal the events are lines you type, then Enter: `tick 1`
 lets a second pass, `key space` stops or starts the walker, and the end
 of input (Ctrl-D) leaves. The map is printed whenever the walker has

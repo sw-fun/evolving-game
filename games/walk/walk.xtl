@@ -25,11 +25,12 @@ u:w_orld := { world -> t:l_ines md:l_ines world }
 t_ally wk:mode md:p_roblem scenario
 "puzzle" md:p_roblem scenario
 
-# Two seconds of walking, a stop, a click (not legal: nothing happens),
-# and on again.
+# Two seconds of walking, a stop, a click on the bridge (the walk says
+# what is under it), a key that is not legal (nothing happens), and on
+# again.
 start := wk:n_ew (scenario, md:nothing, 1)
 _ := t:l_ines wk:l_egal start
-short := "tick 1" "tick 1" "key space" "tick 1" "click 3 4" "key space" "tick 1"
+short := "tick 1" "tick 1" "key space" "tick 1" "click 364 221" "key a" "key space" "tick 1" "click 3 4"
 (clock, state) := 'wk:v_iew 'wk:l_egal 'wk:s_tatus 'wk:s_tep md:r_eplay (short, start)
 # The clock (ticks, milliseconds, events), where the walker is, and the
 # outcome of a walk left unfinished.
