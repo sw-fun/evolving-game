@@ -91,6 +91,26 @@ The scene is text, a call a line, that names no renderer
 | Carts and crows | `piece('cart' ...)`, `piece('crow' ...)`: their paths worked out in X_eTaL, as the neon city's cars are | nothing new | as any piece |
 | A camera that walks | `eye(nums('x z y', 3)[0], nums('hx hz pitch', 3)[0], 60)` in place of `camera`: where you stand, the way you look, the lens | the board player (ask: perspective, and the walk and fly controls its city player has) | a mark where you stand, on the board's picture |
 
+## As built
+
+- **Terrain** (step 2): `lib/Terrain` works the surface out as arrays.
+  A tile is four triangles round its middle; the middle is at the
+  tile's own elevation (so pieces stand where the rules say) and a
+  corner at the mean of the land round it (so steps become slopes);
+  water and bridges have the river's bed as their ground, 0.3 under
+  the water; walls and gates stand on the ground beside them. The
+  battlefield's mesh is 841 corners and 1600 triangles, 42 KB as a
+  call. `vw:s_mooth` makes a stage whose scene is that `terrain` call
+  with tiles only for the water and the built kinds, on which pieces
+  stand on the surface and a click is turned back into a tile by
+  asking the surface itself (to a third of a tile). The walk still
+  uses `vw:s_tage`: the player does not draw `terrain` yet (the ask),
+  and a scene with a call it does not know would not be drawn at all.
+- **Built tiles from their models** (the ask landed 2026-11-16): the
+  scene's bridge, wall and gate tiles name their models, and the live
+  demo draws the wall with its merlons, the gate and the bridge with
+  its rails.
+
 ## What exists to build on
 
 - **The board player** (`board.js`, X_eTaL-extensions): the four calls

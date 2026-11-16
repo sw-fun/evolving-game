@@ -1,0 +1,6 @@
+l:g_round : (Any a, Num b) => (a, Int, b) -> Float
+l:c_orners : (Any a, Num b) => (a, Int, b) -> Float
+l:m_esh : (Any a, Num b) => (a, Int, b) -> (Float, Int, Float)
+l:h_eight : (Any a, Num b) => (a, Int, b) -> Float -> Float
+l:s_tand : (Any a, Num b) => (a, Int, b) -> Float -> Float
+l:c_all : (Any a, Num b) => (a, Int, b) -> Char

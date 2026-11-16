@@ -1,6 +1,6 @@
 number = 2
 slug = "terrain"
-status = "pending"
+status = "in-progress"
 description = "the-look step 2: terrain. The map's heights as one smooth ground worked out i..."
 role = "production"
 context_files = []

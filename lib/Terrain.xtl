@@ -1,0 +1,179 @@
+## Terrain: a map's ground as one smooth surface (docs/look.md), worked
+## out as arrays from its two matrices. The rules keep their grid of
+## tiles with whole elevations; this is how that ground is drawn and
+## stood on: slopes where the grid has steps, banks going down into the
+## river, the river's bed under its water.
+##
+## The surface is a mesh. Each tile is four triangles round its middle:
+## the middle is at the tile's own elevation, exactly, so a piece
+## standing in the middle of a tile stands where the rules say; a
+## corner, shared by up to four tiles, is at the mean of theirs, which
+## makes the slopes. Three kinds of tile take no part in a corner's
+## mean when there is land beside them: water and bridges (their own
+## ground is the river's bed, lower than the water), and walls and
+## gates (built things, standing on the ground of the land next to
+## them).
+##
+## Lengths are the world's: a tile is 1 wide and a step of elevation is
+## half of that. x is east, z south, y up; a board point (x, y) is the
+## world's (x, z).
+## Import: "tr:" u_se< "Terrain"
+
+"w:" u_se< "World"
+
+## How far the river's bed lies under its water.
+h:deep := 0.3
+## Kinds whose ground is the bed (water, bridge) and kinds that are
+## built on the land beside them (wall, gate), as numbers into w:kinds.
+h:wet := 2 3
+h:built := 5 7
+## A color a kind, for the ground under it (red green blue, 0 to 1):
+## ground, the bed, the bed, road, earth under a wall, rock, earth,
+## the road's start.
+h:colors := 8 3 r_eshape 0.37 0.58 0.31  0.3 0.28 0.22  0.3 0.28 0.22  0.72 0.64 0.48  0.45 0.42 0.36  0.48 0.5 0.45  0.45 0.42 0.36  0.79 0.7 0.5
+## More than any height.
+h:far := 1000000.0
+
+### The ground under every tile
+
+## A matrix moved one row or column, the far value coming in.
+h:u_p := { d -> (1 d_rop d) c_at (1 c_at 2 s_elect s_hape d) r_eshape h:far }
+h:d_own := { d -> ((1 c_at 2 s_elect s_hape d) r_eshape h:far) c_at -1 d_rop d }
+h:l_eft := { d -> o_\ h:u_p o_\ d }
+h:r_ight := { d -> o_\ h:d_own o_\ d }
+## Where a tile has no height yet (far), the lowest of its neighbors'.
+h:f_ill := { g -> g m_in (h:far * f_loat g < h:far) + (h:u_p g) m_in (h:d_own g) m_in (h:l_eft g) m_in h:r_ight g }
+# :: (Any a, Num b) => (a, Int, b) -> Float
+## The height of the ground at the middle of every tile, a matrix: a
+## tile's own elevation; under water and bridges, the bed (h:deep under
+## the water's level); under walls and gates, the lowest ground beside
+## them (its own elevation when there is no land beside it).
+l:g_round := { map ->
+  kinds := w:t_iles map
+  own := 0.5 * f_loat w:h_eights map
+  wet := kinds m_ember? h:wet
+  built := kinds m_ember? h:built
+  water := own * f_loat kinds = 2
+  level := ('+ r_/ r_avel water) / 1.0 m_ax f_loat '+ r_/ r_avel kinds = 2
+  bed := (f_loat kinds = 2) * own - h:deep
+  under := (f_loat kinds = 3) * level - h:deep
+  dry := (own * f_loat n_ot wet | built) + h:far * f_loat wet | built
+  filled := h:f_ill h:f_ill dry
+  lost := f_loat filled >= h:far
+  ((filled * f_loat n_ot wet) * 1.0 - lost) + bed + under + (lost * own) * f_loat n_ot wet
+}
+
+### Corners
+
+## Tiles' values gathered at the corners: a matrix of rows and columns
+## made one larger, each corner the sum of the up to four tiles round
+## it.
+h:g_ather := { m ->
+  row := (1 c_at 2 s_elect s_hape m) r_eshape 0.0
+  col := ((1 + f_irst s_hape m) c_at 1) r_eshape 0.0
+  (((m c_at row) c_at_2 col) + ((row c_at m) c_at_2 col)) + (col c_at_2 m c_at row) + col c_at_2 row c_at m
+}
+# :: (Any a, Num b) => (a, Int, b) -> Float
+## The height of every corner of the grid, a matrix one larger each way
+## than the map: the mean of the ground of the tiles round the corner
+## that are land; where none is, the mean of them all.
+l:c_orners := { map ->
+  kinds := w:t_iles map
+  g := l:g_round map
+  land := f_loat n_ot kinds m_ember? h:wet c_at h:built
+  some := h:g_ather land
+  all := h:g_ather 1.0 + 0.0 * g
+  ((f_loat some > 0.0) * (h:g_ather g * land) / 1.0 m_ax some) + (f_loat some = 0.0) * (h:g_ather g) / all
+}
+
+### The mesh
+
+# :: (Any a, Num b) => (a, Int, b) -> (Float, Int, Float)
+## The surface as a mesh: (corners, triangles, colors). Corners are
+## rows of x z y: first the grid's corners, row by row, then the tiles'
+## middles, row by row. Triangles are rows of three corner numbers from
+## 0, four a tile, each facing up. Colors are a row a corner, red green
+## blue: a middle has its kind's color and a grid corner the mean of
+## the tiles' round it, so a road's edge is soft.
+l:m_esh := { map ->
+  kinds := w:t_iles map
+  rc := s_hape kinds
+  r := f_irst rc
+  c := 2 s_elect rc
+  n := (r + 1) * c + 1
+  ci := (r_ange n) - 1
+  cx := f_loat ci m_od c + 1
+  cz := f_loat ci d_iv c + 1
+  ti := (r_ange r * c) - 1
+  mx := 0.5 + f_loat ti m_od c
+  mz := 0.5 + f_loat ti d_iv c
+  ys := (r_avel l:c_orners map) c_at r_avel l:g_round map
+  corners := o_\ (3 c_at n + r * c) r_eshape (cx c_at mx) c_at (cz c_at mz) c_at ys
+  tl := (ti m_od c) + (c + 1) * ti d_iv c
+  tr := tl + 1
+  bl := tl + c + 1
+  br := bl + 1
+  ce := n + ti
+  fan := o_\ (12 c_at r * c) r_eshape tl c_at ce c_at tr c_at tr c_at ce c_at br c_at br c_at ce c_at bl c_at bl c_at ce c_at tl
+  own := (r_avel kinds) s_elect h:colors
+  one := 1.0 + 0.0 * f_loat kinds
+  mean := '{ k -> e_nclose (r_avel h:g_ather rc r_eshape k s_elect_2 own) / r_avel h:g_ather one } e_ach 1 2 3
+  shade := o_\ (3 c_at n) r_eshape (d_isclose f_irst mean) c_at (d_isclose 2 s_elect mean) c_at d_isclose 3 s_elect mean
+  (corners, ((4 * r * c) c_at 3) r_eshape fan, shade c_at own)
+}
+
+### Standing on it
+
+# :: (Any a, Num b) => (a, Int, b) -> Float -> Float
+## The height of the surface under board points: map tr:h_eight points,
+## a row a point (x, y), giving a height each. Off the map it is the
+## nearest tile's. In the middle of a tile it is the tile's own
+## elevation.
+l:h_eight := { map xy ->
+  rc := w:s_ize map
+  x := 0.0 m_ax ((f_loat 2 s_elect rc) - 0.000001) m_in f_irst_2 xy
+  y := 0.0 m_ax ((f_loat f_irst rc) - 0.000001) m_in 2 s_elect_2 xy
+  col := f_loor x
+  row := f_loor y
+  u := x - f_loat col
+  v := y - f_loat row
+  cs := r_avel l:c_orners map
+  k := 1 + 2 s_elect rc
+  tl := (1 + col + k * row) s_elect cs
+  tr := (2 + col + k * row) s_elect cs
+  bl := (1 + col + k * row + 1) s_elect cs
+  br := (2 + col + k * row + 1) s_elect cs
+  mid := (1 + col + (2 s_elect rc) * row) s_elect r_avel l:g_round map
+  top := (tl + u * tr - tl) + v * (2.0 * mid) - tl + tr
+  bottom := (bl + u * br - bl) + (1.0 - v) * (2.0 * mid) - bl + br
+  left := (tl + v * bl - tl) + u * (2.0 * mid) - tl + bl
+  right := (tr + v * br - tr) + (1.0 - u) * (2.0 * mid) - tr + br
+  near := v m_in (1.0 - v) m_in u m_in 1.0 - u
+  a := near = v
+  b := (n_ot a) & near = 1.0 - v
+  d := (n_ot a | b) & near = u
+  ((f_loat a) * top) + ((f_loat b) * bottom) + ((f_loat d) * left) + (f_loat n_ot a | b | d) * right
+}
+# :: (Any a, Num b) => (a, Int, b) -> Float -> Float
+## Where a piece stands at board points: on the surface, but on a
+## bridge, a wall or a gate on the built thing, at the tile's own
+## elevation (the deck, the wall's walk, the gate's sill).
+l:s_tand := { map xy ->
+  rc := w:s_ize map
+  col := 1 + 0 m_ax ((2 s_elect rc) - 1) m_in f_loor f_irst_2 xy
+  row := 1 + 0 m_ax ((f_irst rc) - 1) m_in f_loor 2 s_elect_2 xy
+  i := col + (2 s_elect rc) * row - 1
+  on := f_loat (i s_elect r_avel w:t_iles map) m_ember? 3 c_at h:built
+  (on * 0.5 * f_loat i s_elect r_avel w:h_eights map) + (1.0 - on) * map l:h_eight xy
+}
+
+### The scene's call
+
+h:f_ine := { v -> (f_loat f_loor 0.5 + 1000.0 * v) / 1000.0 }
+# :: (Any a, Num b) => (a, Int, b) -> Char
+## The mesh as a scene call, a line: terrain('ground', nums('x z y
+## ...', 3), ints('a b c ...', 3), nums('r g b ...', 3)).
+l:c_all := { map ->
+  (corners, triangles, colors) := l:m_esh map
+  "terrain('ground', nums('" c_at (f_ormat h:f_ine r_avel corners) c_at "', 3), ints('" c_at (f_ormat r_avel triangles) c_at "', 3), nums('" c_at (f_ormat h:f_ine r_avel colors) c_at "', 3))\n"
+}

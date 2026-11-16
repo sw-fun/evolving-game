@@ -1,0 +1,50 @@
+#!/usr/bin/env xetal
+## The battlefield's ground as one smooth surface (lib/Terrain), and the
+## walk's scene on it (lib/View's smooth stage): what a 3D player is
+## given to draw in place of the columns. First the surface's numbers:
+## the ground under every tile and at every corner. Then standing on
+## it, and a click's way back to a tile on a slope. Then the scene
+## whole: the terrain call (its corners, triangles and colors), the
+## water, the built tiles with their models, and a walker on the bank.
+"tr:" u_se< "Terrain"
+"vw:" u_se< "View"
+"w:" u_se< "World"
+
+field := w:r_ead "../world/battlefield.toml"
+# The ground at the middle of every tile, in the world's units (a step
+# of elevation is 0.5): the river's bed is 0.3 under its water, and
+# under the wall is the ground beside it.
+tr:g_round field
+# The corners between the tiles: where the slopes are.
+tr:c_orners field
+# The mesh: 441 corners and 400 middles; four triangles a tile.
+(corners, triangles, colors) := tr:m_esh field
+(s_hape corners) c_at (s_hape triangles) c_at s_hape colors
+# Every tile of land is, at its middle, exactly at its own elevation:
+# the rules' grid and the surface agree where pieces stand.
+kinds := r_avel w:t_iles field
+land := n_ot kinds m_ember? 2 3 5 7
+mids := o_\ 2 400 r_eshape (0.5 + f_loat ((r_ange 400) - 1) m_od 20) c_at 0.5 + f_loat ((r_ange 400) - 1) d_iv 20
+'& r_/ land r_eplicate (field tr:h_eight mids) = 0.5 * f_loat r_avel w:h_eights field
+# Walking west along row 8 toward the cliff, a tenth of a tile at a
+# time: level ground, then up the slope, to the cliff's top.
+field tr:s_tand o_\ 2 14 r_eshape (2.25 - 0.1 * f_loat r_ange 14) c_at 14 r_eshape 7.5
+# On the bridge a piece stands on the deck, not on the river's bed
+# under it; the bed is what the surface is there.
+field tr:s_tand 1 2 r_eshape 6.5 9.5
+field tr:h_eight 1 2 r_eshape 6.5 9.5
+# A click on the smooth stage goes back to the tile whose surface is
+# under it: the middles of a road tile, a cliff and the gate; and a
+# quarter of a tile either side of the middle of a tile on the slope
+# beside the western cliff (row 8, column 2) is still that tile.
+stage := vw:s_mooth field
+u:c_lick := { xy -> stage vw:t_ile f_irst stage vw:t_o 1 3 r_eshape xy c_at 2.0 * f_irst field tr:s_tand 1 2 r_eshape xy }
+u:c_lick 6.5 7.5
+u:c_lick 0.5 5.5
+u:c_lick 10.5 3.5
+u:c_lick 1.25 7.5
+u:c_lick 1.75 7.5
+stage vw:t_ile 5.0 5.0
+# The scene: the walker on the north bank, a third of the way up the
+# slope from the bridge.
+vw:s_cene vw:o_ne (stage, "walker", "walk", 6.5 8.9 0.0 -1.0 11.0 6.5 8.775 0.05, "On the bank")

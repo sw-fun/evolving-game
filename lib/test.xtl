@@ -325,3 +325,29 @@ _ := u:s_ay u:r_un (take, "choose 1 1" "tick 1" "choose 1 1" "tick 1")
 _ := u:s_ay u:r_un (take, "choose 1 1" "tick 1")
 u:h_ow := { (status, _, _) -> md:s_tatusName status }
 '{ @ -> u:h_ow u:r_un ("../games/walk/bridge.toml", 0 t_ake "tick 1" "tick 1") } []T_RAP '{ err -> []R_ECOVER []E_MESSAGE err }
+
+# Terrain: the small map's ground as a smooth surface. The ground under
+# every tile (the bed 0.3 under the water and the bridge; under the
+# gate, the land beside it), and at every corner (the mean of the land
+# round it).
+"tr:" u_se< "Terrain"
+tr:g_round small
+tr:c_orners small
+# The mesh: 20 corners and 12 middles, four triangles a tile facing up,
+# a color a corner; the first tile's triangles, and its corners.
+(corners, triangles, colors) := tr:m_esh small
+(s_hape corners) c_at (s_hape triangles) c_at s_hape colors
+4 t_ake triangles
+(1 2 6 7 21) s_elect corners
+(1 2 6 7 21) s_elect colors
+# The surface under points: a tile's middle is its own elevation; a
+# corner is the corners' height; halfway from a middle to an edge is
+# halfway between them (the cliff, row 3 column 4, to its north edge).
+small tr:h_eight 4 2 r_eshape 0.5 0.5  3.5 2.5  3.0 2.0  3.5 2.25
+# A piece stands on the surface, but on the bridge and the gate on the
+# built thing.
+small tr:s_tand 3 2 r_eshape 2.5 1.5  3.5 1.5  3.5 2.5
+# The scene's call, and a smooth stage's scene: the terrain, then tiles
+# only for the water and the built kinds (with their models).
+tr:c_all small
+vw:s_cene vw:e_mpty (vw:s_mooth small, "Smooth")

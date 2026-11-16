@@ -240,7 +240,7 @@ h:l_oop := { step_ status_ legal_ view_ (host, lines, last, clock, s) ->
   (c2, s2) := (clock, s) 'step_ 'legal_ h:a_pply e
   'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2)
 }
-# :: (Any a, Any b, Num c, Truthy c) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char)) -> a -> ((Int, Int, Int), a)
+# :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> a -> ((Int, Int, Int), a)
 ## Play a mode on the host's events, from a state its n_ew gave:
 ## 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep md:p_lay state. The view's
 ## text is printed at the start and whenever it changes, and its
@@ -249,7 +249,7 @@ h:l_oop := { step_ status_ legal_ view_ (host, lines, last, clock, s) ->
 l:p_lay := { step_ status_ legal_ view_ s ->
   'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s)
 }
-# :: (Any a, Any b, Num c, Truthy c) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char)) -> (Box Char, a) -> ((Int, Int, Int), a)
+# :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Box Char, a) -> ((Int, Int, Int), a)
 ## The same on a script, a list of event lines (a log, a save): ...
 ## md:r_eplay (lines, state).
 l:r_eplay := { step_ status_ legal_ view_ (lines, s) ->

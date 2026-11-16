@@ -36,7 +36,7 @@ h:a_long := { s -> (h:s_teps s) m_in (h:s_peed s) * (h:w_alked s) / 1000.0 }
 
 ### The protocol
 
-# :: (Num a, Num b) => (Char, (Box Char, a), b) -> (Char, ((Char, Int, Int), Float, Box Char, Float, Char), Int, Float)
+# :: (Num a, Num b, Num c) => (Char, (Box Char, a), b) -> (Char, ((Char, Int, Int), Float, Box Char, Float, Char, c), Int, Float)
 ## A walk from a scenario's file, in a world, with a seed. Boots in the
 ## world (resource.boots) make the walker faster, half a tile a second
 ## a pair. A scenario that is wrong is the error bad-scenario.
@@ -48,7 +48,7 @@ l:n_ew := { (file, world, seed) ->
   gold := 0.0 m_ax file md:r_ule ("reward", "gold")
   (file md:f_ield "zone", vw:s_tage map, map w:r_oad 1, speed c_at limit c_at 0.0 c_at 0.0 c_at 0.0 c_at gold c_at (f_loat seed) c_at 0.0 0.0)
 }
-# :: (Any a, Any b, Num d, Any e, Any f, Any g, Any h, Any i) => (a, ((b, c, d), Float, e, f, g), h, Float) -> (Char, Float, i) -> (a, ((b, c, d), Float, e, f, g), h, Float)
+# :: (Any a, Any b, Num c, Any d, Any e, Any f, Num g, Any h, Any i) => (a, ((b, Int, c), Float, d, e, f, g), h, Float) -> (Char, Float, i) -> (a, ((b, Int, c), Float, d, e, f, g), h, Float)
 ## The state after an event: a tick's time passes, and is walked unless
 ## stopped; the space bar stops and starts; a click points at the tile
 ## under it (lib/View works out which), and the walk says what it is.
@@ -89,7 +89,7 @@ h:a_t := { road along ->
   yx := (from + part * to - from) - 0.5
   (2 s_elect yx) c_at (f_irst yx) c_at (2 s_elect to - from) c_at f_irst to - from
 }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Num h) => (a, ((b, Int, c), d, e, f, g), h, Float) -> (((b, Int, c), d, e, f, g), Box Char, Box Char, Float, Char)
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i) => (a, ((b, Int, c), d, e, f, g, h), i, Float) -> (((b, Int, c), d, e, f, g, h), Box Char, Box Char, Float, Char)
 ## What to show (lib/View): the map with the walker on it, walking or
 ## standing, where it will be a twentieth of a second on (so a player
 ## can move it smoothly between ticks), and a line saying where it is
@@ -118,7 +118,7 @@ h:p_ointed := { (_, stage, _, n) ->
   r := f_loor 8 s_elect n
   c := f_loor 9 s_elect n
   r < 1 ? ""
-  (map, _, _, _, _) := stage
+  (map, _, _, _, _, _) := stage
   kind := d_isclose (c s_elect r s_elect w:t_iles map) s_elect w:kinds
   @ f_ormat< " Pointing at row {r}, column {c}: {kind}."
 }

@@ -19,6 +19,6 @@ l:z_ones : Char -> Char
 l:m_ap : Char -> (Char, Int, Int)
 l:p_roblem : Char -> Char -> Char
 l:a_llows : Truthy b => Box Char -> (Char, a, Char) -> b
-l:p_lay : (Any a, Any b, Num c, Truthy c) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char)) -> a -> ((Int, Int, Int), a)
-l:r_eplay : (Any a, Any b, Num c, Truthy c) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char), Box Char, Box Char, Float, Char)) -> (Box Char, a) -> ((Int, Int, Int), a)
+l:p_lay : (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> a -> ((Int, Int, Int), a)
+l:r_eplay : (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Box Char, a) -> ((Int, Int, Int), a)
 l:r_esult : Any a => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (Box Char, a) -> ((Int, Int, Int), a)

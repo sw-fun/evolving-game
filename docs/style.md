@@ -42,7 +42,8 @@ pieces.
   can print with `xetal expand`.
 - `games/<slug>/<Name>.xtl`: one game's rules, one library, named
   unlike the game (on a case-insensitive disk `Walk.xtl` is
-  `walk.xtl`). It follows the mode protocol (`lib/Mode`, `docs/plan.md`,
+  `walk.xtl`; the same holds in `lib/`: a program beside `Terrain.xtl`
+  may not be `terrain.xtl`, and writing it replaces the library). It follows the mode protocol (`lib/Mode`, `docs/plan.md`,
   The seams) and holds definitions only: `l:mode`, `l:n_ew`,
   `l:s_tep`, `l:l_egal`, `l:s_tatus`, `l:v_iew`, `l:o_utcome`, as
   `games/walk/Walking.xtl` does. Keep what follows from the events
