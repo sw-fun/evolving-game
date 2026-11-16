@@ -1,8 +1,9 @@
 number = 1
 slug = "workspace-scaffold"
-status = "in-progress"
+status = "completed"
 description = "foundations step 1: scaffold the repository as X_eTaL-games does (read its sc..."
 role = "production"
 context_files = []
 created_at = "2026-11-15T15:23:53"
-commits = []
+completed_at = "2026-11-15T16:46:00"
+commits = ["d7d57f17a9023788e5cae637d1bdb601bac223c8"]
