@@ -50,17 +50,19 @@ five waves.
 
 ## Status
 
-Early. There is one small game to play, in the
-[live demo](https://sw-fun.github.io/evolving-game/), at the terminal
-and in a browser of your own (a walk to the castle gate, below): the
-walker follows the road by itself, the space bar stops and starts it,
-and a click on a tile makes the game say what the tile is; otherwise the repository holds the plan,
-the process, the tooling (the pinned X_eTaL, the tests, the gate) and
-the first shared libraries (seeded chance, the event loop every game
-runs in, and the world: the battlefield's map with its road found
-from the gate).
-[`docs/plan.md`](docs/plan.md) has the goal, the decisions made so
-far, the questions still open, and the roadmap.
+Early. One small game can be played: a walk to the castle gate, in
+the [live demo](https://sw-fun.github.io/evolving-game/), at the
+terminal and in a browser of your own (below). The walker follows the
+road by itself, the space bar stops and starts it, and a click on a
+tile makes the game say what the tile is.
+
+Behind it: the shared libraries every game will use (seeded chance,
+the event loop, the world and its maps, the protocol a game follows,
+and the views), the first 3D pieces made by X_eTaL through Blender,
+the page, and the tests. It does not look like much yet: flat colors
+and boxes. [`docs/architecture.md`](docs/architecture.md) says what
+exists and how it fits together; [`docs/plan.md`](docs/plan.md) has
+the decisions, the open questions and what comes next.
 
 ## How it is made
 
@@ -156,6 +158,9 @@ it, and a click on a tile makes the game say what the tile is. Add
 - [`docs/plan.md`](docs/plan.md) -- the goal, what the project builds
   on, the decisions, how the games combine, the layout, the roadmap
   and the open questions.
+- [`docs/architecture.md`](docs/architecture.md) -- what exists and how
+  it fits together: the flow, the libraries, a game as a mode, the
+  page, the assets, the tests.
 - [`docs/desktop.md`](docs/desktop.md) -- the design of the desktop
   version (installers for Linux, macOS and Windows; not built yet).
 - [`docs/style.md`](docs/style.md) -- how the game's X_eTaL is
@@ -168,17 +173,16 @@ it, and a click on a tile makes the game say what the tile is. Add
 ## Architecture
 
 ```
-TOML data, events -> rules (a mode) -> state -> picture (SVG) and scene -> the page
+TOML data, events -> rules (a mode) -> state -> a view -> text, picture (SVG), scene -> the page
 ```
 
-Shared X_eTaL libraries in `lib/` (the event loop and seeded chance,
-the world, the mode protocol every game follows, views, the
-campaign); one directory a game under `games/`; the combined game in
-`campaign/`; the castle's maps in `world/`; the asset descriptions in
-`assets/`; the page in `web/`.
-X_eTaL, X_eTaL-extensions and X_eTaL-games are used at pinned,
-known-good commits. See [`docs/plan.md`](docs/plan.md) (Layout, The
-seams that make the games one game).
+Shared X_eTaL libraries in `lib/` (seeded chance, the event loop, the
+world, the mode protocol every game follows, views); one directory a
+game under `games/`; the castle's maps in `world/`; the pieces'
+descriptions and the pieces in `assets/`; the page in `web/`. X_eTaL,
+X_eTaL-extensions, X_eTaL-games and X_eTaL-libraries are used at
+pinned, known-good commits. See
+[`docs/architecture.md`](docs/architecture.md).
 
 ## Development
 

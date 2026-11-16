@@ -27,6 +27,7 @@ job tooling scripts/selftest-games.sh
 job libraries scripts/test-lib.sh
 job types scripts/check-types.py
 job docs scripts/check-docs.py
+job readme bash -c 'scripts/check-readme.py --self-test && scripts/check-readme.py'
 job markdown markdown
 job web scripts/check-web.sh
 job assets scripts/test-assets.sh

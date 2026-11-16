@@ -1,7 +1,7 @@
 # Desktop version -- design
 
 Designed now so the browser game is built ready for it; implemented
-in Saga 12 (`docs/plan.md`, decisions D16 and D17), which runs after
+in Saga 13 (`docs/plan.md`, decisions D16 and D17), which runs after
 several iterations of the games. Nothing here
 exists yet.
 
@@ -35,7 +35,7 @@ builds installers. Chosen (the user, 2026-11-15, "for now") because:
 | Windows | WebView2 (Chromium) | present on Windows 11; the installer fetches or carries it for Windows 10 |
 | Linux | WebKitGTK | the risk: its WebGL is slower and varies by driver; measure the frame time of a full board early, and fall back to the flat SVG picture where WebGL is missing |
 
-The first step of Saga 12 is that measurement, on all three, with the
+The first step of Saga 13 is that measurement, on all three, with the
 Defend the Bridge level. If WebKitGTK cannot hold the frame rate, the
 alternatives, in order: lower the scene's cost on that system (fewer
 lights, no bloom), ship the Linux build on a bundled Chromium (the
@@ -82,7 +82,7 @@ is cheap later.
 
 ## The desktop shell
 
-`desktop/` (a Rust crate of its own, added in Saga 12): the Tauri
+`desktop/` (a Rust crate of its own, added in Saga 13): the Tauri
 application and its configuration. It does four things and knows
 nothing about the game:
 

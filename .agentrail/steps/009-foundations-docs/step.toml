@@ -1,6 +1,6 @@
 number = 9
 slug = "foundations-docs"
-status = "pending"
+status = "in-progress"
 description = "foundations step 9: close the saga. Read CLAUDE.md and docs/plan.md first. TD..."
 role = "production"
 context_files = []

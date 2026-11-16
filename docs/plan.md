@@ -209,7 +209,7 @@ defaults drawn from the repositories above.
 - D16. A desktop version will follow, designed now and built later
   (the user, 2026-11-15; `docs/desktop.md` is the design): the same
   page wrapped in a web view by Tauri, with installers for Linux,
-  macOS and Windows (Saga 12). So from the first page on: the site is
+  macOS and Windows (Saga 13). So from the first page on: the site is
   self-contained (nothing loaded from another site, works from local
   files and offline), saves go through one small storage interface,
   and nothing assumes a browser tab (window size, full screen, quit).
@@ -367,7 +367,7 @@ functions per module, 5 modules per crate; sw-checklist enforces the
 looser 50 / 7 / 7). X_eTaL follows `docs/style.md`, started in Saga 1
 from X_eTaL-games' style guide.
 
-## Saga 1 -- foundations  [ACTIVE]
+## Saga 1 -- foundations  [DONE]
 
 Goal: the shared libraries exist and show something. A trivial `walk`
 scenario plays at the command line from an event script, pinned by a
@@ -389,7 +389,82 @@ demo is published; the gate is in place.
 | 8  | castle-assets      | `assets/Castle.xtl` on the blender extension's `Bpy.xtl`: the first pieces (ground, water, bridge, wall and gate tiles; a walker with idle and walk clips), `just assets` making each `.glb`, previews and `manifest.toml`; the written script and the clips read back as goldens; the page then draws the pieces, and the demo is published again |
 | 9  | foundations-docs   | `docs/architecture.md`, README current with every command a golden, the saga retrospective in this file |
 
-## Saga 2 -- defend-the-bridge (Castle Defense, first playable)
+### Retrospective (2026-11-16)
+
+Delivered, in nine steps over two days: the tooling and the gate; the
+libraries `Rng`, `Sim`, `World`, `Mode` and `View`; the first mode,
+`games/walk`, played at the command line and in a browser from the
+same file; the battlefield map; the walk drawn as text, as an
+isometric picture and as a 3D scene; six pieces made by X_eTaL through
+Blender; the live demo, https://sw-fun.github.io/evolving-game/,
+published and tested where it is served; `docs/architecture.md`.
+
+What went well:
+
+- Goldens as the specification. Each library's behavior was pinned
+  as it was written; the same event script tests the command line,
+  the page's engine (`web/tests/play.rs`) and the browser.
+- Asking the siblings. The board player was asked for and landed in
+  X_eTaL-extensions the same day; the four repositories were brought
+  onto one X_eTaL in an evening. Nothing of a sibling was copied or
+  worked around in secret.
+- One program everywhere: `play.xtl` runs unmodified at the terminal
+  and in the page, and the host has no rule of the game in it.
+
+What to change:
+
+- Look before building. A seeded generator was written before the
+  sibling repositories were searched for one; the search found two,
+  and a version conflict. Search the X_eTaL repositories first.
+- Look at what is published. The first sources pane showed four
+  lines of raw text; its test checked the text, not what a person
+  sees. A page's test includes a screenshot that is looked at.
+- X_eTaL's rules cost time until learned: Int and Float do not mix; a
+  name with an underscore is a function and a plain one a value; a
+  left operand comes before quoted function operands; a long
+  expression continues only inside parentheses; a rules library is
+  named unlike its program. They are in `docs/style.md` now.
+- The steps were reordered once (the page before the pieces) and the
+  plan's order was right the second time: show something first.
+- The look was nobody's step. The user asked when the game would look
+  better, and no saga answered; the next one does.
+
+Asks raised: X_eTaL-extensions, a board player (landed), a page shell
+for a game (open; `web/` here does it), tiles from models (open);
+X_eTaL-libraries, Philox in bulk is slow (open; nothing waits on it);
+agentrail, em dashes in its generated briefing (open). None of the
+language.
+
+## Saga 2 -- the-look  [ACTIVE]
+
+The user, 2026-11-16: "go on to step 9, then start The look". Goal
+(see The look, and A showcase): the scene there is stops looking like
+boxes. Measured on two test scenes, the board (the bridge and the
+walk) and one small world to walk through, by the frame rate on a
+middling laptop, the size of the site, and captures the user compares
+with what was asked for: less toy, more real; textures, light,
+particles; and a town's life (smoke, cloth, carts, crows).
+
+Most steps need the player (X_eTaL-extensions) or the asset library
+(Bpy.xtl) to grow: each such step writes its ask first, with the
+scene call it wants and a scene to test it on, and builds here what
+can be built without it (the X_eTaL that writes the call, its
+goldens, the flat picture's version).
+
+| #  | Step slug     | Delivers |
+| -- | ------------- | -------- |
+| 1  | look-targets  | `docs/look.md`: the look wanted in the user's words and pictures, the two test scenes, the budgets (frames a second, bytes), the scene calls to add and who draws each; the asks written; a capture of each scene as it is now, to compare against |
+| 2  | terrain       | the map's heights as one smooth ground (a mesh worked out in X_eTaL: slopes, banks, the river's bed), the tiles still the rules' grid; a `terrain` call; the flat picture unchanged |
+| 3  | materials     | stone, wood, grass, cloth and water as textures made in Blender from X_eTaL's descriptions and carried by the pieces; walls, the gate and the bridge as built things, drawn (tiles from models); the size limit of a piece revisited |
+| 4  | light         | a sun with shadows, sky light, ambient occlusion, tone mapping, fog with distance; `sun`, `sky`, `fog` calls; a time of day in the scenario |
+| 5  | water         | a river that moves and reflects, foam at the banks and the bridge |
+| 6  | particles     | a `particles` call: smoke from fires, grills and pots, dust at feet, splashes; described by the program, drawn by the player |
+| 7  | cloth         | banners that wave and tent flaps that move, by a clip or by the player |
+| 8  | figures       | a walker with proportions, a rig and a walk with weight; a horse and cart that ambles; crows that fly over (paths worked out in X_eTaL, as the neon city's cars are) |
+| 9  | world-view    | a mode with a camera that walks or flies, and one small world from a seed to try it on (a street of the town, or the snow before the walls); `lib/View`'s world scene |
+| 10 | look-docs     | the captures side by side with step 1's, the measures, the live demo, the retrospective, the next saga confirmed |
+
+## Saga 3 -- defend-the-bridge (Castle Defense, first playable)
 
 Goal: the research's first milestone, playable in the browser and at
 the command line: one map, one road, three tower types (archer, fire,
@@ -403,7 +478,7 @@ described in `assets/` with idle, fire, walk and hit clips; the
 toolbar and wave display; many seeded games run headless to balance;
 the level in the live demo; docs and retrospective.
 
-## Saga 3 -- rune-keep (first puzzles)
+## Saga 4 -- rune-keep (first puzzles)
 
 Goal: a handful of puzzles in the inner keep: activate colored runes
 in the right order and route magical energy between towers, gates and
@@ -417,7 +492,7 @@ conduits, portals, glowing); ten puzzles of rising difficulty; docs
 and retrospective. The mode protocol is revised here if a game
 without a clock strains it.
 
-## Saga 4 -- campaign-shell (the combined game, first version)
+## Saga 5 -- campaign-shell (the combined game, first version)
 
 Goal: one game containing the first two. A world map of the five
 zones; a short campaign in which a Rune Keep puzzle powers the towers
@@ -431,7 +506,7 @@ map screen, the castle seen whole; a mini-game entry (a small
 scenario launched from inside a level); the first campaign; docs and
 retrospective.
 
-## Saga 5 -- castle-defense-2 (the distinctive mechanic)
+## Saga 6 -- castle-defense-2 (the distinctive mechanic)
 
 Enemies destroy walls and open new invasion routes: wall cells with
 hit points, the road found again by the flood whenever a wall falls,
@@ -439,21 +514,21 @@ repair between waves, siege engines and dragons (flying units that
 ignore walls), the outer walls and courtyard zones, more levels in
 the campaign.
 
-## Saga 6 -- castle-world (the castle from a seed)
+## Saga 7 -- castle-world (the castle from a seed)
 
 The whole castle and its surroundings worked out as arrays from a
 seed, as the neon city is: terrain, cliffs, walls, towers and
 dressing; the authored maps set into it; the camera riding and flying
 over it between levels.
 
-## Saga 7 -- dragonfire-tactics
+## Saga 8 -- dragonfire-tactics
 
 Turn-based squads on the grid: turns and action points, heroes,
 mages, archers and dragons, elemental terrain as cellular rules (fire
 spreads, ice blocks movement, lightning chains, wind bends
 projectiles), an opponent, tactics levels in the campaign.
 
-## Saga 8 -- siege-automata
+## Saga 9 -- siege-automata
 
 Programmable defenses in three control modes: manual, rule-based
 (conditions and actions chosen in the interface, kept as tables) and
@@ -462,26 +537,26 @@ the table of creeps in reach). Programs are world state, so a defense
 programmed here is the one a Castle Defense level runs. Challenge
 levels scored against identical seeded waves.
 
-## Saga 9 -- siege-engineer
+## Saga 10 -- siege-engineer
 
 Catapults, trebuchets and ballistae: ballistics for every shot at
 once (angle, counterweight, projectile type), structures with
 supports, damage and collapse, limited-ammunition puzzles, and siege
 engines in the other modes using the same rules.
 
-## Saga 10 -- shattered-kingdom
+## Saga 11 -- shattered-kingdom
 
 The castle walked in the first person: all five zones, tunnels and
 secrets, artifacts and portals, digging, and the same world before,
 during and after the siege, the zones as the earlier games left them.
 
-## Saga 11 -- siege-commander
+## Saga 12 -- siege-commander
 
 Real-time strategy, attacker or defender: selection and orders,
 groups and formations, elevation affecting sight, range and movement,
 capturing bridges, breaching walls, opponents for both sides.
 
-## Saga 12 -- desktop (installers for Linux, macOS and Windows)
+## Saga 13 -- desktop (installers for Linux, macOS and Windows)
 
 The browser game wrapped in a web view as a desktop application
 (Tauri, D16; the design is `docs/desktop.md`):
@@ -501,7 +576,7 @@ textures, particle systems". Nothing in the sagas below does that:
 they build games on the look Saga 1 ends with, which is the sibling
 repositories' (flat colors, boxes, no light to speak of). The honest
 answer is a saga of its own, and the proposal is to run it next,
-before Saga 2, on the one scene there is (the bridge and the walk), so
+before Saga 3, on the one scene there is (the bridge and the walk), so
 every game after it is built on the better look and not repainted
 later. What it would hold, each a step with its own measure:
 
@@ -555,7 +630,9 @@ dressed for the castle. The user's examples:
   town: narrow crooked streets, a bazaar, a shanty town against the
   wall. Not modern: no neon, no ads, no billboards.
 - **Life in it.** Smoke from fires, grills and boiling pots; banners
-  waving, tent flaps moving.
+  waving, tent flaps moving; and, where the neon city has cars and
+  flying cars, horse-drawn carts ambling by and crows flying overhead
+  (the user, 2026-11-16).
 
 What this changes in the plan, and what it does not:
 
@@ -615,7 +692,7 @@ questions). What the seams already give it:
   read by rules).
 
 Where it goes in the order is open; it is small, and it would give
-the campaign shell (Saga 4) something to do between levels.
+the campaign shell (Saga 5) something to do between levels.
 
 ## Later
 
@@ -640,7 +717,7 @@ repository (D14), the order (Castle Defense first), the player (D7),
 tiles not voxels (D8), X_eTaL-games' libraries by pin for now with a
 move to the libraries repository later (D11, D12), tracked pieces
 (D13), the art reference (D18), Tauri (D16), the desktop saga later,
-after several iterations of the games (Saga 12), and both the site
+after several iterations of the games (Saga 13), and both the site
 and the desktop build packed (D17).
 
 Still open:
@@ -652,9 +729,9 @@ Still open:
    it earns and what spends it; its name; and where it comes in the
    order.
 
-3. The look (see its section): whether that saga runs next, before
-   Castle Defense; and what "realistic" is to mean here (a reference
-   picture decides it).
+3. The look (Saga 2, running): what "realistic" is to mean here; a
+   reference picture, or a few, decides it (step 1 works from the
+   user's words until there is one).
 
 4. The showcase's worlds (see A showcase): the proposed order (The
    look, Castle Defense's first level, then the winter approach and
