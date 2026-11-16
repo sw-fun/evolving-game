@@ -1,7 +1,7 @@
 number = 11
-slug = "world-view"
+slug = "figures"
 status = "pending"
-description = "the-look step 9: the world view. A second kind of view (docs/plan.md, A showc..."
+description = "the-look step 8: figures. A walker with proportions, a rig and a walk with we..."
 role = "production"
 context_files = []
 created_at = "2026-11-16T09:04:34"

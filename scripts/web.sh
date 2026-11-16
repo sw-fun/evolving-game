@@ -18,6 +18,7 @@ pin "${EXTENSIONS_SOURCE:-https://github.com/softwarewrighter/X_eTaL-extensions.
 from="$ext/extensions/three/web/static"
 rm -rf "$root/web/ext"; mkdir -p "$root/web/ext/vendor"
 cp "$from/board.js" "$root/web/ext/"
+cp -R "$from/board" "$root/web/ext/"
 cp -R "$from/vendor/three" "$root/web/ext/vendor/"
 # the pieces the board player loads by name (models/NAME.glb)
 rm -rf "$root/web/models"; mkdir -p "$root/web/models"

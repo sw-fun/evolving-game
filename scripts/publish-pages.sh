@@ -4,8 +4,8 @@
 # files never accumulate), and the pages workflow on main is started,
 # which hands that branch unchanged to GitHub Pages (this repository
 # deploys Pages from GitHub Actions); then waits for it. Refuses unless
-# the work tree is clean, main is pushed and pages/ was built from this
-# very commit, so the published site always matches a commit of main.
+# the work tree is clean, main is pushed, pages/ was built from this
+# very commit and the browser test passes on it, so the published site always matches a commit of main.
 #   scripts/publish-pages.sh
 set -euo pipefail
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -20,6 +20,13 @@ git fetch --quiet origin main
 [ "$(cat pages/BUILT_FROM 2>/dev/null)" = "$head" ] || no "pages/ was not built from this commit (just pages again)"
 gh api repos/sw-fun/evolving-game/pages --jq .build_type 2>/dev/null | grep -qx workflow \
   || no "GitHub Pages is not enabled for GitHub Actions on sw-fun/evolving-game (Settings, Pages, Source: GitHub Actions)"
+# The site is tested as it will be served, here, every time: a failed
+# check stops the publish and says which (the log is work/publish-test.log).
+mkdir -p work
+if ! scripts/browser-test.mjs --dir pages --no-capture > work/publish-test.log 2>&1; then
+  grep -v "^ok" work/publish-test.log >&2
+  no "the browser test failed on pages/ (above); nothing was published"
+fi
 index="$(mktemp)"; rm -f "$index"; trap 'rm -f "$index"' EXIT
 export GIT_INDEX_FILE="$index"
 git --work-tree=pages add -A -f .

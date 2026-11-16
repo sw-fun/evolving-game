@@ -1,0 +1,8 @@
+number = 6
+slug = "look-on"
+status = "in-progress"
+description = "the-look step (inserted 2026-11-16): switch the look on. X_eTaL-extensions ha..."
+role = "production"
+context_files = []
+created_at = "2026-11-16T13:52:57"
+commits = []
