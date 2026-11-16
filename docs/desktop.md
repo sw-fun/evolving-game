@@ -49,7 +49,14 @@ is cheap later.
 1. **Self-contained.** Every file the page needs is in the built
    site: no font, script, model or picture from another site. The
    site works from a local directory and offline. (The browser test
-   runs with the network off.)
+   runs with the network off.) One exception in the browser, the
+   user's convention for every X_eTaL page (2026-10-16, and for this
+   one 2026-11-15): the Sources dialog draws X_eTaL in JuliaMono,
+   taken from a CDN (nothing redistributed) only when the dialog is
+   first opened, with the machine's own monospace until it arrives or
+   when it cannot. The game asks nothing of another site. The desktop
+   build carries the font inside itself (SIL OFL), fetched by a script
+   at build time, never tracked.
 2. **Relative addresses only.** The site runs under any path:
    `/evolving-game/` on GitHub Pages, the root in the desktop
    application.

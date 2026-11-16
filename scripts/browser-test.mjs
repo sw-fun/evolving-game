@@ -7,7 +7,9 @@
 // the tile; a real space bar stops the walker; the flat picture alone
 // (?flat) takes the same click; nothing is asked of another site; the
 // page fits its window at three sizes; the footer names the build and
-// the four pins; the sources pane shows the game's own files. Then a
+// the four pins; the Sources dialog shows the game's own files as
+// X_eTaL renders them, colored, in JuliaMono (the font is the one thing
+// taken from another site, and only then). Then a
 // screen capture of the walker on the bridge is written to
 // images/screencapture.png.
 //   scripts/browser-test.mjs [--no-capture] [--dir pages] [--url https://...]
@@ -124,14 +126,30 @@ for (const pin of ["XETAL", "EXTENSIONS", "GAMES", "LIBRARIES"]) {
   const sha = readFileSync(join(root, `${pin}_COMMIT`), "utf8").slice(0, 7);
   check(footer.includes(sha), `it names the pin ${pin}_COMMIT (${sha})`);
 }
-// The sources: the game's own files, shown as they are.
-await page("document.getElementById('sources').open = true, 1");
-await sleep(100);
+// The sources: a dialog showing the game's own files, X_eTaL drawn as
+// X_eTaL renders it (decorated, colored by token, in JuliaMono), the
+// whole file.
+const before = asked.length;
+await page("document.getElementById('open-sources').click(), 1");
+await sleep(200);
+check(await page("document.getElementById('sources').open"), "the Sources button opens a dialog");
 const names = await page("[...document.querySelectorAll('#files button')].map((b) => b.textContent)");
-check(["play.xtl", "Walking.xtl", "Mode.xtl", "View.xtl", "bridge.toml"].every((n) => names.includes(n)), `the sources pane lists the game's files (${names.length})`);
-await page("[...document.querySelectorAll('#files button')].find((b) => b.textContent === 'play.xtl').click(), 1");
-check((await page("document.getElementById('source').textContent")) === readFileSync(join(root, "games/walk/play.xtl"), "utf8"), "play.xtl is shown as it is in the repository");
-await page("document.getElementById('sources').open = false, 1");
+check(["play.xtl", "Walking.xtl", "Mode.xtl", "View.xtl", "bridge.toml"].every((n) => names.includes(n)), `it lists the game's files (${names.length})`);
+const shown = () => page("document.getElementById('source').textContent");
+const typed = readFileSync(join(root, "games/walk/play.xtl"), "utf8");
+check((await shown()).split("\n").length === typed.split("\n").length, `play.xtl is shown first, every line of it (${typed.split("\n").length - 1})`);
+check((await shown()).includes("u\u0332se<") && !(await shown()).includes("u_se<"), "as X_eTaL renders it: u_se< is drawn with its u underlined");
+const colors = await page("['c-builtin', 'c-libfunc', 'c-string', 'c-doc'].map((c) => { const s = document.querySelector('#source .' + c); return s ? getComputedStyle(s).color : ''; })");
+check(colors.every((c) => c) && new Set(colors).size === 4, `colored by the kind of token (${colors.join(" ")})`);
+check((await page("getComputedStyle(document.getElementById('source')).fontFamily")).startsWith("JuliaMono"), "in JuliaMono");
+check(await page("(() => { const s = document.getElementById('source'); return s.clientHeight > 300 && s.scrollHeight >= s.clientHeight; })()"), "the pane is tall enough to read a file in");
+await page("[...document.querySelectorAll('#files button')].find((b) => b.textContent === 'bridge.toml').click(), 1");
+check((await shown()) === readFileSync(join(root, "games/walk/bridge.toml"), "utf8"), "data (bridge.toml) is shown as it is");
+if (!process.argv.includes("--offline")) check(await until("document.fonts.check('14px JuliaMono')", 15000), "the font arrives");
+const font = "https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/JuliaMono-Regular.woff2";
+const outside = asked.slice(before).filter((u) => !u.startsWith(base) && !u.startsWith("data:"));
+check(outside.every((u) => u === font), `the sources ask another site for the font only${outside.length ? "" : " (not asked yet)"}`);
+await page("document.getElementById('sources').close(), 1");
 
 // The page fits its window at three sizes: nothing scrolls.
 for (const [w, h] of [[1280, 800], [800, 600], [420, 760]]) {
@@ -165,8 +183,8 @@ check(await open(""), "the page starts with its clock");
 check(await until("document.querySelector('#flat svg text').textContent.includes(' 3 walked')", 8000), "the clock's ticks walk the walker");
 
 // Self-contained: every request was to the page's own address.
-const foreign = asked.filter((u) => !u.startsWith(base) && !u.startsWith("data:") && !u.startsWith("blob:") && u !== "about:blank");
-check(foreign.length === 0, `nothing is asked of another site${foreign.length ? ": " + foreign.join(" ") : ""}`);
+const foreign = asked.filter((u) => !u.startsWith(base) && !u.startsWith("data:") && !u.startsWith("blob:") && u !== "about:blank" && u !== font);
+check(foreign.length === 0, `the game asks nothing of another site${foreign.length ? ": " + foreign.join(" ") : ""}`);
 const missing = await page("document.getElementById('err').textContent");
 check(!missing, `no error on the page${missing ? ": " + missing : ""}`);
 

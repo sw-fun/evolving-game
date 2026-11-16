@@ -10,11 +10,11 @@ pub fn sources() -> String {
     evolving_web::about::sources()
 }
 
-/// One of the game's files, as it is.
+/// One of the game's files as HTML: X_eTaL as X_eTaL renders it.
 #[wasm_bindgen]
 #[must_use]
-pub fn source(path: &str) -> String {
-    evolving_web::about::source(path)
+pub fn rendered(path: &str) -> String {
+    evolving_web::about::rendered(path)
 }
 
 /// The footer's build facts (HTML spans).

@@ -45,8 +45,30 @@ pub fn sources() -> String {
     paths().join("\n")
 }
 
-/// One of those files, as it is.
+/// One of those files as HTML: X_eTaL drawn as X_eTaL renders it
+/// (names decorated, a span a token classed by its kind, `c-builtin`,
+/// `c-userfunc`, `c-comment` ...), data as it is.
 #[must_use]
-pub fn source(path: &str) -> String {
-    text(path).unwrap_or_default().to_string()
+pub fn rendered(path: &str) -> String {
+    let src = text(path).unwrap_or_default();
+    if !path.ends_with(".xtl") && !path.ends_with(".xtlm") {
+        return escaped(src);
+    }
+    xetal_store::install(std::sync::Arc::new(crate::store::Session::default()));
+    let mut out = String::new();
+    for s in xetal_play::decorated(src) {
+        let class = format!("{:?}", s.class).to_lowercase();
+        out.push_str(&format!(
+            "<span class=\"c-{class}\">{}</span>",
+            escaped(&s.text)
+        ));
+    }
+    out
+}
+
+/// Text made safe to put in HTML.
+fn escaped(text: &str) -> String {
+    text.replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
 }

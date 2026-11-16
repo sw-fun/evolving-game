@@ -9,8 +9,8 @@
 //     board (class "flat") is hidden then, and is all there is to see
 //     where there is no WebGL
 //   - what the program printed, in a pane that opens when it ends
-// ?flat shows the flat picture only. ?hold stops the clock (for tests:
-// events are then given by window.game.feed).
+// ?flat shows the flat picture only. ?sources opens the sources. ?hold
+// stops the clock (for tests: events are then given by window.game.feed).
 import { board } from '../ext/board.js';
 
 const TICK = 0.05;
@@ -68,7 +68,7 @@ flat.parentElement.addEventListener('click', (e) => {
 // Keys the game may be given; none is a browser's or a system's.
 const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter' };
 window.addEventListener('keydown', (e) => {
-  if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+  if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || el('sources').open) return;
   const name = NAMES[e.key] || (/^[a-z0-9]$/.test(e.key) ? e.key : '');
   if (!name) return;
   e.preventDefault();
@@ -86,24 +86,42 @@ function start() {
 }
 el('again').addEventListener('click', (e) => { e.currentTarget.blur(); start(); });
 
-// The game's sources, shown as they are when their pane is opened.
+// The game's sources in a dialog: each file drawn by X_eTaL itself
+// (decorated, a span a token), colored by the page's stylesheet, in
+// JuliaMono. The font is the one thing the page takes from another
+// site (a CDN, as the X_eTaL live demos do; nothing is redistributed),
+// and only when the sources are first opened: the game itself asks
+// nothing of anyone, and without the font the sources are drawn in the
+// machine's own monospace.
+const FONT = 'https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/JuliaMono-Regular.woff2';
+function font() {
+  if (document.getElementById('juliamono')) return;
+  const style = document.createElement('style');
+  style.id = 'juliamono';
+  style.textContent = `@font-face { font-family: JuliaMono; src: url("${FONT}") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }`;
+  document.head.append(style);
+}
 function sources() {
   const files = el('files'), source = el('source');
-  if (files.children.length) return;
-  for (const name of wasm.sources().split('\n')) {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = name;
-    b.addEventListener('click', () => {
-      for (const o of files.children) o.classList.toggle('on', o === b);
-      source.textContent = wasm.source(name);
-      source.scrollTop = 0;
-    });
-    files.append(b);
+  font();
+  if (!files.children.length) {
+    for (const name of wasm.sources().split('\n')) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = name;
+      b.addEventListener('click', () => {
+        for (const o of files.children) o.classList.toggle('on', o === b);
+        source.innerHTML = wasm.rendered(name);
+        source.scrollTop = 0;
+      });
+      files.append(b);
+    }
+    // the game's own program first
+    ([...files.children].find((b) => b.textContent === 'play.xtl') || files.firstChild).click();
   }
-  files.querySelector('button')?.click();
+  el('sources').showModal();
 }
-el('sources').addEventListener('toggle', (e) => { if (e.target.open) sources(); });
+el('open-sources').addEventListener('click', (e) => { e.currentTarget.blur(); sources(); });
 
 const ready = () => {
   wasm = window.wasmBindings;
@@ -112,6 +130,7 @@ const ready = () => {
   el('title').textContent = title;
   window.game = { feed, start, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player };
   start();
+  if (q.has('sources')) sources();
   document.title = `${title}: ready`;
 };
 if (window.wasmBindings) ready(); else window.addEventListener('TrunkApplicationStarted', ready, { once: true });

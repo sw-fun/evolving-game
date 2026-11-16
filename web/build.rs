@@ -23,9 +23,15 @@ const DATA: &[(&str, &str)] = &[
 fn main() {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..");
     let mut files: Vec<(String, PathBuf)> = Vec::new();
-    for dir in ["lib", "games/walk"] {
-        files.extend(sources(&root.join(dir)));
-    }
+    // the walk's programs and rules, then the shared libraries (not
+    // lib/'s own test programs, which no game imports)
+    files.extend(sources(&root.join("games/walk")));
+    let shared = sources(&root.join("lib"));
+    files.extend(
+        shared
+            .into_iter()
+            .filter(|(name, _)| name.starts_with(char::is_uppercase)),
+    );
     files.extend(SIBLINGS.iter().map(|p| named(&root.join(p))));
     files.extend(DATA.iter().map(|(k, p)| ((*k).to_string(), root.join(p))));
     write(&files);

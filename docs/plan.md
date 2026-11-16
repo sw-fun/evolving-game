@@ -318,8 +318,12 @@ keep them.
   (the repository's Pages source is GitHub Actions; nothing is built
   on GitHub; the actions are pinned to full commits);
   `scripts/browser-test.mjs --url` tests the deployed site. The footer
-  names the build (commit, host, time) and the four pins; a pane shows
-  the game's sources as they are, plain until the packed build of D17.
+  names the build (commit, host, time) and the four pins; a Sources dialog
+  shows the game's files as X_eTaL renders them (decorated, colored by
+  the kind of token, in JuliaMono from a CDN as the X_eTaL live demos
+  do: the user, 2026-11-15, after the first version showed them as
+  typed, in one color, in a pane squeezed to four lines), plain until
+  the packed build of D17.
 - **Save.** The world state, the campaign position and, for a level
   in progress, the scenario, seed and events so far.
 

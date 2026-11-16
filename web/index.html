@@ -9,13 +9,14 @@
 <link data-trunk rel="copy-dir" href="ext" />
 <link data-trunk rel="icon" href="favicon.ico" />
 <style>
-  html, body { margin: 0; height: 100%; background: #14151c; color: #e8e6df; font: 16px/1.4 system-ui, sans-serif; }
-  body { display: flex; flex-direction: column; }
+  html, body { margin: 0; background: #14151c; color: #e8e6df; font: 16px/1.4 system-ui, sans-serif; }
+  body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
+  header, footer, details, #err { flex: none; }
   header { display: flex; align-items: baseline; gap: 16px; padding: 8px 16px; }
   header h1 { font-size: 20px; margin: 0; font-weight: 600; }
   header button { font: inherit; padding: 4px 12px; border-radius: 6px; border: 1px solid #56607a; background: #1a1f2e; color: #e8e6df; cursor: pointer; }
   #stat { color: #a0a4ab; font-size: 14px; font-variant-numeric: tabular-nums; margin-left: auto; }
-  #stage { position: relative; flex: 1; min-height: 0; background: #1d1f2b; outline: none; }
+  #stage { position: relative; flex: 1 1 0; min-height: 120px; background: #1d1f2b; outline: none; }
   #view, #flat { position: absolute; inset: 0; }
   #flat { pointer-events: none; display: flex; align-items: center; justify-content: center; }
   #flat svg { width: 100%; height: 100%; }
@@ -24,10 +25,33 @@
   details { padding: 0 16px 8px; }
   summary { cursor: pointer; color: #c3c8d4; padding: 6px 0; }
   #printed { margin: 0; max-height: 9.5em; overflow: auto; background: #101116; padding: 8px 10px; border-radius: 6px; font: 13px/1.35 ui-monospace, Menlo, monospace; white-space: pre; }
-  #files { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-bottom: 6px; }
-  #files button { font: 13px ui-monospace, Menlo, monospace; padding: 2px 8px; border-radius: 5px; border: 1px solid #3a4052; background: #1a1f2e; color: #c3c8d4; cursor: pointer; }
+  /* the game's sources: a dialog over the page, the whole file shown */
+  dialog { background: #14151c; color: #e8e6df; border: 1px solid #30333a; border-radius: 10px; padding: 14px 16px; width: min(72em, 94vw); height: 88vh; box-sizing: border-box; }
+  dialog[open] { display: flex; flex-direction: column; gap: 8px; }
+  dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+  dialog h2 { font-size: 17px; margin: 0; font-weight: 600; }
+  dialog .top { display: flex; align-items: baseline; gap: 12px; }
+  dialog .top form { margin-left: auto; }
+  dialog button { font: inherit; padding: 3px 12px; border-radius: 6px; border: 1px solid #56607a; background: #1a1f2e; color: #e8e6df; cursor: pointer; }
+  #files { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+  #files button { font: 13px JuliaMono, ui-monospace, Menlo, monospace; padding: 2px 8px; border-color: #3a4052; color: #c3c8d4; }
   #files button.on { background: #e8e6df; color: #14151c; }
-  #source { margin: 0; max-height: 40vh; overflow: auto; background: #101116; padding: 8px 10px; border-radius: 6px; font: 13px/1.4 ui-monospace, Menlo, monospace; white-space: pre; }
+  /* X_eTaL as X_eTaL renders it, colored by the kind of token (the
+     classes xetal-view writes; the colors of the X_eTaL live demos) */
+  .rendered-source { flex: 1 1 0; min-height: 0; margin: 0; overflow: auto; background: #101116; padding: 10px 12px; border-radius: 6px; font: 14px/1.5 JuliaMono, "DejaVu Sans Mono", Menlo, ui-monospace, monospace; white-space: pre; tab-size: 2; }
+  .rendered-source .c-builtin { color: #82b4ff; }
+  .rendered-source .c-userfunc { color: #7cdb95; }
+  .rendered-source .c-libfunc { color: #65d9e5; }
+  .rendered-source .c-lambdaarg { color: #e69ce6; }
+  .rendered-source .c-number, .rendered-source .c-exponent { color: #f0ce72; }
+  .rendered-source .c-string { color: #e8d89b; }
+  .rendered-source .c-symbol { color: #a1cfff; }
+  .rendered-source .c-quote { font-weight: bold; }
+  .rendered-source .c-comment { color: #91a6ba; }
+  .rendered-source .c-macro { color: #f0ce72; font-weight: bold; }
+  .rendered-source .c-doc { color: #9fc3ad; font-style: italic; }
+  .rendered-source .c-heading { color: #9fc3ad; font-weight: bold; }
+  .rendered-source .c-error { color: #ff9999; }
   footer { display: flex; flex-wrap: wrap; gap: 2px 16px; padding: 6px 16px 8px; color: #8d919a; font-size: 13px; border-top: 1px solid #262936; }
   footer a { color: #8fb0ff; }
   #build { display: contents; }
@@ -39,12 +63,17 @@
 <header>
   <h1 id="title">Evolving Game</h1>
   <button id="again" type="button">Start again</button>
+  <button id="open-sources" type="button">Sources</button>
   <span id="stat"></span>
 </header>
 <div id="stage" tabindex="0"><div id="view"></div><div id="flat"></div></div>
 <div id="err"></div>
 <details id="log"><summary>What the program printed</summary><pre id="printed"></pre></details>
-<details id="sources"><summary>The game's sources (X_eTaL and its data)</summary><div id="files"></div><pre id="source"></pre></details>
+<dialog id="sources">
+  <div class="top"><h2>The game's sources: X_eTaL, as X_eTaL draws it, and its data</h2><form method="dialog"><button>Close</button></form></div>
+  <div id="files"></div>
+  <pre id="source" class="rendered-source"></pre>
+</dialog>
 <footer>
   <span>Copyright (c) 2026 Michael A Wright</span>
   <span>MIT License</span>
