@@ -537,6 +537,63 @@ measures: the frame rate on a middling laptop, the site's size, and a
 capture the user compares with the reference. Open: whether it runs
 next, and how far "realistic" goes (Open questions).
 
+## A showcase: worlds to walk and fly (the user, 2026-11-16)
+
+The user: the game is a showcase. It needs aspects, modes, games
+within games, side quests and mini-games, and some of them are to be
+like the procedural snow world (snowflow_demo-fork) and the neon city
+(X_eTaL-extensions' three extension): worlds made from a seed that
+are flown or walked through, with those demos' kind of interface,
+dressed for the castle. The user's examples:
+
+- **A siege in winter.** Trudging through snow toward the castle: the
+  snow world's endless field, footprints pressed into it and their
+  sound, with the walls ahead, the camp, the weather.
+- **A medieval city from a seed.** The neon city's method (lots worked
+  out as arrays, each building's size and skin a hash of its number
+  and the seed, so another seed is another city) turned to a walled
+  town: narrow crooked streets, a bazaar, a shanty town against the
+  wall. Not modern: no neon, no ads, no billboards.
+- **Life in it.** Smoke from fires, grills and boiling pots; banners
+  waving, tent flaps moving.
+
+What this changes in the plan, and what it does not:
+
+- There are two kinds of view, and a mode says which it gives. The
+  **board** (the isometric battlefield: tower defense, puzzles,
+  tactics) and the **world** (a first-person or flying camera in a
+  place made from a seed: the winter approach, the town, later The
+  Shattered Kingdom's castle). Both are scenes X_eTaL writes and a
+  player draws; `lib/View` grows a world scene beside its board
+  scene, in the vocabulary the city already has (`boxes`, `model`,
+  `fleet`, `lamps`, `fog`, `steam`, `fly`) plus what the castle
+  needs: smoke, cloth that moves, terrain from heights, snow that
+  takes a footprint.
+- A world is still a mode (`lib/Mode`): its state is the seed, where
+  you are and what you have found; its events are ticks, keys and the
+  pointer; its outcome is what you found or reached (a side quest
+  done, a way into the castle seen). So a walk through the bazaar is
+  a mini-game of the campaign like any other, and what a board game
+  changes (a wall breached, a gate opened) is there to be walked up
+  to.
+- The generators are arrays, as the siblings' are, and the same
+  castle underlies both views: the town outside the walls and the
+  battlefield are one map at two scales.
+- It leans on the same work as The look (terrain, materials, light,
+  smoke and other particles, a camera that comes down), so that saga
+  comes first and should be planned with these worlds as its targets,
+  not only the board.
+- Where the siblings' code is general (the snow field, the city's
+  lots, the walk and fly controls), it is used by pin and asked for,
+  not copied (D11, D12): asks of X_eTaL-extensions and of
+  snowflow_demo-fork's libraries.
+
+Proposed order, for the user to change: The look, with the board and
+one small world as its two test scenes; then Castle Defense's first
+level; then the winter approach and the town as worlds of their own,
+before the larger games. The Shattered Kingdom (game 6) becomes the
+sum of these worlds, not a late start from nothing.
+
 ## Idler (asked for by the user, 2026-11-15; not in the research)
 
 An idle game: the castle earns while you do something else, or
@@ -598,6 +655,10 @@ Still open:
 3. The look (see its section): whether that saga runs next, before
    Castle Defense; and what "realistic" is to mean here (a reference
    picture decides it).
+
+4. The showcase's worlds (see A showcase): the proposed order (The
+   look, Castle Defense's first level, then the winter approach and
+   the medieval town); which world is first.
 
 Settled since: the repository exists and is public, and GitHub Pages
 is enabled on it, deploying from GitHub Actions (the user,
