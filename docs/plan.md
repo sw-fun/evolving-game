@@ -877,6 +877,30 @@ The framework (`games/castle`, Saga 3's castle-map step):
   experience and says when deeds are new; the hall of deeds, a venue
   known from the start, shows them all.
 
+- **The village behind the wall** (the user, 2026-11-17: "there is
+  nothing past the wall/gate. There should be a sprawling village
+  around castle buildings, towers, a keep ... the neon-city
+  equivalent"; "the village needs to be the same on the main screen
+  (main menu) same seed"). `lib/Village` lays a village out from a
+  seed, a width and a depth alone, about the gate (houses, halls and
+  market stalls along winding streets, watch towers, a keep), so one
+  line in a scenario (`village = ["seed 7", "wide 34", "deep 20"]`)
+  is one village behind every map: the castle's map and the
+  battlefield show the same one. It is scenery so far (models stood
+  many times, chimney smoke). Still to do: snow on its roofs, flags
+  that wave, walking its streets.
+- **The siege cart** (the user, 2026-11-17: "the creeps appear out of
+  thin air. Better: have a siege engine (a cart with sides?) that
+  they emerge from"): a war wagon stands at the start of the road in
+  Castle Defense, its open end and ramp toward the road.
+- **Ways between the games, proposed** (the user asked how one gets
+  to the city, the rogue-like and the two mazes; not yet decided by
+  the user): the gate reached on foot opens onto the same village at
+  street level, whose doors and stalls are the games' entrances; the
+  gatehouse door is the first maze (the portcullis drops); a stair
+  down from the maze is the dungeon; an exit from the dungeon is the
+  second maze. The map stays as the overview and the debug jump.
+
 What the user's second message adds, each a later step on this
 framework, none blocking it:
 

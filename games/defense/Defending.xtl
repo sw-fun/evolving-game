@@ -317,7 +317,11 @@ l:v_iew := { s ->
   tk := f_loor f_irst_2 towers
   models := (kind s_elect "runner" "brute" "shield") c_at (tk s_elect "archer" "fire" "ice") c_at (lit s_elect tk) s_elect "*dust" "*fire" "*splash"
   clips := (fn r_eshape e_nclose "walk") c_at ((1 + age < 0.4) s_elect "idle" "fire") c_at (t_ally lit) r_eshape e_nclose ""
-  vw:m_any (stage, models, clips, walk c_at stand c_at burst, h:c_aption s)
+  from := road h:o_nRoad 1 r_eshape 0.0
+  cx := (f_irst_2 from) - 0.7 * 3 s_elect_2 from
+  cy := (2 s_elect_2 from) - 0.7 * 4 s_elect_2 from
+  cart := 1 8 r_eshape cx c_at cy c_at (3 s_elect_2 from) c_at (4 s_elect_2 from) c_at 0.0 c_at cx c_at cy c_at 0.05
+  vw:m_any (stage, models c_at e_nclose "cart", clips c_at e_nclose "", walk c_at stand c_at burst c_at cart, h:c_aption s)
 }
 # :: (Any a, Any c, Any d) => (a, b, c, d, Float, Float) -> (Int, (Box Char, Int), (Box Char, Int))
 ## How it ended: left while playing; lost, and the gate is breached in

@@ -27,3 +27,9 @@ shield
 clip walk 0.00-1.00 s: shield arm left rotation, shield arm right rotation, shield body translation, shield leg left rotation, shield leg right rotation
 clip idle 0.00-2.00 s: shield body scale
 clip hit 0.00-0.30 s: shield body rotation
+house
+hall
+stall
+watch
+keep
+cart

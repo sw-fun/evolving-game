@@ -229,6 +229,14 @@ l:w_inter := { (map, amount) ->
   over := "<rect width=\"" c_at w c_at "\" height=\"" c_at h c_at "\" fill=\"#f2f5f9\" fill-opacity=\"" c_at (f_ormat h:f_ine 0.45 * amount) c_at "\"/>"
   (map, frame, tiles c_at e_nclose over, depths c_at 999999.0, land c_at beyond c_at river c_at falls c_at t:j_oin 3 5 7 s_elect calls, 1)
 }
+# :: (Any a, Any b, Any c, Any d, Any f) => ((a, b, c, d, e, f), e) -> (a, b, c, d, e, f)
+## A stage with more in its scene: (stage, lines), scene lines put after
+## its ground's (scenery a library has worked out: a village behind the
+## wall). The flat picture is as it was.
+l:d_ressed := { (stage, lines) ->
+  (map, frame, tiles, depths, ground, smooth) := stage
+  (map, frame, tiles, depths, ground c_at lines, smooth)
+}
 # :: (Any a, Any c, Any d, Any e, Any f, Any g, Any h) => ((a, b, c), d, e, f, g, h) -> Int
 ## The places of a stage's tiles in the order they are drawn, far to
 ## near, a row each (row, column).

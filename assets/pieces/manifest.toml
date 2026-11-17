@@ -14,84 +14,126 @@ most-bytes = 262144
 
 [pieces.walker]
 glb = "walker.glb"
-glb-sha256 = "c3a31eda13ee6c80b95bff21e9bdbbf623aaf900aa6a941ecbf6d4e2c0b99da1"
+glb-sha256 = "5c1449fc94a1aaffdf0a7bc6d154e74faa8e34698d81f20beed4b081b0ee24de"
 preview = "walker.png"
-preview-sha256 = "c2019fdef30badd3adbc5f04c3c0bd85057a1319727e62a3ea4bdf300126e966"
+preview-sha256 = "7dbb17a7e1e9ef58b873539fa8d35e1e410d2303c9c9f0018e82e178c21c3126"
 clips = ["idle 2.0", "walk 1.0"]
 
 [pieces.ground]
 glb = "ground.glb"
 glb-sha256 = "0e966c893e6e6c5a7f245d8d3683517fc2224b6e046b78b20f9d76784eea30b9"
 preview = "ground.png"
-preview-sha256 = "79cbd27d01bef6be861ed861c20404c77452d2b879c9f8bd302849340134b9ea"
+preview-sha256 = "edd7951cf6651ba4666db22e3fe11014ebfb0fc1632fe34663d9b2b45b2c9e60"
 clips = []
 
 [pieces.water]
 glb = "water.glb"
 glb-sha256 = "3076ab68fde5928c7028e13aa7ac020545bf957bda0bdd9ee5ee89e86e5fc7ff"
 preview = "water.png"
-preview-sha256 = "1bc473d3304ef73f0f3ac44ba2032368a4f4a3e0ea512544044e44d99e35a287"
+preview-sha256 = "1f0890340fba23325767749fdb33a4e034d788db74297fdbf6484b54412d52bc"
 clips = []
 
 [pieces.bridge]
 glb = "bridge.glb"
 glb-sha256 = "1092ec3ba51667b8753a15ca7c559bcf4e9a3a9c34ae67fe6f15426eeaa80c10"
 preview = "bridge.png"
-preview-sha256 = "0e28264750052accf60a9209e5b32b5b40066109c257f0f4cbc68b5cb7e7d0e6"
+preview-sha256 = "477f56cce4c0bee08f96a3ddb9c03a6af8752af29871f66213db45f66426c538"
 clips = []
 
 [pieces.wall]
 glb = "wall.glb"
 glb-sha256 = "a8d7a769c19b9e7ba9d0053f7869b9d699bc5bd6611796a2e1106cbc30636c87"
 preview = "wall.png"
-preview-sha256 = "98289c2642eaf4bd3551749d622099b9f4ba31dfed67333831da6b687fc4be86"
+preview-sha256 = "ae0aec617b7044e4f55dd0148f9f1db8f345c583fdb17b5dbd57ba18636682fc"
 clips = []
 
 [pieces.gate]
 glb = "gate.glb"
 glb-sha256 = "9b48020a1704b0bde8020f7beacd6623faec690b3ef16d4aaba472fc39256199"
 preview = "gate.png"
-preview-sha256 = "eabb34e19a76f36159b5ea3307ec773f4f6bab7e589266e0a89445608a38818b"
+preview-sha256 = "0257a57f12ddd685d98af5995d2c31207786861339b9b4ed4deefacc7440d1b9"
 clips = []
 
 [pieces.archer]
 glb = "archer.glb"
 glb-sha256 = "7e385a09bc16479a31e71d13baccd456e9c96eedb32afab82701cbd475c14b63"
 preview = "archer.png"
-preview-sha256 = "cdc510fcff49c305d7eb30d70cd55446d307b01d1e55c5bdf144630eecf9876e"
+preview-sha256 = "6f1517adbefe17ec0bed657832c8e89056944b08b8519a2d33c392dd00919de4"
 clips = ["idle 2.0", "fire 0.4"]
 
 [pieces.fire]
 glb = "fire.glb"
 glb-sha256 = "358951789a06f96535964f159916ccd3013a123b7674f006b627903eb845e316"
 preview = "fire.png"
-preview-sha256 = "2b4feabd4b584d0aa22d23f0de785f9c2cc337d9432dbe572bdb030e8534fa12"
+preview-sha256 = "ca14f756c42ff255691d32eb8448e10b3a94ca610d2041e8ff372e0863555bed"
 clips = ["idle 2.0", "fire 0.4"]
 
 [pieces.ice]
 glb = "ice.glb"
 glb-sha256 = "e0792c4f331514682c072cc51e36e8ea28dd41678afcf87d3c773a77e05c4868"
 preview = "ice.png"
-preview-sha256 = "9c4ed08fb492258cea7fb593b64130ef7e6f42a84d10cf7bdcb55a0ae8f2de4c"
+preview-sha256 = "47d8f44c07989d0cfd72b53a32706ffe90e2ac825cab2206e325e662cb294c79"
 clips = ["idle 2.0", "fire 0.4"]
 
 [pieces.runner]
 glb = "runner.glb"
-glb-sha256 = "da4346a7d4094ab7a83f2ac00b90b591f7f738a9f4670c7d49f993adde5b12a3"
+glb-sha256 = "86dc1346a751bd9fe518c7452b85f0b0d86733953231b68ffcf6cacdcf15e7a8"
 preview = "runner.png"
-preview-sha256 = "80ffe523490d84d4853bc4ca75fac87c8d2435a7f67977f2d3a7640b39e4b799"
+preview-sha256 = "f8fda2b837ecbdbd3e751a0791a648c16078239c9a679e96c4b326b249bfe6f8"
 clips = ["idle 2.0", "walk 1.0", "hit 0.3"]
 
 [pieces.brute]
 glb = "brute.glb"
-glb-sha256 = "2950eebb77e4459dd32a452dfc17a057d07e5fb388cf2900197be8fd3a1c546c"
+glb-sha256 = "4ec3ad981943171878693e169d208b05c580af7b689f796b1f58cf46da3de255"
 preview = "brute.png"
-preview-sha256 = "bf2be857144d073c12e542146d761787ff68e26c1d1c4749ee0ef16c52bf230a"
+preview-sha256 = "f6a18e4c0a9d51b0045c00294c874597fefa602d17550d6369e4a79ad4b15132"
 clips = ["idle 2.0", "walk 1.0", "hit 0.3"]
 
 [pieces.shield]
 glb = "shield.glb"
-glb-sha256 = "c478f16ec9f319069dce1817e8c905de266f291f8b447e0700829984ed8bebe5"
+glb-sha256 = "3ede067fff7d2dbb90fa38008b5330bb11ee1412888065ccc1d76543ce78d97a"
 preview = "shield.png"
-preview-sha256 = "07486be9fb28c7c7a0a62dea4bdb7d4a53992bb3f54380109f36bb62399c75b6"
+preview-sha256 = "8df4edea35fe30880cb162f3d74bde82f5871b28b9d745fdd03b90d7315fd978"
 clips = ["idle 2.0", "walk 1.0", "hit 0.3"]
+
+[pieces.house]
+glb = "house.glb"
+glb-sha256 = "96fe086bf29632c71c4cb5b4bf17e7e8b7212f4d800c09fd2fb1192e190195a3"
+preview = "house.png"
+preview-sha256 = "84d6a6a47bfd514d548851250e8421537dde447c93f9a35751d3659f732b9909"
+clips = []
+
+[pieces.hall]
+glb = "hall.glb"
+glb-sha256 = "a09e8dbe3f3117d0e9e06e25aa896005eb7424dffb73b9e6258bfb10b297dfea"
+preview = "hall.png"
+preview-sha256 = "af648b675cd9e9d68bab022777ea0df41144bad1d3f7a1ce23cedfef66721ccd"
+clips = []
+
+[pieces.stall]
+glb = "stall.glb"
+glb-sha256 = "c1f0da9ddb6ee2a07efe712b770889cb5148b9177356873367b161566cdfc605"
+preview = "stall.png"
+preview-sha256 = "7c804e2d5904a7ac697edfd028d1c6b3bbf37525abe0bd6692d947d8f8722b5f"
+clips = []
+
+[pieces.watch]
+glb = "watch.glb"
+glb-sha256 = "6a9593c1263fdb7296cda7465ed3bf5b129f3f6bf32eddc89c84bdd57e252d95"
+preview = "watch.png"
+preview-sha256 = "83a6ec2f918920ae53b1cc29a7d901b05f6f2bc17df6d6e814e4252f00126a12"
+clips = []
+
+[pieces.keep]
+glb = "keep.glb"
+glb-sha256 = "b312c882b2df7fa2f4eed1f029ab405d9ca281a5b30a0c7244e48f4a5d9605a4"
+preview = "keep.png"
+preview-sha256 = "9be338d4bf79df2f7a6e1696cf77e43dd305d8ed6fe65f82a423f91cf65f5c18"
+clips = []
+
+[pieces.cart]
+glb = "cart.glb"
+glb-sha256 = "12aafa0b0925c4d712902382829df5cc6021f5ca43e70e15ac8afe3e6c9607a2"
+preview = "cart.png"
+preview-sha256 = "5f160b8323967ce07547277c931e0c560fbe4fe3eb4b792ece62ee776a9c21cf"
+clips = []

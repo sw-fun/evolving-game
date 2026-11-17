@@ -54,12 +54,15 @@ h:t_urned := { (part, name) z -> "skin(\"" c_at part c_at "\", \"" c_at name c_a
 # :: Char
 ## Python baking the textures the pieces wear: dressed stone in
 ## courses, darker stone for lintels and copings, boards for a deck,
-## darker timber, and a door's planks.
+## darker timber, a door's planks, plaster, roof tiles and thatch.
 l:textures := ((("stone", "bricks", stone, 0.52 0.55 0.6, 0.33 0.34 0.36, 4.0, 0.92) h:t_exture 0) c_at
   (("darkstone", "bricks", darkstone, 0.36 0.38 0.42, 0.25 0.26 0.28, 5.0, 0.95) h:t_exture 0) c_at
   (("planks", "boards", plank, 0.52 0.4 0.24, 0.2 0.15 0.09, 5.0, 0.8) h:t_exture 0) c_at
   (("timber", "boards", beam, 0.33 0.24 0.14, 0.14 0.1 0.06, 8.0, 0.85) h:t_exture 0) c_at
-  ("doorwood", "boards", door, 0.3 0.22 0.15, 0.1 0.07 0.05, 6.0, 0.75) h:t_exture 0)
+  (("doorwood", "boards", door, 0.3 0.22 0.15, 0.1 0.07 0.05, 6.0, 0.75) h:t_exture 0) c_at
+  (("plaster", "grain", 0.86 0.82 0.72, 0.74 0.69 0.58, 0.5 0.5 0.5, 14.0, 0.95) h:t_exture 0) c_at
+  (("rooftile", "bricks", 0.6 0.27 0.18, 0.5 0.22 0.15, 0.3 0.14 0.1, 7.0, 0.85) h:t_exture 0) c_at
+  ("thatch", "boards", 0.62 0.52 0.3, 0.52 0.43 0.24, 0.36 0.29 0.15, 14.0, 0.97) h:t_exture 0)
 
 ### Keys
 
@@ -197,6 +200,89 @@ h:s_hieldBearer := { z ->
     ("shield boss", -0.1 -0.23 0.52, 0.06 0.06 0.03, 90.0 0.0 0.0, 0.8 0.7 0.3, 0.0) bp:c_ylinder 0)
 }
 
+### The village
+
+## What stands behind the wall: the buildings of the village and the
+## castle, each on a base about a tile wide (the keep three), its door
+## toward -y. They are made once and stood many times (lib/Village).
+## A roof over a box: a ridge along y, half as wide as w and d say, its
+## eaves at height z and its ridge r above them: six triangles.
+h:r_oof := { (name, w, d, z, r, skin) z0 ->
+  v := 6 3 r_eshape (0.0 - w) c_at (0.0 - d) c_at 0.0 c_at w c_at (0.0 - d) c_at 0.0 c_at w c_at d c_at 0.0 c_at (0.0 - w) c_at d c_at 0.0 c_at 0.0 c_at (0.0 - d) c_at r c_at 0.0 c_at d c_at r
+  f := 6 3 r_eshape 0 4 5  0 5 3  1 2 5  1 5 4  0 1 4  3 5 2
+  ((name, 0.0 0.0 c_at z, v, f, flat, 0.6 0.3 0.2, 0.0) bp:m_esh 0) c_at (name, skin) h:s_kin 0
+}
+## A house: plastered walls, a timber sill and corner posts, a door, a
+## thatched roof and a chimney.
+h:h_ouse := { z ->
+  ((bp:p_iece "house") c_at
+    ((("house walls", 0.0 0.0 0.36, 1.0 0.8 0.6, flat, 0.86 0.82 0.72, 0.0) bp:b_ox 0) c_at (("house walls", "plaster") h:s_kin 0)) c_at
+    ((("house sill", 0.0 0.0 0.04, 1.06 0.86 0.08, flat, beam, 0.0) bp:b_ox 0) c_at (("house sill", "timber") h:s_kin 0)) c_at
+    ((("house post 1", -0.5 -0.4 0.36, 0.06 0.06 0.6, flat, beam, 0.0) bp:b_ox 0) c_at (("house post 2", 0.5 -0.4 0.36, 0.06 0.06 0.6, flat, beam, 0.0) bp:b_ox 0)) c_at
+    ((("house door", 0.15 -0.41 0.26, 0.2 0.03 0.4, flat, door, 0.0) bp:b_ox 0) c_at (("house window", -0.25 -0.41 0.42, 0.18 0.03 0.16, flat, 0.2 0.18 0.15, 0.0) bp:b_ox 0)) c_at
+    (("house roof", 0.6, 0.48, 0.66, 0.5, "thatch") h:r_oof 0) c_at
+    ("house chimney", 0.32 0.2 0.98, 0.14 0.14 0.5, flat, darkstone, 0.0) bp:b_ox 0)
+}
+## A hall: two floors, stone below and plaster above jutting over it,
+## under a tiled roof.
+h:h_all := { z ->
+  ((bp:p_iece "hall") c_at
+    ((("hall ground", 0.0 0.0 0.3, 1.3 1.0 0.6, flat, stone, 0.0) bp:b_ox 0) c_at (("hall ground", "stone") h:s_kin 0)) c_at
+    ((("hall upper", 0.0 -0.04 0.86, 1.4 1.1 0.52, flat, 0.86 0.82 0.72, 0.0) bp:b_ox 0) c_at (("hall upper", "plaster") h:s_kin 0)) c_at
+    ((("hall beam", 0.0 -0.04 0.6, 1.44 1.14 0.07, flat, beam, 0.0) bp:b_ox 0) c_at (("hall beam", "timber") h:s_kin 0)) c_at
+    ((("hall door", 0.0 -0.51 0.26, 0.26 0.03 0.44, flat, door, 0.0) bp:b_ox 0) c_at (("hall window 1", -0.4 -0.6 0.88, 0.2 0.03 0.2, flat, 0.2 0.18 0.15, 0.0) bp:b_ox 0)) c_at
+    ((("hall window 2", 0.4 -0.6 0.88, 0.2 0.03 0.2, flat, 0.2 0.18 0.15, 0.0) bp:b_ox 0)) c_at
+    (("hall roof", 0.8, 0.65, 1.12, 0.62, "rooftile") h:r_oof 0) c_at
+    ("hall chimney", -0.45 0.3 1.5, 0.16 0.16 0.6, flat, darkstone, 0.0) bp:b_ox 0)
+}
+## A market stall: four posts, a counter, and an awning of cloth.
+h:s_tall := { z ->
+  p_ost := { (n, x, y) z1 -> ("stall post " c_at n, x c_at y c_at 0.4, 0.05 0.05 0.8, flat, beam, 0.0) bp:b_ox 0 }
+  ((bp:p_iece "stall") c_at (("1", -0.45, -0.3) p_ost 0) c_at (("2", 0.45, -0.3) p_ost 0) c_at (("3", -0.45, 0.3) p_ost 0) c_at (("4", 0.45, 0.3) p_ost 0) c_at
+    ((("stall counter", 0.0 -0.22 0.36, 0.95 0.2 0.06, flat, plank, 0.0) bp:b_ox 0) c_at (("stall counter", "planks") h:s_kin 0)) c_at
+    ((("stall awning", 0.0 -0.05 0.84, 1.1 0.85 0.04, 14.0 0.0 0.0, 0.7 0.2 0.16, 0.0) bp:b_ox 0)) c_at
+    ((("stall goods 1", -0.25 -0.22 0.44, 0.16 0.14 0.1, flat, 0.75 0.55 0.2, 0.0) bp:b_ox 0) c_at ("stall goods 2", 0.2 -0.22 0.43, 0.2 0.12 0.08, flat, 0.4 0.55 0.3, 0.0) bp:b_ox 0))
+}
+## A watch tower: round, of stone, under a cone of tiles, a flag on it.
+h:w_atch := { z ->
+  ((bp:p_iece "watch") c_at
+    ((("watch shaft", 0.0 0.0 1.3, 0.45 0.45 2.6, flat, stone, 0.0) bp:c_ylinder 0) c_at (("watch shaft", "stone") h:s_kin 0)) c_at
+    ((("watch ring", 0.0 0.0 2.6, 0.5 0.06, flat, darkstone, 0.0) bp:t_orus 0) c_at (("watch cone", 0.0 0.0 3.05, 0.56 0.0 0.9, flat, 0.55 0.24 0.16, 0.0) bp:c_one 0)) c_at
+    ((("watch pole", 0.0 0.0 3.8, 0.015 0.015 0.7, flat, iron, 0.0) bp:c_ylinder 0) c_at ("watch flag", 0.18 0.0 4.0, 0.34 0.02 0.2, flat, red, 0.0) bp:b_ox 0))
+}
+## The keep: a great square tower of stone with a turret at each corner
+## and a banner over it.
+h:k_eep := { z ->
+  t_urret := { (n, x, y) z1 ->
+    ((("keep turret " c_at n, x c_at y c_at 2.4, 0.42 0.42 4.8, flat, stone, 0.0) bp:c_ylinder 0) c_at (("keep turret " c_at n, "stone") h:s_kin 0) c_at
+      ("keep cap " c_at n, x c_at y c_at 5.15, 0.5 0.0 0.7, flat, 0.55 0.24 0.16, 0.0) bp:c_one 0)
+  }
+  ((bp:p_iece "keep") c_at
+    ((("keep body", 0.0 0.0 2.0, 2.6 2.6 4.0, flat, stone, 0.0) bp:b_ox 0) c_at (("keep body", "stone") h:s_kin 0)) c_at
+    ((("keep course", 0.0 0.0 4.0, 2.76 2.76 0.14, flat, darkstone, 0.0) bp:b_ox 0) c_at (("keep course", "darkstone") h:s_kin 0)) c_at
+    ((("keep door", 0.0 -1.31 0.5, 0.5 0.04 1.0, flat, door, 0.0) bp:b_ox 0)) c_at
+    (("1", -1.3, -1.3) t_urret 0) c_at (("2", 1.3, -1.3) t_urret 0) c_at (("3", -1.3, 1.3) t_urret 0) c_at (("4", 1.3, 1.3) t_urret 0) c_at
+    ((("keep pole", 0.0 0.0 4.9, 0.03 0.03 1.6, flat, iron, 0.0) bp:c_ylinder 0) c_at ("keep banner", 0.4 0.0 5.3, 0.76 0.03 0.5, flat, red, 0.0) bp:b_ox 0))
+}
+
+### The siege cart
+
+## What the attackers come out of: a war wagon, a bed on four wheels
+## with plank sides and a roof of hides, closed behind and open in
+## front (-y, the way a piece faces), a ramp down from its open end.
+h:c_art := { z ->
+  w_heel := { (n, x, y) z1 -> ("cart wheel " c_at n, x c_at y c_at 0.24, 0.24 0.24 0.07, 0.0 90.0 0.0, beam, 0.0) bp:c_ylinder 0 }
+  ((bp:p_iece "cart") c_at
+    ((("cart bed", 0.0 0.0 0.3, 0.8 1.3 0.08, flat, plank, 0.0) bp:b_ox 0) c_at (("cart bed", "planks") h:s_kin 0)) c_at
+    ((("cart left", -0.38 0.0 0.66, 0.05 1.3 0.66, flat, plank, 0.0) bp:b_ox 0) c_at (("cart left", "planks") h:s_kin 0)) c_at
+    ((("cart right", 0.38 0.0 0.66, 0.05 1.3 0.66, flat, plank, 0.0) bp:b_ox 0) c_at (("cart right", "planks") h:s_kin 0)) c_at
+    ((("cart back", 0.0 0.63 0.66, 0.8 0.05 0.66, flat, plank, 0.0) bp:b_ox 0) c_at (("cart back", "planks") h:s_kin 0)) c_at
+    ((("cart roof", 0.0 0.0 1.02, 0.9 1.4 0.05, flat, 0.42 0.3 0.2, 0.0) bp:b_ox 0)) c_at
+    ((("cart ramp", 0.0 -0.86 0.16, 0.7 0.5 0.04, -34.0 0.0 0.0, plank, 0.0) bp:b_ox 0) c_at (("cart ramp", "planks") h:s_kin 0)) c_at
+    ((("cart band 1", 0.0 -0.4 0.66, 0.84 0.05 0.7, flat, iron, 0.0) bp:b_ox 0) c_at (("cart band 2", 0.0 0.4 0.66, 0.84 0.05 0.7, flat, iron, 0.0) bp:b_ox 0)) c_at
+    (("1", -0.44, -0.42) w_heel 0) c_at (("2", 0.44, -0.42) w_heel 0) c_at (("3", -0.44, 0.42) w_heel 0) c_at (("4", 0.44, 0.42) w_heel 0))
+}
+
 ### The tiles
 
 h:g_round := { z -> (bp:p_iece "ground") c_at ("ground slab", 0.0 0.0 0.05, 1.0 1.0 0.1, flat, grass, 0.0) bp:b_ox 0 }
@@ -238,10 +324,10 @@ h:g_ate := { z ->
 
 # :: Char
 ## The pieces' names, a space between: the files are NAME.glb.
-l:names := "walker ground water bridge wall gate archer fire ice runner brute shield"
+l:names := "walker ground water bridge wall gate archer fire ice runner brute shield house hall stall watch keep cart"
 # :: Box Char
 ## The same, a text each.
-l:list := "walker" "ground" "water" "bridge" "wall" "gate" "archer" "fire" "ice" "runner" "brute" "shield"
+l:list := "walker" "ground" "water" "bridge" "wall" "gate" "archer" "fire" "ice" "runner" "brute" "shield" "house" "hall" "stall" "watch" "keep" "cart"
 # :: Char -> Char
 ## Python making the piece NAME and keying its clips; "" for another
 ## name.
@@ -258,6 +344,12 @@ l:m_odel := { name ->
   name m_atch "runner" ? h:r_unner 0
   name m_atch "brute" ? h:b_rute 0
   name m_atch "shield" ? h:s_hieldBearer 0
+  name m_atch "house" ? h:h_ouse 0
+  name m_atch "hall" ? h:h_all 0
+  name m_atch "stall" ? h:s_tall 0
+  name m_atch "watch" ? h:w_atch 0
+  name m_atch "keep" ? h:k_eep 0
+  name m_atch "cart" ? h:c_art 0
   ""
 }
 # :: Char -> Box Char
@@ -279,7 +371,7 @@ l:e_xport := { name -> (l:m_odel name) c_at (bp:e_xportPiece name) c_at bp:c_lip
 ## then writing out/clips.txt:
 ## each piece's name and, under it, its clips as read back from its
 ## file.
-l:all := l:skins c_at l:textures c_at (l:e_xport "walker") c_at (l:e_xport "ground") c_at (l:e_xport "water") c_at (l:e_xport "bridge") c_at (l:e_xport "wall") c_at (l:e_xport "gate") c_at (l:e_xport "archer") c_at (l:e_xport "fire") c_at (l:e_xport "ice") c_at (l:e_xport "runner") c_at (l:e_xport "brute") c_at (l:e_xport "shield") c_at "with open(os.path.join(out, \"clips.txt\"), \"w\") as f:\n    for n in \"" c_at l:names c_at "\".split():\n        f.write(n + \"\\n\" + open(os.path.join(out, n + \"-clips.txt\")).read())\n"
+l:all := l:skins c_at l:textures c_at (l:e_xport "walker") c_at (l:e_xport "ground") c_at (l:e_xport "water") c_at (l:e_xport "bridge") c_at (l:e_xport "wall") c_at (l:e_xport "gate") c_at (l:e_xport "archer") c_at (l:e_xport "fire") c_at (l:e_xport "ice") c_at (l:e_xport "runner") c_at (l:e_xport "brute") c_at (l:e_xport "shield") c_at (l:e_xport "house") c_at (l:e_xport "hall") c_at (l:e_xport "stall") c_at (l:e_xport "watch") c_at (l:e_xport "keep") c_at (l:e_xport "cart") c_at "with open(os.path.join(out, \"clips.txt\"), \"w\") as f:\n    for n in \"" c_at l:names c_at "\".split():\n        f.write(n + \"\\n\" + open(os.path.join(out, n + \"-clips.txt\")).read())\n"
 # :: Int -> Char
 ## Python rendering each piece alone as out/NAME.png, size pixels
 ## square on a transparent ground, from the front a little to the right

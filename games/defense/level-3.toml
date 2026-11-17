@@ -11,6 +11,11 @@ title = ["Defend the Bridge: the storm"]
 zones = ["../../world/zones.toml"]
 zone = ["battlefield"]
 
+# What stands behind the wall: the village, made from a seed, so many
+# tiles wide and deep (lib/Village). The same line in every scenario
+# is the same village.
+village = ["seed 7", "wide 34", "deep 20"]
+
 # The hour of the day, 0 to 24 (lib/Sky).
 time = ["17.4"]
 

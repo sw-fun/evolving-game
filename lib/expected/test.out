@@ -521,3 +521,15 @@ zone.courtyard.wall 1
 0
 resource.gold 5
 resource.xp 7
+209 5
+132 53 19 4 1
+0
+1
+0
+1
+tiles('house
+tiles('hall'
+tiles('stall
+tiles('watch
+tiles('keep'
+30

@@ -1,4 +1,4 @@
-walker ground water bridge wall gate archer fire ice runner brute shield
+walker ground water bridge wall gate archer fire ice runner brute shield house hall stall watch keep cart
 walker: 2
 ground: 0
 water: 0
@@ -11,6 +11,12 @@ ice: 2
 runner: 3
 brute: 3
 shield: 3
+house: 0
+hall: 0
+stall: 0
+watch: 0
+keep: 0
+cart: 0
 
 # Skins: surfaces that look like what they are. A texture is a picture
 # baked from Blender's own nodes (courses of stone, boards, a grain)
@@ -141,6 +147,9 @@ texture("darkstone", "bricks", (0.42, 0.44, 0.48), (0.36, 0.38, 0.42), (0.25, 0.
 texture("planks", "boards", (0.61, 0.48, 0.3), (0.52, 0.4, 0.24), (0.2, 0.15, 0.09), 5.0, 0.8, 256)
 texture("timber", "boards", (0.4, 0.3, 0.18), (0.33, 0.24, 0.14), (0.14, 0.1, 0.06), 8.0, 0.85, 256)
 texture("doorwood", "boards", (0.36, 0.27, 0.19), (0.3, 0.22, 0.15), (0.1, 0.07, 0.05), 6.0, 0.75, 256)
+texture("plaster", "grain", (0.86, 0.82, 0.72), (0.74, 0.69, 0.58), (0.5, 0.5, 0.5), 14.0, 0.95, 256)
+texture("rooftile", "bricks", (0.6, 0.27, 0.18), (0.5, 0.22, 0.15), (0.3, 0.14, 0.1), 7.0, 0.85, 256)
+texture("thatch", "boards", (0.62, 0.52, 0.3), (0.52, 0.43, 0.24), (0.36, 0.29, 0.15), 14.0, 0.97, 256)
 pc = piece("walker")
 top = pc
 pc = group("walker body", pc, nums("0.0 0.0 0.26", 3)[0], nums("0.0 0.0 0.0", 3)[0])
@@ -669,8 +678,264 @@ attach(o, pc, material("shield boss", nums("0.8 0.7 0.3", 3)[0], 0.0), nums("-0.
 export_piece(bpy.data.objects["shield"], os.path.join(out, "shield.glb"))
 with open(os.path.join(out, "shield-clips.txt"), "w") as f:
     f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "shield.glb"))))
+pc = piece("house")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("house walls")
+o.scale = nums("1.0 0.8 0.6", 3)[0]
+attach(o, pc, material("house walls", nums("0.86 0.82 0.72", 3)[0], 0.0), nums("0.0 0.0 0.36", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("house walls", "plaster")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("house sill")
+o.scale = nums("1.06 0.86 0.08", 3)[0]
+attach(o, pc, material("house sill", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.0 0.0 0.04", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("house sill", "timber")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("house post 1")
+o.scale = nums("0.06 0.06 0.6", 3)[0]
+attach(o, pc, material("house post 1", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("-0.5 -0.4 0.36", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("house post 2")
+o.scale = nums("0.06 0.06 0.6", 3)[0]
+attach(o, pc, material("house post 2", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.5 -0.4 0.36", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("house door")
+o.scale = nums("0.2 0.03 0.4", 3)[0]
+attach(o, pc, material("house door", nums("0.36 0.27 0.19", 3)[0], 0.0), nums("0.15 -0.41 0.26", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("house window")
+o.scale = nums("0.18 0.03 0.16", 3)[0]
+attach(o, pc, material("house window", nums("0.2 0.18 0.15", 3)[0], 0.0), nums("-0.25 -0.41 0.42", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+o = mesh_object("house roof", nums("""-0.6 -0.48 0.0 0.6 -0.48 0.0 0.6 0.48 0.0 -0.6 0.48 0.0 0.0 -0.48 0.5 0.0 0.48 0.5""", 3), [tuple(int(i) for i in f) for f in nums("""0 4 5 0 5 3 1 2 5 1 5 4 0 1 4 3 5 2""", 3)])
+attach(o, pc, material("house roof", nums("0.6 0.3 0.2", 3)[0], 0.0), nums("0.0 0.0 0.66", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("house roof", "thatch")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("house chimney")
+o.scale = nums("0.14 0.14 0.5", 3)[0]
+attach(o, pc, material("house chimney", nums("0.42 0.44 0.48", 3)[0], 0.0), nums("0.32 0.2 0.98", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["house"], os.path.join(out, "house.glb"))
+with open(os.path.join(out, "house-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "house.glb"))))
+pc = piece("hall")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("hall ground")
+o.scale = nums("1.3 1.0 0.6", 3)[0]
+attach(o, pc, material("hall ground", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("0.0 0.0 0.3", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("hall ground", "stone")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("hall upper")
+o.scale = nums("1.4 1.1 0.52", 3)[0]
+attach(o, pc, material("hall upper", nums("0.86 0.82 0.72", 3)[0], 0.0), nums("0.0 -0.04 0.86", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("hall upper", "plaster")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("hall beam")
+o.scale = nums("1.44 1.14 0.07", 3)[0]
+attach(o, pc, material("hall beam", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.0 -0.04 0.6", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("hall beam", "timber")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("hall door")
+o.scale = nums("0.26 0.03 0.44", 3)[0]
+attach(o, pc, material("hall door", nums("0.36 0.27 0.19", 3)[0], 0.0), nums("0.0 -0.51 0.26", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("hall window 1")
+o.scale = nums("0.2 0.03 0.2", 3)[0]
+attach(o, pc, material("hall window 1", nums("0.2 0.18 0.15", 3)[0], 0.0), nums("-0.4 -0.6 0.88", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("hall window 2")
+o.scale = nums("0.2 0.03 0.2", 3)[0]
+attach(o, pc, material("hall window 2", nums("0.2 0.18 0.15", 3)[0], 0.0), nums("0.4 -0.6 0.88", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+o = mesh_object("hall roof", nums("""-0.8 -0.65 0.0 0.8 -0.65 0.0 0.8 0.65 0.0 -0.8 0.65 0.0 0.0 -0.65 0.62 0.0 0.65 0.62""", 3), [tuple(int(i) for i in f) for f in nums("""0 4 5 0 5 3 1 2 5 1 5 4 0 1 4 3 5 2""", 3)])
+attach(o, pc, material("hall roof", nums("0.6 0.3 0.2", 3)[0], 0.0), nums("0.0 0.0 1.12", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("hall roof", "rooftile")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("hall chimney")
+o.scale = nums("0.16 0.16 0.6", 3)[0]
+attach(o, pc, material("hall chimney", nums("0.42 0.44 0.48", 3)[0], 0.0), nums("-0.45 0.3 1.5", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["hall"], os.path.join(out, "hall.glb"))
+with open(os.path.join(out, "hall-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "hall.glb"))))
+pc = piece("stall")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("stall post 1")
+o.scale = nums("0.05 0.05 0.8", 3)[0]
+attach(o, pc, material("stall post 1", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("-0.45 -0.3 0.4", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("stall post 2")
+o.scale = nums("0.05 0.05 0.8", 3)[0]
+attach(o, pc, material("stall post 2", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.45 -0.3 0.4", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("stall post 3")
+o.scale = nums("0.05 0.05 0.8", 3)[0]
+attach(o, pc, material("stall post 3", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("-0.45 0.3 0.4", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("stall post 4")
+o.scale = nums("0.05 0.05 0.8", 3)[0]
+attach(o, pc, material("stall post 4", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.45 0.3 0.4", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("stall counter")
+o.scale = nums("0.95 0.2 0.06", 3)[0]
+attach(o, pc, material("stall counter", nums("0.61 0.48 0.3", 3)[0], 0.0), nums("0.0 -0.22 0.36", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("stall counter", "planks")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("stall awning")
+o.scale = nums("1.1 0.85 0.04", 3)[0]
+attach(o, pc, material("stall awning", nums("0.7 0.2 0.16", 3)[0], 0.0), nums("0.0 -0.05 0.84", 3)[0], nums("14.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("stall goods 1")
+o.scale = nums("0.16 0.14 0.1", 3)[0]
+attach(o, pc, material("stall goods 1", nums("0.75 0.55 0.2", 3)[0], 0.0), nums("-0.25 -0.22 0.44", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("stall goods 2")
+o.scale = nums("0.2 0.12 0.08", 3)[0]
+attach(o, pc, material("stall goods 2", nums("0.4 0.55 0.3", 3)[0], 0.0), nums("0.2 -0.22 0.43", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["stall"], os.path.join(out, "stall.glb"))
+with open(os.path.join(out, "stall-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "stall.glb"))))
+pc = piece("watch")
+top = pc
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("watch shaft")
+o.scale = nums("0.45 0.45 2.6", 3)[0]
+attach(o, pc, material("watch shaft", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("0.0 0.0 1.3", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("watch shaft", "stone")
+bpy.ops.mesh.primitive_torus_add(major_segments=16, minor_segments=8, major_radius=0.5, minor_radius=0.06)
+o = made("watch ring")
+attach(o, pc, material("watch ring", nums("0.42 0.44 0.48", 3)[0], 0.0), nums("0.0 0.0 2.6", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.56, radius2=0.0, depth=0.9)
+o = made("watch cone")
+attach(o, pc, material("watch cone", nums("0.55 0.24 0.16", 3)[0], 0.0), nums("0.0 0.0 3.05", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("watch pole")
+o.scale = nums("0.015 0.015 0.7", 3)[0]
+attach(o, pc, material("watch pole", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 0.0 3.8", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("watch flag")
+o.scale = nums("0.34 0.02 0.2", 3)[0]
+attach(o, pc, material("watch flag", nums("0.78 0.14 0.1", 3)[0], 0.0), nums("0.18 0.0 4.0", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["watch"], os.path.join(out, "watch.glb"))
+with open(os.path.join(out, "watch-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "watch.glb"))))
+pc = piece("keep")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("keep body")
+o.scale = nums("2.6 2.6 4.0", 3)[0]
+attach(o, pc, material("keep body", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("0.0 0.0 2.0", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("keep body", "stone")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("keep course")
+o.scale = nums("2.76 2.76 0.14", 3)[0]
+attach(o, pc, material("keep course", nums("0.42 0.44 0.48", 3)[0], 0.0), nums("0.0 0.0 4.0", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("keep course", "darkstone")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("keep door")
+o.scale = nums("0.5 0.04 1.0", 3)[0]
+attach(o, pc, material("keep door", nums("0.36 0.27 0.19", 3)[0], 0.0), nums("0.0 -1.31 0.5", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("keep turret 1")
+o.scale = nums("0.42 0.42 4.8", 3)[0]
+attach(o, pc, material("keep turret 1", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("-1.3 -1.3 2.4", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("keep turret 1", "stone")
+bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.5, radius2=0.0, depth=0.7)
+o = made("keep cap 1")
+attach(o, pc, material("keep cap 1", nums("0.55 0.24 0.16", 3)[0], 0.0), nums("-1.3 -1.3 5.15", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("keep turret 2")
+o.scale = nums("0.42 0.42 4.8", 3)[0]
+attach(o, pc, material("keep turret 2", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("1.3 -1.3 2.4", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("keep turret 2", "stone")
+bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.5, radius2=0.0, depth=0.7)
+o = made("keep cap 2")
+attach(o, pc, material("keep cap 2", nums("0.55 0.24 0.16", 3)[0], 0.0), nums("1.3 -1.3 5.15", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("keep turret 3")
+o.scale = nums("0.42 0.42 4.8", 3)[0]
+attach(o, pc, material("keep turret 3", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("-1.3 1.3 2.4", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("keep turret 3", "stone")
+bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.5, radius2=0.0, depth=0.7)
+o = made("keep cap 3")
+attach(o, pc, material("keep cap 3", nums("0.55 0.24 0.16", 3)[0], 0.0), nums("-1.3 1.3 5.15", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("keep turret 4")
+o.scale = nums("0.42 0.42 4.8", 3)[0]
+attach(o, pc, material("keep turret 4", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("1.3 1.3 2.4", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("keep turret 4", "stone")
+bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.5, radius2=0.0, depth=0.7)
+o = made("keep cap 4")
+attach(o, pc, material("keep cap 4", nums("0.55 0.24 0.16", 3)[0], 0.0), nums("1.3 1.3 5.15", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("keep pole")
+o.scale = nums("0.03 0.03 1.6", 3)[0]
+attach(o, pc, material("keep pole", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 0.0 4.9", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("keep banner")
+o.scale = nums("0.76 0.03 0.5", 3)[0]
+attach(o, pc, material("keep banner", nums("0.78 0.14 0.1", 3)[0], 0.0), nums("0.4 0.0 5.3", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["keep"], os.path.join(out, "keep.glb"))
+with open(os.path.join(out, "keep-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "keep.glb"))))
+pc = piece("cart")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("cart bed")
+o.scale = nums("0.8 1.3 0.08", 3)[0]
+attach(o, pc, material("cart bed", nums("0.61 0.48 0.3", 3)[0], 0.0), nums("0.0 0.0 0.3", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("cart bed", "planks")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("cart left")
+o.scale = nums("0.05 1.3 0.66", 3)[0]
+attach(o, pc, material("cart left", nums("0.61 0.48 0.3", 3)[0], 0.0), nums("-0.38 0.0 0.66", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("cart left", "planks")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("cart right")
+o.scale = nums("0.05 1.3 0.66", 3)[0]
+attach(o, pc, material("cart right", nums("0.61 0.48 0.3", 3)[0], 0.0), nums("0.38 0.0 0.66", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("cart right", "planks")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("cart back")
+o.scale = nums("0.8 0.05 0.66", 3)[0]
+attach(o, pc, material("cart back", nums("0.61 0.48 0.3", 3)[0], 0.0), nums("0.0 0.63 0.66", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("cart back", "planks")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("cart roof")
+o.scale = nums("0.9 1.4 0.05", 3)[0]
+attach(o, pc, material("cart roof", nums("0.42 0.3 0.2", 3)[0], 0.0), nums("0.0 0.0 1.02", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("cart ramp")
+o.scale = nums("0.7 0.5 0.04", 3)[0]
+attach(o, pc, material("cart ramp", nums("0.61 0.48 0.3", 3)[0], 0.0), nums("0.0 -0.86 0.16", 3)[0], nums("-34.0 0.0 0.0", 3)[0])
+skin("cart ramp", "planks")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("cart band 1")
+o.scale = nums("0.84 0.05 0.7", 3)[0]
+attach(o, pc, material("cart band 1", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 -0.4 0.66", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("cart band 2")
+o.scale = nums("0.84 0.05 0.7", 3)[0]
+attach(o, pc, material("cart band 2", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 0.4 0.66", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("cart wheel 1")
+o.scale = nums("0.24 0.24 0.07", 3)[0]
+attach(o, pc, material("cart wheel 1", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("-0.44 -0.42 0.24", 3)[0], nums("0.0 90.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("cart wheel 2")
+o.scale = nums("0.24 0.24 0.07", 3)[0]
+attach(o, pc, material("cart wheel 2", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.44 -0.42 0.24", 3)[0], nums("0.0 90.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("cart wheel 3")
+o.scale = nums("0.24 0.24 0.07", 3)[0]
+attach(o, pc, material("cart wheel 3", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("-0.44 0.42 0.24", 3)[0], nums("0.0 90.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("cart wheel 4")
+o.scale = nums("0.24 0.24 0.07", 3)[0]
+attach(o, pc, material("cart wheel 4", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.44 0.42 0.24", 3)[0], nums("0.0 90.0 0.0", 3)[0])
+export_piece(bpy.data.objects["cart"], os.path.join(out, "cart.glb"))
+with open(os.path.join(out, "cart-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "cart.glb"))))
 with open(os.path.join(out, "clips.txt"), "w") as f:
-    for n in "walker ground water bridge wall gate archer fire ice runner brute shield".split():
+    for n in "walker ground water bridge wall gate archer fire ice runner brute shield house hall stall watch keep cart".split():
         f.write(n + "\n" + open(os.path.join(out, n + "-clips.txt")).read())
 
 cam = bpy.data.cameras.new("still")
@@ -689,8 +954,8 @@ look.up_axis = "UP_Y"
 scene.camera = eye
 scene.render.film_transparent = True
 scene.render.resolution_x = scene.render.resolution_y = 256
-for n in "walker ground water bridge wall gate archer fire ice runner brute shield".split():
-    for m in "walker ground water bridge wall gate archer fire ice runner brute shield".split():
+for n in "walker ground water bridge wall gate archer fire ice runner brute shield house hall stall watch keep cart".split():
+    for m in "walker ground water bridge wall gate archer fire ice runner brute shield house hall stall watch keep cart".split():
         o = bpy.data.objects[m]
         for p in [o] + list(o.children_recursive):
             p.hide_render = m != n

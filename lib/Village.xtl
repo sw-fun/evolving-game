@@ -1,0 +1,120 @@
+## Village: what stands behind the castle's wall, worked out as arrays
+## from a seed (docs/plan.md, The castle as one game): a village of
+## houses, halls and market stalls along winding streets, with watch
+## towers and a keep among them. Another seed is another village. It
+## is scenery: the buildings are models (assets/Castle.xtl) stood many
+## times, smoke rises from some chimneys, and nothing here is a rule of
+## any game.
+##
+## A village is laid out from its seed, its width and its depth alone,
+## about the castle's gate: x east of the gate's middle, z south of the
+## wall's north face (so every lot's z is negative). The map it stands
+## behind has no say in it, so the same seed is the same village behind
+## every map (the castle's map and the battlefield show one village).
+## Its streets run east and west and wind as they go; a lot is a place
+## beside a street, each side of it, facing it. Where the keep stands,
+## and along the way from the gate to it, no lot is built on.
+##
+## x is east, z south, y up, as in every scene.
+## Import: "vg:" u_se< "Village"
+
+"rg:" u_se< "Rng"
+"t:" u_se< "Text"
+"tr:" u_se< "Terrain"
+"w:" u_se< "World"
+
+## How far apart the streets are, how far apart the lots along one, and
+## how far a lot stands back from its street.
+h:between := 3.6
+h:along := 1.5
+h:back := 1.0
+## How far round the map the ground goes before it is level with the
+## world beyond (lib/View's band).
+h:far := 24.0
+
+### The lots
+
+# :: (Int, Float, Float) -> Float
+## Every lot of a village: (seed, wide, deep) to a table, a row a lot:
+## x, z (from the gate, as above), its kind (1 a house, 2 a hall, 3 a
+## stall, 4 a watch tower, 5 the keep), and the way it faces (hx hz).
+## wide and deep are the village's size in tiles.
+l:l_ots := { (seed, wide, deep) ->
+  streets := f_loor deep / h:between
+  slots := f_loor wide / h:along
+  n := 2 * streets * slots
+  i := (r_ange n) - 1
+  side := f_loat i m_od 2
+  street := f_loat (i d_iv 2) d_iv slots
+  slot := f_loat (i d_iv 2) m_od slots
+  u := (seed, 1) rg:u_nit r_ange n
+  v := (seed, 2) rg:u_nit r_ange n
+  k := (seed, 3) rg:u_nit r_ange n
+  x := ((h:along * slot) - 0.5 * wide) + 0.5 * u - 0.5
+  bend := 0.9 * s_in (0.45 * x) + 1.7 * street
+  z := (((0.0 - 2.6) - h:between * street) + bend) + (h:back + 0.3 * v) * (2.0 * side) - 1.0
+  market := (street = 1.0) & (a_bs x + 0.25 * wide) < 4.0
+  kind := (1 + (k > 0.62) + (k > 0.9)) m_ax 3 * market & k > 0.25
+  keep := 0.0 c_at (0.0 - 0.5 * deep)
+  open := ((a_bs x - f_irst keep) > 2.6) | (a_bs z - 2 s_elect keep) > 2.6
+  clear := open & ((a_bs x - f_irst keep) > 1.3) | z < 2 s_elect keep
+  turn := 0.25 * (2.0 * v) - 1.0
+  hx := s_in turn
+  hz := (c_os turn) * 1.0 - 2.0 * side
+  homes := clear r_eplicate o_\ (5 c_at n) r_eshape x c_at z c_at (f_loat kind) c_at hx c_at hz
+  kx := f_irst keep
+  kz := 2 s_elect keep
+  castle := 5 5 r_eshape kx c_at kz c_at 5.0 0.0 1.0 c_at (kx - 4.0) c_at (kz - 4.0) c_at 4.0 0.0 1.0 c_at (kx + 4.0) c_at (kz - 4.0) c_at 4.0 0.0 1.0 c_at (kx - 4.0) c_at (kz + 4.0) c_at 4.0 0.0 1.0 c_at (kx + 4.0) c_at (kz + 4.0) c_at 4.0 0.0 1.0
+  homes c_at castle
+}
+
+### Standing them
+
+## Where a map's gate is in its scene: the middle of the gate east and
+## west, the north face of its wall.
+h:o_rigin := { map ->
+  g := w:g_ate map
+  ((f_loat 2 s_elect g) - 0.5) c_at (f_loat f_irst g) - 1.0
+}
+## The height of the ground at a map's points (x, z a row), on the map
+## and off it: on it, the surface (lib/Terrain); off it, the nearest
+## tile's, falling to the world beyond over the band.
+h:g_round := { map xz ->
+  rc := f_loat w:s_ize map
+  x := f_irst_2 xz
+  z := 2 s_elect_2 xz
+  out := (0.0 - z) m_ax (z - f_irst rc) m_ax (0.0 - x) m_ax (x - 2 s_elect rc) m_ax 0.0
+  (map tr:h_eight xz) * 0.0 m_ax 1.0 - out / h:far
+}
+h:f_ine := { v -> (f_loat f_loor 0.5 + 1000.0 * v) / 1000.0 }
+## The scene's line for every lot of one kind: tiles('name', 'color',
+## nums('x z y base hx hz ...', 6), 'model').
+h:k_indCall := { (map, lots) k ->
+  mine := (k = f_loor 3 s_elect_2 lots) r_eplicate lots
+  0 = t_ally mine ? ""
+  y := map h:g_round (1 2) s_elect_2 mine
+  rows := o_\ (6 c_at t_ally mine) r_eshape (f_irst_2 mine) c_at (2 s_elect_2 mine) c_at y c_at y c_at (4 s_elect_2 mine) c_at 5 s_elect_2 mine
+  name := d_isclose k s_elect "house" "hall" "stall" "watch" "keep"
+  "tiles('" c_at name c_at "', '#8a8f98', nums('" c_at (f_ormat h:f_ine r_avel rows) c_at "', 6), '" c_at name c_at "')\n"
+}
+# :: (Any a, Any b) => ((a, Int, b), Int, Float, Float) -> Float
+## A village's lots where they stand behind a map: l:l_ots's table with
+## x and z the scene's (moved to the map's gate).
+l:b_ehind := { (map, seed, wide, deep) ->
+  lots := l:l_ots (seed, wide, deep)
+  o := h:o_rigin map
+  o_\ (5 c_at t_ally lots) r_eshape ((f_irst o) + f_irst_2 lots) c_at ((2 s_elect o) + 2 s_elect_2 lots) c_at r_avel o_\ (3 4 5) s_elect_2 lots
+}
+# :: (Any a, Num b) => ((a, Int, b), Int, Float, Float) -> Char
+## A village as a scene's lines: (map, seed, wide, deep). Every lot of a
+## kind is one line (a model stood many times), and from one house or
+## hall in six smoke rises (the wind from the west).
+l:c_alls := { (map, seed, wide, deep) ->
+  lots := l:b_ehind (map, seed, wide, deep)
+  built := t:j_oin '{ k -> e_nclose (map, lots) h:k_indCall k } e_ach r_ange 5
+  homes := ((3 s_elect_2 lots) < 3.0) r_eplicate lots
+  smoking := (0 = ((r_ange t_ally homes) m_od 6)) r_eplicate homes
+  y := map h:g_round (1 2) s_elect_2 smoking
+  s_moke := { j -> "particles('smoke', nums('" c_at (f_ormat h:f_ine (2 t_ake j s_elect smoking) c_at 1.5 + j s_elect y) c_at "', 3)[0], 5, nums('0.35 0.1', 2)[0], " c_at (f_ormat 100 + j) c_at ")\n" }
+  built c_at t:j_oin '{ j -> e_nclose s_moke j } e_ach r_ange t_ally smoking
+}

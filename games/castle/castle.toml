@@ -11,6 +11,11 @@ title = ["The castle"]
 # map the venues are shown on.
 zones = ["../../world/zones.toml"]
 zone = ["realm"]
+# What stands behind the wall: the village, made from a seed, so many
+# tiles wide and deep (lib/Village). The same line in every scenario
+# is the same village.
+village = ["seed 7", "wide 34", "deep 20"]
+
 time = ["10.5"]
 
 # The venues, in the order of their numbers on the map.

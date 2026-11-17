@@ -45,6 +45,7 @@
 "sk:" u_se< "Sky"
 "sm:" u_se< "Sim"
 "st:" u_se< "Strings"
+"vg:" u_se< "Village"
 "vw:" u_se< "View"
 "w:" u_se< "World"
 
@@ -207,16 +208,24 @@ l:m_ap := { file ->
 ## A scenario's stage (lib/View), ready to draw: its zone's map made
 ## smooth, under the weather the scenario says (weather = ["snow 0.8"]:
 ## snow, and how thick from 0 to 1) and lit as the hour it says is
-## (time = ["14.5"]); a scenario that says neither is drawn plain. One
+## (time = ["14.5"]), with the village it says behind the wall
+## (village = ["seed 7", "wide 34", "deep 20"]); a scenario that says none of
+## them is drawn plain. One
 ## place, so every mode's scenarios mean the same by them.
 l:s_tage := { file ->
   map := l:m_ap file
   snow := 0.0 m_ax 1.0 m_in h:w_eather file
-  stage := h:g_round (map, snow)
+  stage := (file, map) h:v_illage h:g_round (map, snow)
   n_ot file l:h_as "time" ? stage
   light := sk:a_t file l:n_umber "time"
   snow > 0.0 ? vw:l_it (stage, sk:s_now (light, snow))
   vw:l_it (stage, light)
+}
+## A stage with the scenario's village behind its map's wall, if it
+## says one (village = ["seed 7", "wide 34", "deep 20"]: lib/Village).
+h:v_illage := { (file, map) stage ->
+  n_ot file l:h_as "village" ? stage
+  vw:d_ressed (stage, vg:c_alls (map, f_loor file l:r_ule ("village", "seed"), file l:r_ule ("village", "wide"), file l:r_ule ("village", "deep")))
 }
 h:w_eather := { file -> n_ot file l:h_as "weather" ? 0.0; file l:r_ule ("weather", "snow") }
 h:g_round := { (map, snow) -> snow > 0.0 ? vw:w_inter (map, snow); vw:s_mooth map }
