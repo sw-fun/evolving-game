@@ -1,0 +1,8 @@
+number = 6
+slug = "defense-docs"
+status = "pending"
+description = "defend-the-bridge step 6: close the saga. The game's README, docs/architectur..."
+role = "production"
+context_files = []
+created_at = "2026-11-16T17:11:07"
+commits = []

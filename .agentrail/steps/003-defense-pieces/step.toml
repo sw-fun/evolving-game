@@ -1,0 +1,8 @@
+number = 3
+slug = "defense-pieces"
+status = "pending"
+description = "defend-the-bridge step 3: the pieces. assets: the three towers and the three ..."
+role = "production"
+context_files = []
+created_at = "2026-11-16T17:11:07"
+commits = []

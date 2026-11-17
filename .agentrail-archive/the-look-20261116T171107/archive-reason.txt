@@ -1,0 +1,1 @@
+Closed early by the user (2026-11-16): start Castle Defense now, do the look work as needed. Done: targets, terrain, materials, light, page chrome, look-on, a walking camera. Carried forward: particles, figures, cloth, the map's edge, the worlds, docs/games.md.

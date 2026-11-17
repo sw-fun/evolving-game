@@ -1,0 +1,8 @@
+number = 1
+slug = "defense-rules"
+status = "pending"
+description = "defend-the-bridge step 1: the rules. games/defense (just new-game defense): D..."
+role = "production"
+context_files = []
+created_at = "2026-11-16T17:11:07"
+commits = []

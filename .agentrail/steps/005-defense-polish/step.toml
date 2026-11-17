@@ -1,0 +1,8 @@
+number = 5
+slug = "defense-polish"
+status = "pending"
+description = "defend-the-bridge step 5: polish. What playing shows is missing, chosen with ..."
+role = "production"
+context_files = []
+created_at = "2026-11-16T17:11:07"
+commits = []
