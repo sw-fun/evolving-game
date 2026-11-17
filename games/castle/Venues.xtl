@@ -1,0 +1,77 @@
+## Venues: the castle's list of places to play, read from its file
+## (castle.toml): every game, level and place, where it is on the
+## realm's map, what makes it known, what it needs. The map (Atlas.xtl),
+## a venue not built yet (Sketch.xtl) and the program that goes from one
+## to the next all read it here, so a game is added in one place.
+##
+## A venue is a number, from 1, in the order the file lists them. What
+## the world state says of one: venue.ID.done is set when it has been
+## won; campaign.go is the number of the venue being gone to.
+## Import: "vn:" u_se< "Venues"
+
+"md:" u_se< "Mode"
+
+## The table of a file: a row a venue, its nine fields as texts.
+h:t_able := { file ->
+  '{ @ -> ((e_nclose file) c_at e_nclose "venue") []T_ABLE ("venues" "venue-fields") } []T_RAP '{ err -> "bad-scenario" []S_IGNAL []E_MESSAGE err }
+}
+h:f_ield := { (file, k) j -> d_isclose j s_elect k s_elect h:t_able file }
+## The directory part of a path, with its last slash.
+h:d_ir := { file -> ('m_ax r_/ 0 c_at w_here file = f_irst "/") t_ake file }
+
+# :: Char -> Box Char
+## The venues' names (their ids), in order.
+l:n_ames := { file -> file md:l_ist "venues" }
+# :: Char -> Int
+## How many venues a file has.
+l:c_ount := { file -> t_ally l:n_ames file }
+# :: (Char, Int) -> Char
+## A venue's title: (file, k).
+l:t_itle := { fk -> fk h:f_ield 1 }
+# :: (Char, Int) -> Char
+## A venue's kind: the mode that plays it (defense, roam ...), or
+## placeholder for one not built yet.
+l:k_ind := { fk -> fk h:f_ield 2 }
+# :: (Char, Int) -> Char
+## The path of a venue's scenario from where the program runs (in the
+## file it is written from the file's own directory); empty for a
+## placeholder.
+l:s_cenario := { (file, k) ->
+  path := (file, k) h:f_ield 3
+  0 = t_ally path ? path
+  (h:d_ir file) c_at path
+}
+# :: (Char, Int) -> Char
+## What a venue is about, in a sentence or two.
+l:a_bout := { fk -> fk h:f_ield 9 }
+# :: (Char, Int) -> Char
+## The piece that stands for a venue on the map.
+l:m_arker := { fk -> fk h:f_ield 8 }
+# :: (Char, Int) -> Char
+## The name in the world state that says a venue has been won.
+l:d_one := { (file, k) -> "venue." c_at (d_isclose k s_elect l:n_ames file) c_at ".done" }
+# :: Char -> Int
+## Every venue's place on the realm's map, a row each (row, column).
+l:p_laces := { file ->
+  t := h:t_able file
+  n_um := { x -> f_irst f_loor n_umbers d_isclose x }
+  o_\ (2 c_at t_ally t) r_eshape ('n_um e_ach 4 s_elect_2 t) c_at 'n_um e_ach 5 s_elect_2 t
+}
+# :: (Num a, Num b, Truthy b) => (Char, (Box Char, a)) -> b
+## What the world says of every venue, a row each of three 0s and 1s:
+## known (it is known from the start, or the venue it comes from has
+## been won, or it has), open (known, and what it needs is set in the
+## world), done (won).
+l:s_tanding := { (file, world) ->
+  t := h:t_able file
+  ids := l:n_ames file
+  n := t_ally ids
+  done := '{ k -> 0 < world md:g_et l:d_one (file, k) } e_ach r_ange n
+  from := ids i_ndexOf 6 s_elect_2 t
+  known := done | (from > n) | (from m_in n) s_elect done
+  needs := '{ x -> (0 = t_ally d_isclose x) | 0 < world md:g_et d_isclose x } e_ach 7 s_elect_2 t
+  o_\ (3 c_at n) r_eshape (0 + known) c_at (0 + known & needs) c_at 0 + done
+}
+# :: (Char, Int) -> Char
+## What a venue needs of the world, as a name ("" for nothing).
+l:n_eeds := { fk -> fk h:f_ield 7 }

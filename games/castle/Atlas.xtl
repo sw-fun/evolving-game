@@ -1,0 +1,127 @@
+## Atlas: the map of the castle and its country (the mode "map"), by
+## which you go from one game to the next. The venues (Venues.xtl) stand
+## on the realm's map where their file says. You see the ones you know
+## of: those known from the start, and those a venue you have won led
+## to. One that is open is gone to by a click on it, or by its number
+## (the command "choose 1 N"); one that is not says what it needs. The
+## key D shows them all and opens them all, to try any of them (and D
+## again goes back to what you have earned).
+##
+## The state is (stage, file, places, standing, numbers): the venues'
+## places (a row each: row, column), what the world says of each (a row
+## each: known, open, done), and the venue chosen (0 until one is), the
+## venue last asked about, and whether all are shown (the key D).
+## Import: "at:" u_se< "Atlas"
+
+"md:" u_se< "Mode"
+"sm:" u_se< "Sim"
+"st:" u_se< "Strings"
+"vn:" u_se< "Venues"
+"vw:" u_se< "View"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "map"
+# :: Char
+## How it is used, a line a thing to know.
+l:help := "This is the castle and its country. Each marker is a game or a place.\nClick a marker to go there. You see the ones you have found; winning one shows where it leads.\nA place that is not open yet says what it needs.\nD shows every place and opens them all (to try any of them); D again goes back to what you have earned."
+
+# :: (Num a, Any b, Num c, Num d, Truthy d, Num e, Truthy e) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Char, Int, d, e)
+## The map from the castle's file, in a world: every venue's place and
+## what that world says of it. All are shown if the world's
+## campaign.all is set (the key D was pressed on an earlier visit).
+l:n_ew := { (file, world, seed) ->
+  (md:s_tage file, file, vn:p_laces file, vn:s_tanding (file, world), 0 0 c_at 0 + 0 < world md:g_et "campaign.all")
+}
+## What stands for each venue now: known and open as the world says, or
+## all of them when all are shown.
+h:k_nown := { (_, _, _, standing, n) -> (0 < 3 s_elect n) | 0 < f_irst_2 standing }
+h:o_pen := { (_, _, _, standing, n) -> (0 < 3 s_elect n) | 0 < 2 s_elect_2 standing }
+## The venue at a place, of those known: the nearest within a tile of
+## it, or 0.
+h:a_t := { s rk ->
+  (_, _, places, _, _) := s
+  off := 'm_ax r_/_2 a_bs places - ((t_ally places) c_at 2) r_eshape rk
+  near := (h:k_nown s) & off <= 1
+  0 = '+ r_/ near ? 0
+  f_irst w_here near & off = 'm_in r_/ off + 9 * n_ot near
+}
+## Going to venue k, if it is known and open; asking about it, if it is
+## known and not; nothing, if it is not known.
+h:g_o := { s k ->
+  (stage, file, places, standing, n) := s
+  (k < 1) | k > t_ally places ? s
+  n_ot k s_elect h:k_nown s ? s
+  k s_elect h:o_pen s ? (stage, file, places, standing, k c_at 0 c_at 3 s_elect n)
+  (stage, file, places, standing, 0 c_at k c_at 3 s_elect n)
+}
+# :: (Any a, Num b, Any c, Any d, Any e, Num f, Any g, Num h) => (((a, Int, b), Float, c, d, e, f), g, Int, h, Int) -> (Char, Float, Char) -> (((a, Int, b), Float, c, d, e, f), g, Int, h, Int)
+## The state after an event: a click on a venue, or choose 1 N, goes to
+## it; the key D shows and hides all the venues.
+l:s_tep := { s e ->
+  (stage, file, places, standing, n) := s
+  e sm:i_s "click" ? s h:g_o s h:a_t stage vw:t_ile 2 t_ake sm:n_umbers e
+  e sm:i_s "choose" ? s h:g_o f_loor 2 s_elect sm:n_umbers e
+  "d" m_atch st:l_ower sm:t_ext e ? (stage, file, places, standing, 0 0 c_at 1 - 3 s_elect n)
+  s
+}
+# :: Any a => a -> Box Char
+## The events it takes: a click, a venue's number, the key D.
+l:l_egal := { s -> "click X Y" "choose 1 N" "key d" "key D" }
+# :: (Any a, Any b, Any c, Any d, Num e) => (a, b, c, d, e) -> Int
+## Won when a venue has been chosen; playing until then.
+l:s_tatus := { (_, _, _, _, n) -> 0 < f_irst n ? md:won; md:playing }
+# :: (Any a, Any b, Any c, Any d) => (a, b, c, d, e) -> e
+## The venue chosen, 0 for none.
+l:c_hosen := { (_, _, _, _, n) -> f_irst n }
+## The lines under the map: the places open to go to, by number; and
+## what was asked about, or where you are going.
+h:c_aption := { s ->
+  (_, file, places, standing, n) := s
+  open := w_here (h:o_pen s) & h:k_nown s
+  todo := (n_ot (open s_elect 3 s_elect_2 standing) > 0) r_eplicate open
+  list := ", " st:j_oin '{ k -> e_nclose (f_ormat k) c_at " " c_at vn:t_itle (file, k) } e_ach todo
+  count := @ f_ormat< "The castle and its country: {'+ r_/ h:k_nown s} of {t_ally places} places known, {'+ r_/ 0 < 3 s_elect_2 standing} won."
+  first := count c_at (0 < 3 s_elect n) r_eplicate " (Every place shown: D hides them again.)"
+  0 < f_irst n ? first c_at "\nTo " c_at (vn:t_itle (file, f_irst n)) c_at "."
+  0 < 2 s_elect n ? first c_at "\n" c_at (vn:t_itle (file, 2 s_elect n)) c_at " is not open yet: it needs " c_at (h:w_ords vn:n_eeds (file, 2 s_elect n)) c_at "."
+  (0 = t_ally todo) | 0 < 3 s_elect n ? first c_at "\nClick a place to go there."
+  first c_at "\nTo do: " c_at list c_at ". Click one."
+}
+## What a name of the world state asks for, in words.
+h:w_ords := { name ->
+  name m_atch "fact.bridge-held" ? "the bridge held (win a Defend the Bridge level)"
+  name m_atch "resource.gold" ? "gold in the world"
+  name
+}
+# :: (Any a, Num b, Num c) => (a, Char, b, c, Int) -> (a, Box Char, Box Char, Float, Char)
+## What to show (lib/View): the realm's map with a piece for every
+## venue known and its number and name written over it (and whether
+## it is won, or locked), and the lines under it.
+l:v_iew := { s ->
+  (stage, file, places, _, _) := s
+  ks := w_here h:k_nown s
+  at := (f_loat ks s_elect places) - 0.5
+  x := 2 s_elect_2 at
+  y := f_irst_2 at
+  n := t_ally ks
+  pieces := o_\ (8 c_at n) r_eshape x c_at y c_at (n r_eshape 0.0) c_at (n r_eshape 1.0) c_at (n r_eshape 0.0) c_at x c_at y c_at n r_eshape 0.05
+  markers := '{ k -> e_nclose vn:m_arker (file, k) } e_ach ks
+  names := '{ k -> e_nclose "#" c_at (f_ormat k) c_at " " c_at (vn:t_itle (file, k)) c_at s h:m_ark k } e_ach ks
+  vw:m_any (stage, markers c_at names, (2 * n) r_eshape e_nclose "idle", pieces c_at pieces, h:c_aption s)
+}
+## What a venue's label says after its name: won, or not open yet.
+h:m_ark := { s k ->
+  (_, _, _, standing, _) := s
+  0 < 3 s_elect k s_elect standing ? " (won)"
+  n_ot k s_elect h:o_pen s ? " (locked)"
+  ""
+}
+# :: (Any a, Any b, Any c, Any d) => (a, b, c, d, Int) -> (Int, (Box Char, Int), (Box Char, Int))
+## Where you are going: the world's campaign.go is the venue chosen,
+## and campaign.all whether every place is shown. Left when none was.
+l:o_utcome := { s ->
+  n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
+  (_, _, _, _, n) := s
+  (md:won, (md:nothing md:s_et ("campaign.go", l:c_hosen s)) md:s_et ("campaign.all", 3 s_elect n), md:nothing)
+}

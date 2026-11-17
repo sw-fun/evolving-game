@@ -1,0 +1,202 @@
+# The castle: every venue of the game (a game, a level, a place), where
+# it is on the realm's map, what makes it known and what it needs. Read
+# by Atlas.xtl (the map) and Sketch.xtl (a venue not built yet) through
+# lib/Mode; every value is a string, or a list of strings. To add a
+# game: add a venue here (and, when it is built, its kind and scenario
+# in place of "placeholder").
+mode = ["map"]
+title = ["The castle"]
+
+# Where: the castle's zones (a path from this file) and the zone whose
+# map the venues are shown on.
+zones = ["../../world/zones.toml"]
+zone = ["realm"]
+time = ["10.5"]
+
+# The venues, in the order of their numbers on the map.
+venues = ["bridge-1", "on-foot", "bridge-2", "camp", "town", "bridge-3", "engineer", "commander", "crossing", "gate-maze", "rune-keep", "tactics", "dungeon", "ray-maze", "treasury", "automata"]
+venue-fields = ["title", "kind", "scenario", "row", "column", "from", "needs", "marker", "about"]
+
+# A venue: its title; its kind (the mode that plays it: defense, roam,
+# or placeholder for one not built yet) and its scenario (a path from
+# this file; none for a placeholder); its row and column on the realm's
+# map; from, the venue whose winning makes it known ("" for one known
+# from the start); needs, a name in the world state that must be set
+# for it to be entered ("" for none); marker, the piece that stands for
+# it on the map; and what it is about.
+
+[venue.bridge-1]
+title = "Defend the Bridge: summer"
+kind = "defense"
+scenario = "../defense/level-1.toml"
+row = "9"
+column = "10"
+from = ""
+needs = ""
+marker = "archer"
+about = "Castle Defense's first level: towers against five waves on the summer battlefield."
+
+[venue.on-foot]
+title = "The battlefield on foot"
+kind = "roam"
+scenario = "../walk/roam.toml"
+row = "11"
+column = "3"
+from = ""
+needs = ""
+marker = "walker"
+about = "Walk the battlefield yourself, to the castle gate."
+
+[venue.bridge-2]
+title = "Defend the Bridge: snow"
+kind = "defense"
+scenario = "../defense/defend.toml"
+row = "9"
+column = "14"
+from = "bridge-1"
+needs = ""
+marker = "ice"
+about = "The same road in winter, and more of them."
+
+[venue.camp]
+title = "The winter camp"
+kind = "placeholder"
+scenario = ""
+row = "11"
+column = "16"
+from = "bridge-1"
+needs = ""
+marker = "runner"
+about = "The besiegers' camp in the snow, to walk through: tents, cook fires, banners, a cart on the road, crows."
+
+[venue.town]
+title = "The town"
+kind = "placeholder"
+scenario = ""
+row = "11"
+column = "21"
+from = "bridge-1"
+needs = ""
+marker = "runner"
+about = "A medieval town made from a seed: narrow crooked streets, a bazaar, a shanty town against the wall; carts and crows."
+
+[venue.bridge-3]
+title = "Defend the Bridge: the storm"
+kind = "defense"
+scenario = "../defense/level-3.toml"
+row = "7"
+column = "14"
+from = "bridge-2"
+needs = ""
+marker = "fire"
+about = "The last and hardest, at dusk under a thunderstorm."
+
+[venue.engineer]
+title = "Siege Engineer"
+kind = "placeholder"
+scenario = ""
+row = "6"
+column = "4"
+from = "bridge-2"
+needs = ""
+marker = "brute"
+about = "A physics puzzle: topple a tower or break a wall's support with a few shots."
+
+[venue.commander]
+title = "Siege Commander"
+kind = "placeholder"
+scenario = ""
+row = "6"
+column = "20"
+from = "bridge-3"
+needs = ""
+marker = "shield"
+about = "Real-time strategy: attack or defend across several elevations."
+
+[venue.crossing]
+title = "The long bridge"
+kind = "placeholder"
+scenario = ""
+row = "8"
+column = "12"
+from = "bridge-3"
+needs = "fact.bridge-held"
+marker = "walker"
+about = "The crossing to the castle, over the chasm, under the storm: the way from the country to the inside."
+
+[venue.gate-maze]
+title = "The gate maze"
+kind = "placeholder"
+scenario = ""
+row = "4"
+column = "12"
+from = "crossing"
+needs = ""
+marker = "gate"
+about = "The portcullis shuts behind you. A maze seen from inside, with torches, paintings and cobwebs to know your way by; its exits lead to the other games."
+
+[venue.rune-keep]
+title = "Rune Keep"
+kind = "placeholder"
+scenario = ""
+row = "3"
+column = "17"
+from = "gate-maze"
+needs = ""
+marker = "ice"
+about = "Logic puzzles: rune networks that work like circuits."
+
+[venue.tactics]
+title = "Dragonfire Tactics"
+kind = "placeholder"
+scenario = ""
+row = "3"
+column = "5"
+from = "gate-maze"
+needs = ""
+marker = "fire"
+about = "Turn-based squads; fire spreads, ice blocks, lightning chains, wind bends shots."
+
+[venue.dungeon]
+title = "The dungeon"
+kind = "placeholder"
+scenario = ""
+row = "2"
+column = "12"
+from = "gate-maze"
+needs = ""
+marker = "brute"
+about = "Down the stair and through a door: a rogue-like seen from above. Fight monsters for treasure and find the way out."
+
+[venue.ray-maze]
+title = "The second maze"
+kind = "placeholder"
+scenario = ""
+row = "2"
+column = "7"
+from = "dungeon"
+needs = ""
+marker = "wall"
+about = "Another maze, seen another way, beyond the dungeon."
+
+[venue.treasury]
+title = "The treasury"
+kind = "placeholder"
+scenario = ""
+row = "1"
+column = "12"
+from = "dungeon"
+needs = "resource.gold"
+marker = "shield"
+about = "The castle earns while you play elsewhere, or nothing: an idle game."
+
+[venue.automata]
+title = "Siege Automata"
+kind = "placeholder"
+scenario = ""
+row = "2"
+column = "20"
+from = "ray-maze"
+needs = ""
+marker = "archer"
+about = "Program the towers: by hand, by rules, or in X_eTaL."

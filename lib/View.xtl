@@ -276,7 +276,9 @@ l:m_any := { (stage, models, clips, pieces, caption) ->
 }
 # :: (Any a, Any b, Any c, Any e) => ((a, Box b, Box c, d, e), b, c, d) -> (a, Box b, Box c, d, e)
 ## A view with one more piece: (view, model, clip, its eight numbers).
-## A model that begins with a star is a burst of particles at its
+## A model that begins with a hash is a label: its words are written
+## over the picture at its place ("#3 The town"), and it is no part of
+## the scene. A model that begins with a star is a burst of particles at its
 ## place ("*fire", "*dust" ...: its heading the wind, t how many a
 ## second, its last number a seed), which only the scene shows.
 ## The model "eye" is not a thing to draw but where you look from: its
@@ -310,7 +312,21 @@ l:t_ext := { (stage, models, _, every, caption) ->
 
 ## Which of a view's pieces are things standing on the board: not a
 ## burst (a model that begins with a star), which only a scene shows.
-h:s_olid := { models -> '{ m -> n_ot "*" m_atch 1 t_ake d_isclose m } e_ach models }
+h:s_olid := { models -> '{ m -> n_ot (f_irst (d_isclose m) c_at " ") m_ember? "*#" } e_ach models }
+## Which are labels: a model that begins with a hash is words written
+## over the picture at its place (and over a 3D view of the scene, which
+## the picture lies on), not a thing in the scene.
+h:w_ritten := { models -> '{ m -> "#" m_atch 1 t_ake d_isclose m } e_ach models }
+## The labels' SVG: each a line of words centered a little above its
+## place, with a dark edge to read over anything.
+h:l_abels := { (stage, models, pieces) ->
+  (map, frame, _, _, _, _) := stage
+  which := h:w_ritten models
+  xy := (1 2) s_elect_2 which r_eplicate pieces
+  p := frame h:t_o xy c_at_2 ((t_ally xy) c_at 1) r_eshape map h:u_nder xy
+  words := which r_eplicate models
+  t:j_oin '{ i -> e_nclose "<text x=\"" c_at (f_ormat h:w_hole f_irst i s_elect p) c_at "\" y=\"" c_at (f_ormat h:w_hole (2 s_elect i s_elect p) - 34.0) c_at "\" font-size=\"11\" text-anchor=\"middle\" fill=\"#ffffff\" stroke=\"#14151c\" stroke-width=\"3\" paint-order=\"stroke\">" c_at (1 d_rop d_isclose f_irst (i - 1) d_rop words) c_at "</text>" } e_ach r_ange t_ally words
+}
 
 ## Which pieces are on or near the map: one far off it (a mode keeps a
 ## piece waiting there, to be the same piece when it comes) is not in
@@ -346,7 +362,8 @@ h:d_epths := { pieces -> 2.5 + (f_loat f_loor f_irst_2 pieces) + f_loat f_loor 2
 # :: (Any a, Num b, Truthy b, Num c) => (((a, Int, b), Float, Box Char, Float, Char, c), Box Char, Box Char, Float, Char) -> Char
 ## The flat picture: an SVG document. The tiles and the pieces are drawn
 ## far to near (a piece just after the tile it stands on, so a wall
-## nearer the eye hides it), then the caption. What a 3D view replaces
+## nearer the eye hides it), then the caption, a line of it a line of
+## the picture, the last at the bottom. What a 3D view replaces
 ## is in a group of class "flat", and the scene is the picture's
 ## metadata, so a page that can draw the scene does, and hides the flat
 ## group; one that cannot shows the picture as it is.
@@ -359,8 +376,9 @@ l:p_icture := { view ->
   h := f_ormat h:w_hole 4 s_elect frame
   head := "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 " c_at w c_at " " c_at h c_at "\" width=\"" c_at w c_at "\" height=\"" c_at h c_at "\" font-family=\"sans-serif\">"
   back := "<rect class=\"flat\" width=\"" c_at w c_at "\" height=\"" c_at h c_at "\" fill=\"#1d1f2b\"/>"
-  words := "<text x=\"" c_at (f_ormat h:w_hole h:edge) c_at "\" y=\"" c_at (f_ormat h:w_hole (4 s_elect frame) - h:edge) c_at "\" font-size=\"16\" fill=\"#e8e6df\">" c_at caption c_at "</text>"
-  head c_at "<metadata id=\"scene\">" c_at (l:s_cene view) c_at "</metadata>" c_at back c_at "<g class=\"flat\">" c_at (t:j_oin order s_elect all) c_at "</g>" c_at words c_at "</svg>"
+  said := st:l_ines caption
+  words := t:j_oin '{ i -> e_nclose "<text x=\"" c_at (f_ormat h:w_hole h:edge) c_at "\" y=\"" c_at (f_ormat h:w_hole ((4 s_elect frame) - h:edge) - 20.0 * f_loat (t_ally said) - i) c_at "\" font-size=\"16\" fill=\"#e8e6df\">" c_at (d_isclose f_irst (i - 1) d_rop said) c_at "</text>" } e_ach r_ange t_ally said
+  head c_at "<metadata id=\"scene\">" c_at (l:s_cene view) c_at "</metadata>" c_at back c_at "<g class=\"flat\">" c_at (t:j_oin order s_elect all) c_at "</g>" c_at (h:l_abels (stage, models, pieces)) c_at words c_at "</svg>"
 }
 
 ### The scene
@@ -395,6 +413,7 @@ h:tall := 0.5
 ## it stands at now and where it will be, and its eight numbers.
 h:p_ieceCall := { (model, clip, y, y2, n) ->
   model m_atch "eye" ? h:e_yeCall (y, n)
+  "#" m_atch 1 t_ake model ? ""
   "*" m_atch 1 t_ake model ? h:b_urstCall (1 d_rop model, y, n)
   from := (2 t_ake n) c_at y c_at 2 t_ake 2 d_rop n
   to := (2 t_ake 5 d_rop n) c_at y2

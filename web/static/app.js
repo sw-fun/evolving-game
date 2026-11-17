@@ -8,7 +8,10 @@
 //     how far a locked pointer went since the last tick, "move DX DY".
 //     Every game is given all of these; each takes what it knows
 //   - which of the page's programs to play: the header's two buttons
-//     (?game=foot or ?game=defense starts with another)
+//     (the castle first; ?game=walk, ?game=foot or ?game=defense
+//     starts with one of its games alone); the Map button gives the
+//     loop's own command to leave a game ("choose 0 0"); ?debug gives
+//     the castle's map the key D once, which shows every place
 //   - after each event, the picture the program showed (SVG). Its
 //     metadata is the scene, which the board player of X_eTaL-extensions
 //     (ext/board.js, Three.js) draws; the picture's own drawing of the
@@ -25,7 +28,7 @@ const q = new URLSearchParams(location.search);
 const el = (id) => document.getElementById(id);
 const view = el('view'), flat = el('flat'), stat = el('stat');
 let wasm = null, player = null, timer = 0, cost = 0, frames = '', eyed = false;
-let program = { foot: 'explore.xtl', defense: 'defense/play.xtl' }[q.get('game')] || 'play.xtl';
+let program = { walk: 'play.xtl', foot: 'explore.xtl', defense: 'defense/play.xtl' }[q.get('game')] || 'castle/play.xtl';
 const held = new Set(), look = [0, 0];
 // the events given to the program, but the clock's (for tests to read)
 const said = [];
@@ -127,10 +130,12 @@ function start() {
   for (const b of document.querySelectorAll('.pick button')) b.classList.toggle('on', b.dataset.program === program);
   wasm.start(program);
   named();
+  if (q.has('debug') && program === 'castle/play.xtl') wasm.feed('key d');
   draw();
   if (!q.has('hold')) timer = setInterval(tick, TICK * 1000);
 }
 el('again').addEventListener('click', (e) => { e.currentTarget.blur(); start(); });
+el('leave').addEventListener('click', (e) => { e.currentTarget.blur(); feed('choose 0 0'); });
 for (const b of document.querySelectorAll('.pick button')) b.addEventListener('click', () => { b.blur(); program = b.dataset.program; start(); });
 
 // The game's sources in a dialog: each file drawn by X_eTaL itself

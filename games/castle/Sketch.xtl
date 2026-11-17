@@ -1,0 +1,55 @@
+## Sketch: a venue that is not built yet (the mode "placeholder"). It
+## stands where the game will: it says what the place is and what will
+## be played there, and it can be called done, which gives a real
+## outcome, so the way through the castle can be walked, and tested,
+## before its games exist. Which venue it stands for is the world's
+## campaign.go, as the map left it.
+##
+## The state is (stage, title, about, numbers): 1 when called done, 1
+## when left.
+## Import: "sk:" u_se< "Sketch"
+
+"md:" u_se< "Mode"
+"sm:" u_se< "Sim"
+"st:" u_se< "Strings"
+"vn:" u_se< "Venues"
+"vw:" u_se< "View"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "placeholder"
+# :: Char
+## How it is used, a line a thing to know.
+l:help := "This place is not built yet: what you read is what it will be.\nSpace: call it done, as if you had won it, and go back to the map (what it leads to is then known).\nB: go back to the map without that."
+
+# :: (Any a, Num b, Num c) => (Char, (Box Char, Int), a) -> (((Char, Int, Int), Float, Box Char, Float, Char, b), Char, Char, c)
+## The venue the world is going to (campaign.go), from the castle's
+## file.
+l:n_ew := { (file, world, seed) ->
+  k := 1 m_ax (vn:c_ount file) m_in world md:g_et "campaign.go"
+  (md:s_tage file, vn:t_itle (file, k), vn:a_bout (file, k), 0 0)
+}
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Num g) => (a, b, c, d) -> (e, f, Char) -> (a, b, c, g)
+## The state after an event: space calls it done; B leaves.
+l:s_tep := { (stage, title, about, n) e ->
+  " " m_atch sm:t_ext e ? (stage, title, about, 1 0)
+  (stage, title, about, 0 1)
+}
+# :: Any a => a -> Box Char
+## The events it takes: space, and B.
+l:l_egal := { s -> "key space" "key b" "key B" }
+# :: (Any a, Any b, Any c, Num d) => (a, b, c, d) -> Int
+## Won when called done; left when left; playing until then.
+l:s_tatus := { (_, _, _, n) -> 0 < f_irst n ? md:won; 0 < 2 s_elect n ? md:left; md:playing }
+# :: (Any a, Any b) => (a, Char, Char, b) -> (a, Box Char, Box Char, Float, Char)
+## What to show: the realm's map, and under it the venue's name, what
+## it will be, and what to press.
+l:v_iew := { (stage, title, about, _) ->
+  vw:e_mpty (stage, title c_at " (not built yet).\n" c_at about c_at "\nSpace: call it done. B: back to the map.")
+}
+# :: (Any a, Any b, Any c, Num d) => (a, b, c, d) -> (Int, (Box Char, Int), (Box Char, Int))
+## Called done, it is won and brings a coin; else it was left.
+l:o_utcome := { s ->
+  n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
+  (md:won, md:nothing, md:nothing md:s_et ("resource.gold", 1))
+}

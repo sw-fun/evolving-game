@@ -1,9 +1,10 @@
-# Defend the Bridge: Castle Defense's first level. Enemies come up the
+# Defend the Bridge in snow: Castle Defense's second level (and the one
+# its own goldens play). Enemies come up the
 # battlefield's road in waves, over the bridge, to the castle gate; you
 # build towers on the grass to stop them. Read by Defending.xtl through
 # lib/Mode; every value is a string, or a list of strings.
 mode = ["defense"]
-title = ["Defend the Bridge"]
+title = ["Defend the Bridge: snow"]
 
 # Where: the castle's zones (a path from this file) and the zone.
 zones = ["../../world/zones.toml"]

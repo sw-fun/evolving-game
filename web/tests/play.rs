@@ -2,7 +2,10 @@
 //! events of games/walk/expected/play.in, fed a line at a time, print
 //! exactly games/walk/expected/play.out.
 
-use evolving_web::{Game, PROGRAM};
+use evolving_web::Game;
+
+/// The walk watched: the page's oldest program.
+const PROGRAM: &str = "play.xtl";
 
 const EVENTS: &str = include_str!("../../games/walk/expected/play.in");
 const EXPECTED: &str = include_str!("../../games/walk/expected/play.out");
@@ -173,4 +176,32 @@ fn the_page_plays_castle_defense_as_the_command_line_does() {
     assert_eq!(game.session().printed(), DEFENSE_EXPECTED);
     assert!(game.session().picture().contains("piece('archer'"));
     assert!(evolving_web::help("defense/play.xtl").contains("Space: send the next wave"));
+}
+
+const CASTLE: &str = include_str!("../../games/castle/expected/play.in");
+const CASTLE_EXPECTED: &str = include_str!("../../games/castle/expected/play.out");
+
+#[test]
+fn the_page_goes_round_the_castle_as_the_command_line_does() {
+    let _turn = TURN
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    assert_eq!(
+        evolving_web::PROGRAM,
+        "castle/play.xtl",
+        "the castle is what a page starts with"
+    );
+    let mut game = Game::start(evolving_web::PROGRAM, 1);
+    assert_eq!(game.error(), "");
+    for line in CASTLE.lines() {
+        game.feed(line);
+    }
+    game.feed("end");
+    assert!(game.over());
+    assert_eq!(game.error(), "");
+    assert_eq!(game.session().printed(), CASTLE_EXPECTED);
+    assert_eq!(
+        evolving_web::title(evolving_web::PROGRAM),
+        "Evolving Game: The castle"
+    );
 }

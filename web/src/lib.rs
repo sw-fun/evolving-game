@@ -13,9 +13,12 @@ pub mod store;
 pub use game::Game;
 
 /// The programs the page can play, each with the rules library its help
-/// is in and the name of its game: the walk watched, the battlefield on
-/// foot, and Castle Defense. The first is the one a page starts with.
+/// is in and the name of its game: the castle (the map and every venue,
+/// one world carried through), and three of its games alone: the walk
+/// watched, the battlefield on foot, Castle Defense. The first is the
+/// one a page starts with.
 pub const PROGRAMS: &[(&str, &str, &str)] = &[
+    ("castle/play.xtl", "Atlas", "The castle"),
     ("play.xtl", "Walking", "Walk"),
     ("explore.xtl", "Roaming", "On foot"),
     ("defense/play.xtl", "Defending", "Castle Defense"),

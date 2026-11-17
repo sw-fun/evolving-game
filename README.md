@@ -51,13 +51,15 @@ five waves.
 
 ## Status
 
-Early. Three things can be played in the
-[live demo](https://sw-fun.github.io/evolving-game/), at the terminal
-and in a browser of your own (below): a walk to the castle gate that
-you watch, the same battlefield walked on foot, and the first level
-of Castle Defense (towers against five waves). They share one map
-and one engine; nothing yet carries what you win in one into the
-next.
+Early, and schematic. The
+[live demo](https://sw-fun.github.io/evolving-game/) opens on the map
+of the castle and its country: sixteen places, each a game, a level or
+a place, shown as you find them. Three are games you can play (Castle
+Defense's three levels, and the battlefield on foot); the rest say
+what they will be and can be called done, so the whole castle can be
+gone round. One world is carried through: the gold kept at the bridge
+is the next level's to spend, and a place won shows where it leads.
+Add `?debug` to the address to see and open every place.
 
 Behind it: the shared libraries every game will use (seeded chance,
 the event loop, the world and its maps, the protocol a game follows,
@@ -139,6 +141,13 @@ just run walk                        # the scripted walk
 just play walk                       # play it: type tick 1, key space; Ctrl-D leaves
 just run walk picture.xtl            # the scene and the SVG picture, as text
 just test-game walk                  # check it against its expected output
+```
+
+The castle, which goes round them all:
+
+```bash
+just run castle                      # the venues, the map and a placeholder, scripted
+just play castle                     # the castle at the terminal
 ```
 
 And in a browser, in 3D:

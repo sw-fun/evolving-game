@@ -87,7 +87,8 @@ const open = async (query) => {
   return until("document.title.endsWith(': ready')");
 };
 // The caption the program wrote in its picture.
-const caption = () => page("document.querySelector('#flat svg text')?.textContent || ''");
+// (the picture's other words, labels over its pieces, are centered: text-anchor)
+const caption = () => page("[...document.querySelectorAll('#flat svg text:not([text-anchor])')].map((x) => x.textContent).join(' ')");
 // Where a point of the picture is in the window (the picture is fitted
 // whole into the stage, about its middle).
 const where = (x, y) => page(`(() => {
@@ -108,7 +109,7 @@ await send("Page.enable");
 await send("Network.enable");
 
 // 3D, the clock held: events are given here.
-check(await open("?hold"), "the page starts and says it is ready");
+check(await open("?hold&game=walk"), "the page starts and says it is ready");
 check((await page("document.title")) === "Evolving Game: Walk: ready", "its title is X_eTaL's (Evolving Game: Walk)");
 check(await page("!!document.querySelector('#view canvas')"), "the board player made a canvas");
 await sleep(300);
@@ -194,7 +195,7 @@ for (const [w, h] of [[1280, 800], [800, 600], [420, 760]]) {
 // The walker on the bridge, for the README.
 if (capture) {
   await send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 800, deviceScaleFactor: 1, mobile: false });
-  await open("?hold");
+  await open("?hold&game=walk");
   await page("(() => { for (let i = 0; i < 212; i++) window.game.feed('tick 0.05'); return 1; })()");
   await sleep(600);
   const shot = await send("Page.captureScreenshot", { format: "png" });
@@ -203,6 +204,28 @@ if (capture) {
   writeFileSync(join(root, to), Buffer.from(shot.data, "base64"));
   check((await caption()).startsWith("Row 10, column 7"), "the capture shows the walker on the bridge (images/screencapture.png)");
 }
+
+// The castle: what the page starts with. The map shows the places found;
+// a real click on a marker goes into its game; the Map button comes
+// back; a place not built yet says what it will be and can be called
+// done, which is then counted; ?debug shows every place.
+check(await open("?hold"), "the page starts with the castle");
+check((await page("document.title")) === "Evolving Game: The castle: ready", "its title is the castle's");
+check((await caption()).startsWith("The castle and its country: 2 of 16 places known, 0 won."), "the map shows two places to begin with");
+await sleep(300);
+check((await page("window.game.player().count().pieces")) === 2, "each a marker on the map");
+check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x.textContent).join('|')")).includes("2 The battlefield on foot"), "with its number and name written over it");
+await click(104, 203);
+check((await caption()).includes("W A S D walk"), "a click on the second marker goes into the battlefield on foot");
+await page("document.getElementById('leave').click(), 1");
+check((await caption()).startsWith("The castle and its country: 2 of 16"), "the Map button comes back to the map");
+check(await open("?hold&debug"), "the page starts with ?debug");
+check((await caption()).startsWith("The castle and its country: 16 of 16 places known"), "and every place is shown");
+await page("window.game.feed('choose 1 10'), 1");
+check((await caption()).startsWith("The gate maze (not built yet)."), "a place not built yet says what it will be");
+check((await page("document.querySelectorAll('#flat svg text:not([text-anchor])').length")) === 3, "in three lines under the map");
+await space();
+check((await caption()).includes("1 won"), "called done, it is counted on the map");
 
 // On foot: the second game, seen through an eye, walked with held keys.
 const key = async (type, k, code, n) => send("Input.dispatchKeyEvent", { type, key: k, code, windowsVirtualKeyCode: n, nativeVirtualKeyCode: n });
@@ -257,14 +280,14 @@ if (capture) {
 }
 
 // The flat picture alone.
-check(await open("?flat&hold"), "the flat page starts");
+check(await open("?flat&hold&game=walk"), "the flat page starts");
 check(!(await page("!!document.querySelector('#view canvas')")), "no 3D is drawn there");
 check((await page("document.querySelectorAll('#flat .flat polygon').length")) > 400, "the flat board is drawn");
 await click(364, 221);
 check((await caption()).includes("Pointing at row 10, column 7: bridge."), "a click on the flat picture names the tile too");
 
 // The clock: left alone, the walk goes by itself and ends.
-check(await open(""), "the page starts with its clock");
+check(await open("?game=walk"), "the page starts with its clock");
 check(await until("document.querySelector('#flat svg text').textContent.includes(' 3 walked')", 8000), "the clock's ticks walk the walker");
 
 // Self-contained: every request was to the page's own address.

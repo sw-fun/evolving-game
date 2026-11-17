@@ -829,6 +829,63 @@ exists, plus rain and lightning); then the series: the gate, the
 first maze with its landmarks, the stair down to the dungeon, the
 second maze beyond it; the bridge scene between each.
 
+## The castle as one game: venues, a map, and what is made from a seed (the user, 2026-11-17)
+
+The user: "maybe we need schematic placeholders for a more well
+connected game that has clear ways to navigate from sub-game to
+sub-game. We can flesh out graphics and effects later. Suggest an
+uber map (possibly hidden or gradually revealed, of all the
+parts/venues/games). We need an overall, extensible plan/framework to
+start with all the game types mentioned in the planning so far and a
+way/place to add more." And then: "level-set, the maps/mazes etc
+should be procedurally generated from a seed. The TD game needs a
+large village and/or castle buildings behind the gate visible during
+play, with waving flags. Once you get through the gate we need the
+medieval version of the neon city to navigate through to find
+entrances to other mini games."
+
+The framework (`games/castle`, Saga 3's castle-map step):
+
+- **Venues are data.** `games/castle/castle.toml` lists every game,
+  level and place: its title, the mode that plays it and its scenario,
+  where it is on the realm's map, the venue whose winning makes it
+  known, what it needs of the world state, and what it is about. A
+  game is added by adding a venue.
+- **A placeholder mode** stands for every venue not built: it says
+  what the place will be and can be completed, with a real outcome,
+  so the whole castle can be gone round, and tested, before its games
+  exist. Building a game is changing a venue's kind and scenario.
+- **The map is a mode** over a small map of the castle and its
+  country (`world/realm.toml`): venues appear as they become known;
+  one that is open is entered by a click; a locked one says what it
+  needs.
+- **One program** shows the map, plays the venue chosen, applies its
+  outcome to the world state and comes back. That is the link: the
+  gold kept at the bridge is the next level's to spend; a bridge held
+  opens the crossing.
+
+What the user's second message adds, each a later step on this
+framework, none blocking it:
+
+- **Made from a seed.** Maps, mazes and level sets are generated, not
+  drawn by hand: a venue's scenario gives a seed (from the campaign's
+  seed and the venue's number), and a generator in X_eTaL makes the
+  map (a battlefield's river, road and ground; a maze; a dungeon; a
+  town), checked as a hand-drawn one is, with goldens for known
+  seeds. The hand-drawn battlefield stays as a fixture and a
+  fallback. Castle Defense's levels become a set generated from one
+  seed.
+- **Something behind the gate.** During Castle Defense the castle is
+  there to defend: the village and the castle's buildings behind the
+  wall, their flags waving (cloth: X_eTaL-extensions' Bpy has it).
+  They are scenery of the battlefield's zone, generated like the
+  town.
+- **Inside the gate, a city to walk.** The medieval neon city (see A
+  showcase): once through the gate you navigate its streets on foot
+  to find the entrances to the mini-games. So the venues inside the
+  walls are doors in that city, and the schematic map is how you
+  travel until the city exists, and a map you carry after.
+
 ## Idler (asked for by the user, 2026-11-15; not in the research)
 
 An idle game: the castle earns while you do something else, or
@@ -891,6 +948,9 @@ Still open:
    reference picture, or a few, decides it (step 1 works from the
    user's words until there is one).
 
+8. The castle as one game (see its section): the venues' list and
+   order as first drawn (`games/castle/castle.toml`); whether the
+   schematic map stays once the city inside the gate can be walked.
 7. Levels, the three reused games and landmarks (see their section):
    the proposed order; whether a level's map changes or only its
    waves and weather.

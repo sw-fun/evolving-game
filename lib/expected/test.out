@@ -118,7 +118,8 @@ outer-walls
 courtyard
 inner-keep
 cliffs-and-tunnels
-5
+realm
+6
 The inner keep
 ../world/battlefield.toml
 0
@@ -512,3 +513,5 @@ piece('walker', nums('1.5 1.5 0.0 1.0 0.0', 5)[0], 'walk', 0.0, nums('1.5 1.5 0.
 particles('fire', nums('2.5 1.5 1.0', 3)[0], 160, nums('0.2 0.1', 2)[0], 3)
 piece('walker', nums('-300.0 -300.0 0.0 1.0 0.0', 5)[0], 'walk', 0.0, nums('-300.0 -300.0 0.0', 3)[0], 0.05)
 1
+(0, 0, 1)
+playing

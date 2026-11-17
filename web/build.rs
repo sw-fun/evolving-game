@@ -18,6 +18,25 @@ const DATA: &[(&str, &str)] = &[
     ("bridge.toml", "games/walk/bridge.toml"),
     ("roam.toml", "games/walk/roam.toml"),
     ("defend.toml", "games/defense/defend.toml"),
+    // the castle, run from games/castle: its own file, the scenarios it
+    // names from there, and what those name in turn (each path as the
+    // program asks for it)
+    ("castle.toml", "games/castle/castle.toml"),
+    ("../../world/realm.toml", "world/realm.toml"),
+    ("../defense/level-1.toml", "games/defense/level-1.toml"),
+    ("../defense/defend.toml", "games/defense/defend.toml"),
+    ("../defense/level-3.toml", "games/defense/level-3.toml"),
+    ("../walk/roam.toml", "games/walk/roam.toml"),
+    ("../defense/../../world/zones.toml", "world/zones.toml"),
+    (
+        "../defense/../../world/battlefield.toml",
+        "world/battlefield.toml",
+    ),
+    ("../walk/../../world/zones.toml", "world/zones.toml"),
+    (
+        "../walk/../../world/battlefield.toml",
+        "world/battlefield.toml",
+    ),
     ("../../world/zones.toml", "world/zones.toml"),
     ("../../world/battlefield.toml", "world/battlefield.toml"),
 ];
@@ -30,16 +49,16 @@ fn main() {
     files.extend(sources(&root.join("games/walk")));
     // a second game's programs are kept under its name (its play.xtl is
     // not the walk's); its rules library is imported by name, as any
-    for (name, path) in sources(&root.join("games/defense")) {
-        let library = name.starts_with(char::is_uppercase);
-        files.push((
-            if library {
+    for game in ["defense", "castle"] {
+        for (name, path) in sources(&root.join("games").join(game)) {
+            let library = name.starts_with(char::is_uppercase);
+            let key = if library {
                 name
             } else {
-                format!("defense/{name}")
-            },
-            path,
-        ));
+                format!("{game}/{name}")
+            };
+            files.push((key, path));
+        }
     }
     let shared = sources(&root.join("lib"));
     files.extend(

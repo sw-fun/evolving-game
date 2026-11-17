@@ -1,0 +1,8 @@
+# One game's description: read by the scripts for the tests and, later,
+# the site.
+slug = "castle"            # the directory name, games/<slug>/
+title = "The castle"
+summary = "The map of the castle and its country: every game and place, and the way from one to the next."
+mode = "map"            # the mode's name in scenarios (docs/plan.md, The seams)
+status = "draft"             # draft | live
+needs = []                   # asks in docs/xetal-asks.md it waits on or works around

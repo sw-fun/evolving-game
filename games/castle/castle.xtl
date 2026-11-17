@@ -1,0 +1,58 @@
+#!/usr/bin/env xetal
+## The castle, scripted: the venues' list and what the world says of
+## each; the map played on scripts of events (a place that is open is
+## gone to, a locked one says what it needs, the key D shows them all);
+## and a place not built yet, called done or left. The program that goes
+## round them all is play.xtl.
+"at:" u_se< "Atlas"
+"md:" u_se< "Mode"
+"sk:" u_se< "Sketch"
+"st:" u_se< "Strings"
+"t:" u_se< "Text"
+"vn:" u_se< "Venues"
+"vw:" u_se< "View"
+
+file := "castle.toml"
+u:l_ast := { (_, s) -> s }
+# The file is right for the map; how many venues; each one's kind and
+# title.
+t_ally at:mode md:p_roblem file
+vn:c_ount file
+_ := t:l_ines '{ k -> e_nclose (f_ormat k) c_at " " c_at (vn:k_ind (file, k)) c_at ": " c_at vn:t_itle (file, k) } e_ach r_ange vn:c_ount file
+# A built venue's scenario is a path from here; a placeholder has none.
+vn:s_cenario (file, 1)
+t_ally vn:s_cenario (file, 4)
+# What the world says of each venue (known, open, done, a row each): in
+# an empty world two are known and open; with the first level won, what
+# it leads to; with all three levels won and the bridge held, the
+# crossing is open.
+o_\ vn:s_tanding (file, md:nothing)
+one := md:nothing md:s_et ("venue.bridge-1.done", 1)
+o_\ vn:s_tanding (file, one)
+held := (((one md:s_et ("venue.bridge-2.done", 1)) md:s_et ("venue.bridge-3.done", 1)) md:s_et ("fact.bridge-held", 1))
+o_\ vn:s_tanding (file, held)
+
+# The map in an empty world, shown: two places. The fourth is not known,
+# so choosing it does nothing; the second is open, and is chosen.
+u:m_ap := { (lines, world) -> u:l_ast 'at:v_iew 'at:l_egal 'at:s_tatus 'at:s_tep md:r_eplay (lines, at:n_ew (file, world, 1)) }
+u:s_ay := { (status, changes, rewards) ->
+  _ := p_rint! "outcome: " c_at md:s_tatusName status
+  _ := t:l_ines '{ l -> e_nclose "  changes " c_at d_isclose l } e_ach md:l_ines changes
+  t_ally t:l_ines '{ l -> e_nclose "  brings " c_at d_isclose l } e_ach md:l_ines rewards
+}
+_ := u:s_ay at:o_utcome u:m_ap ("choose 1 4" "choose 1 2", md:nothing)
+# With the levels won but the bridge not held, the crossing is known and
+# not open, and says what it needs; D shows and opens everything, and
+# then it can be gone to.
+unheld := ((one md:s_et ("venue.bridge-2.done", 1)) md:s_et ("venue.bridge-3.done", 1))
+_ := u:s_ay at:o_utcome u:m_ap ("choose 1 9" "key D" "choose 1 9", unheld)
+# What a player is given to draw for the map: a piece a venue known.
+_ := t:l_ines '{ l -> e_nclose 70 t_ake d_isclose l } e_ach -3 t_ake st:l_ines vw:s_cene at:v_iew at:n_ew (file, one, 1)
+
+# A place not built yet (the world is going to venue 10, the gate maze):
+# what it will be; called done, it is won and brings a coin; left, it
+# is left.
+going := md:nothing md:s_et ("campaign.go", 10)
+u:p_lace := { lines -> u:l_ast 'sk:v_iew 'sk:l_egal 'sk:s_tatus 'sk:s_tep md:r_eplay (lines, sk:n_ew (file, going, 1)) }
+_ := u:s_ay sk:o_utcome u:p_lace "tick 1" "key space"
+_ := u:s_ay sk:o_utcome u:p_lace 1 r_eshape e_nclose "key b"

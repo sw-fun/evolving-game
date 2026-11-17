@@ -448,3 +448,10 @@ mixed := vw:m_any (ground, "walker" "*fire" "walker", "walk" "" "walk", 3 8 r_es
 vw:t_ext mixed
 _ := t:l_ines -3 t_ake st:l_ines vw:s_cene mixed
 t_ally "<ellipse" st:f_ind vw:p_icture mixed
+
+# The loop's own command, "choose 0 0": a game is left as it stands.
+# The lights puzzle left after one move is still being played, so its
+# outcome is left; the events after the command are not read.
+(vclock, quit) := 'u:l_legal 'u:l_status 'u:l_step md:r_esult ("choose 1 1" "choose 0 0" "choose 1 3" "choose 1 2", u:l_new (lights, md:nothing, 1))
+vclock
+md:s_tatusName u:l_status quit

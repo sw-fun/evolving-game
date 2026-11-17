@@ -74,6 +74,19 @@ what one game leaves for another.
 rules), `bridge.toml` (the scenario), `walk.xtl` (scripted),
 `play.xtl` (played), `picture.xtl` (its scene and picture as text).
 
+## The castle: the games as one
+
+[`games/castle`](../games/castle) is the game the others are parts of.
+Its file lists every venue (a game, a level, a place): the mode that
+plays it and its scenario, its place on a small map of the whole
+(`world/realm.toml`), what makes it known and what it needs. The map
+is a mode (`Atlas`), a venue not built yet is one (`Sketch`), and one
+program plays the map, then the venue chosen, then the map again, with
+one world state carried through: that is what connects the games. The
+loop's own command `choose 0 0` leaves any game for the map. Every
+game's rules library is on the library path, each with a name of its
+own in the repository.
+
 ## Shown three ways
 
 `lib/View` makes of one view:
@@ -108,8 +121,10 @@ The walk's `play.xtl`, the file the command line runs, as WebAssembly.
   lines; after each event, the scene to the board player
   (X_eTaL-extensions' `board.js`, Three.js, copied from its pinned
   clone at build time), or the flat picture where there is no WebGL.
-- Three programs to choose between (the walk watched, the battlefield
-  on foot, Castle Defense), each with its own title and help; the
+- Four programs to choose between (the castle, which is what a page
+  starts with, and three of its games alone), a Map button that
+  leaves a game for the castle's map, and `?debug`, which shows every
+  place on it, each with its own title and help; the
   board's place is measured again whenever it changes size; every key is given both as `key NAME` and as going down
   and up (`choose 2 CODE`, `choose 3 CODE`), and a locked pointer's
   movement as `move DX DY`: each game takes what it knows.

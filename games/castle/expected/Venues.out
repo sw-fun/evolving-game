@@ -1,0 +1,11 @@
+l:n_ames : Char -> Box Char
+l:c_ount : Char -> Int
+l:t_itle : (Char, Int) -> Char
+l:k_ind : (Char, Int) -> Char
+l:s_cenario : (Char, Int) -> Char
+l:a_bout : (Char, Int) -> Char
+l:m_arker : (Char, Int) -> Char
+l:d_one : (Char, Int) -> Char
+l:p_laces : Char -> Int
+l:s_tanding : (Num a, Num b, Truthy b) => (Char, (Box Char, a)) -> b
+l:n_eeds : (Char, Int) -> Char

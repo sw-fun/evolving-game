@@ -22,7 +22,8 @@
 ## md:r_eplay on a script. An event the mode does not list as legal
 ## never reaches its s_tep; the view is printed as text when that
 ## changes, and p_lay shows its picture ([]S_HOW) after every event; the
-## loop ends when the status is no longer playing or the events end.
+## loop ends when the status is no longer playing, when the events
+## end, or at the command "choose 0 0" (leave), which is the loop's own.
 ## A program chooses a mode by importing its library and handing its
 ## functions over:
 ##   "m:" u_se< "Walk"
@@ -254,13 +255,18 @@ h:a_pply := { legal_ step_ (clock, s) e ->
   n_ot (legal_ s) l:a_llows e ? (clock sm:a_dvance e, s)
   (clock sm:a_dvance e, s step_ e)
 }
+## Is the event the command to leave: "choose 0 0"? It is the loop's
+## own, never a mode's: the game is left as it stands (its outcome is
+## then left, if it was still being played), and a program that plays
+## several goes back to where they are chosen.
+h:l_eave := { e -> (e sm:i_s "choose") & 0.0 0.0 m_atch 2 t_ake (sm:n_umbers e) c_at 1.0 1.0 }
 h:n_ext := { (host, lines) -> host ? sm:n_ext @; sm:p_arse d_isclose f_irst lines }
 h:l_oop := { step_ status_ legal_ view_ (host, lines, last, clock, s) ->
   shown := 'view_ h:s_how (host, last, s)
   l:playing != status_ s ? (clock, s)
   (n_ot host) & 0 = t_ally lines ? (clock, s)
   e := h:n_ext (host, lines)
-  e sm:i_s "end" ? (clock, s)
+  (e sm:i_s "end") | h:l_eave e ? (clock, s)
   (c2, s2) := (clock, s) 'step_ 'legal_ h:a_pply e
   'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2)
 }
@@ -287,7 +293,7 @@ h:r_un := { step_ status_ legal_ (lines, clock, s) ->
   l:playing != status_ s ? (clock, s)
   0 = t_ally lines ? (clock, s)
   e := sm:p_arse d_isclose f_irst lines
-  e sm:i_s "end" ? (clock, s)
+  (e sm:i_s "end") | h:l_eave e ? (clock, s)
   (c2, s2) := (clock, s) 'step_ 'legal_ h:a_pply e
   'legal_ 'status_ 'step_ h:r_un (1 d_rop lines, c2, s2)
 }
