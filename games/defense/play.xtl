@@ -2,7 +2,7 @@
 ## Castle Defense: Defend the Bridge. Enemies come up the road in waves,
 ## over the bridge, to the castle gate; build towers on the grass to
 ## stop them. 1, 2 and 3 choose the archer, fire or ice tower; a click
-## on grass builds it there if you have the gold; the space bar sends
+## on open ground builds it there if you have the gold; the space bar sends
 ## the next wave. The events come from the host: on a page, the clock's
 ## ticks, your keys and clicks; at the command line, lines on standard
 ## input such as "tick 0.05", "key 2", "choose 15 5" (build on row 15,

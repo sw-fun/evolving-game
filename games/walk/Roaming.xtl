@@ -63,7 +63,7 @@ h:o_pen := { stage xy ->
 ## A scenario that is wrong is the error bad-scenario.
 l:n_ew := { (file, world, seed) ->
   map := md:m_ap file
-  stage := vw:l_it (vw:s_mooth map, sk:a_t file md:n_umber "time")
+  stage := md:s_tage file
   start := f_loat f_irst w:e_ntrances map
   n := ((2 s_elect start) - 0.5) c_at ((f_irst start) - 0.5) c_at 0.0 0.0 c_at (7 r_eshape 0.0) c_at 0.0 c_at (file md:n_umber "speed") c_at file md:n_umber "turn"
   (file md:f_ield "zone", stage, n)

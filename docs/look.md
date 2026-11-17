@@ -169,6 +169,20 @@ The scene is text, a call a line, that names no renderer
   needs tents, fires and figures), and a real pointer, which has only
   been tried with made-up events.
 
+- **Snow** (2026-11-17, the first weather): a scenario says
+  `weather = ["snow 0.8"]`. `md:s_tage` builds every mode's stage from
+  its scenario's time and weather. Under snow (`vw:w_inter`) the
+  terrain is white, trodden brown along the roads, under the player's
+  snow texture, round the map and to the horizon; the river runs
+  dark; `sk:s_now` dims and pales the sun, grays the sky and whitens
+  the haze; the flat picture is whitened. Castle Defense and the
+  battlefield on foot are in snow; the watched walk stays green.
+  Falling snow is written (`particles('snow', ...)`) and is an ask:
+  the player has no falling kind yet, warns, and draws the rest.
+  Snow changes no rule yet. Captures: `images/look/snow-defense.png`,
+  `images/look/snow-foot.png`. The reference picture is now
+  `docs/images/block-bridge-far.jpg`.
+
 ## What exists to build on
 
 - **The board player** (`board.js`, X_eTaL-extensions): the four calls

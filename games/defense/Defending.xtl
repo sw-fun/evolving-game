@@ -1,6 +1,6 @@
 ## Defending: Castle Defense (the mode "defense"). Enemies come up the
 ## map's road in waves and make for the gate; you build towers on the
-## grass to stop them. A tower shoots the enemy furthest along the road
+## open ground to stop them. A tower shoots the enemy furthest along the road
 ## within its reach whenever its time between shots is up. An enemy that
 ## falls pays its bounty; one that reaches the gate costs a life. Won
 ## when every wave is spent and lives are left; lost when none is.
@@ -38,10 +38,10 @@
 l:mode := "defense"
 # :: Char
 ## How it is played, a line a thing to know.
-l:help := "Enemies come up the road in waves, over the bridge, to the castle gate. Each that reaches it costs a life.\n1, 2, 3: choose a tower to build: archer (quick, far), fire (hurts all round its target), ice (slows).\nClick grass to build the tower chosen there, if you have the gold.\nSpace: send the next wave. Enemies that fall pay gold. See off the last wave to win."
+l:help := "Enemies come up the road in waves, over the bridge, to the castle gate. Each that reaches it costs a life.\n1, 2, 3: choose a tower to build: archer (quick, far), fire (hurts all round its target), ice (slows).\nClick open ground to build the tower chosen there, if you have the gold.\nSpace: send the next wave. Enemies that fall pay gold. See off the last wave to win."
 
 ## What the game last said, by number (the first is nothing).
-h:said := "" "Built." "Towers stand on grass." "A tower stands there already." "Not enough gold." "The next wave is coming." "Every wave has been sent."
+h:said := "" "Built." "Towers stand on open ground." "A tower stands there already." "Not enough gold." "The next wave is coming." "Every wave has been sent."
 
 ### Reading the level
 
@@ -98,7 +98,7 @@ h:o_ut := { (road, hp, prog) -> (prog >= 0.0) & (hp > 0.0) & prog < f_loat (t_al
 ## bad-scenario.
 l:n_ew := { (file, world, seed) ->
   map := md:m_ap file
-  stage := vw:l_it (vw:s_mooth map, sk:a_t file md:n_umber "time")
+  stage := md:s_tage file
   towers := file h:t_able ("tower", "towers", "tower-fields", 6)
   enemies := file h:t_able ("enemy", "enemies", "enemy-fields", 4)
   cast := h:c_ast file
@@ -280,7 +280,7 @@ h:c_aption := { s ->
   said := d_isclose (1 + f_loor 6 s_elect n) s_elect h:said
   0 < t_ally end ? how c_at end
   0 < t_ally said ? how c_at " " c_at said
-  how c_at " 1 2 3 choose a tower, a click on grass builds it, space sends a wave."
+  how c_at " 1 2 3 choose a tower, a click on open ground builds it, space sends a wave."
 }
 # :: (Any a, Num b, Num c, Any d, Num e) => (a, b, (c, d, e), Float, Float, Float) -> (a, Box Char, Box Char, Float, Char)
 ## What to show (lib/View): the battlefield with every tower and every

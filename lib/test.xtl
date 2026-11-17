@@ -420,3 +420,21 @@ crowd := vw:m_any (ground, "walker" "guard", "walk" "idle", 2 8 r_eshape 0.5 0.5
 vw:t_ext crowd
 -2 t_ake st:l_ines vw:s_cene crowd
 '{ @ -> vw:c_aption vw:m_any (ground, "walker" "guard", 1 r_eshape e_nclose "walk", 2 8 r_eshape 0.0, "Wrong") } []T_RAP '{ err -> []R_ECOVER []E_MESSAGE err }
+
+# Weather: a light under snow. At noon with snow at 0.8 the sun is
+# dimmer and paler, the sky gray-white, the haze white and thicker; with
+# no snow the light is as it was.
+snowing := sk:s_now (sk:a_t 12.0, 0.8)
+sk:c_alls snowing
+(sk:a_t 12.0) m_atch sk:s_now (sk:a_t 12.0, 0.0)
+# A winter stage of the small map: its ground white (the road trodden),
+# under snow on to the horizon, snow falling, the water dark; and the
+# flat picture whitened.
+snowy := vw:e_mpty (vw:w_inter (small, 0.8), "Snow")
+_ := t:l_ines '{ l -> e_nclose 60 t_ake (d_isclose l) c_at 60 r_eshape " " } e_ach st:l_ines vw:s_cene snowy
+1 = t_ally "fill=\"#f2f5f9\" fill-opacity=\"0.36\"" st:f_ind vw:p_icture snowy
+# A scenario's stage: Castle Defense's says snow and an hour, so its
+# scene is a winter one, lit; the watched walk's says an hour alone.
+u:h_as := { (file, word) -> 0 < t_ally word st:f_ind vw:s_cene vw:e_mpty (md:s_tage file, "") }
+'{ w -> u:h_as ("../games/defense/defend.toml", d_isclose w) } e_ach "particles('snow'" "'snow', 'dirt'" "sun(" "'grass'"
+'{ w -> u:h_as ("../games/walk/bridge.toml", d_isclose w) } e_ach "particles('snow'" "'snow', 'dirt'" "sun(" "'grass'"

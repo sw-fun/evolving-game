@@ -261,6 +261,17 @@ h:t_errain := { name (corners, triangles, colors) ->
 # :: (Any a, Num b) => ((a, Int, b), Int) -> Char
 ## The ground round the map as a scene call, the terrain 'around'.
 l:c_allAround := { (map, far) -> "around" h:t_errain l:a_round (map, far) }
+# :: (Any a, Num b) => ((a, Int, b), Int) -> Char
+## The same two calls for ground under snow, (map, far): the meshes as
+## they are, their colors white where the ground is untrodden and the
+## brown of trodden snow along the roads and in the river's bed.
+l:c_allSnow := { (map, far) ->
+  (corners, triangles, _) := l:m_esh map
+  worn := 1.0 m_in 1.8 * l:w_orn map
+  trod := (worn '* t_able 0.74 0.69 0.62) + (1.0 - worn) '* t_able 0.95 0.96 0.98
+  (rc, rt, _) := l:a_round (map, far)
+  ("ground" h:t_errain (corners, triangles, trod)) c_at "around" h:t_errain (rc, rt, ((t_ally rc) c_at 3) r_eshape 0.95 0.96 0.98)
+}
 # :: (Any a, Num b, Num c) => ((a, Int, b), c, Float, Char) -> Char
 ## The river as a scene call, a line: water(nums('x z y ...', 3),
 ## ints('a b c ...', 3), nums('fx fz', 2)[0], 'color'): its surface,

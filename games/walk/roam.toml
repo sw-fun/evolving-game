@@ -11,6 +11,9 @@ zone = ["battlefield"]
 # The hour of the day, 0 to 24 (lib/Sky).
 time = ["14.5"]
 
+# The weather: snow, and how thick it falls from 0 to 1.
+weather = ["snow 0.8"]
+
 # How fast you walk, in tiles a second (Shift doubles it), and how fast
 # the arrow keys turn you, in degrees a second.
 speed = ["2.5"]

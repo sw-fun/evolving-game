@@ -67,6 +67,27 @@ l:a_t := { hour ->
   to c_at color c_at strength c_at top c_at horizon c_at (0.25 + 0.75 * d) c_at (0.9 * horizon) c_at 0.014 - 0.008 * full
 }
 
+### Weather
+
+## The colors of a snowing sky: the sun through cloud, the sky overhead
+## and at the horizon, the haze.
+h:veiled := 0.85 0.88 0.95
+h:overcast := 2 3 r_eshape 0.72 0.75 0.8  0.86 0.88 0.91
+h:white := 0.9 0.92 0.95
+# :: (Float, Float) -> Float
+## A light under falling snow: (light, amount), amount from 0 (none) to
+## 1 (thick). The sun is dimmed and paled by the cloud, the sky goes
+## gray-white, and the haze whitens and thickens: far things are lost
+## in it.
+l:s_now := { (light, amount) ->
+  a := h:u_nit amount
+  sun := (h:u_nit (3 t_ake 3 d_rop light), h:veiled) h:m_ix a
+  top := (3 t_ake 7 d_rop light, f_irst h:overcast) h:m_ix a
+  low := (3 t_ake 10 d_rop light, 2 s_elect h:overcast) h:m_ix a
+  haze := (3 t_ake 14 d_rop light, h:white) h:m_ix a
+  (3 t_ake light) c_at sun c_at ((7 s_elect light) * 1.0 - 0.65 * a) c_at top c_at low c_at ((14 s_elect light) + 0.1 * a) c_at haze c_at (18 s_elect light) + 0.008 * a
+}
+
 ### The scene's calls
 
 h:f_ine := { v -> (f_loat f_loor 0.5 + 1000.0 * v) / 1000.0 }

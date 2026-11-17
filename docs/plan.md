@@ -785,8 +785,9 @@ short walk through an eye, the far end the next game, mist and
 lightning round it; and the art reference the plan has lacked (D18):
 weathered stone, moss, storm light, deep haze. It also says where the
 castle stands: across a chasm, and Defend the Bridge is fought on a
-bridge like this, not a plank over a stream. The picture is not in
-the repository until the user says it may be published.
+bridge like this, not a plank over a stream. The picture is the user's to publish (2026-11-17) and is
+`docs/images/block-bridge-far.jpg`: the art reference (D18) until the
+first one named there is added.
 
 ## Idler (asked for by the user, 2026-11-15; not in the research)
 

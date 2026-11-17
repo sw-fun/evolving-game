@@ -1,7 +1,7 @@
 # Castle Defense
 
 Enemies come up the battlefield's road in waves, over the bridge, to
-the castle gate. You build towers on the grass to stop them. This is
+the castle gate. You build towers on the open ground to stop them, in the snow. This is
 its first level, Defend the Bridge: three towers, three enemies, five
 waves.
 
@@ -36,7 +36,7 @@ just test-game defense  # compare with the expected output
 
 The events: `tick 0.05` lets time pass; `key 1`, `key 2`, `key 3`
 choose the archer, fire or ice tower; `click X Y` builds the tower
-chosen on the grass tile under that point of the picture (`choose R
+chosen on the ground tile under that point of the picture (`choose R
 C` on the tile of that row and column, which is what a script writes);
 `key space` sends the next wave.
 

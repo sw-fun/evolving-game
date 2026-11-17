@@ -18,6 +18,7 @@ l:r_ule : Char -> (Char, Char) -> Float
 l:n_umber : Char -> Char -> Float
 l:z_ones : Char -> Char
 l:m_ap : Char -> (Char, Int, Int)
+l:s_tage : Num a => Char -> ((Char, Int, Int), Float, Box Char, Float, Char, a)
 l:p_roblem : Char -> Char -> Char
 l:a_llows : Truthy b => Box Char -> (Char, a, Char) -> b
 l:p_lay : (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> a -> ((Int, Int, Int), a)

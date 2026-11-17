@@ -8,4 +8,5 @@ l:a_round : (Any a, Num b) => ((a, Int, b), Int) -> (Float, Int, Float)
 l:w_ater : (Any a, Num b, Num c) => ((a, Int, b), c) -> (Float, Int)
 l:c_all : (Any a, Num b) => (a, Int, b) -> Char
 l:c_allAround : (Any a, Num b) => ((a, Int, b), Int) -> Char
+l:c_allSnow : (Any a, Num b) => ((a, Int, b), Int) -> Char
 l:c_allWater : (Any a, Num b, Num c) => ((a, Int, b), c, Float, Char) -> Char

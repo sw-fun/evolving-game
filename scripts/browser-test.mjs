@@ -235,10 +235,10 @@ check(await open("?hold&game=defense"), "the page starts Castle Defense (?game=d
 check((await page("document.title")) === "Evolving Game: Castle Defense: ready", "its title is the game's");
 check((await caption()).startsWith("Gold 100, lives 10, wave 0 of 5. Building: archer (40 gold)."), "it starts with 100 gold and no wave sent");
 await click(224, 263);
-check((await caption()).startsWith("Gold 60,") && (await caption()).endsWith("Built."), "a click on grass beside the road builds an archer tower for 40 gold");
+check((await caption()).startsWith("Gold 60,") && (await caption()).endsWith("Built."), "a click on open ground beside the road builds an archer tower for 40 gold");
 check((await page("window.game.picture()")).includes("piece('archer', nums('4.5 14.5 "), "on the tile clicked (row 15, column 5), though the header has wrapped since the board was made");
 await click(204, 273);
-check((await caption()).endsWith("Towers stand on grass."), `a click on the road builds nothing, and the game says why (${await caption()}; ${JSON.stringify(await page("window.game.said()"))})`);
+check((await caption()).endsWith("Towers stand on open ground."), `a click on the road builds nothing, and the game says why (${await caption()}; ${JSON.stringify(await page("window.game.said()"))})`);
 await key("keyDown", "2", "Digit2", 50);
 await key("keyUp", "2", "Digit2", 50);
 check((await caption()).includes("Building: fire (70 gold)"), "the key 2 chooses the fire tower");

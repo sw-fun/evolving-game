@@ -37,10 +37,11 @@
 ##
 ## A scenario is a TOML file of lists of strings: mode, title, zones (a
 ## zones file, beside or relative to the scenario), zone, win, loss,
-## reward, and the mode's own tables. What is wrong with one is the
+## reward, time and weather (md:s_tage), and the mode's own tables. What is wrong with one is the
 ## error "bad-scenario", its message naming the file and the field.
 ## Import: "md:" u_se< "Mode"
 
+"sk:" u_se< "Sky"
 "sm:" u_se< "Sim"
 "st:" u_se< "Strings"
 "vw:" u_se< "View"
@@ -176,6 +177,23 @@ l:m_ap := { file ->
     (file, "zone") h:f_ail []E_MESSAGE err
   }
 }
+# :: Num a => Char -> ((Char, Int, Int), Float, Box Char, Float, Char, a)
+## A scenario's stage (lib/View), ready to draw: its zone's map made
+## smooth, under the weather the scenario says (weather = ["snow 0.8"]:
+## snow, and how thick from 0 to 1) and lit as the hour it says is
+## (time = ["14.5"]); a scenario that says neither is drawn plain. One
+## place, so every mode's scenarios mean the same by them.
+l:s_tage := { file ->
+  map := l:m_ap file
+  snow := 0.0 m_ax 1.0 m_in h:w_eather file
+  stage := h:g_round (map, snow)
+  n_ot file l:h_as "time" ? stage
+  light := sk:a_t file l:n_umber "time"
+  snow > 0.0 ? vw:l_it (stage, sk:s_now (light, snow))
+  vw:l_it (stage, light)
+}
+h:w_eather := { file -> n_ot file l:h_as "weather" ? 0.0; file l:r_ule ("weather", "snow") }
+h:g_round := { (map, snow) -> snow > 0.0 ? vw:w_inter (map, snow); vw:s_mooth map }
 # :: Char -> Char -> Char
 ## What is wrong with a scenario for a mode, as a message, or the empty
 ## text: mode md:p_roblem file. It must name that mode, have a title,

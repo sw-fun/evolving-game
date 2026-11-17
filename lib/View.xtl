@@ -209,6 +209,26 @@ l:s_mooth := { map ->
   river := tr:c_allWater (map, 0, 0.35 0.0, "#3f6f8f")
   (map, frame, tiles, depths, land c_at round c_at beyond c_at river c_at t:j_oin 3 5 7 s_elect calls, 1)
 }
+# :: (Any a, Num b, Num c) => ((a, Int, b), Float) -> ((a, Int, b), Float, Box Char, Float, Char, c)
+## The smooth stage in snow: (map, amount), amount from 0 to 1. The
+## ground is white (trodden brown along the roads), under the player's
+## snow texture, round the map and on to the horizon; snow falls over
+## it all (a particle kind a player may not have yet: then none
+## falls); the river runs dark. The flat picture is whitened to match,
+## as strongly as the snow is thick.
+l:w_inter := { (map, amount) ->
+  (frame, tiles, depths, calls) := h:p_arts map
+  rc := w:s_ize map
+  far := 24
+  land := (tr:c_allSnow (map, far)) c_at "ground('ground', 'snow', 'dirt', nums('" c_at (f_ormat h:f_ine 1.0 m_in 1.8 * tr:w_orn map) c_at "', 1))\nground('around', 'snow', 'snow', nums('" c_at (f_ormat ((3 + f_irst rc) * 3 + 2 s_elect rc) r_eshape 0.0) c_at "', 1))\n"
+  beyond := "beyond(0.0, 'snow', '#f2f5f9', nums('" c_at (f_ormat (0.0 - f_loat far) c_at (0.0 - f_loat far) c_at (f_loat far + 2 s_elect rc) c_at f_loat far + f_irst rc) c_at "', 4)[0])\n"
+  river := tr:c_allWater (map, 0, 0.25 0.0, "#2c3f52")
+  falls := "particles('snow', nums('" c_at (f_ormat h:f_ine (0.5 * f_loat 2 s_elect rc) c_at (0.5 * f_loat f_irst rc) c_at 8.0) c_at "', 3)[0], " c_at (f_ormat h:w_hole 400.0 * amount) c_at ", nums('0.3 0.1', 2)[0], 1)\n"
+  w := f_ormat h:w_hole 3 s_elect frame
+  h := f_ormat h:w_hole 4 s_elect frame
+  over := "<rect width=\"" c_at w c_at "\" height=\"" c_at h c_at "\" fill=\"#f2f5f9\" fill-opacity=\"" c_at (f_ormat h:f_ine 0.45 * amount) c_at "\"/>"
+  (map, frame, tiles c_at e_nclose over, depths c_at 999999.0, land c_at beyond c_at river c_at falls c_at t:j_oin 3 5 7 s_elect calls, 1)
+}
 # :: (Any a, Any c, Any d, Any e, Any f, Any g, Any h) => ((a, b, c), d, e, f, g, h) -> Int
 ## The places of a stage's tiles in the order they are drawn, far to
 ## near, a row each (row, column).
