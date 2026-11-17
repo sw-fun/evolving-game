@@ -1,8 +1,9 @@
 number = 5
 slug = "castle-map"
-status = "in-progress"
+status = "completed"
 description = "defend-the-bridge step (inserted, the user 2026-11-17): the framework that co..."
 role = "production"
 context_files = []
 created_at = "2026-11-17T10:16:30"
-commits = []
+completed_at = "2026-11-17T11:07:26"
+commits = ["d7b2e9aeaa4910e52d096f3e46dc55499500692e"]
