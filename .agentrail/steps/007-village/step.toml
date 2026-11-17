@@ -1,6 +1,6 @@
 number = 7
 slug = "village"
-status = "pending"
+status = "in-progress"
 description = "defend-the-bridge step (inserted, the user 2026-11-17): something behind the ..."
 role = "production"
 context_files = []
