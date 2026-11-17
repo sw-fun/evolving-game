@@ -1,0 +1,86 @@
+# Defend the Bridge: Castle Defense's first level. Enemies come up the
+# battlefield's road in waves, over the bridge, to the castle gate; you
+# build towers on the grass to stop them. Read by Defending.xtl through
+# lib/Mode; every value is a string, or a list of strings.
+mode = ["defense"]
+title = ["Defend the Bridge"]
+
+# Where: the castle's zones (a path from this file) and the zone.
+zones = ["../../world/zones.toml"]
+zone = ["battlefield"]
+
+# The hour of the day, 0 to 24 (lib/Sky).
+time = ["14.5"]
+
+# What you start with.
+start = ["gold 100", "lives 10"]
+
+# The waves, in order: a letter an enemy, in the order they come, gap
+# seconds apart. The space bar sends the next wave. Win by seeing off
+# the last.
+waves = ["rrrrr", "rrrbrrr", "ssrrss", "bbrrrrbb", "sbsbsbrrrr"]
+gap = ["1.0"]
+
+# The towers and the enemies, by name; their numbers are below.
+towers = ["archer", "fire", "ice"]
+tower-fields = ["name", "cost", "range", "damage", "cooldown", "splash", "slow"]
+enemies = ["runner", "brute", "shield"]
+enemy-fields = ["name", "hp", "speed", "armor", "bounty", "letter"]
+
+# A tower: what it costs, how far it reaches (tiles), the damage of a
+# shot, the seconds between shots, how far round its target a shot also
+# hurts (0: the target alone), and the seconds a hit slows an enemy to
+# half its speed (0: not at all).
+[tower.archer]
+name = "Archer tower"
+cost = "40"
+range = "3.2"
+damage = "4"
+cooldown = "0.6"
+splash = "0"
+slow = "0"
+
+[tower.fire]
+name = "Fire tower"
+cost = "70"
+range = "2.4"
+damage = "6"
+cooldown = "1.5"
+splash = "1.2"
+slow = "0"
+
+[tower.ice]
+name = "Ice tower"
+cost = "50"
+range = "2.6"
+damage = "1"
+cooldown = "1.0"
+splash = "0"
+slow = "2.5"
+
+# An enemy: hit points, speed (tiles a second), armor (taken off every
+# hit, which never does less than 1), the gold it pays when it falls,
+# and its letter in the waves.
+[enemy.runner]
+name = "Runner"
+hp = "10"
+speed = "1.6"
+armor = "0"
+bounty = "5"
+letter = "r"
+
+[enemy.brute]
+name = "Brute"
+hp = "40"
+speed = "0.8"
+armor = "1"
+bounty = "12"
+letter = "b"
+
+[enemy.shield]
+name = "Shield bearer"
+hp = "24"
+speed = "1.1"
+armor = "3"
+bounty = "10"
+letter = "s"

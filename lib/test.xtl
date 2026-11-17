@@ -413,3 +413,10 @@ vw:s_cene looking
 1 = t_ally "<ellipse" st:f_ind vw:p_icture looking
 # With a walker as well: two pieces, the eye last.
 vw:s_cene vw:w_ith (seen, "eye", "", 0.5 0.5 1.0 0.0 0.0 0.0 0.0 0.05)
+
+# A view of many pieces at once: a model, a clip and eight numbers
+# each; unequal counts are an error.
+crowd := vw:m_any (ground, "walker" "guard", "walk" "idle", 2 8 r_eshape 0.5 0.5 1.0 0.0 0.0 0.5 0.5 0.05  3.5 1.5 0.0 1.0 0.0 3.5 1.5 0.05, "Two")
+vw:t_ext crowd
+-2 t_ake st:l_ines vw:s_cene crowd
+'{ @ -> vw:c_aption vw:m_any (ground, "walker" "guard", 1 r_eshape e_nclose "walk", 2 8 r_eshape 0.0, "Wrong") } []T_RAP '{ err -> []R_ECOVER []E_MESSAGE err }

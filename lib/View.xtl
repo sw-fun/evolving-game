@@ -246,6 +246,14 @@ l:e_mpty := { (stage, caption) -> (stage, 0 t_ake e_nclose "", 0 t_ake e_nclose 
 # :: (Any a, Any b, Any c, Any e) => (a, b, c, d, e) -> (a, Box b, Box c, d, e)
 ## A view of one piece: (stage, model, clip, its eight numbers, caption).
 l:o_ne := { (stage, model, clip, numbers, caption) -> (stage, 1 r_eshape e_nclose model, 1 r_eshape e_nclose clip, 1 8 r_eshape numbers, caption) }
+# :: (Any a, Any e) => (a, b, c, d, e) -> (a, b, c, d, e)
+## A view of many pieces: (stage, models, clips, pieces, caption), a
+## model and a clip a piece (lists of texts) and its eight numbers a
+## row. As many of each as there are pieces, or it is an error.
+l:m_any := { (stage, models, clips, pieces, caption) ->
+  n_ot ((t_ally models) = t_ally clips) & ((t_ally models) c_at 8) m_atch s_hape pieces ? "bad-view" []S_IGNAL "a view's pieces: a model, a clip and eight numbers each"
+  (stage, models, clips, pieces, caption)
+}
 # :: (Any a, Any b, Any c, Any e) => ((a, Box b, Box c, d, e), b, c, d) -> (a, Box b, Box c, d, e)
 ## A view with one more piece: (view, model, clip, its eight numbers).
 ## The model "eye" is not a thing to draw but where you look from: its

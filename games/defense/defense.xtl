@@ -1,0 +1,78 @@
+#!/usr/bin/env xetal
+## Castle Defense, scripted: the level Defend the Bridge played through
+## lib/Mode's loop on scripts of events, with no keyboard. What the
+## level takes and how it is played; builds that are refused; a first
+## wave against two archer towers, shown; the whole level won by a
+## written order of building; the same order again ending the same; and
+## the level lost by building nothing. A script builds with the command
+## "choose R C" (the tile of that row and column), as a click on that
+## tile does.
+"df:" u_se< "Defending"
+"md:" u_se< "Mode"
+"t:" u_se< "Text"
+
+scenario := "defend.toml"
+start := df:n_ew (scenario, md:nothing, 1)
+u:t_icks := { n -> n r_eshape e_nclose "tick 0.05" }
+u:e_nd := { lines ->
+  (_, s) := 'df:l_egal 'df:s_tatus 'df:s_tep md:r_esult (lines, start)
+  s
+}
+## An outcome and the world after it, a line each.
+u:s_ay := { outcome ->
+  (status, _, _) := outcome
+  _ := p_rint! "outcome: " c_at md:s_tatusName status
+  t_ally t:l_ines md:l_ines md:nothing md:a_fter outcome
+}
+
+# The scenario is right for this mode; what it takes; how it is played.
+t_ally df:mode md:p_roblem scenario
+_ := t:l_ines df:l_egal start
+df:help
+# The game in numbers: gold, lives, waves sent, towers built, enemies on
+# the road, fallen, through.
+df:c_ount start
+
+# Builds refused, each leaving the gold as it was: on the road (row 16,
+# column 5), off the map, on a tower already there, and a fire tower
+# (70) with 60 gold left.
+df:c_ount u:e_nd "choose 16 5" "choose 0 0" "choose 30 3"
+df:c_ount u:e_nd "choose 15 5" "choose 15 5"
+df:c_ount u:e_nd "choose 15 5" "key 2" "choose 15 8"
+
+# Two archer towers beside the road, and the first wave: five runners,
+# a second apart. Shown as it goes (the text marks every tower and
+# enemy; the line under it is the game's).
+first := "key 1" "choose 15 5" "choose 15 8" "key space" c_at u:t_icks 60
+(clock, state) := 'df:v_iew 'df:l_egal 'df:s_tatus 'df:s_tep md:r_eplay (first, start)
+clock
+df:c_ount state
+
+# The whole level, a wave at a time, building with what the fallen pay:
+# archers along the lower road, an ice tower and a fire tower at the
+# bend, more archers by the bridge and above it. The counts after each
+# wave, and how it ends.
+w1 := "key 1" "choose 15 5" "choose 15 8" "key space" c_at u:t_icks 500
+w2 := w1 c_at "choose 15 11" "key space" c_at u:t_icks 600
+w3 := w2 c_at "key 3" "choose 12 13" "key 1" "choose 14 12" "key space" c_at u:t_icks 600
+w4 := w3 c_at "key 2" "choose 14 13" "key 1" "choose 11 8" "key space" c_at u:t_icks 800
+w5 := w4 c_at "key 2" "choose 8 8" "key 1" "choose 8 6" "choose 6 8" "key 3" "choose 11 6" "key space" c_at u:t_icks 1000
+df:c_ount u:e_nd w1
+df:c_ount u:e_nd w2
+df:c_ount u:e_nd w3
+df:c_ount u:e_nd w4
+won := u:e_nd w5
+df:c_ount won
+md:s_tatusName df:s_tatus won
+_ := u:s_ay df:o_utcome won
+# The same order again ends the same (a replay).
+(df:c_ount won) m_atch df:c_ount u:e_nd w5
+
+# Every wave sent at once and nothing built: lost, and the gate is
+# breached in the world.
+lost := u:e_nd (5 r_eshape e_nclose "key space") c_at u:t_icks 1200
+df:c_ount lost
+md:s_tatusName df:s_tatus lost
+_ := u:s_ay df:o_utcome lost
+# A sixth wave cannot be sent.
+df:c_ount u:e_nd 6 r_eshape e_nclose "key space"

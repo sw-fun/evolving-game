@@ -1,6 +1,6 @@
 number = 1
 slug = "defense-rules"
-status = "pending"
+status = "in-progress"
 description = "defend-the-bridge step 1: the rules. games/defense (just new-game defense): D..."
 role = "production"
 context_files = []

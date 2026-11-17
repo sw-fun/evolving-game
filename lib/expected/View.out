@@ -7,6 +7,7 @@ l:f_arToNear : (Any a, Any c, Any d, Any e, Any f, Any g, Any h) => ((a, b, c), 
 l:l_it : (Any a, Any b) => ((a, Float, Box Char, Float, Char, b), Float) -> (a, Float, Box Char, Float, Char, b)
 l:e_mpty : (Any a, Any b) => (a, b) -> (a, Box Char, Box Char, Float, b)
 l:o_ne : (Any a, Any b, Any c, Any e) => (a, b, c, d, e) -> (a, Box b, Box c, d, e)
+l:m_any : (Any a, Any e) => (a, b, c, d, e) -> (a, b, c, d, e)
 l:w_ith : (Any a, Any b, Any c, Any e) => ((a, Box b, Box c, d, e), b, c, d) -> (a, Box b, Box c, d, e)
 l:c_aption : (Any a, Any b, Any c, Any d, Any e) => (a, b, c, d, e) -> e
 l:t_ext : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i, Num j) => (((a, Int, b), c, d, e, f, g), h, i, j, Char) -> Char

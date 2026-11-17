@@ -1,0 +1,315 @@
+## Defending: Castle Defense (the mode "defense"). Enemies come up the
+## map's road in waves and make for the gate; you build towers on the
+## grass to stop them. A tower shoots the enemy furthest along the road
+## within its reach whenever its time between shots is up. An enemy that
+## falls pays its bounty; one that reaches the gate costs a life. Won
+## when every wave is spent and lives are left; lost when none is.
+##
+## Every tower against every enemy is one table: how far apart they
+## are. A tick is a few expressions over it, whatever their number.
+##
+## The state is (stage, road, level, towers, foes, numbers):
+##   level    (tower table, enemy table, cast): a row a kind of tower
+##            (cost, range, damage, cooldown, splash, slow) and of enemy
+##            (hit points, speed, armor, bounty); the cast is a row an
+##            enemy of the level, in order: its kind, its wave, its
+##            place in the wave
+##   towers   a row a tower built: kind, row, column, the seconds till
+##            it may shoot again, where its last shot went (x y), and
+##            the seconds since
+##   foes     a row an enemy of the cast: hit points left, how far
+##            along the road it is in tiles (-1 before it comes), the
+##            seconds it is still slowed
+##   numbers  gold, lives, the tower chosen (1 to 3), the time in
+##            seconds, how many waves have been sent, the last thing
+##            said (a number into h:said), the gap between enemies of
+##            a wave, then when each wave was sent (-1: not yet)
+## Import: "df:" u_se< "Defending"
+
+"md:" u_se< "Mode"
+"sk:" u_se< "Sky"
+"sm:" u_se< "Sim"
+"st:" u_se< "Strings"
+"vw:" u_se< "View"
+"w:" u_se< "World"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "defense"
+# :: Char
+## How it is played, a line a thing to know.
+l:help := "Enemies come up the road in waves, over the bridge, to the castle gate. Each that reaches it costs a life.\n1, 2, 3: choose a tower to build: archer (quick, far), fire (hurts all round its target), ice (slows).\nClick grass to build the tower chosen there, if you have the gold.\nSpace: send the next wave. Enemies that fall pay gold. See off the last wave to win."
+
+## What the game last said, by number (the first is nothing).
+h:said := "" "Built." "Towers stand on grass." "A tower stands there already." "Not enough gold." "The next wave is coming." "Every wave has been sent."
+
+### Reading the level
+
+## A scenario's table (rows and fields named by two lists) as numbers:
+## its k columns after the first, which is a name; a cell that is not a
+## number is the scenario's error.
+h:t_able := { file (what, rows, fields, k) ->
+  texts := '{ @ -> ((e_nclose file) c_at e_nclose what) []T_ABLE ((e_nclose rows) c_at e_nclose fields) } []T_RAP '{ err -> "bad-scenario" []S_IGNAL []E_MESSAGE err }
+  cells := r_avel (1 + r_ange k) s_elect_2 texts
+  ((f_irst s_hape texts) c_at k) r_eshape '{ x -> (file, what) h:n_umber d_isclose x } e_ach cells
+}
+h:n_umber := { (file, what) text ->
+  n := '{ @ -> f_loat n_umbers text } []T_RAP '{ err -> []R_ECOVER 0 r_eshape 0.0 }
+  n_ot 1 = t_ally n ? "bad-scenario" []S_IGNAL file c_at ": " c_at what c_at ": \"" c_at text c_at "\" is not a number"
+  f_irst n
+}
+## The cast: a row an enemy of the level, in order: its kind (by its
+## letter), its wave, its place in the wave. A letter that is no
+## enemy's is the scenario's error.
+h:c_ast := { file ->
+  texts := ((e_nclose file) c_at e_nclose "enemy") []T_ABLE ("enemies" "enemy-fields")
+  letters := '{ x -> f_irst (d_isclose x) c_at " " } e_ach 6 s_elect_2 texts
+  waves := file md:l_ist "waves"
+  sizes := '{ x -> t_ally d_isclose x } e_ach waves
+  all := "" st:j_oin waves
+  kinds := letters i_ndexOf all
+  '| r_/ kinds > t_ally letters ? "bad-scenario" []S_IGNAL file c_at ": waves: a letter of \"" c_at all c_at "\" is no enemy's (" c_at letters c_at ")"
+  wave := sizes r_eplicate r_ange t_ally sizes
+  place := (r_ange t_ally wave) - wave s_elect 0 c_at '+ s_\ sizes
+  f_loat o_\ (3 c_at t_ally kinds) r_eshape kinds c_at wave c_at place
+}
+
+### The parts of a state
+
+## Where enemies so far along a road are on the board, a row each: x,
+## y, and the way each faces (hx hy): between the middles of two tiles.
+h:o_nRoad := { road prog ->
+  i := 1 + 0 m_ax ((t_ally road) - 2) m_in f_loor prog
+  from := f_loat i s_elect road
+  to := f_loat (i + 1) s_elect road
+  part := 0.0 m_ax prog - f_loat i - 1
+  at := (from + (o_\ (2 c_at t_ally prog) r_eshape part c_at part) * to - from) - 0.5
+  o_\ (4 c_at t_ally prog) r_eshape (2 s_elect_2 at) c_at (f_irst_2 at) c_at (2 s_elect_2 to - from) c_at f_irst_2 to - from
+}
+## Which enemies are on the road: come, alive, and not yet at the gate.
+h:o_ut := { (road, hp, prog) -> (prog >= 0.0) & (hp > 0.0) & prog < f_loat (t_ally road) - 1 }
+
+### The protocol
+
+# :: (Any a, Any b, Num c) => (Char, a, b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Int, (Float, Float, Float), Float, Float, Float)
+## A level from a scenario's file, in a world, with a seed: its map lit
+## as its hour is, its road, its towers', enemies' and waves' numbers,
+## no tower built, no enemy come. A scenario that is wrong is the error
+## bad-scenario.
+l:n_ew := { (file, world, seed) ->
+  map := md:m_ap file
+  stage := vw:l_it (vw:s_mooth map, sk:a_t file md:n_umber "time")
+  towers := file h:t_able ("tower", "towers", "tower-fields", 6)
+  enemies := file h:t_able ("enemy", "enemies", "enemy-fields", 4)
+  cast := h:c_ast file
+  waves := t_ally file md:l_ist "waves"
+  hp := (f_loor f_irst_2 cast) s_elect f_irst_2 enemies
+  foes := o_\ (3 c_at t_ally hp) r_eshape hp c_at ((t_ally hp) r_eshape -1.0) c_at (t_ally hp) r_eshape 0.0
+  n := (file md:r_ule ("start", "gold")) c_at (file md:r_ule ("start", "lives")) c_at 1.0 0.0 0.0 0.0 c_at (file md:n_umber "gap") c_at waves r_eshape -1.0
+  (stage, map w:r_oad 1, (towers, enemies, cast), 0 7 r_eshape 0.0, foes, n)
+}
+
+### A tick
+
+## The towers shoot: (road, level, towers, hp, prog, slow) and the
+## seconds passed, to (towers, hp, slow, the gold the fallen pay). Every
+## tower against every enemy is the table of how far apart they are; a
+## tower that may shoot takes the enemy furthest along within its
+## reach; its shot hurts that enemy, and with a splash all within that
+## of it; a hit never does less than 1 after armor; a tower that slows,
+## slows what it hits.
+h:s_hoot := { (road, level, towers, hp, prog, slow) dt ->
+  (tt, et, cast) := level
+  kn := t_ally towers
+  fn := t_ally hp
+  0 = kn ? (towers, hp, slow, 0.0)
+  k := f_loor f_irst_2 towers
+  kind := f_loor f_irst_2 cast
+  w_ide := { v -> (kn c_at fn) r_eshape fn r_eplicate v }
+  t_all := { v -> (kn c_at fn) r_eshape v }
+  cool := 0.0 m_ax (4 s_elect_2 towers) - dt
+  out := h:o_ut (road, hp, prog)
+  at := road h:o_nRoad prog
+  cx := f_irst_2 at
+  cy := 2 s_elect_2 at
+  dx := ((3 s_elect_2 towers) - 0.5) '- t_able cx
+  dy := ((2 s_elect_2 towers) - 0.5) '- t_able cy
+  far := ((dx * dx) + dy * dy) ^ 0.5
+  can := (far <= w_ide k s_elect 2 s_elect_2 tt) & (t_all out) & w_ide cool <= 0.0
+  score := (f_loat can) * 1.0 + t_all prog
+  best := 'm_ax r_/_2 score
+  fires := best > 0.0
+  hit := can & score = w_ide best
+  count := 1.0 m_ax '+ r_/_2 f_loat hit
+  gx := ('+ r_/_2 (f_loat hit) * t_all cx) / count
+  gy := ('+ r_/_2 (f_loat hit) * t_all cy) / count
+  sx := gx '- t_able cx
+  sy := gy '- t_able cy
+  splash := k s_elect 5 s_elect_2 tt
+  also := ((((sx * sx) + sy * sy) ^ 0.5) <= w_ide splash) & (t_all out) & w_ide fires & splash > 0.0
+  struck := f_loat hit | also
+  each := 1.0 m_ax (w_ide k s_elect 3 s_elect_2 tt) - t_all kind s_elect 3 s_elect_2 et
+  hp2 := hp - '+ r_/ struck * each
+  slow2 := slow m_ax 'm_ax r_/ struck * w_ide k s_elect 6 s_elect_2 tt
+  fell := out & hp2 <= 0.0
+  shot := f_loat fires
+  cool2 := (shot * k s_elect 4 s_elect_2 tt) + (1.0 - shot) * cool
+  tx := (shot * gx) + (1.0 - shot) * 5 s_elect_2 towers
+  ty := (shot * gy) + (1.0 - shot) * 6 s_elect_2 towers
+  age := (1.0 - shot) * dt + 7 s_elect_2 towers
+  towers2 := o_\ (7 c_at kn) r_eshape (f_irst_2 towers) c_at (2 s_elect_2 towers) c_at (3 s_elect_2 towers) c_at cool2 c_at tx c_at ty c_at age
+  (towers2, hp2, slow2, '+ r_/ (f_loat fell) * kind s_elect 4 s_elect_2 et)
+}
+## The state after dt seconds: enemies due come onto the road; those on
+## it walk (at half speed while slowed); one that reaches the gate costs
+## a life and is gone; then the towers shoot.
+h:t_ick := { s dt ->
+  (stage, road, level, towers, foes, n) := s
+  (tt, et, cast) := level
+  now := dt + 4 s_elect n
+  long := f_loat (t_ally road) - 1
+  kind := f_loor f_irst_2 cast
+  mine := (f_loor 2 s_elect_2 cast) s_elect 7 d_rop n
+  due := (mine >= 0.0) & now >= mine + (7 s_elect n) * (3 s_elect_2 cast) - 1.0
+  hp := f_irst_2 foes
+  slow := 3 s_elect_2 foes
+  come := (2 s_elect_2 foes) m_ax (f_loat due) - 1.0
+  out := h:o_ut (road, hp, come)
+  pace := (kind s_elect 2 s_elect_2 et) * 1.0 - 0.5 * f_loat slow > 0.0
+  prog := come + (f_loat out) * pace * dt
+  leaked := out & prog >= long
+  (towers2, hp2, slow2, paid) := (road, level, towers, hp * f_loat n_ot leaked, prog, 0.0 m_ax slow - dt) h:s_hoot dt
+  foes2 := o_\ (3 c_at t_ally hp) r_eshape hp2 c_at prog c_at slow2
+  n2 := ((f_irst n) + paid) c_at ((2 s_elect n) - f_loat '+ r_/ leaked) c_at (3 s_elect n) c_at now c_at 4 d_rop n
+  (stage, road, level, towers2, foes2, n2)
+}
+
+### What a player does
+
+## The numbers with what was last said set.
+h:s_aying := { n k -> (5 t_ake n) c_at (f_loat k) c_at 6 d_rop n }
+## A tower of the kind chosen built on the tile under a point of the
+## picture, if that is grass, free and paid for; else what is wrong is
+## what was last said.
+h:b_uild := { s xy ->
+  (stage, _, _, _, _, _) := s
+  s h:b_uildAt stage vw:t_ile xy
+}
+## The same on a tile named by its row and column.
+h:b_uildAt := { s rk ->
+  (stage, road, level, towers, foes, n) := s
+  (map, _, _, _, _, _) := stage
+  (tt, _, _) := level
+  rc := w:s_ize map
+  (0 = f_irst rk) | ((f_irst rk) > f_irst rc) | ((2 s_elect rk) < 1) | (2 s_elect rk) > 2 s_elect rc ? (stage, road, level, towers, foes, n h:s_aying 2)
+  n_ot 1 = (2 s_elect rk) s_elect (f_irst rk) s_elect w:t_iles map ? (stage, road, level, towers, foes, n h:s_aying 2)
+  taken := ((2 s_elect_2 towers) = f_loat f_irst rk) & (3 s_elect_2 towers) = f_loat 2 s_elect rk
+  0 < '+ r_/ taken c_at 0 = 1 ? (stage, road, level, towers, foes, n h:s_aying 3)
+  kind := f_loor 3 s_elect n
+  cost := f_irst kind s_elect tt
+  cost > f_irst n ? (stage, road, level, towers, foes, n h:s_aying 4)
+  made := (f_loat kind) c_at (f_loat rk) c_at 0.0 0.0 0.0 9.0
+  (stage, road, level, towers c_at 1 7 r_eshape made, foes, (((f_irst n) - cost) c_at 1 d_rop n) h:s_aying 1)
+}
+## The next wave sent now, if one is left.
+h:s_end := { s ->
+  (stage, road, level, towers, foes, n) := s
+  sent := f_loor 5 s_elect n
+  waves := (t_ally n) - 7
+  sent >= waves ? (stage, road, level, towers, foes, n h:s_aying 6)
+  n2 := ((4 t_ake n) c_at (f_loat sent + 1) c_at 5.0 c_at (7 s_elect n) c_at (sent t_ake 7 d_rop n) c_at (4 s_elect n) c_at (sent + 1) d_rop 7 d_rop n)
+  (stage, road, level, towers, foes, n2)
+}
+## A tower chosen by its key: 1, 2 or 3.
+h:c_hoose := { s name ->
+  (stage, road, level, towers, foes, n) := s
+  (tt, _, _) := level
+  kind := "123" i_ndexOf f_irst name c_at " "
+  kind > t_ally tt ? s
+  (stage, road, level, towers, foes, ((2 t_ake n) c_at (f_loat kind) c_at 3 d_rop n) h:s_aying 0)
+}
+# :: (Any a, Num b, Any c, Any d, Any e, Num f, Num g) => (((a, Int, b), Float, c, d, e, f), g, (Float, Float, Float), Float, Float, Float) -> (Char, Float, Char) -> (((a, Int, b), Float, c, d, e, f), g, (Float, Float, Float), Float, Float, Float)
+## The state after an event: time passes; a key chooses a tower (1 2
+## 3) or sends the next wave (space); a click builds on the tile under
+## it, and the command "choose R C" on the tile of that row and column
+## (what a script writes, and a page with no pointer).
+l:s_tep := { s e ->
+  e sm:i_s "tick" ? s h:t_ick 0.001 * f_loat sm:m_illis e
+  e sm:i_s "click" ? s h:b_uild 2 t_ake sm:n_umbers e
+  e sm:i_s "choose" ? s h:b_uildAt f_loor 2 t_ake sm:n_umbers e
+  " " m_atch sm:t_ext e ? h:s_end s
+  s h:c_hoose sm:t_ext e
+}
+# :: Any a => a -> Box Char
+## The events it takes: time, the keys 1 2 3 and space, a click.
+l:l_egal := { s -> "tick S" "key 1" "key 2" "key 3" "key space" "click X Y" "choose R C" }
+# :: (Any a, Any c, Any d) => (a, b, c, d, Float, Float) -> Int
+## Lost with no life left; won when every wave has been sent and every
+## enemy has fallen or got through; playing until then.
+l:s_tatus := { s ->
+  (_, road, _, _, foes, n) := s
+  (2 s_elect n) <= 0.0 ? md:lost
+  gone := ((2 s_elect_2 foes) >= 0.0) & n_ot h:o_ut (road, f_irst_2 foes, 2 s_elect_2 foes)
+  ((f_loor 5 s_elect n) = (t_ally n) - 7) & '& r_/ gone ? md:won
+  md:playing
+}
+
+### What it shows
+
+# :: (Any a, Any c, Num e) => (a, b, c, d, Float, e) -> Int
+## The game in numbers: gold, lives, the waves sent, the towers built,
+## the enemies on the road, those fallen, those that got through.
+l:c_ount := { s ->
+  (_, road, _, towers, foes, n) := s
+  hp := f_irst_2 foes
+  prog := 2 s_elect_2 foes
+  out := h:o_ut (road, hp, prog)
+  through := (prog >= f_loat (t_ally road) - 1)
+  (f_loor 2 t_ake n) c_at (f_loor 5 s_elect n) c_at (t_ally towers) c_at ('+ r_/ out) c_at ('+ r_/ (prog >= 0.0) & (hp <= 0.0) & n_ot through) c_at '+ r_/ through
+}
+## The line under the picture: how it stands, the tower chosen and its
+## cost, and what was last said.
+h:c_aption := { s ->
+  (_, _, level, _, _, n) := s
+  (tt, _, _) := level
+  c := l:c_ount s
+  kind := f_loor 3 s_elect n
+  name := d_isclose kind s_elect "archer" "fire" "ice"
+  how := @ f_ormat< "Gold {f_irst c}, lives {2 s_elect c}, wave {3 s_elect c} of {(t_ally n) - 7}. Building: {name} ({f_loor f_irst kind s_elect tt} gold)."
+  end := d_isclose (1 + l:s_tatus s) s_elect "" " The castle stands: every wave is beaten." " The gate has fallen." ""
+  said := d_isclose (1 + f_loor 6 s_elect n) s_elect h:said
+  0 < t_ally end ? how c_at end
+  0 < t_ally said ? how c_at " " c_at said
+  how c_at " 1 2 3 choose a tower, a click on grass builds it, space sends a wave."
+}
+# :: (Any a, Num b, Num c, Any d, Num e) => (a, b, (c, d, e), Float, Float, Float) -> (a, Box Char, Box Char, Float, Char)
+## What to show (lib/View): the battlefield with every tower and every
+## enemy on the road as a piece, an enemy facing the way it walks, and
+## the line under it.
+l:v_iew := { s ->
+  (stage, road, level, towers, foes, n) := s
+  (_, _, cast) := level
+  hp := f_irst_2 foes
+  prog := 2 s_elect_2 foes
+  on := w_here h:o_ut (road, hp, prog)
+  at := road h:o_nRoad on s_elect prog
+  step := 0.05 * (on s_elect f_loor f_irst_2 cast) s_elect 1.6 0.8 1.1
+  walk := o_\ (8 c_at t_ally on) r_eshape (f_irst_2 at) c_at (2 s_elect_2 at) c_at (3 s_elect_2 at) c_at (4 s_elect_2 at) c_at (4 s_elect n) c_at ((f_irst_2 at) + step * 3 s_elect_2 at) c_at ((2 s_elect_2 at) + step * 4 s_elect_2 at) c_at (t_ally on) r_eshape 0.05
+  kn := t_ally towers
+  tx := (3 s_elect_2 towers) - 0.5
+  ty := (2 s_elect_2 towers) - 0.5
+  stand := o_\ (8 c_at kn) r_eshape tx c_at ty c_at ((5 s_elect_2 towers) - tx) c_at ((6 s_elect_2 towers) - ty) c_at (7 s_elect_2 towers) c_at tx c_at ty c_at kn r_eshape 0.05
+  models := ((on s_elect f_loor f_irst_2 cast) s_elect "runner" "brute" "shield") c_at (f_loor f_irst_2 towers) s_elect "archer" "fire" "ice"
+  clips := ((t_ally on) r_eshape e_nclose "walk") c_at (1 + (7 s_elect_2 towers) < 0.4) s_elect "idle" "fire"
+  vw:m_any (stage, models, clips, walk c_at stand, h:c_aption s)
+}
+# :: (Any a, Any c, Any d) => (a, b, c, d, Float, Float) -> (Int, (Box Char, Int), (Box Char, Int))
+## How it ended: left while playing; lost, and the gate is breached in
+## the world; won, and the bridge is held and the gold kept.
+l:o_utcome := { s ->
+  (_, _, _, _, _, n) := s
+  status := l:s_tatus s
+  status = md:playing ? (md:left, md:nothing, md:nothing)
+  status = md:lost ? (md:lost, md:nothing md:s_et ("zone.battlefield.gate-breached", 1), md:nothing)
+  (md:won, md:nothing md:s_et ("fact.bridge-held", 1), md:nothing md:s_et ("resource.gold", f_loor f_irst n))
+}
