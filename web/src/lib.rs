@@ -13,9 +13,13 @@ pub mod store;
 pub use game::Game;
 
 /// The programs the page can play, each with the rules library its help
-/// is in: the walk watched, and the battlefield on foot. The first is
-/// the one a page starts with.
-pub const PROGRAMS: &[(&str, &str)] = &[("play.xtl", "Walking"), ("explore.xtl", "Roaming")];
+/// is in and the name of its game: the walk watched, the battlefield on
+/// foot, and Castle Defense. The first is the one a page starts with.
+pub const PROGRAMS: &[(&str, &str, &str)] = &[
+    ("play.xtl", "Walking", "Walk"),
+    ("explore.xtl", "Roaming", "On foot"),
+    ("defense/play.xtl", "Defending", "Castle Defense"),
+];
 
 /// The program the page starts with.
 pub const PROGRAM: &str = PROGRAMS[0].0;
@@ -24,7 +28,7 @@ pub const PROGRAM: &str = PROGRAMS[0].0;
 /// `help`); nothing for a program the page does not have.
 #[must_use]
 pub fn help(program: &str) -> String {
-    let Some((_, rules)) = PROGRAMS.iter().find(|(p, _)| *p == program) else {
+    let Some((_, rules, _)) = PROGRAMS.iter().find(|(p, _, _)| *p == program) else {
         return String::new();
     };
     xetal_store::install(std::sync::Arc::new(store::Session::default()));
@@ -32,11 +36,13 @@ pub fn help(program: &str) -> String {
     run.out.trim().to_string()
 }
 
-/// The page's title, said by X_eTaL (lib/Game.xtl): the game's name
-/// before the walk's.
+/// The page's title for a program, said by X_eTaL (lib/Game.xtl): the
+/// game's name before the program's.
 #[must_use]
-pub fn title() -> String {
+pub fn title(program: &str) -> String {
+    let found = PROGRAMS.iter().find(|(p, _, _)| *p == program);
+    let name = found.map_or(PROGRAMS[0].2, |(_, _, name)| name);
     xetal_store::install(std::sync::Arc::new(store::Session::default()));
-    let run = xetal_play::run("\"g:\" u_se< \"Game\"\ng:t_itle \"Walk\"\n", 1);
+    let run = xetal_play::run(&format!("\"g:\" u_se< \"Game\"\ng:t_itle \"{name}\"\n"), 1);
     run.out.trim().to_string()
 }

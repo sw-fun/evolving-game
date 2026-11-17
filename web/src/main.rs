@@ -19,7 +19,7 @@ fn with<T: Default>(f: impl FnOnce(&mut Game) -> T) -> T {
 /// name, or the first when it is not one of them.
 #[wasm_bindgen]
 pub fn start(program: &str) {
-    let known = PROGRAMS.iter().any(|(p, _)| *p == program);
+    let known = PROGRAMS.iter().any(|(p, _, _)| *p == program);
     let program = if known { program } else { PROGRAM };
     GAME.with(|g| *g.borrow_mut() = Some(Game::start(program, 1)));
 }
@@ -50,8 +50,8 @@ pub fn printed() -> String {
 /// The page's title, from X_eTaL.
 #[wasm_bindgen]
 #[must_use]
-pub fn title() -> String {
-    evolving_web::title()
+pub fn title(program: &str) -> String {
+    evolving_web::title(program)
 }
 
 fn main() {}

@@ -17,6 +17,7 @@ const SIBLINGS: &[&str] = &[
 const DATA: &[(&str, &str)] = &[
     ("bridge.toml", "games/walk/bridge.toml"),
     ("roam.toml", "games/walk/roam.toml"),
+    ("defend.toml", "games/defense/defend.toml"),
     ("../../world/zones.toml", "world/zones.toml"),
     ("../../world/battlefield.toml", "world/battlefield.toml"),
 ];
@@ -27,6 +28,19 @@ fn main() {
     // the walk's programs and rules, then the shared libraries (not
     // lib/'s own test programs, which no game imports)
     files.extend(sources(&root.join("games/walk")));
+    // a second game's programs are kept under its name (its play.xtl is
+    // not the walk's); its rules library is imported by name, as any
+    for (name, path) in sources(&root.join("games/defense")) {
+        let library = name.starts_with(char::is_uppercase);
+        files.push((
+            if library {
+                name
+            } else {
+                format!("defense/{name}")
+            },
+            path,
+        ));
+    }
     let shared = sources(&root.join("lib"));
     files.extend(
         shared

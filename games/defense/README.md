@@ -30,6 +30,7 @@ them, whatever their number.
 
 ```bash
 just run defense        # the scripted game: builds refused, a level won, a level lost
+just play defense       # play it at the terminal (type the events)
 just test-game defense  # compare with the expected output
 ```
 

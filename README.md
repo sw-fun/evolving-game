@@ -51,11 +51,13 @@ five waves.
 
 ## Status
 
-Early. One small game can be played: a walk to the castle gate, in
-the [live demo](https://sw-fun.github.io/evolving-game/), at the
-terminal and in a browser of your own (below). The walker follows the
-road by itself, the space bar stops and starts it, and a click on a
-tile makes the game say what the tile is.
+Early. Three things can be played in the
+[live demo](https://sw-fun.github.io/evolving-game/), at the terminal
+and in a browser of your own (below): a walk to the castle gate that
+you watch, the same battlefield walked on foot, and the first level
+of Castle Defense (towers against five waves). They share one map
+and one engine; nothing yet carries what you win in one into the
+next.
 
 Behind it: the shared libraries every game will use (seeded chance,
 the event loop, the world and its maps, the protocol a game follows,
@@ -154,7 +156,9 @@ The walker follows the road by itself; the space bar stops and starts
 it, and a click on a tile makes the game say what the tile is. **Walk
 it yourself** (or `?game=foot` on the address) puts you on the
 battlefield on foot: W A S D walk, Shift runs, the arrow keys and the
-mouse turn you; find the gate. Add `?flat` to the address for the flat
+mouse turn you; find the gate. **Castle Defense** (`?game=defense`)
+is the first real game: 1, 2 and 3 choose a tower, a click on grass
+builds it, the space bar sends the next wave of enemies up the road. Add `?flat` to the address for the flat
 picture without 3D.
 
 ## Documentation

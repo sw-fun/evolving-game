@@ -761,6 +761,33 @@ dungeon), then the dungeon, then the other games as exits are added.
 That makes the castle one place to walk into as soon as there are two
 games, which is what the user asked the showcase to be.
 
+## Weather, and the bridge between games (the user, 2026-11-17)
+
+**Weather.** The user: "consider adding weather effects, like snow
+first, lightning later, rain, clouds, fog". It is the sky's idea
+again (`lib/Sky`: a scenario says an hour, X_eTaL works the light out,
+the scene carries it): a scenario says its weather, and a library
+works out what falls (particles: snow, rain), what lies (the terrain's
+second texture: snow), what the sky and the haze are, and, for a
+storm, when the lightning strikes (from the seed, so a replay storms
+the same). Order: snow (which the siege in winter needs), then rain,
+cloud and fog, then lightning. Weather that is only seen first;
+weather that changes a game's rules (snow slows, rain puts out fire,
+fog shortens a tower's reach) is a rule of that game, added after.
+
+**The bridge.** The user's picture, `block-bridge-far.jpg`: a long
+mossy bridge of stone blocks over a chasm of waterfalls under a storm,
+its far end small in the distance; asked: how can it be the bridging
+part between the sub-games? Three uses, cheapest first: the scene a
+game shows when it ends and the next begins (what was won, where you
+go), drawn by the program in its own picture; the same bridge as a
+short walk through an eye, the far end the next game, mist and
+lightning round it; and the art reference the plan has lacked (D18):
+weathered stone, moss, storm light, deep haze. It also says where the
+castle stands: across a chasm, and Defend the Bridge is fought on a
+bridge like this, not a plank over a stream. The picture is not in
+the repository until the user says it may be published.
+
 ## Idler (asked for by the user, 2026-11-15; not in the research)
 
 An idle game: the castle earns while you do something else, or
@@ -823,6 +850,10 @@ Still open:
    reference picture, or a few, decides it (step 1 works from the
    user's words until there is one).
 
+6. Weather and the bridge (see their section): snow first or the
+   bridge between games first; whether the bridge picture may be
+   published in the repository; whether the castle moves across a
+   chasm.
 5. Inside the castle (see its section): the maze as the campaign's
    map in place of Saga 5's world map; whether the maze is X_eTaL-games'
    stepped Maze or its smooth Raycaster (the battlefield on foot

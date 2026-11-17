@@ -8,7 +8,7 @@
 //     how far a locked pointer went since the last tick, "move DX DY".
 //     Every game is given all of these; each takes what it knows
 //   - which of the page's programs to play: the header's two buttons
-//     (?game=foot starts with the second)
+//     (?game=foot or ?game=defense starts with another)
 //   - after each event, the picture the program showed (SVG). Its
 //     metadata is the scene, which the board player of X_eTaL-extensions
 //     (ext/board.js, Three.js) draws; the picture's own drawing of the
@@ -25,8 +25,10 @@ const q = new URLSearchParams(location.search);
 const el = (id) => document.getElementById(id);
 const view = el('view'), flat = el('flat'), stat = el('stat');
 let wasm = null, player = null, timer = 0, cost = 0, frames = '', eyed = false;
-let program = q.get('game') === 'foot' ? 'explore.xtl' : 'play.xtl';
+let program = { foot: 'explore.xtl', defense: 'defense/play.xtl' }[q.get('game')] || 'play.xtl';
 const held = new Set(), look = [0, 0];
+// the events given to the program, but the clock's (for tests to read)
+const said = [];
 
 // Can this browser draw 3D?
 const solid = !q.has('flat') && (() => {
@@ -57,6 +59,7 @@ function draw() {
 // Give the program an event; when it has ended, stop the clock.
 function feed(line, quiet = false) {
   if (!wasm) return;
+  if (!line.startsWith('tick ')) said.push(line);
   const before = performance.now();
   const over = wasm.feed(line);
   if (line.startsWith('tick ')) cost = cost ? cost * 0.9 + (performance.now() - before) * 0.1 : performance.now() - before;
@@ -76,6 +79,12 @@ flat.parentElement.addEventListener('click', (e) => {
   const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
   point(p.x, p.y);
 });
+
+// The board's place can change size without the window changing (the
+// header wrapping onto a second line, a pane opening): the player
+// measures on the window's resize, so it is told. Otherwise a click
+// would be read against the size the board had before.
+new ResizeObserver(() => window.dispatchEvent(new Event('resize'))).observe(el('stage'));
 
 // Keys the game may be given; none is a browser's or a system's.
 const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter' };
@@ -117,6 +126,7 @@ function start() {
   if (document.pointerLockElement) document.exitPointerLock();
   for (const b of document.querySelectorAll('.pick button')) b.classList.toggle('on', b.dataset.program === program);
   wasm.start(program);
+  named();
   draw();
   if (!q.has('hold')) timer = setInterval(tick, TICK * 1000);
 }
@@ -173,20 +183,23 @@ el('open-about').addEventListener('click', (e) => { e.currentTarget.blur(); el('
 // With a dialog open the game is not given keys (Escape closes it).
 const talking = () => !!document.querySelector('dialog[open]');
 
-const ready = () => {
-  wasm = window.wasmBindings;
-  const title = wasm.title();
+// The page's title is the game's, said by X_eTaL for the program played.
+function named() {
+  const title = wasm.title(program);
   el('title').textContent = title;
   el('about-title').textContent = title;
+  document.title = `${title}: ready`;
+}
+const ready = () => {
+  wasm = window.wasmBindings;
   el('build').textContent = `Build: ${wasm.build()}`;
   el('about-build').textContent = wasm.build();
   el('pins').textContent = wasm.pins().split('\n').join(', ');
-  window.game = { feed, start, program: () => program, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player };
+  window.game = { feed, start, said: () => said.slice(-20), program: () => program, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player };
   start();
   if (q.has('sources')) sources();
   if (q.has('help')) help();
   if (q.has('about')) el('about').showModal();
-  document.title = `${title}: ready`;
 };
 if (window.wasmBindings) ready(); else window.addEventListener('TrunkApplicationStarted', ready, { once: true });
 window.addEventListener('error', (e) => { el('err').textContent = String(e.message || e); });

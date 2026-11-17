@@ -228,6 +228,34 @@ check(await page("document.getElementById('pick-foot').classList.contains('on') 
 await page("document.getElementById('pick-watch').click(), 1");
 check((await caption()).startsWith("Row 20, column 4; 37 steps to walk"), "the other button goes back to watching the walk");
 
+// Castle Defense: the third game. A real click on grass beside the
+// road builds the tower chosen; the space bar sends a wave; enemies
+// come and the tower's shots pay.
+check(await open("?hold&game=defense"), "the page starts Castle Defense (?game=defense)");
+check((await page("document.title")) === "Evolving Game: Castle Defense: ready", "its title is the game's");
+check((await caption()).startsWith("Gold 100, lives 10, wave 0 of 5. Building: archer (40 gold)."), "it starts with 100 gold and no wave sent");
+await click(224, 263);
+check((await caption()).startsWith("Gold 60,") && (await caption()).endsWith("Built."), "a click on grass beside the road builds an archer tower for 40 gold");
+check((await page("window.game.picture()")).includes("piece('archer', nums('4.5 14.5 "), "on the tile clicked (row 15, column 5), though the header has wrapped since the board was made");
+await click(204, 273);
+check((await caption()).endsWith("Towers stand on grass."), `a click on the road builds nothing, and the game says why (${await caption()}; ${JSON.stringify(await page("window.game.said()"))})`);
+await key("keyDown", "2", "Digit2", 50);
+await key("keyUp", "2", "Digit2", 50);
+check((await caption()).includes("Building: fire (70 gold)"), "the key 2 chooses the fire tower");
+await space();
+check((await caption()).includes("wave 1 of 5"), "the space bar sends the first wave");
+await ticks(200);
+check(/Gold (6[5-9]|[7-9]\d),/.test(await caption()), `the tower's shots pay (${(await caption()).slice(0, 30)})`);
+await sleep(400);
+const army = await page("window.game.player().count().pieces");
+check(army >= 2, `the tower and the enemies on the road are drawn (${army} pieces)`);
+if (capture) {
+  await sleep(600);
+  const shot = await send("Page.captureScreenshot", { format: "png" });
+  mkdirSync(join(root, "images/look"), { recursive: true });
+  writeFileSync(join(root, "images/look/defense.png"), Buffer.from(shot.data, "base64"));
+}
+
 // The flat picture alone.
 check(await open("?flat&hold"), "the flat page starts");
 check(!(await page("!!document.querySelector('#view canvas')")), "no 3D is drawn there");

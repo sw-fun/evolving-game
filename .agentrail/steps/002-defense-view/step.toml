@@ -1,6 +1,6 @@
 number = 2
 slug = "defense-view"
-status = "pending"
+status = "in-progress"
 description = "defend-the-bridge step 2: the view and the page. The view: every enemy and to..."
 role = "production"
 context_files = []

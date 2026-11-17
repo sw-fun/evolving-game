@@ -34,7 +34,11 @@ fn the_page_plays_the_walk_as_the_command_line_does() {
     assert!(game.session().pictures() > 60, "a picture an event");
     // The store is one for the process, so the title is asked here,
     // after the game, not in a test of its own running beside it.
-    assert_eq!(evolving_web::title(), "Evolving Game: Walk");
+    assert_eq!(evolving_web::title(PROGRAM), "Evolving Game: Walk");
+    assert_eq!(
+        evolving_web::title("defense/play.xtl"),
+        "Evolving Game: Castle Defense"
+    );
     // How to play is the game's to say (the mode's help).
     let help = evolving_web::help(PROGRAM);
     assert_eq!(help.lines().count(), 4, "{help}");
@@ -146,4 +150,27 @@ fn x_etal_is_shown_as_x_etal_renders_it() {
         shown.lines().count(),
         include_str!("../../lib/Game.xtl").lines().count()
     );
+}
+
+const DEFENSE: &str = include_str!("../../games/defense/expected/play.in");
+const DEFENSE_EXPECTED: &str = include_str!("../../games/defense/expected/play.out");
+
+#[test]
+fn the_page_plays_castle_defense_as_the_command_line_does() {
+    let _turn = TURN
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let mut game = Game::start("defense/play.xtl", 1);
+    assert_eq!(game.error(), "");
+    for line in DEFENSE.lines() {
+        game.feed(line);
+    }
+    // The command line then reaches the end of its input, which ends
+    // the game: the page is told so.
+    game.feed("end");
+    assert!(game.over());
+    assert_eq!(game.error(), "");
+    assert_eq!(game.session().printed(), DEFENSE_EXPECTED);
+    assert!(game.session().picture().contains("piece('archer'"));
+    assert!(evolving_web::help("defense/play.xtl").contains("Space: send the next wave"));
 }
