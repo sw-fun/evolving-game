@@ -701,6 +701,66 @@ level; then the winter approach and the town as worlds of their own,
 before the larger games. The Shattered Kingdom (game 6) becomes the
 sum of these worlds, not a late start from nothing.
 
+## Inside the castle: the maze and the dungeon (the user, 2026-11-16)
+
+The user wants two games of X_eTaL-games reused and made the castle's:
+its Maze (a maze seen from inside, `games/maze`, `Walls.xtl`, with a
+mini map; and its Raycaster, `Rays.xtl`, the same idea with smooth
+movement) and its Dungeon (a top-down rogue-like, `games/dungeon`,
+`Crawl.xtl`: monsters that come after you, potions, gold, a way out).
+The user's design:
+
+- **You enter the castle and the portcullis shuts behind you.** You
+  cannot go back. You are in a maze, seen through your own eyes, with
+  a mini map of what you have seen.
+- **The maze is how you get to the games.** Its exits lead to the
+  next games; finding one starts it.
+- **One exit goes down a stair.** At the bottom is a door; through it
+  the game changes to the dungeon, seen from above. You fight
+  monsters for treasure and look for the way out, which leads to the
+  next game (one of this plan's).
+
+How it fits:
+
+- **The maze is the campaign's map.** The plan had a campaign shell
+  as a graph of levels (Saga 5); the user's maze is that graph as a
+  place: a node is a room or an exit, an edge a passage, and which
+  exits are open is the world state (a game won opens the next). So
+  Saga 5 becomes the maze, and the abstract world map is not built.
+- **Both are modes** (`lib/Mode`), each with an outcome. The maze's
+  outcome names the exit taken, which the campaign turns into the
+  next scenario; the dungeon's is treasure (the world's
+  `resource.gold` and what it buys in the other games), what was
+  killed, and the exit found.
+- **Two views that exist.** The maze is a world seen through an eye
+  (`lib/View`'s eye, as the battlefield on foot is), its walls and
+  floor a scene the 3D player draws, with stone from the pieces'
+  textures and torches for light and smoke; the mini map is the
+  mode's flat picture, shown in a corner. The dungeon is a board seen
+  from straight above (a `camera` call looking down), or the flat
+  picture alone.
+- **Reuse, by pin and by ask** (D11, D12, the user: reuse, do not
+  rewrite): `Walls.xtl` (the maze carved from a seed, what is seen
+  from a place), `Rays.xtl` and `Crawl.xtl` (on X_eTaL-games'
+  `lib/Ecs`) are that repository's rules libraries, each written for
+  its own page and protocol (`n_ew`, `m_ove`, `l_egal`, `s_tatus`,
+  `v_iew`). A mode here wraps one: this game's events in, its state
+  kept, its view given as a `lib/View` view. Where a library's shape
+  does not allow that (it draws its own picture, reads its own TOML
+  from its own directory, rolls with `r_oll!`), that is an ask of
+  X_eTaL-games (`docs/xetal-games-asks.md`, to be started), not a
+  copy edited here.
+- **What is new for the castle**: the portcullis and the stair as
+  scenes; exits that are doors into other modes; the dungeon's
+  monsters and treasure as castle things (rats, guards' ghosts, the
+  armory); what treasure buys.
+
+Order, proposed: after Castle Defense's first level, the maze with
+two exits (back out to the battlefield games, and down to the
+dungeon), then the dungeon, then the other games as exits are added.
+That makes the castle one place to walk into as soon as there are two
+games, which is what the user asked the showcase to be.
+
 ## Idler (asked for by the user, 2026-11-15; not in the research)
 
 An idle game: the castle earns while you do something else, or
@@ -763,6 +823,11 @@ Still open:
    reference picture, or a few, decides it (step 1 works from the
    user's words until there is one).
 
+5. Inside the castle (see its section): the maze as the campaign's
+   map in place of Saga 5's world map; whether the maze is X_eTaL-games'
+   stepped Maze or its smooth Raycaster (the battlefield on foot
+   already walks smoothly, so the proposal is smooth); what treasure
+   buys.
 4. The showcase's worlds (see A showcase): the proposed order (The
    look, Castle Defense's first level, then the winter approach and
    the medieval town); which world is first.

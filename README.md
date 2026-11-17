@@ -42,6 +42,7 @@ level starts with; a wall lost in a siege is a ruin to explore later.
 | The Shattered Kingdom | exploration | the same castle before, during and after the siege |
 | Siege Commander | real-time strategy | attack or defend across several elevations |
 | An idler (not named yet) | idle game | the castle earns while you play something else, or nothing |
+| The castle's maze and dungeon | a maze seen from inside; a top-down rogue-like | the portcullis shuts behind you; the maze's exits are the ways into the other games, and a stair leads down to a dungeon of monsters and treasure |
 | Worlds to walk and fly | exploration, side quests | places made from a seed: a siege in winter through deep snow, a medieval town of crooked streets, a bazaar and a shanty town, with smoke and banners |
 
 The first to be built is Castle Defense, starting with one level,
