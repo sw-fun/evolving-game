@@ -323,11 +323,13 @@ l:v_iew := { s ->
 ## How it ended: left while playing; lost, and the gate is breached in
 ## the world; won, and the bridge is held and the world's gold is what
 ## was left at the end (the world's gold was spent here, so it is set,
-## not added to).
+## not added to), and it brings experience: 10 a wave and 2 a life
+## left.
 l:o_utcome := { s ->
   (_, _, _, _, _, n) := s
   status := l:s_tatus s
   status = md:playing ? (md:left, md:nothing, md:nothing)
   status = md:lost ? (md:lost, md:nothing md:s_et ("zone.battlefield.gate-breached", 1), md:nothing)
-  (md:won, (md:nothing md:s_et ("fact.bridge-held", 1)) md:s_et ("resource.gold", f_loor f_irst n), md:nothing)
+  xp := (10 * (t_ally n) - 7) + 2 * f_loor 2 s_elect n
+  (md:won, (md:nothing md:s_et ("fact.bridge-held", 1)) md:s_et ("resource.gold", f_loor f_irst n), md:nothing md:s_et ("resource.xp", xp))
 }

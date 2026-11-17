@@ -864,6 +864,19 @@ The framework (`games/castle`, Saga 3's castle-map step):
   gold kept at the bridge is the next level's to spend; a bridge held
   opens the crossing.
 
+- **Experience, quests, achievements, and a board** (the user,
+  2026-11-17: "in addition to gold during TD game, we need some
+  overall score, like XP, and or quests completed (or both)";
+  "achievements (and a board showing unlocked/achieved
+  achievements)"). Winning brings experience (`resource.xp`: 10 a
+  wave and 2 a life left at the bridge, 15 for the gate on foot, 2
+  for a placeholder). Deeds are data beside the venues: quests, known
+  from the start, and achievements, hidden until earned; each a
+  condition on the world's names and an experience of its own. The
+  program awards them after every game; the map shows gold and
+  experience and says when deeds are new; the hall of deeds, a venue
+  known from the start, shows them all.
+
 What the user's second message adds, each a later step on this
 framework, none blocking it:
 

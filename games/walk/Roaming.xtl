@@ -141,5 +141,5 @@ h:s_ays := { s -> md:won = l:s_tatus s ? " You are in the gate."; " W A S D walk
 l:o_utcome := { s ->
   (zone, _, _) := s
   n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
-  (md:won, md:nothing md:s_et ("fact.walked-in", 1), md:nothing md:s_et ("resource.gold", 1))
+  (md:won, md:nothing md:s_et ("fact.walked-in", 1), (md:nothing md:s_et ("resource.gold", 1)) md:s_et ("resource.xp", 15))
 }

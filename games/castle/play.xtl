@@ -5,7 +5,9 @@
 ## numbered N) goes there; when its game ends you are back at the map,
 ## and what you won is in the world: the gold kept at the bridge is the
 ## next level's to spend, a bridge held opens the crossing, and a place
-## won shows where it leads. The key D on the map shows and opens every
+## won shows where it leads. Winning brings experience, and deeds
+## (quests and achievements) are awarded as they are earned: the hall
+## of deeds shows them. The key D on the map shows and opens every
 ## place. A place whose game is not built yet says what it will be, and
 ## can be called done. The command "choose 0 0" leaves a game as it
 ## stands and goes back to the map. The events come from the host, as every game's
@@ -13,7 +15,9 @@
 ## venues are castle.toml's; each game is its own mode, played by
 ## lib/Mode's loop.
 "at:" u_se< "Atlas"
+"dd:" u_se< "Deeds"
 "df:" u_se< "Defending"
+"lg:" u_se< "Ledger"
 "md:" u_se< "Mode"
 "rm:" u_se< "Roaming"
 "sk:" u_se< "Sketch"
@@ -30,15 +34,18 @@ u:v_isit := { (world, k) ->
   path := vn:s_cenario (file, k)
   kind m_atch "defense" ? df:o_utcome u:l_ast 'df:v_iew 'df:l_egal 'df:s_tatus 'df:s_tep md:p_lay df:n_ew (path, world, k)
   kind m_atch "roam" ? rm:o_utcome u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:p_lay rm:n_ew (path, world, k)
+  kind m_atch "board" ? lg:o_utcome u:l_ast 'lg:v_iew 'lg:l_egal 'lg:s_tatus 'lg:s_tep md:p_lay lg:n_ew (file, world, k)
   sk:o_utcome u:l_ast 'sk:v_iew 'sk:l_egal 'sk:s_tatus 'sk:s_tep md:p_lay sk:n_ew (file, world, k)
 }
-## The world after a venue's outcome: what it changed and brought, and,
-## won, the venue marked done.
+## The world after a venue's outcome: what it changed and brought; won,
+## the venue marked done and counted (stat.won); and every deed it has
+## now earned awarded (Deeds.xtl).
 u:a_fter := { (world, k) outcome ->
   (status, _, _) := outcome
   next := world md:a_fter outcome
-  n_ot status = md:won ? next
-  next md:s_et (vn:d_one (file, k), 1)
+  n_ot status = md:won ? dd:a_ward (file, next)
+  done := next md:s_et (vn:d_one (file, k), 1)
+  dd:a_ward (file, done md:s_et ("stat.won", '+ r_/ 3 s_elect_2 vn:s_tanding (file, done)))
 }
 ## The map, then the venue chosen, then the map again, until the events
 ## end.

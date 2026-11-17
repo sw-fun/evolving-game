@@ -82,7 +82,10 @@ plays it and its scenario, its place on a small map of the whole
 (`world/realm.toml`), what makes it known and what it needs. The map
 is a mode (`Atlas`), a venue not built yet is one (`Sketch`), and one
 program plays the map, then the venue chosen, then the map again, with
-one world state carried through: that is what connects the games. The
+one world state carried through: that is what connects the games. Winning
+brings experience, and deeds (quests and achievements, listed in the
+same file as conditions on the world state) are awarded after every
+game and shown in the hall of deeds (`Ledger`). The
 loop's own command `choose 0 0` leaves any game for the map. Every
 game's rules library is on the library path, each with a name of its
 own in the repository.

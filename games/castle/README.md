@@ -24,7 +24,16 @@ the next. This is the game the others are parts of.
   gold kept at the bridge is the next level's to spend; a bridge held
   opens the crossing; a place won shows where it leads.
 
-[`Venues.xtl`](Venues.xtl) reads the list for all three.
+- **Experience, quests and achievements.** Winning brings experience
+  (`resource.xp` in the world). [`castle.toml`](castle.toml) also lists
+  the deeds: quests, known from the start, and achievements, hidden
+  until earned; each is achieved when the names of the world it needs
+  reach its least, and brings experience of its own
+  ([`Deeds.xtl`](Deeds.xtl)). The program awards them after every game,
+  the map says when there are new ones, and the hall of deeds
+  ([`Ledger.xtl`](Ledger.xtl), `board`) shows them all.
+
+[`Venues.xtl`](Venues.xtl) reads the venues for the others.
 
 ## Play it
 
@@ -33,6 +42,9 @@ just run castle        # the scripted tour of the venues, the map and a placehol
 just play castle       # the castle at the terminal (type the events)
 just test-game castle  # compare with the expected output
 ```
+
+A quest or an achievement is added as a venue is: a `[deed.NAME]` in
+the file.
 
 The events: `choose 1 N` goes to venue N from the map (a click on its
 marker does the same); `key D` shows every place; in a place not built

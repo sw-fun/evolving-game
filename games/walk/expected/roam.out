@@ -288,4 +288,5 @@ eye(nums('8.277 15.978 0.5', 3)[0], nums('0.955 0.296 6.0', 3)[0], 60, 0.05)
 won
 fact.walked-in 1
 resource.gold 1
+resource.xp 15
 Row 4, column 11, facing north. You are in the gate.

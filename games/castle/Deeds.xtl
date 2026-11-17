@@ -1,0 +1,76 @@
+## Deeds: quests and achievements, read from the castle's file
+## (castle.toml). A deed is achieved when every name of the world state
+## it needs is at least its least; achieving it is written in the world
+## (deed.ID is set) and brings its experience (resource.xp). A quest is
+## known from the start, so that you know what to try; an achievement
+## is hidden until it is earned. The hall of deeds (Ledger.xtl) shows
+## them, and the castle's program awards them after every game.
+## Import: "dd:" u_se< "Deeds"
+
+"md:" u_se< "Mode"
+"st:" u_se< "Strings"
+
+## The table of a file: a row a deed, its six fields as texts.
+h:t_able := { file ->
+  '{ @ -> ((e_nclose file) c_at e_nclose "deed") []T_ABLE ("deeds" "deed-fields") } []T_RAP '{ err -> "bad-scenario" []S_IGNAL []E_MESSAGE err }
+}
+h:n_um := { x -> f_irst f_loor n_umbers d_isclose x }
+## Is one deed's need met in a world: every name at least the least?
+h:m_et := { world (names, least) -> '& r_/ (0 = 0) c_at '{ name -> least <= world md:g_et d_isclose name } e_ach st:w_ords names }
+
+# :: Char -> Int
+## How many deeds a file has.
+l:c_ount := { file -> t_ally file md:l_ist "deeds" }
+# :: Char -> Box Char
+## The names in the world state that say each deed is achieved.
+l:n_ames := { file -> '{ id -> e_nclose "deed." c_at d_isclose id } e_ach file md:l_ist "deeds" }
+# :: (Num a, Truthy b) => (Char, (Box Char, a)) -> b
+## Which deeds a world has achieved (it says so), a 1 or 0 each.
+l:d_one := { (file, world) -> '{ name -> 0 < world md:g_et d_isclose name } e_ach l:n_ames file }
+# :: Truthy a => (Char, (Box Char, Int)) -> a
+## Which deeds' needs a world meets, a 1 or 0 each.
+l:m_et := { (file, world) ->
+  t := h:t_able file
+  '{ k -> world h:m_et (d_isclose 3 s_elect k s_elect t, h:n_um 4 s_elect k s_elect t) } e_ach r_ange t_ally t
+}
+## One round of awarding: every deed met and not yet achieved is
+## written in the world and its experience added.
+h:r_ound := { file world ->
+  t := h:t_able file
+  new := w_here (l:m_et (file, world)) & n_ot l:d_one (file, world)
+  names := new s_elect l:n_ames file
+  xp := '+ r_/ 0 c_at '{ k -> h:n_um 5 s_elect k s_elect t } e_ach new
+  marked := (world md:m_erge (names, (t_ally new) r_eshape 1)) md:a_dd ("resource.xp", xp)
+  marked md:a_dd ("campaign.new", t_ally new)
+}
+# :: (Char, (Box Char, Int)) -> (Box Char, Int)
+## A world with every deed it has earned awarded: (file, world). The
+## experience one deed brings may earn another, so it is gone round
+## three times. The world's campaign.new is how many were new.
+l:a_ward := { (file, world) -> file h:r_ound file h:r_ound file h:r_ound world md:s_et ("campaign.new", 0) }
+# :: Num a => (Char, (Box Char, a)) -> Box Char
+## The deeds as lines for the hall, quests first: a quest with [x] or
+## [ ], its title and what to do; an achievement earned with its title
+## and what it was for, one not earned as a line of question marks.
+l:l_ines := { (file, world) ->
+  t := h:t_able file
+  done := l:d_one (file, world)
+  quest := '{ x -> "quest" m_atch d_isclose x } e_ach 2 s_elect_2 t
+  l_ine := { k ->
+    title := d_isclose f_irst k s_elect t
+    about := d_isclose 6 s_elect k s_elect t
+    k s_elect quest ? e_nclose (d_isclose (1 + k s_elect done) s_elect "[ ] " "[x] ") c_at title c_at ": " c_at about
+    k s_elect done ? e_nclose " *  " c_at title c_at ": " c_at about
+    e_nclose " ?  ? ? ?"
+  }
+  ('l_ine e_ach w_here quest) c_at 'l_ine e_ach w_here n_ot quest
+}
+# :: (Num a, Num b, Truthy b) => (Char, (Box Char, a)) -> b
+## How many quests are done and how many there are, and the same for
+## achievements: four numbers.
+l:t_ally := { (file, world) ->
+  t := h:t_able file
+  done := l:d_one (file, world)
+  quest := '{ x -> "quest" m_atch d_isclose x } e_ach 2 s_elect_2 t
+  ('+ r_/ quest & done) c_at ('+ r_/ quest) c_at ('+ r_/ done & n_ot quest) c_at '+ r_/ n_ot quest
+}

@@ -211,21 +211,34 @@ if (capture) {
 // done, which is then counted; ?debug shows every place.
 check(await open("?hold"), "the page starts with the castle");
 check((await page("document.title")) === "Evolving Game: The castle: ready", "its title is the castle's");
-check((await caption()).startsWith("The castle and its country: 2 of 16 places known, 0 won."), "the map shows two places to begin with");
+check((await caption()).startsWith("The castle and its country: 3 of 17 places known, 0 won. Gold 0, experience 0."), "the map shows three places to begin with, and your gold and experience");
 await sleep(300);
-check((await page("window.game.player().count().pieces")) === 2, "each a marker on the map");
+check((await page("window.game.player().count().pieces")) === 3, "each a marker on the map");
 check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x.textContent).join('|')")).includes("2 The battlefield on foot"), "with its number and name written over it");
 await click(104, 203);
 check((await caption()).includes("W A S D walk"), "a click on the second marker goes into the battlefield on foot");
 await page("document.getElementById('leave').click(), 1");
-check((await caption()).startsWith("The castle and its country: 2 of 16"), "the Map button comes back to the map");
+check((await caption()).startsWith("The castle and its country: 3 of 17"), "the Map button comes back to the map");
 check(await open("?hold&debug"), "the page starts with ?debug");
-check((await caption()).startsWith("The castle and its country: 16 of 16 places known"), "and every place is shown");
+check((await caption()).startsWith("The castle and its country: 17 of 17 places known"), "and every place is shown");
 await page("window.game.feed('choose 1 10'), 1");
 check((await caption()).startsWith("The gate maze (not built yet)."), "a place not built yet says what it will be");
 check((await page("document.querySelectorAll('#flat svg text:not([text-anchor])').length")) === 3, "in three lines under the map");
 await space();
 check((await caption()).includes("1 won"), "called done, it is counted on the map");
+check(/Gold 1, experience 2\./.test(await caption()), "and it brought a coin and some experience");
+await page("window.game.feed('choose 1 17'), 1");
+check((await caption()).startsWith("The hall of deeds. Experience 2, gold 1. Quests 0 of 5; achievements 0 of 6."), "the hall of deeds shows experience, gold, quests and achievements");
+check((await caption()).includes("[ ] Hold the bridge in summer") && (await caption()).includes("? ? ?"), "quests to do are named, achievements not earned are hidden");
+check(await page("document.querySelector('#flat svg').getBoundingClientRect().height > 0 && [...document.querySelectorAll('#flat svg text:not([text-anchor])')].every((x) => x.getBoundingClientRect().top > document.getElementById('stage').getBoundingClientRect().top)"), "all of it fits the picture");
+if (capture) {
+  await sleep(500);
+  const hall = await send("Page.captureScreenshot", { format: "png" });
+  mkdirSync(join(root, "images/look"), { recursive: true });
+  writeFileSync(join(root, "images/look/hall.png"), Buffer.from(hall.data, "base64"));
+}
+await space();
+check((await caption()).startsWith("The castle and its country"), "a key goes back to the map");
 
 // On foot: the second game, seen through an eye, walked with held keys.
 const key = async (type, k, code, n) => send("Input.dispatchKeyEvent", { type, key: k, code, windowsVirtualKeyCode: n, nativeVirtualKeyCode: n });

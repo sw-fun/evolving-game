@@ -48,8 +48,9 @@ l:v_iew := { (stage, title, about, _) ->
   vw:e_mpty (stage, title c_at " (not built yet).\n" c_at about c_at "\nSpace: call it done. B: back to the map.")
 }
 # :: (Any a, Any b, Any c, Num d) => (a, b, c, d) -> (Int, (Box Char, Int), (Box Char, Int))
-## Called done, it is won and brings a coin; else it was left.
+## Called done, it is won and brings a coin and a little experience;
+## else it was left.
 l:o_utcome := { s ->
   n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
-  (md:won, md:nothing, md:nothing md:s_et ("resource.gold", 1))
+  (md:won, md:nothing, (md:nothing md:s_et ("resource.gold", 1)) md:s_et ("resource.xp", 2))
 }

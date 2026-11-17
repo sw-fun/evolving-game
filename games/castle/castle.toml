@@ -14,11 +14,20 @@ zone = ["realm"]
 time = ["10.5"]
 
 # The venues, in the order of their numbers on the map.
-venues = ["bridge-1", "on-foot", "bridge-2", "camp", "town", "bridge-3", "engineer", "commander", "crossing", "gate-maze", "rune-keep", "tactics", "dungeon", "ray-maze", "treasury", "automata"]
+venues = ["bridge-1", "on-foot", "bridge-2", "camp", "town", "bridge-3", "engineer", "commander", "crossing", "gate-maze", "rune-keep", "tactics", "dungeon", "ray-maze", "treasury", "automata", "hall"]
 venue-fields = ["title", "kind", "scenario", "row", "column", "from", "needs", "marker", "about"]
 
+# Deeds: quests (known from the start, so you know what to try) and
+# achievements (hidden until earned). Each is achieved when every name
+# it needs (names of the world state, a space between) is at least its
+# least; achieving it brings its experience (xp). They are shown in the
+# hall of deeds.
+deeds = ["season-summer", "every-season", "way-in", "cross", "inside", "first-win", "purse", "veteran", "wanderer", "cartographer", "breached"]
+deed-fields = ["title", "kind", "needs", "least", "xp", "about"]
+
 # A venue: its title; its kind (the mode that plays it: defense, roam,
-# or placeholder for one not built yet) and its scenario (a path from
+# board for the hall of deeds, or placeholder for one not built yet) and
+# its scenario (a path from
 # this file; none for a placeholder); its row and column on the realm's
 # map; from, the venue whose winning makes it known ("" for one known
 # from the start); needs, a name in the world state that must be set
@@ -200,3 +209,102 @@ from = "ray-maze"
 needs = ""
 marker = "archer"
 about = "Program the towers: by hand, by rules, or in X_eTaL."
+
+[venue.hall]
+title = "The hall of deeds"
+kind = "board"
+scenario = ""
+row = "10"
+column = "2"
+from = ""
+needs = ""
+marker = "shield"
+about = "Your experience, your quests and what you have achieved."
+
+[deed.season-summer]
+title = "Hold the bridge in summer"
+kind = "quest"
+needs = "venue.bridge-1.done"
+least = "1"
+xp = "10"
+about = "Win the first level of Defend the Bridge."
+
+[deed.every-season]
+title = "Hold the bridge in every season"
+kind = "quest"
+needs = "venue.bridge-1.done venue.bridge-2.done venue.bridge-3.done"
+least = "1"
+xp = "60"
+about = "Win all three levels: summer, snow and the storm."
+
+[deed.way-in]
+title = "Find the way in"
+kind = "quest"
+needs = "fact.walked-in"
+least = "1"
+xp = "15"
+about = "Walk the battlefield on foot to the castle gate."
+
+[deed.cross]
+title = "Cross the long bridge"
+kind = "quest"
+needs = "venue.crossing.done"
+least = "1"
+xp = "20"
+about = "Hold the bridge, then cross to the castle."
+
+[deed.inside]
+title = "Stand in the treasury"
+kind = "quest"
+needs = "venue.treasury.done"
+least = "1"
+xp = "40"
+about = "Find your way through the gate maze and the dungeon to the castle's gold."
+
+[deed.first-win]
+title = "First blood"
+kind = "achievement"
+needs = "fact.bridge-held"
+least = "1"
+xp = "10"
+about = "Won a level of Castle Defense."
+
+[deed.purse]
+title = "A full purse"
+kind = "achievement"
+needs = "resource.gold"
+least = "150"
+xp = "15"
+about = "Held 150 gold at once."
+
+[deed.veteran]
+title = "Veteran"
+kind = "achievement"
+needs = "resource.xp"
+least = "100"
+xp = "0"
+about = "Earned 100 experience."
+
+[deed.wanderer]
+title = "Wanderer"
+kind = "achievement"
+needs = "stat.won"
+least = "5"
+xp = "20"
+about = "Won five places."
+
+[deed.cartographer]
+title = "Cartographer"
+kind = "achievement"
+needs = "stat.won"
+least = "12"
+xp = "50"
+about = "Won twelve places."
+
+[deed.breached]
+title = "The gate fell"
+kind = "achievement"
+needs = "zone.battlefield.gate-breached"
+least = "1"
+xp = "5"
+about = "Lost a level: the enemy reached the gate."

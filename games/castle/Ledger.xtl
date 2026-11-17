@@ -1,0 +1,43 @@
+## Ledger: the hall of deeds (the mode "board"): your experience and
+## gold, your quests (done or to do) and your achievements (those not
+## yet earned are hidden). It shows what the world says; any key goes
+## back to the map.
+##
+## The state is (stage, words, left): the lines to show, and 1 once a
+## key has been pressed.
+## Import: "lg:" u_se< "Ledger"
+
+"dd:" u_se< "Deeds"
+"md:" u_se< "Mode"
+"st:" u_se< "Strings"
+"vw:" u_se< "View"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "board"
+# :: Char
+## How it is used, a line a thing to know.
+l:help := "The hall of deeds: your experience, your gold, your quests and your achievements.\nA quest is a thing to try; [x] marks one done. An achievement is shown once you have earned it.\nB, or the space bar: back to the map."
+
+# :: (Num a, Any b, Num c, Num d) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Char, d)
+## The hall for a world: what it has earned, from the castle's file.
+l:n_ew := { (file, world, seed) ->
+  c := dd:t_ally (file, world)
+  head := @ f_ormat< "The hall of deeds. Experience {world md:g_et \"resource.xp\"}, gold {world md:g_et \"resource.gold\"}. Quests {f_irst c} of {2 s_elect c}; achievements {3 s_elect c} of {4 s_elect c}."
+  (md:s_tage file, "\n" st:j_oin (e_nclose head) c_at (dd:l_ines (file, world)) c_at e_nclose "B or Space: back to the map.", 0)
+}
+# :: (Any a, Any b, Any c, Any d, Num e) => (a, b, c) -> d -> (a, b, e)
+## The state after an event: any key it takes goes back.
+l:s_tep := { (stage, words, _) e -> (stage, words, 1) }
+# :: Any a => a -> Box Char
+## The events it takes: B, and the space bar.
+l:l_egal := { s -> "key b" "key B" "key space" }
+# :: (Any a, Any b, Num c) => (a, b, c) -> Int
+## Left when a key has been pressed; playing until then.
+l:s_tatus := { (_, _, left) -> 0 < left ? md:left; md:playing }
+# :: (Any a, Any b, Any c) => (a, b, c) -> (a, Box Char, Box Char, Float, b)
+## What to show: the realm's map, and the deeds written over it.
+l:v_iew := { (stage, words, _) -> vw:e_mpty (stage, words) }
+# :: Any a => a -> (Int, (Box Char, Int), (Box Char, Int))
+## The hall changes nothing: it was looked at, and left.
+l:o_utcome := { s -> (md:left, md:nothing, md:nothing) }

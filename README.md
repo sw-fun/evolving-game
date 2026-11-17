@@ -59,6 +59,8 @@ Defense's three levels, and the battlefield on foot); the rest say
 what they will be and can be called done, so the whole castle can be
 gone round. One world is carried through: the gold kept at the bridge
 is the next level's to spend, and a place won shows where it leads.
+Winning brings experience; quests and achievements are awarded as you
+earn them, and the hall of deeds shows them.
 Add `?debug` to the address to see and open every place.
 
 Behind it: the shared libraries every game will use (seeded chance,

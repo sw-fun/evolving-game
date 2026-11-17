@@ -1,6 +1,6 @@
 l:mode : Char
 l:help : Char
-l:n_ew : (Num a, Any b, Num c, Num d, Truthy d, Num e, Truthy e) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Char, Int, d, e)
+l:n_ew : (Num a, Truthy a, Any b, Num c, Num d, Truthy d) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Char, Int, d, a)
 l:s_tep : (Any a, Num b, Any c, Any d, Any e, Num f, Any g, Num h) => (((a, Int, b), Float, c, d, e, f), g, Int, h, Int) -> (Char, Float, Char) -> (((a, Int, b), Float, c, d, e, f), g, Int, h, Int)
 l:l_egal : Any a => a -> Box Char
 l:s_tatus : (Any a, Any b, Any c, Any d, Num e) => (a, b, c, d, e) -> Int

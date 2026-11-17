@@ -5,6 +5,8 @@
 ## and a place not built yet, called done or left. The program that goes
 ## round them all is play.xtl.
 "at:" u_se< "Atlas"
+"dd:" u_se< "Deeds"
+"lg:" u_se< "Ledger"
 "md:" u_se< "Mode"
 "sk:" u_se< "Sketch"
 "st:" u_se< "Strings"
@@ -56,3 +58,23 @@ going := md:nothing md:s_et ("campaign.go", 10)
 u:p_lace := { lines -> u:l_ast 'sk:v_iew 'sk:l_egal 'sk:s_tatus 'sk:s_tep md:r_eplay (lines, sk:n_ew (file, going, 1)) }
 _ := u:s_ay sk:o_utcome u:p_lace "tick 1" "key space"
 _ := u:s_ay sk:o_utcome u:p_lace 1 r_eshape e_nclose "key b"
+
+# Deeds (quests and achievements): how many; which an empty world has
+# earned (none); a world that has held the bridge in summer, with 160
+# gold and 70 experience, earns the summer quest, First blood, A full
+# purse, and, with the experience those bring, Veteran.
+dd:c_ount file
+dd:m_et (file, md:nothing)
+earned := dd:a_ward (file, (((md:nothing md:s_et ("fact.bridge-held", 1)) md:s_et ("venue.bridge-1.done", 1)) md:s_et ("resource.gold", 160)) md:s_et ("resource.xp", 70))
+_ := t:l_ines md:l_ines earned
+# Quests done and in all, achievements earned and in all.
+dd:t_ally (file, earned)
+# Awarding again changes nothing but the count of new ones.
+(md:l_ines dd:a_ward (file, earned)) m_atch md:l_ines earned md:s_et ("campaign.new", 0)
+# The hall of deeds for that world: quests marked, achievements earned
+# shown and the others hidden; a key leaves it, and it changes nothing.
+u:h_all := { lines -> u:l_ast 'lg:v_iew 'lg:l_egal 'lg:s_tatus 'lg:s_tep md:r_eplay (lines, lg:n_ew (file, earned, 1)) }
+_ := u:s_ay lg:o_utcome u:h_all "tick 1" "key b"
+# The map then says the gold, the experience, and that there are new
+# deeds.
+vw:c_aption at:v_iew at:n_ew (file, earned, 1)

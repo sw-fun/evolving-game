@@ -1,0 +1,7 @@
+l:c_ount : Char -> Int
+l:n_ames : Char -> Box Char
+l:d_one : (Num a, Truthy b) => (Char, (Box Char, a)) -> b
+l:m_et : Truthy a => (Char, (Box Char, Int)) -> a
+l:a_ward : (Char, (Box Char, Int)) -> (Box Char, Int)
+l:l_ines : Num a => (Char, (Box Char, a)) -> Box Char
+l:t_ally : (Num a, Num b, Truthy b) => (Char, (Box Char, a)) -> b
