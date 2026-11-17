@@ -25,7 +25,18 @@ impl Game {
     /// first wait.
     #[must_use]
     pub fn start(program: &str, seed: u64) -> Game {
+        Game::resume(program, seed, "", "")
+    }
+
+    /// The same, with a text the program kept on an earlier visit (its
+    /// save: a name and what it wrote) there for it to read; an empty
+    /// name for none.
+    #[must_use]
+    pub fn resume(program: &str, seed: u64, name: &str, kept: &str) -> Game {
         let session = Arc::new(Session::default());
+        if let (false, Ok(mut k)) = (name.is_empty(), session.kept.lock()) {
+            k.insert(name.to_string(), kept.to_string());
+        }
         xetal_store::install(session.clone());
         let src = crate::about::text(program).unwrap_or_default();
         let (run, error) = match Interactive::start(src, seed, Box::new(Out(session.clone()))) {

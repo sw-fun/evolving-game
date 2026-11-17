@@ -11,7 +11,8 @@
 ## place. A place whose game is not built yet says what it will be, and
 ## can be called done. The command "choose 0 0" leaves a game as it
 ## stands and goes back to the map. The events come from the host, as every game's
-## do; when they end, the world as it then stands is printed. The
+## do; when they end, the world as it then stands is printed. In a
+## browser the world is kept between visits. The
 ## venues are castle.toml's; each game is its own mode, played by
 ## lib/Mode's loop.
 "at:" u_se< "Atlas"
@@ -26,6 +27,20 @@
 "vn:" u_se< "Venues"
 
 file := "castle.toml"
+## In a browser the world is kept between visits: written after every
+## game and read at the start, as the text "castle.save" in the host's
+## store. At the command line nothing is kept, so a run is only what
+## its events make it.
+web := @ c_fg< "web"
+u:k_ept := { @ ->
+  n_ot web ? md:nothing
+  md:f_rom '{ @ -> []N_GET "castle.save" } []T_RAP '{ err -> []R_ECOVER "" }
+}
+u:k_eep := { world ->
+  n_ot web ? world
+  _ := (md:t_ext world) []N_PUT "castle.save"
+  world
+}
 u:l_ast := { (_, s) -> s }
 ## A venue played to its end in a world: its mode chosen by its kind;
 ## every mode's outcome is the same kind of thing.
@@ -55,7 +70,7 @@ u:r_ound := { world ->
   n_ot status = md:won ? u:s_tay world
   k := going md:g_et "campaign.go"
   there := world md:m_erge going
-  u:r_ound (there, k) u:a_fter u:v_isit (there, k)
+  u:r_ound u:k_eep (there, k) u:a_fter u:v_isit (there, k)
 }
 ## The map was left without a place chosen: the events have ended (the
 ## next is the end again), and so does the game; or it was the command
@@ -66,4 +81,4 @@ u:s_tay := { world ->
 }
 wrong := at:mode md:p_roblem file
 _ := t:l_ines (0 < t_ally wrong) r_eplicate e_nclose wrong
-_ := t:l_ines md:l_ines u:r_ound md:nothing
+_ := t:l_ines md:l_ines u:r_ound u:k_ept @

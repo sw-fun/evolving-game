@@ -24,6 +24,9 @@ pub const PROGRAMS: &[(&str, &str, &str)] = &[
     ("defense/play.xtl", "Defending", "Castle Defense"),
 ];
 
+/// The name of the text the castle keeps between visits.
+pub const SAVE: &str = "castle.save";
+
 /// The program the page starts with.
 pub const PROGRAM: &str = PROGRAMS[0].0;
 

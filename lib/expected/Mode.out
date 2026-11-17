@@ -10,6 +10,8 @@ l:a_dd : (Eq a, Num b) => (Box a, b) -> (a, b) -> (Box a, b)
 l:m_erge : Eq a => (Box a, b) -> (Box a, b) -> (Box a, b)
 l:g_ain : (Eq a, Num b) => (Box a, b) -> (Box a, b) -> (Box a, b)
 l:l_ines : (Box Char, a) -> Box Char
+l:t_ext : (Box Char, a) -> Char
+l:f_rom : Char -> (Box Char, Int)
 l:a_fter : (Eq a, Num b) => (Box a, b) -> (Int, (Box a, b), (Box a, b)) -> (Box a, b)
 l:l_ist : Char -> Char -> Box Char
 l:h_as : Truthy a => Char -> Char -> a

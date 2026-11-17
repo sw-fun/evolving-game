@@ -25,4 +25,14 @@ impl Session {
     pub fn pictures(&self) -> usize {
         self.shown.lock().map_or(0, |s| s.pictures)
     }
+
+    /// A text the program has kept (its save), by name; empty for none.
+    #[must_use]
+    pub fn kept(&self, name: &str) -> String {
+        let kept = self.kept.lock();
+        kept.map_or_else(
+            |_| String::new(),
+            |k| k.get(name).cloned().unwrap_or_default(),
+        )
+    }
 }

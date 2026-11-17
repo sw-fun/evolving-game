@@ -1,6 +1,7 @@
 //! The store a game runs on in a page: its files (read only), what it
 //! printed, and the latest picture it showed.
 
+use std::collections::BTreeMap;
 use std::io::Write;
 use std::sync::{Arc, Mutex};
 
@@ -16,21 +17,26 @@ pub struct Shown {
     pub pictures: usize,
 }
 
-/// The files, and where output goes.
+/// The files, where output goes, and the texts the program keeps (its
+/// saves): given back to it when it asks, and to the page to store.
 #[derive(Default)]
 pub struct Session {
     pub shown: Mutex<Shown>,
+    pub kept: Mutex<BTreeMap<String, String>>,
 }
 
 impl Store for Session {
     fn get(&self, path: &str) -> Result<String, String> {
-        files::text(path)
-            .map(str::to_string)
+        let kept = self.kept.lock().ok().and_then(|k| k.get(path).cloned());
+        kept.or_else(|| files::text(path).map(str::to_string))
             .ok_or_else(|| format!("{path}: no such file"))
     }
 
-    fn put(&self, _path: &str, _text: &str) -> Result<(), String> {
-        Err("the page keeps no files".into())
+    fn put(&self, path: &str, text: &str) -> Result<(), String> {
+        if let Ok(mut k) = self.kept.lock() {
+            k.insert(path.to_string(), text.to_string());
+        }
+        Ok(())
     }
 
     fn line(&self) -> Result<String, String> {

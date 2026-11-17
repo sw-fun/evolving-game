@@ -515,3 +515,9 @@ piece('walker', nums('-300.0 -300.0 0.0 1.0 0.0', 5)[0], 'walk', 0.0, nums('-300
 1
 (0, 0, 1)
 playing
+resource.gold 7
+zone.courtyard.wall 1
+1
+0
+resource.gold 5
+resource.xp 7

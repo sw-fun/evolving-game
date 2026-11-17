@@ -37,3 +37,10 @@ pub fn pins() -> String {
 pub fn help(program: &str) -> String {
     evolving_web::help(program)
 }
+
+/// The page's title, from X_eTaL.
+#[wasm_bindgen]
+#[must_use]
+pub fn title(program: &str) -> String {
+    evolving_web::title(program)
+}

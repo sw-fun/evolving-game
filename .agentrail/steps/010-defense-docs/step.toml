@@ -1,4 +1,4 @@
-number = 8
+number = 10
 slug = "defense-docs"
 status = "pending"
 description = "defend-the-bridge step 6: close the saga. The game's README, docs/architectur..."

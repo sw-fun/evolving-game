@@ -455,3 +455,11 @@ t_ally "<ellipse" st:f_ind vw:p_icture mixed
 (vclock, quit) := 'u:l_legal 'u:l_status 'u:l_step md:r_esult ("choose 1 1" "choose 0 0" "choose 1 3" "choose 1 2", u:l_new (lights, md:nothing, 1))
 vclock
 md:s_tatusName u:l_status quit
+
+# A world to text and back (what is saved): the same world; an empty
+# text, or one that is not a world's, is the empty world; a line that
+# is not "name value" is passed over.
+md:t_ext world
+(md:l_ines md:f_rom md:t_ext world) m_atch md:l_ines world
+t_ally md:l_ines md:f_rom ""
+_ := t:l_ines md:l_ines md:f_rom "resource.gold 5\nnot a line of it\nfact.x many\nresource.xp 7"

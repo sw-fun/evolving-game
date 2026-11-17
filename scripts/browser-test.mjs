@@ -109,7 +109,7 @@ await send("Page.enable");
 await send("Network.enable");
 
 // 3D, the clock held: events are given here.
-check(await open("?hold&game=walk"), "the page starts and says it is ready");
+check(await open("?hold&game=walk&fresh"), "the page starts and says it is ready");
 check((await page("document.title")) === "Evolving Game: Walk: ready", "its title is X_eTaL's (Evolving Game: Walk)");
 check(await page("!!document.querySelector('#view canvas')"), "the board player made a canvas");
 await sleep(300);
@@ -195,7 +195,7 @@ for (const [w, h] of [[1280, 800], [800, 600], [420, 760]]) {
 // The walker on the bridge, for the README.
 if (capture) {
   await send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 800, deviceScaleFactor: 1, mobile: false });
-  await open("?hold&game=walk");
+  await open("?hold&game=walk&fresh");
   await page("(() => { for (let i = 0; i < 212; i++) window.game.feed('tick 0.05'); return 1; })()");
   await sleep(600);
   const shot = await send("Page.captureScreenshot", { format: "png" });
@@ -209,7 +209,7 @@ if (capture) {
 // a real click on a marker goes into its game; the Map button comes
 // back; a place not built yet says what it will be and can be called
 // done, which is then counted; ?debug shows every place.
-check(await open("?hold"), "the page starts with the castle");
+check(await open("?hold&fresh"), "the page starts with the castle");
 check((await page("document.title")) === "Evolving Game: The castle: ready", "its title is the castle's");
 check((await caption()).startsWith("The castle and its country: 3 of 17 places known, 0 won. Gold 0, experience 0."), "the map shows three places to begin with, and your gold and experience");
 await sleep(300);
@@ -219,7 +219,7 @@ await click(104, 203);
 check((await caption()).includes("W A S D walk"), "a click on the second marker goes into the battlefield on foot");
 await page("document.getElementById('leave').click(), 1");
 check((await caption()).startsWith("The castle and its country: 3 of 17"), "the Map button comes back to the map");
-check(await open("?hold&debug"), "the page starts with ?debug");
+check(await open("?hold&debug&fresh"), "the page starts with ?debug");
 check((await caption()).startsWith("The castle and its country: 17 of 17 places known"), "and every place is shown");
 await page("window.game.feed('choose 1 10'), 1");
 check((await caption()).startsWith("The gate maze (not built yet)."), "a place not built yet says what it will be");
@@ -240,10 +240,24 @@ if (capture) {
 await space();
 check((await caption()).startsWith("The castle and its country"), "a key goes back to the map");
 
+// What is won is kept: a place called done is still won after the page
+// is loaded again; New game forgets it.
+await page("try { localStorage.clear(); } catch {} 1");
+check(await open("?hold"), "the page starts, keeping what is won");
+await page("window.game.feed('key d'), window.game.feed('choose 1 10'), 1");
+await space();
+check((await caption()).includes("1 won"), "a place is won");
+check(await open("?hold"), "the page is loaded again");
+check((await caption()).includes("1 won") && /experience 2\b/.test(await caption()), "and it is still won, with its experience");
+await page("document.getElementById('forget').click(), 1");
+check((await caption()).includes("0 won") && /experience 0\b/.test(await caption()), "New game forgets it");
+check(await open("?hold"), "and loaded again");
+check((await caption()).includes("0 won"), "it stays forgotten");
+
 // On foot: the second game, seen through an eye, walked with held keys.
 const key = async (type, k, code, n) => send("Input.dispatchKeyEvent", { type, key: k, code, windowsVirtualKeyCode: n, nativeVirtualKeyCode: n });
 const ticks = (n) => page(`(() => { for (let i = 0; i < ${n}; i++) window.game.feed('tick 0.05'); return 1; })()`);
-check(await open("?hold&game=foot"), "the page starts on foot (?game=foot)");
+check(await open("?hold&game=foot&fresh"), "the page starts on foot (?game=foot)");
 check((await caption()).startsWith("Row 20, column 4, facing north."), "you stand at the entrance, facing north");
 await sleep(300);
 check((await page("window.game.player().count().eye")) === 1 || /eye\(/.test(await page("window.game.picture()")), "the scene is seen through an eye");
@@ -267,7 +281,7 @@ check((await caption()).startsWith("Row 20, column 4; 37 steps to walk"), "the o
 // Castle Defense: the third game. A real click on grass beside the
 // road builds the tower chosen; the space bar sends a wave; enemies
 // come and the tower's shots pay.
-check(await open("?hold&game=defense"), "the page starts Castle Defense (?game=defense)");
+check(await open("?hold&game=defense&fresh"), "the page starts Castle Defense (?game=defense)");
 check((await page("document.title")) === "Evolving Game: Castle Defense: ready", "its title is the game's");
 check((await caption()).startsWith("Gold 100, lives 10, wave 0 of 5. Building: archer (40 gold)."), "it starts with 100 gold and no wave sent");
 await click(224, 263);
@@ -293,14 +307,14 @@ if (capture) {
 }
 
 // The flat picture alone.
-check(await open("?flat&hold&game=walk"), "the flat page starts");
+check(await open("?flat&hold&game=walk&fresh"), "the flat page starts");
 check(!(await page("!!document.querySelector('#view canvas')")), "no 3D is drawn there");
 check((await page("document.querySelectorAll('#flat .flat polygon').length")) > 400, "the flat board is drawn");
 await click(364, 221);
 check((await caption()).includes("Pointing at row 10, column 7: bridge."), "a click on the flat picture names the tile too");
 
 // The clock: left alone, the walk goes by itself and ends.
-check(await open("?game=walk"), "the page starts with its clock");
+check(await open("?game=walk&fresh"), "the page starts with its clock");
 check(await until("document.querySelector('#flat svg text').textContent.includes(' 3 walked')", 8000), "the clock's ticks walk the walker");
 
 // Self-contained: every request was to the page's own address.

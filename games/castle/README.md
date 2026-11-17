@@ -33,6 +33,11 @@ the next. This is the game the others are parts of.
   the map says when there are new ones, and the hall of deeds
   ([`Ledger.xtl`](Ledger.xtl), `board`) shows them all.
 
+- **Kept between visits.** In a browser the world (gold, experience,
+  places won, deeds) is saved after every game and read back when the
+  page is opened again; New game forgets it. At the command line
+  nothing is kept, so a run is only what its events make it.
+
 [`Venues.xtl`](Venues.xtl) reads the venues for the others.
 
 ## Play it

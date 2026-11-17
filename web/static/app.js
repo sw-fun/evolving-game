@@ -18,6 +18,10 @@
 //     board (class "flat") is hidden then, and is all there is to see
 //     where there is no WebGL
 //   - what the program printed, in a pane that opens when it ends
+// What the castle keeps between visits (its world: gold, experience,
+// places won, deeds) is a text the program writes; the page stores it
+// in the browser, under one name, and gives it back when the program
+// starts. New game forgets it. ?fresh neither reads nor stores it.
 // ?flat shows the flat picture only. ?sources, ?help and ?about open
 // those dialogs. ?hold
 // stops the clock (for tests: events are then given by window.game.feed).
@@ -30,6 +34,10 @@ const view = el('view'), flat = el('flat'), stat = el('stat');
 let wasm = null, player = null, timer = 0, cost = 0, frames = '', eyed = false;
 let program = { walk: 'play.xtl', foot: 'explore.xtl', defense: 'defense/play.xtl' }[q.get('game')] || 'castle/play.xtl';
 const held = new Set(), look = [0, 0];
+// the browser's store for the one text the game keeps
+const KEPT = 'evolving-game/castle.save';
+const store = q.has('fresh') ? null : (() => { try { return window.localStorage; } catch { return null; } })();
+let lastKept = '';
 // the events given to the program, but the clock's (for tests to read)
 const said = [];
 
@@ -66,9 +74,19 @@ function feed(line, quiet = false) {
   const before = performance.now();
   const over = wasm.feed(line);
   if (line.startsWith('tick ')) cost = cost ? cost * 0.9 + (performance.now() - before) * 0.1 : performance.now() - before;
+  keep();
   if (quiet && !over) return;
   draw();
   if (over) { clearInterval(timer); timer = 0; el('log').open = true; document.body.classList.add('over'); }
+}
+
+// Store what the program has kept, when it has changed.
+function keep() {
+  if (!store) return;
+  const kept = wasm.kept();
+  if (kept === lastKept) return;
+  lastKept = kept;
+  try { store.setItem(KEPT, kept); } catch { /* a full or closed store: the game goes on unsaved */ }
 }
 
 // A click on the 3D board comes in the picture's units already.
@@ -128,13 +146,15 @@ function start() {
   held.clear();
   if (document.pointerLockElement) document.exitPointerLock();
   for (const b of document.querySelectorAll('.pick button')) b.classList.toggle('on', b.dataset.program === program);
-  wasm.start(program);
+  lastKept = (store && store.getItem(KEPT)) || '';
+  wasm.start(program, lastKept);
   named();
   if (q.has('debug') && program === 'castle/play.xtl') wasm.feed('key d');
   draw();
   if (!q.has('hold')) timer = setInterval(tick, TICK * 1000);
 }
 el('again').addEventListener('click', (e) => { e.currentTarget.blur(); start(); });
+el('forget').addEventListener('click', (e) => { e.currentTarget.blur(); if (store) store.removeItem(KEPT); start(); });
 el('leave').addEventListener('click', (e) => { e.currentTarget.blur(); feed('choose 0 0'); });
 for (const b of document.querySelectorAll('.pick button')) b.addEventListener('click', () => { b.blur(); program = b.dataset.program; start(); });
 

@@ -205,3 +205,22 @@ fn the_page_goes_round_the_castle_as_the_command_line_does() {
         "Evolving Game: The castle"
     );
 }
+
+#[test]
+fn a_program_keeps_a_text_and_reads_it_back() {
+    let _turn = TURN
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let session = std::sync::Arc::new(evolving_web::store::Session::default());
+    xetal_play::install(session.clone());
+    let run = xetal_play::run(
+        "_ := \"resource.gold 5\" []N_PUT \"castle.save\"\n[]N_GET \"castle.save\"\n",
+        1,
+    );
+    assert_eq!((run.out.trim(), run.err.trim()), ("resource.gold 5", ""));
+    assert_eq!(session.kept("castle.save"), "resource.gold 5");
+    // A game started with a kept text has it to read.
+    let game = Game::resume("play.xtl", 1, "castle.save", "resource.xp 9");
+    assert_eq!(game.session().kept("castle.save"), "resource.xp 9");
+    assert_eq!(game.session().kept("nothing"), "");
+}

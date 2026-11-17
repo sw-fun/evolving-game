@@ -4,7 +4,7 @@ mod sources;
 
 use std::cell::RefCell;
 
-use evolving_web::{Game, PROGRAM, PROGRAMS};
+use evolving_web::{Game, PROGRAM, PROGRAMS, SAVE};
 use wasm_bindgen::prelude::*;
 
 thread_local! {
@@ -16,12 +16,21 @@ fn with<T: Default>(f: impl FnOnce(&mut Game) -> T) -> T {
 }
 
 /// Start a program from its beginning: one of the page's programs by
-/// name, or the first when it is not one of them.
+/// name, or the first when it is not one of them. `kept` is what the
+/// program kept on an earlier visit (the page stored it; empty for
+/// none), given back for it to read.
 #[wasm_bindgen]
-pub fn start(program: &str) {
+pub fn start(program: &str, kept: &str) {
     let known = PROGRAMS.iter().any(|(p, _, _)| *p == program);
     let program = if known { program } else { PROGRAM };
-    GAME.with(|g| *g.borrow_mut() = Some(Game::start(program, 1)));
+    GAME.with(|g| *g.borrow_mut() = Some(Game::resume(program, 1, SAVE, kept)));
+}
+
+/// What the program has kept (its save), for the page to store.
+#[wasm_bindgen]
+#[must_use]
+pub fn kept() -> String {
+    with(|g| g.session().kept(SAVE))
 }
 
 /// Give the program an event's line; true once the program has ended.
@@ -45,13 +54,6 @@ pub fn picture() -> String {
 #[must_use]
 pub fn printed() -> String {
     with(|g| format!("{}{}", g.session().printed(), g.error()))
-}
-
-/// The page's title, from X_eTaL.
-#[wasm_bindgen]
-#[must_use]
-pub fn title(program: &str) -> String {
-    evolving_web::title(program)
 }
 
 fn main() {}

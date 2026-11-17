@@ -86,7 +86,12 @@ one world state carried through: that is what connects the games. Winning
 brings experience, and deeds (quests and achievements, listed in the
 same file as conditions on the world state) are awarded after every
 game and shown in the hall of deeds (`Ledger`). The
-loop's own command `choose 0 0` leaves any game for the map. Every
+loop's own command `choose 0 0` leaves any game for the map. In a
+browser the world is kept between visits: the program writes it as a
+text after every game and reads it when it starts (`[]N_PUT`,
+`[]N_GET` of `castle.save`); the host holds that text and the page
+stores it in the browser under one name (New game forgets it). At the
+command line nothing is kept. Every
 game's rules library is on the library path, each with a name of its
 own in the repository.
 
