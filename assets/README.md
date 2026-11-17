@@ -19,6 +19,8 @@ The game's 3D pieces, described in X_eTaL and made by Blender.
 | Piece | Clips |
 | ----- | ----- |
 | `walker` | `idle` (2 s), `walk` (1 s) |
+| `archer`, `fire`, `ice` (Castle Defense's towers) | `idle` (2 s), `fire` (0.4 s) |
+| `runner`, `brute`, `shield` (its enemies) | `idle` (2 s), `walk` (1 s), `hit` (0.3 s) |
 | `ground`, `water`, `bridge`, `wall`, `gate` | none |
 
 ```bash

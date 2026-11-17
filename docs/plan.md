@@ -789,6 +789,46 @@ bridge like this, not a plank over a stream. The picture is the user's to publis
 `docs/images/block-bridge-far.jpg`: the art reference (D18) until the
 first one named there is added.
 
+## Levels, three walkers' views, and landmarks (the user, 2026-11-17)
+
+**Castle Defense needs levels**: "some with grass, some with snow,
+some with violent thunderstorms". A level is a scenario (data): its
+waves, its start, its hour and its weather; the map may be the same
+battlefield or another. So: a list of levels in the game's data, the
+played program going from one won to the next and carrying the gold
+kept (the world state: the first real link between two plays), and
+the weather each needs: grass (done), snow (done but for the flakes),
+then rain and a storm with lightning (not done: a darker sky, rain as
+particles, a flash and a clap timed from the seed).
+
+**The bridge art** is not in the game yet (the user asked where it is
+used): it is the reference picture in `docs/images/`. Its first use
+is the scene between two levels or two games (what was won, where you
+go next); see Weather, and the bridge between games.
+
+**Three games of X_eTaL-games are to be reused**, not two: the Dungeon
+(top-down), the Maze (stepped, a drawn view from inside) and the
+Raycaster (smooth, walls cast as columns). "The two mazes look
+different (and should remain distinct)": each keeps its own way of
+seeing, and each is a mode in the series of connected games.
+
+**Landmarks in both mazes**, so that a place can be known again:
+torches of different kinds and states on some walls (bright, dim,
+extinguished, missing: an empty bracket), and others that stay where
+they are in each room or section: paintings, cobwebs. They belong to
+the maze's data (which wall of which cell has what, made from the
+seed with the maze, and kept), are drawn by each maze's own view, are
+on the mini map only once seen, and can matter to play later (a torch
+lit or put out is a state; a dark section is harder; a painting can
+be a clue). In X_eTaL-games' libraries a wall is a wall: landmarks are
+an ask of that repository (a wall's decoration as data its views
+draw), and the castle's modes supply the decorations.
+
+Order, proposed: Castle Defense's levels next (they need only what
+exists, plus rain and lightning); then the series: the gate, the
+first maze with its landmarks, the stair down to the dungeon, the
+second maze beyond it; the bridge scene between each.
+
 ## Idler (asked for by the user, 2026-11-15; not in the research)
 
 An idle game: the castle earns while you do something else, or
@@ -851,6 +891,9 @@ Still open:
    reference picture, or a few, decides it (step 1 works from the
    user's words until there is one).
 
+7. Levels, the three reused games and landmarks (see their section):
+   the proposed order; whether a level's map changes or only its
+   waves and weather.
 6. Weather and the bridge (see their section): snow first or the
    bridge between games first; whether the bridge picture may be
    published in the repository; whether the castle moves across a

@@ -1,6 +1,6 @@
 number = 4
 slug = "defense-pieces"
-status = "pending"
+status = "in-progress"
 description = "defend-the-bridge step 3: the pieces. assets: the three towers and the three ..."
 role = "production"
 context_files = []

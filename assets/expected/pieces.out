@@ -1,10 +1,16 @@
-walker ground water bridge wall gate
+walker ground water bridge wall gate archer fire ice runner brute shield
 walker: 2
 ground: 0
 water: 0
 bridge: 0
 wall: 0
 gate: 0
+archer: 2
+fire: 2
+ice: 2
+runner: 3
+brute: 3
+shield: 3
 
 # Skins: surfaces that look like what they are. A texture is a picture
 # baked from Blender's own nodes (courses of stone, boards, a grain)
@@ -315,8 +321,356 @@ skin("gate sill", "darkstone")
 export_piece(bpy.data.objects["gate"], os.path.join(out, "gate.glb"))
 with open(os.path.join(out, "gate-clips.txt"), "w") as f:
     f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "gate.glb"))))
+pc = piece("archer")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("archer base")
+o.scale = nums("0.84 0.84 0.14", 3)[0]
+attach(o, pc, material("archer base", nums("0.42 0.44 0.48", 3)[0], 0.0), nums("0.0 0.0 0.07", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("archer shaft")
+o.scale = nums("0.56 0.56 1.3", 3)[0]
+attach(o, pc, material("archer shaft", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("0.0 0.0 0.79", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("archer course")
+o.scale = nums("0.66 0.66 0.08", 3)[0]
+attach(o, pc, material("archer course", nums("0.42 0.44 0.48", 3)[0], 0.0), nums("0.0 0.0 1.44", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("archer base", "darkstone")
+skin("archer shaft", "stone")
+skin("archer course", "darkstone")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("archer deck")
+o.scale = nums("0.8 0.8 0.08", 3)[0]
+attach(o, pc, material("archer deck", nums("0.61 0.48 0.3", 3)[0], 0.0), nums("0.0 0.0 1.5", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("archer deck", "planks")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("archer merlon 1")
+o.scale = nums("0.16 0.16 0.16", 3)[0]
+attach(o, pc, material("archer merlon 1", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.3 0.3 1.62", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("archer merlon 2")
+o.scale = nums("0.16 0.16 0.16", 3)[0]
+attach(o, pc, material("archer merlon 2", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("-0.3 0.3 1.62", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("archer merlon 3")
+o.scale = nums("0.16 0.16 0.16", 3)[0]
+attach(o, pc, material("archer merlon 3", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.3 -0.3 1.62", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("archer merlon 4")
+o.scale = nums("0.16 0.16 0.16", 3)[0]
+attach(o, pc, material("archer merlon 4", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("-0.3 -0.3 1.62", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = group("archer aim", pc, nums("0.0 0.0 1.6", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("archer stock")
+o.scale = nums("0.08 0.5 0.08", 3)[0]
+attach(o, pc, material("archer stock", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.0 -0.04 0.08", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("archer limbs")
+o.scale = nums("0.56 0.05 0.05", 3)[0]
+attach(o, pc, material("archer limbs", nums("0.61 0.48 0.3", 3)[0], 0.0), nums("0.0 -0.26 0.09", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("archer bolt")
+o.scale = nums("0.016 0.016 0.42", 3)[0]
+attach(o, pc, material("archer bolt", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 -0.12 0.14", 3)[0], nums("90.0 0.0 0.0", 3)[0])
+pc = top
+pc = group("archer banner", pc, nums("0.3 0.3 1.7", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("archer pole")
+o.scale = nums("0.014 0.014 0.6", 3)[0]
+attach(o, pc, material("archer pole", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 0.0 0.3", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("archer flag")
+o.scale = nums("0.28 0.02 0.18", 3)[0]
+attach(o, pc, material("archer flag", nums("0.2 0.5 0.24", 3)[0], 0.0), nums("0.15 0.0 0.48", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("archer aim", "idle", "rotation_euler", nums("0.0 0.5 1.0 1.5 2.0", 5)[0], nums("""0.0 0.0 0.0 0.0 0.0 14.0 0.0 0.0 0.0 0.0 0.0 -14.0 0.0 0.0 0.0""", 3))
+keys("archer aim", "fire", "location", nums("0.0 0.08 0.4", 3)[0], nums("""0.0 0.0 1.6 0.0 0.1 1.6 0.0 0.0 1.6""", 3))
+keys("archer banner", "idle", "rotation_euler", nums("0.0 0.5 1.0 1.5 2.0", 5)[0], nums("""0.0 0.0 0.0 0.0 0.0 24.0 0.0 0.0 0.0 0.0 0.0 -24.0 0.0 0.0 0.0""", 3))
+export_piece(bpy.data.objects["archer"], os.path.join(out, "archer.glb"))
+with open(os.path.join(out, "archer-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "archer.glb"))))
+pc = piece("fire")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("fire base")
+o.scale = nums("0.84 0.84 0.14", 3)[0]
+attach(o, pc, material("fire base", nums("0.42 0.44 0.48", 3)[0], 0.0), nums("0.0 0.0 0.07", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("fire shaft")
+o.scale = nums("0.6 0.6 1.2", 3)[0]
+attach(o, pc, material("fire shaft", nums("0.6 0.63 0.67", 3)[0], 0.0), nums("0.0 0.0 0.74", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("fire course")
+o.scale = nums("0.7 0.7 0.08", 3)[0]
+attach(o, pc, material("fire course", nums("0.42 0.44 0.48", 3)[0], 0.0), nums("0.0 0.0 1.3399999999999999", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+skin("fire base", "darkstone")
+skin("fire shaft", "stone")
+skin("fire course", "darkstone")
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("fire band")
+o.scale = nums("0.66 0.66 0.14", 3)[0]
+attach(o, pc, material("fire band", nums("0.78 0.14 0.1", 3)[0], 0.0), nums("0.0 0.0 0.9", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_torus_add(major_segments=16, minor_segments=8, major_radius=0.3, minor_radius=0.05)
+o = made("fire rim")
+attach(o, pc, material("fire rim", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 0.0 1.4400000000000002", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.2, radius2=0.3, depth=0.16)
+o = made("fire bowl")
+attach(o, pc, material("fire bowl", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 0.0 1.36", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("fire merlon 1")
+o.scale = nums("0.16 0.16 0.16", 3)[0]
+attach(o, pc, material("fire merlon 1", nums("0.78 0.14 0.1", 3)[0], 0.0), nums("0.32 0.32 1.4400000000000002", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("fire merlon 2")
+o.scale = nums("0.16 0.16 0.16", 3)[0]
+attach(o, pc, material("fire merlon 2", nums("0.78 0.14 0.1", 3)[0], 0.0), nums("-0.32 0.32 1.4400000000000002", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("fire merlon 3")
+o.scale = nums("0.16 0.16 0.16", 3)[0]
+attach(o, pc, material("fire merlon 3", nums("0.78 0.14 0.1", 3)[0], 0.0), nums("0.32 -0.32 1.4400000000000002", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("fire merlon 4")
+o.scale = nums("0.16 0.16 0.16", 3)[0]
+attach(o, pc, material("fire merlon 4", nums("0.78 0.14 0.1", 3)[0], 0.0), nums("-0.32 -0.32 1.4400000000000002", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = group("fire flame", pc, nums("0.0 0.0 1.5", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+o = mesh_object("fire flame a", nums("""0.16 0.0 0.0 -0.16 0.0 0.0 0.0 0.16 0.0 0.0 -0.16 0.0 0.0 0.0 0.3 0.0 0.0 -0.3""", 3), [tuple(int(i) for i in f) for f in nums("""0 2 4 2 1 4 1 3 4 3 0 4 2 0 5 1 2 5 3 1 5 0 3 5""", 3)])
+attach(o, pc, material("fire flame a", nums("1.0 0.55 0.1", 3)[0], 3.0), nums("0.0 0.0 0.14", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+o = mesh_object("fire flame b", nums("""0.09 0.0 0.0 -0.09 0.0 0.0 0.0 0.09 0.0 0.0 -0.09 0.0 0.0 0.0 0.18 0.0 0.0 -0.18""", 3), [tuple(int(i) for i in f) for f in nums("""0 2 4 2 1 4 1 3 4 3 0 4 2 0 5 1 2 5 3 1 5 0 3 5""", 3)])
+attach(o, pc, material("fire flame b", nums("1.0 0.85 0.3", 3)[0], 4.0), nums("0.08 0.05 0.08", 3)[0], nums("0.0 0.0 30.0", 3)[0])
+o = mesh_object("fire flame c", nums("""0.08 0.0 0.0 -0.08 0.0 0.0 0.0 0.08 0.0 0.0 -0.08 0.0 0.0 0.0 0.16 0.0 0.0 -0.16""", 3), [tuple(int(i) for i in f) for f in nums("""0 2 4 2 1 4 1 3 4 3 0 4 2 0 5 1 2 5 3 1 5 0 3 5""", 3)])
+attach(o, pc, material("fire flame c", nums("1.0 0.85 0.3", 3)[0], 4.0), nums("-0.08 -0.04 0.07", 3)[0], nums("0.0 0.0 60.0", 3)[0])
+pc = top
+keys("fire flame", "idle", "scale", nums("0.0 0.5 1.0 1.5 2.0", 5)[0], nums("""1.0 1.0 1.0 1.12 1.12 1.3 1.0 1.0 1.0 0.88 0.88 0.7 1.0 1.0 1.0""", 3))
+keys("fire flame", "idle", "rotation_euler", nums("0.0 0.5 1.0 1.5 2.0", 5)[0], nums("""0.0 0.0 0.0 0.0 0.0 40.0 0.0 0.0 0.0 0.0 0.0 -40.0 0.0 0.0 0.0""", 3))
+keys("fire flame", "fire", "scale", nums("0.0 0.08 0.4", 3)[0], nums("""1.0 1.0 1.0 1.9 1.9 2.6 1.0 1.0 1.0""", 3))
+export_piece(bpy.data.objects["fire"], os.path.join(out, "fire.glb"))
+with open(os.path.join(out, "fire-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "fire.glb"))))
+pc = piece("ice")
+top = pc
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("ice base")
+o.scale = nums("0.84 0.84 0.14", 3)[0]
+attach(o, pc, material("ice base", nums("0.16 0.34 0.7", 3)[0], 0.0), nums("0.0 0.0 0.07", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("ice shaft")
+o.scale = nums("0.3 0.3 1.16", 3)[0]
+attach(o, pc, material("ice shaft", nums("0.86 0.93 1.0", 3)[0], 0.0), nums("0.0 0.0 0.72", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_torus_add(major_segments=16, minor_segments=8, major_radius=0.34, minor_radius=0.05)
+o = made("ice ring")
+attach(o, pc, material("ice ring", nums("0.16 0.34 0.7", 3)[0], 0.0), nums("0.0 0.0 1.3", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_torus_add(major_segments=16, minor_segments=8, major_radius=0.33, minor_radius=0.04)
+o = made("ice band")
+attach(o, pc, material("ice band", nums("0.16 0.34 0.7", 3)[0], 0.0), nums("0.0 0.0 0.5", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = group("ice crystal", pc, nums("0.0 0.0 1.72", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+o = mesh_object("ice heart", nums("""0.2 0.0 0.0 -0.2 0.0 0.0 0.0 0.2 0.0 0.0 -0.2 0.0 0.0 0.0 0.38 0.0 0.0 -0.38""", 3), [tuple(int(i) for i in f) for f in nums("""0 2 4 2 1 4 1 3 4 3 0 4 2 0 5 1 2 5 3 1 5 0 3 5""", 3)])
+attach(o, pc, material("ice heart", nums("0.62 0.86 1.0", 3)[0], 1.6), nums("0.0 0.0 0.0", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+o = mesh_object("ice shard 1", nums("""0.07 0.0 0.0 -0.07 0.0 0.0 0.0 0.07 0.0 0.0 -0.07 0.0 0.0 0.0 0.2 0.0 0.0 -0.2""", 3), [tuple(int(i) for i in f) for f in nums("""0 2 4 2 1 4 1 3 4 3 0 4 2 0 5 1 2 5 3 1 5 0 3 5""", 3)])
+attach(o, pc, material("ice shard 1", nums("0.62 0.86 1.0", 3)[0], 1.0), nums("0.26 0.0 1.44", 3)[0], nums("0.0 20.0 0.0", 3)[0])
+o = mesh_object("ice shard 2", nums("""0.07 0.0 0.0 -0.07 0.0 0.0 0.0 0.07 0.0 0.0 -0.07 0.0 0.0 0.0 0.2 0.0 0.0 -0.2""", 3), [tuple(int(i) for i in f) for f in nums("""0 2 4 2 1 4 1 3 4 3 0 4 2 0 5 1 2 5 3 1 5 0 3 5""", 3)])
+attach(o, pc, material("ice shard 2", nums("0.62 0.86 1.0", 3)[0], 1.0), nums("-0.26 0.0 1.44", 3)[0], nums("0.0 -20.0 0.0", 3)[0])
+o = mesh_object("ice shard 3", nums("""0.07 0.0 0.0 -0.07 0.0 0.0 0.0 0.07 0.0 0.0 -0.07 0.0 0.0 0.0 0.2 0.0 0.0 -0.2""", 3), [tuple(int(i) for i in f) for f in nums("""0 2 4 2 1 4 1 3 4 3 0 4 2 0 5 1 2 5 3 1 5 0 3 5""", 3)])
+attach(o, pc, material("ice shard 3", nums("0.62 0.86 1.0", 3)[0], 1.0), nums("0.0 0.26 1.44", 3)[0], nums("-20.0 0.0 0.0", 3)[0])
+o = mesh_object("ice shard 4", nums("""0.07 0.0 0.0 -0.07 0.0 0.0 0.0 0.07 0.0 0.0 -0.07 0.0 0.0 0.0 0.2 0.0 0.0 -0.2""", 3), [tuple(int(i) for i in f) for f in nums("""0 2 4 2 1 4 1 3 4 3 0 4 2 0 5 1 2 5 3 1 5 0 3 5""", 3)])
+attach(o, pc, material("ice shard 4", nums("0.62 0.86 1.0", 3)[0], 1.0), nums("0.0 -0.26 1.44", 3)[0], nums("20.0 0.0 0.0", 3)[0])
+keys("ice crystal", "idle", "rotation_euler", nums("0.0 1.0 2.0", 3)[0], nums("""0.0 0.0 0.0 0.0 0.0 180.0 0.0 0.0 360.0""", 3))
+keys("ice crystal", "idle", "location", nums("0.0 0.5 1.0 1.5 2.0", 5)[0], nums("""0.0 0.0 1.72 0.0 0.0 1.77 0.0 0.0 1.72 0.0 0.0 1.67 0.0 0.0 1.72""", 3))
+keys("ice crystal", "fire", "scale", nums("0.0 0.08 0.4", 3)[0], nums("""1.0 1.0 1.0 1.5 1.5 1.5 1.0 1.0 1.0""", 3))
+export_piece(bpy.data.objects["ice"], os.path.join(out, "ice.glb"))
+with open(os.path.join(out, "ice-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "ice.glb"))))
+pc = piece("runner")
+top = pc
+pc = group("runner body", pc, nums("0.0 0.0 0.39", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("runner coat")
+o.scale = nums("0.27999999999999997 0.182 0.36", 3)[0]
+attach(o, pc, material("runner coat", nums("0.5 0.33 0.18", 3)[0], 0.0), nums("0.0 0.0 0.165", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("runner belt")
+o.scale = nums("0.294 0.196 0.045", 3)[0]
+attach(o, pc, material("runner belt", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 0.0 0.03", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=1.0)
+o = made("runner head")
+o.scale = nums("0.11249999999999999 0.11249999999999999 0.12", 3)[0]
+attach(o, pc, material("runner head", nums("0.95 0.79 0.65", 3)[0], 0.0), nums("0.0 0.0 0.46499999999999997", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=1.0)
+o = made("runner nose")
+o.scale = nums("0.03 0.03 0.03", 3)[0]
+attach(o, pc, material("runner nose", nums("0.95 0.79 0.65", 3)[0], 0.0), nums("0.0 -0.11249999999999999 0.4575", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+pc = group("runner leg left", pc, nums("-0.077 0.0 0.39", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("runner leg left part")
+o.scale = nums("0.105 0.119 0.39", 3)[0]
+attach(o, pc, material("runner leg left part", nums("0.3 0.24 0.2", 3)[0], 0.0), nums("0.0 0.0 -0.195", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("runner leg left", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 28.0 0.0 0.0 0.0 0.0 0.0 -28.0 0.0 0.0 0.0 0.0 0.0""", 3))
+pc = group("runner leg right", pc, nums("0.077 0.0 0.39", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("runner leg right part")
+o.scale = nums("0.105 0.119 0.39", 3)[0]
+attach(o, pc, material("runner leg right part", nums("0.3 0.24 0.2", 3)[0], 0.0), nums("0.0 0.0 -0.195", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("runner leg right", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 -28.0 0.0 0.0 0.0 0.0 0.0 28.0 0.0 0.0 0.0 0.0 0.0""", 3))
+pc = group("runner arm left", pc, nums("-0.189 0.0 0.6900000000000001", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("runner arm left part")
+o.scale = nums("0.077 0.091 0.30000000000000004", 3)[0]
+attach(o, pc, material("runner arm left part", nums("0.5 0.33 0.18", 3)[0], 0.0), nums("0.0 0.0 -0.15000000000000002", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("runner arm left", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 -22.0 0.0 0.0 0.0 0.0 0.0 22.0 0.0 0.0 0.0 0.0 0.0""", 3))
+pc = group("runner arm right", pc, nums("0.189 0.0 0.6900000000000001", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("runner arm right part")
+o.scale = nums("0.077 0.091 0.30000000000000004", 3)[0]
+attach(o, pc, material("runner arm right part", nums("0.5 0.33 0.18", 3)[0], 0.0), nums("0.0 0.0 -0.15000000000000002", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("runner arm right", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 22.0 0.0 0.0 0.0 0.0 0.0 -22.0 0.0 0.0 0.0 0.0 0.0""", 3))
+keys("runner body", "idle", "scale", nums("0.0 1.0 2.0", 3)[0], nums("""1.0 1.0 1.0 1.0 1.0 1.04 1.0 1.0 1.0""", 3))
+keys("runner body", "walk", "location", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.39 0.0 0.0 0.41250000000000003 0.0 0.0 0.39 0.0 0.0 0.41250000000000003 0.0 0.0 0.39""", 3))
+keys("runner body", "hit", "rotation_euler", nums("0.0 0.1 0.3", 3)[0], nums("""0.0 0.0 0.0 -18.0 0.0 0.0 0.0 0.0 0.0""", 3))
+bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=1.0)
+o = made("runner hood")
+o.scale = nums("0.125 0.125 0.1", 3)[0]
+attach(o, pc, material("runner hood", nums("0.36 0.24 0.12", 3)[0], 0.0), nums("0.0 0.012 0.72", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["runner"], os.path.join(out, "runner.glb"))
+with open(os.path.join(out, "runner-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "runner.glb"))))
+pc = piece("brute")
+top = pc
+pc = group("brute body", pc, nums("0.0 0.0 0.546", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("brute coat")
+o.scale = nums("0.44000000000000006 0.28600000000000003 0.504", 3)[0]
+attach(o, pc, material("brute coat", nums("0.3 0.3 0.34", 3)[0], 0.0), nums("0.0 0.0 0.231", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("brute belt")
+o.scale = nums("0.462 0.30800000000000005 0.063", 3)[0]
+attach(o, pc, material("brute belt", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 0.0 0.042", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=1.0)
+o = made("brute head")
+o.scale = nums("0.1575 0.1575 0.168", 3)[0]
+attach(o, pc, material("brute head", nums("0.95 0.79 0.65", 3)[0], 0.0), nums("0.0 0.0 0.651", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=1.0)
+o = made("brute nose")
+o.scale = nums("0.042 0.042 0.042", 3)[0]
+attach(o, pc, material("brute nose", nums("0.95 0.79 0.65", 3)[0], 0.0), nums("0.0 -0.1575 0.6405", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+pc = group("brute leg left", pc, nums("-0.12100000000000001 0.0 0.546", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("brute leg left part")
+o.scale = nums("0.165 0.18700000000000003 0.546", 3)[0]
+attach(o, pc, material("brute leg left part", nums("0.2 0.18 0.16", 3)[0], 0.0), nums("0.0 0.0 -0.273", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("brute leg left", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 28.0 0.0 0.0 0.0 0.0 0.0 -28.0 0.0 0.0 0.0 0.0 0.0""", 3))
+pc = group("brute leg right", pc, nums("0.12100000000000001 0.0 0.546", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("brute leg right part")
+o.scale = nums("0.165 0.18700000000000003 0.546", 3)[0]
+attach(o, pc, material("brute leg right part", nums("0.2 0.18 0.16", 3)[0], 0.0), nums("0.0 0.0 -0.273", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("brute leg right", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 -28.0 0.0 0.0 0.0 0.0 0.0 28.0 0.0 0.0 0.0 0.0 0.0""", 3))
+pc = group("brute arm left", pc, nums("-0.29700000000000004 0.0 0.9660000000000001", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("brute arm left part")
+o.scale = nums("0.12100000000000001 0.14300000000000002 0.42000000000000004", 3)[0]
+attach(o, pc, material("brute arm left part", nums("0.3 0.3 0.34", 3)[0], 0.0), nums("0.0 0.0 -0.21000000000000002", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("brute arm left", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 -22.0 0.0 0.0 0.0 0.0 0.0 22.0 0.0 0.0 0.0 0.0 0.0""", 3))
+pc = group("brute arm right", pc, nums("0.29700000000000004 0.0 0.9660000000000001", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("brute arm right part")
+o.scale = nums("0.12100000000000001 0.14300000000000002 0.42000000000000004", 3)[0]
+attach(o, pc, material("brute arm right part", nums("0.3 0.3 0.34", 3)[0], 0.0), nums("0.0 0.0 -0.21000000000000002", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("brute arm right", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 22.0 0.0 0.0 0.0 0.0 0.0 -22.0 0.0 0.0 0.0 0.0 0.0""", 3))
+keys("brute body", "idle", "scale", nums("0.0 1.0 2.0", 3)[0], nums("""1.0 1.0 1.0 1.0 1.0 1.04 1.0 1.0 1.0""", 3))
+keys("brute body", "walk", "location", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.546 0.0 0.0 0.5775 0.0 0.0 0.546 0.0 0.0 0.5775 0.0 0.0 0.546""", 3))
+keys("brute body", "hit", "rotation_euler", nums("0.0 0.1 0.3", 3)[0], nums("""0.0 0.0 0.0 -18.0 0.0 0.0 0.0 0.0 0.0""", 3))
+bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=1.0)
+o = made("brute helm")
+o.scale = nums("0.19 0.19 0.14", 3)[0]
+attach(o, pc, material("brute helm", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 0.0 1.22", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("brute plate")
+o.scale = nums("0.36 0.05 0.36", 3)[0]
+attach(o, pc, material("brute plate", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 -0.16 0.82", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cone_add(vertices=12, radius1=0.05, radius2=0.08, depth=0.7)
+o = made("brute club")
+attach(o, pc, material("brute club", nums("0.4 0.3 0.18", 3)[0], 0.0), nums("0.34 0.0 1.0", 3)[0], nums("20.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["brute"], os.path.join(out, "brute.glb"))
+with open(os.path.join(out, "brute-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "brute.glb"))))
+pc = piece("shield")
+top = pc
+pc = group("shield body", pc, nums("0.0 0.0 0.442", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("shield coat")
+o.scale = nums("0.32000000000000006 0.20800000000000002 0.408", 3)[0]
+attach(o, pc, material("shield coat", nums("0.2 0.32 0.6", 3)[0], 0.0), nums("0.0 0.0 0.187", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("shield belt")
+o.scale = nums("0.336 0.22400000000000003 0.051", 3)[0]
+attach(o, pc, material("shield belt", nums("0.25 0.25 0.28", 3)[0], 0.0), nums("0.0 0.0 0.034", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=1.0)
+o = made("shield head")
+o.scale = nums("0.1275 0.1275 0.136", 3)[0]
+attach(o, pc, material("shield head", nums("0.95 0.79 0.65", 3)[0], 0.0), nums("0.0 0.0 0.527", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=1.0)
+o = made("shield nose")
+o.scale = nums("0.034 0.034 0.034", 3)[0]
+attach(o, pc, material("shield nose", nums("0.95 0.79 0.65", 3)[0], 0.0), nums("0.0 -0.1275 0.5185", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+pc = group("shield leg left", pc, nums("-0.08800000000000001 0.0 0.442", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("shield leg left part")
+o.scale = nums("0.12 0.136 0.442", 3)[0]
+attach(o, pc, material("shield leg left part", nums("0.32 0.34 0.4", 3)[0], 0.0), nums("0.0 0.0 -0.221", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("shield leg left", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 28.0 0.0 0.0 0.0 0.0 0.0 -28.0 0.0 0.0 0.0 0.0 0.0""", 3))
+pc = group("shield leg right", pc, nums("0.08800000000000001 0.0 0.442", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("shield leg right part")
+o.scale = nums("0.12 0.136 0.442", 3)[0]
+attach(o, pc, material("shield leg right part", nums("0.32 0.34 0.4", 3)[0], 0.0), nums("0.0 0.0 -0.221", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("shield leg right", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 -28.0 0.0 0.0 0.0 0.0 0.0 28.0 0.0 0.0 0.0 0.0 0.0""", 3))
+pc = group("shield arm left", pc, nums("-0.21600000000000003 0.0 0.782", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("shield arm left part")
+o.scale = nums("0.08800000000000001 0.10400000000000001 0.34", 3)[0]
+attach(o, pc, material("shield arm left part", nums("0.2 0.32 0.6", 3)[0], 0.0), nums("0.0 0.0 -0.17", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("shield arm left", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 -22.0 0.0 0.0 0.0 0.0 0.0 22.0 0.0 0.0 0.0 0.0 0.0""", 3))
+pc = group("shield arm right", pc, nums("0.21600000000000003 0.0 0.782", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("shield arm right part")
+o.scale = nums("0.08800000000000001 0.10400000000000001 0.34", 3)[0]
+attach(o, pc, material("shield arm right part", nums("0.2 0.32 0.6", 3)[0], 0.0), nums("0.0 0.0 -0.17", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+pc = top
+keys("shield arm right", "walk", "rotation_euler", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.0 22.0 0.0 0.0 0.0 0.0 0.0 -22.0 0.0 0.0 0.0 0.0 0.0""", 3))
+keys("shield body", "idle", "scale", nums("0.0 1.0 2.0", 3)[0], nums("""1.0 1.0 1.0 1.0 1.0 1.04 1.0 1.0 1.0""", 3))
+keys("shield body", "walk", "location", nums("0.0 0.25 0.5 0.75 1.0", 5)[0], nums("""0.0 0.0 0.442 0.0 0.0 0.4675 0.0 0.0 0.442 0.0 0.0 0.4675 0.0 0.0 0.442""", 3))
+keys("shield body", "hit", "rotation_euler", nums("0.0 0.1 0.3", 3)[0], nums("""0.0 0.0 0.0 -18.0 0.0 0.0 0.0 0.0 0.0""", 3))
+bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=8, radius=1.0)
+o = made("shield helm")
+o.scale = nums("0.15 0.15 0.11", 3)[0]
+attach(o, pc, material("shield helm", nums("0.72 0.74 0.78", 3)[0], 0.0), nums("0.0 0.0 0.985", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cube_add(size=1.0)
+o = made("shield board")
+o.scale = nums("0.34 0.04 0.56", 3)[0]
+attach(o, pc, material("shield board", nums("0.2 0.32 0.6", 3)[0], 0.0), nums("-0.1 -0.2 0.5", 3)[0], nums("0.0 0.0 0.0", 3)[0])
+bpy.ops.mesh.primitive_cylinder_add(vertices=12, radius=1.0, depth=1.0)
+o = made("shield boss")
+o.scale = nums("0.06 0.06 0.03", 3)[0]
+attach(o, pc, material("shield boss", nums("0.8 0.7 0.3", 3)[0], 0.0), nums("-0.1 -0.23 0.52", 3)[0], nums("90.0 0.0 0.0", 3)[0])
+export_piece(bpy.data.objects["shield"], os.path.join(out, "shield.glb"))
+with open(os.path.join(out, "shield-clips.txt"), "w") as f:
+    f.write("".join(c + "\n" for c in glb_clips(os.path.join(out, "shield.glb"))))
 with open(os.path.join(out, "clips.txt"), "w") as f:
-    for n in "walker ground water bridge wall gate".split():
+    for n in "walker ground water bridge wall gate archer fire ice runner brute shield".split():
         f.write(n + "\n" + open(os.path.join(out, n + "-clips.txt")).read())
 
 cam = bpy.data.cameras.new("still")
@@ -335,8 +689,8 @@ look.up_axis = "UP_Y"
 scene.camera = eye
 scene.render.film_transparent = True
 scene.render.resolution_x = scene.render.resolution_y = 256
-for n in "walker ground water bridge wall gate".split():
-    for m in "walker ground water bridge wall gate".split():
+for n in "walker ground water bridge wall gate archer fire ice runner brute shield".split():
+    for m in "walker ground water bridge wall gate archer fire ice runner brute shield".split():
         o = bpy.data.objects[m]
         for p in [o] + list(o.children_recursive):
             p.hide_render = m != n

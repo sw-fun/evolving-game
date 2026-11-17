@@ -26,6 +26,18 @@ them, whatever their number.
 - Winning tells the world the bridge was held and keeps the gold;
   losing tells it the gate was breached.
 
+## What you see
+
+The towers and the enemies are models described in X_eTaL and made
+through Blender ([`assets/`](../../assets)): the archer tower's wooden
+deck, crossbow and green pennant, the fire tower's red band and
+burning brazier, the ice tower's blue crystal; a hooded runner, a
+brute in iron with a club, a shield bearer. A tower turns to where it
+last shot and plays its fire clip; where a shot lands there is a
+burst for a moment (dust for an arrow, fire, a splash for ice). Every
+enemy of the level has its piece from the start, so a piece is always
+the same enemy; one not on the road waits out of sight.
+
 ## Play it
 
 ```bash

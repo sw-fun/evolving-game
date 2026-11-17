@@ -97,6 +97,106 @@ h:w_alker := { z ->
   body c_at limbs c_at keys
 }
 
+### The towers
+
+## Castle Defense's three towers: each a stone tower about two tiles
+## tall on a base 0.8 wide, told apart at a glance by its top and its
+## color: the archer's wooden deck, crossbow and green pennant; the fire
+## tower's red roof-trim and burning brazier; the ice tower's pale stone
+## and blue crystal. The part that aims or burns hangs in a group; idle
+## sways or turns it, fire kicks or flares it.
+green := 0.2 0.5 0.24
+red := 0.78 0.14 0.1
+flame := 1.0 0.55 0.1
+ember := 1.0 0.85 0.3
+ice := 0.62 0.86 1.0
+frost := 0.86 0.93 1.0
+deep := 0.16 0.34 0.7
+idle := 0.0 0.5 1.0 1.5 2.0
+sway := 0.0 1.0 0.0 -1.0 0.0
+fire := 0.0 0.08 0.4
+kick := 0.0 1.0 0.0
+## A tower's base, shaft and the course under its top, in stone.
+h:s_haft := { (p, tall, wide) z ->
+  ((((p c_at " base", 0.0 0.0 0.07, 0.84 0.84 0.14, flat, darkstone, 0.0) bp:b_ox 0) c_at ((p c_at " shaft", 0.0 0.0 c_at 0.14 + tall / 2.0, wide c_at wide c_at tall, flat, stone, 0.0) bp:b_ox 0)) c_at
+    (((p c_at " course", 0.0 0.0 c_at 0.14 + tall, (wide + 0.1) c_at (wide + 0.1) c_at 0.08, flat, darkstone, 0.0) bp:b_ox 0)) c_at
+    (((p c_at " base", "darkstone") h:s_kin 0) c_at ((p c_at " shaft", "stone") h:s_kin 0) c_at (p c_at " course", "darkstone") h:s_kin 0))
+}
+## Four merlons on a top at height z, half a width w apart.
+h:m_erlons := { (p, w, z, rgb) z0 ->
+  m_k := { (n, x, y) z1 -> (p c_at " merlon " c_at n, x c_at y c_at z, 0.16 0.16 0.16, flat, rgb, 0.0) bp:b_ox 0 }
+  ((("1", w, w) m_k 0) c_at (("2", 0.0 - w, w) m_k 0) c_at (("3", w, 0.0 - w) m_k 0) c_at ("4", 0.0 - w, 0.0 - w) m_k 0)
+}
+h:a_rcher := { z ->
+  top := 1.5
+  ((bp:p_iece "archer") c_at (("archer", 1.3, 0.56) h:s_haft 0) c_at
+    ((("archer deck", (0.0 0.0 c_at top), 0.8 0.8 0.08, flat, plank, 0.0) bp:b_ox 0) c_at (("archer deck", "planks") h:s_kin 0) c_at (("archer", 0.3, top + 0.12, beam) h:m_erlons 0)) c_at
+    ((("archer aim", 0.0 0.0 c_at top + 0.1, flat) bp:g_roup 0) c_at (("archer stock", 0.0 -0.04 0.08, 0.08 0.5 0.08, flat, beam, 0.0) bp:b_ox 0)) c_at
+    ((("archer limbs", 0.0 -0.26 0.09, 0.56 0.05 0.05, flat, plank, 0.0) bp:b_ox 0) c_at (("archer bolt", 0.0 -0.12 0.14, 0.016 0.016 0.42, 90.0 0.0 0.0, iron, 0.0) bp:c_ylinder 0) c_at bp:ungroup) c_at
+    ((("archer banner", 0.3 0.3 c_at top + 0.2, flat) bp:g_roup 0) c_at (("archer pole", 0.0 0.0 0.3, 0.014 0.014 0.6, flat, iron, 0.0) bp:c_ylinder 0)) c_at
+    ((("archer flag", 0.15 0.0 0.48, 0.28 0.02 0.18, flat, green, 0.0) bp:b_ox 0) c_at bp:ungroup) c_at
+    ((("archer aim", "idle", "rotation", flat, 0.0 0.0 14.0, idle, sway) h:k_ey 0) c_at (("archer aim", "fire", "location", 0.0 0.0 c_at top + 0.1, 0.0 0.1 0.0, fire, kick) h:k_ey 0)) c_at
+    ("archer banner", "idle", "rotation", flat, 0.0 0.0 24.0, idle, sway) h:k_ey 0)
+}
+h:f_ireTower := { z ->
+  top := 1.34
+  ((bp:p_iece "fire") c_at (("fire", 1.2, 0.6) h:s_haft 0) c_at
+    ((("fire band", 0.0 0.0 0.9, 0.66 0.66 0.14, flat, red, 0.0) bp:b_ox 0) c_at (("fire rim", 0.0 0.0 c_at top + 0.1, 0.3 0.05, flat, iron, 0.0) bp:t_orus 0)) c_at
+    ((("fire bowl", 0.0 0.0 c_at top + 0.02, 0.2 0.3 0.16, flat, iron, 0.0) bp:c_one 0) c_at (("fire", 0.32, top + 0.1, red) h:m_erlons 0)) c_at
+    ((("fire flame", 0.0 0.0 c_at top + 0.16, flat) bp:g_roup 0) c_at (("fire flame a", 0.0 0.0 0.14, 0.16 0.16 0.3, flat, flame, 3.0) bp:o_ctahedron 0)) c_at
+    ((("fire flame b", 0.08 0.05 0.08, 0.09 0.09 0.18, 0.0 0.0 30.0, ember, 4.0) bp:o_ctahedron 0) c_at (("fire flame c", -0.08 -0.04 0.07, 0.08 0.08 0.16, 0.0 0.0 60.0, ember, 4.0) bp:o_ctahedron 0) c_at bp:ungroup) c_at
+    ((("fire flame", "idle", "scale", one, 0.12 0.12 0.3, idle, sway) h:k_ey 0) c_at (("fire flame", "idle", "rotation", flat, 0.0 0.0 40.0, idle, sway) h:k_ey 0)) c_at
+    ("fire flame", "fire", "scale", one, 0.9 0.9 1.6, fire, kick) h:k_ey 0)
+}
+h:i_ceTower := { z ->
+  top := 1.3
+  ((bp:p_iece "ice") c_at (("ice base", 0.0 0.0 0.07, 0.84 0.84 0.14, flat, deep, 0.0) bp:b_ox 0) c_at
+    ((("ice shaft", 0.0 0.0 0.72, 0.3 0.3 1.16, flat, frost, 0.0) bp:c_ylinder 0) c_at (("ice ring", (0.0 0.0 c_at top), 0.34 0.05, flat, deep, 0.0) bp:t_orus 0)) c_at
+    ((("ice band", 0.0 0.0 0.5, 0.33 0.04, flat, deep, 0.0) bp:t_orus 0)) c_at
+    ((("ice crystal", 0.0 0.0 c_at top + 0.42, flat) bp:g_roup 0) c_at (("ice heart", 0.0 0.0 0.0, 0.2 0.2 0.38, flat, ice, 1.6) bp:o_ctahedron 0) c_at bp:ungroup) c_at
+    ((("ice shard 1", 0.26 0.0 c_at top + 0.14, 0.07 0.07 0.2, 0.0 20.0 0.0, ice, 1.0) bp:o_ctahedron 0) c_at (("ice shard 2", -0.26 0.0 c_at top + 0.14, 0.07 0.07 0.2, 0.0 -20.0 0.0, ice, 1.0) bp:o_ctahedron 0)) c_at
+    ((("ice shard 3", 0.0 0.26 c_at top + 0.14, 0.07 0.07 0.2, -20.0 0.0 0.0, ice, 1.0) bp:o_ctahedron 0) c_at (("ice shard 4", 0.0 -0.26 c_at top + 0.14, 0.07 0.07 0.2, 20.0 0.0 0.0, ice, 1.0) bp:o_ctahedron 0)) c_at
+    ((("ice crystal", "idle", "rotation", flat, 0.0 0.0 180.0, 0.0 1.0 2.0, 0.0 1.0 2.0) h:k_ey 0) c_at (("ice crystal", "idle", "location", 0.0 0.0 c_at top + 0.42, 0.0 0.0 0.05, idle, sway) h:k_ey 0)) c_at
+    ("ice crystal", "fire", "scale", one, 0.5 0.5 0.5, fire, kick) h:k_ey 0)
+}
+
+### The enemies
+
+## Castle Defense's three enemies, soldiers of the besieging army, each
+## a figure of the walker's make at its own size: (name, how tall
+## against the walker, how broad, its coat, its legs). Its limbs swing
+## in walk; idle breathes; hit throws it back.
+h:s_oldier := { (p, tall, broad, coat, legs) z ->
+  hip := 0.26 * tall
+  l_imb := { (name, x, up, size, rgb, deg) z1 ->
+    ((((p c_at " " c_at name, (x * broad) c_at 0.0 c_at up * tall, flat) bp:g_roup 0) c_at ((p c_at " " c_at name c_at " part", 0.0 0.0 c_at -0.5 * tall * 3 s_elect size, (size * broad c_at broad c_at tall), flat, rgb, 0.0) bp:b_ox 0) c_at bp:ungroup) c_at
+      (p c_at " " c_at name, "walk", "rotation", flat, deg c_at 0.0 0.0, walk, swing) h:k_ey 0)
+  }
+  ((bp:p_iece p) c_at ((p c_at " body", 0.0 0.0 c_at hip, flat) bp:g_roup 0) c_at
+    (((p c_at " coat", 0.0 0.0 c_at 0.11 * tall, (0.2 * broad) c_at (0.13 * broad) c_at 0.24 * tall, flat, coat, 0.0) bp:b_ox 0) c_at ((p c_at " belt", 0.0 0.0 c_at 0.02 * tall, (0.21 * broad) c_at (0.14 * broad) c_at 0.03 * tall, flat, iron, 0.0) bp:b_ox 0)) c_at
+    (((p c_at " head", 0.0 0.0 c_at 0.31 * tall, (0.075 * tall) c_at (0.075 * tall) c_at 0.08 * tall, flat, skin, 0.0) bp:s_phere 0) c_at ((p c_at " nose", (0.0 c_at (-0.075 * tall) c_at 0.305 * tall), 0.02 0.02 0.02 * tall, flat, skin, 0.0) bp:s_phere 0) c_at bp:ungroup) c_at
+    ((("leg left", -0.055, 0.26, 0.075 0.085 0.26, legs, 28.0) l_imb 0) c_at (("leg right", 0.055, 0.26, 0.075 0.085 0.26, legs, -28.0) l_imb 0)) c_at
+    ((("arm left", -0.135, 0.46, 0.055 0.065 0.2, coat, -22.0) l_imb 0) c_at (("arm right", 0.135, 0.46, 0.055 0.065 0.2, coat, 22.0) l_imb 0)) c_at
+    (((p c_at " body", "idle", "scale", one, 0.0 0.0 0.04, slow, breathe) h:k_ey 0) c_at ((p c_at " body", "walk", "location", 0.0 0.0 c_at hip, 0.0 0.0 c_at 0.015 * tall, walk, bob) h:k_ey 0)) c_at
+    (p c_at " body", "hit", "rotation", flat, -18.0 0.0 0.0, 0.0 0.1 0.3, kick) h:k_ey 0)
+}
+## The runner: light, quick, in a brown jerkin and a hood.
+h:r_unner := { z ->
+  ((("runner", 1.5, 1.4, 0.5 0.33 0.18, hose) h:s_oldier 0) c_at ("runner hood", 0.0 0.012 0.72, 0.125 0.125 0.1, flat, 0.36 0.24 0.12, 0.0) bp:s_phere 0)
+}
+## The brute: big and slow, in dark iron, a club on its shoulder.
+h:b_rute := { z ->
+  ((("brute", 2.1, 2.2, 0.3 0.3 0.34, 0.2 0.18 0.16) h:s_oldier 0) c_at
+    ((("brute helm", 0.0 0.0 1.22, 0.19 0.19 0.14, flat, iron, 0.0) bp:s_phere 0) c_at (("brute plate", 0.0 -0.16 0.82, 0.36 0.05 0.36, flat, iron, 0.0) bp:b_ox 0)) c_at
+    ("brute club", 0.34 0.0 1.0, 0.05 0.08 0.7, 20.0 0.0 0.0, beam, 0.0) bp:c_one 0)
+}
+## The shield bearer: steel and a blue tabard behind a tall shield.
+h:s_hieldBearer := { z ->
+  ((("shield", 1.7, 1.6, 0.2 0.32 0.6, 0.32 0.34 0.4) h:s_oldier 0) c_at
+    ((("shield helm", 0.0 0.0 0.985, 0.15 0.15 0.11, flat, 0.72 0.74 0.78, 0.0) bp:s_phere 0) c_at (("shield board", -0.1 -0.2 0.5, 0.34 0.04 0.56, flat, 0.2 0.32 0.6, 0.0) bp:b_ox 0)) c_at
+    ("shield boss", -0.1 -0.23 0.52, 0.06 0.06 0.03, 90.0 0.0 0.0, 0.8 0.7 0.3, 0.0) bp:c_ylinder 0)
+}
+
 ### The tiles
 
 h:g_round := { z -> (bp:p_iece "ground") c_at ("ground slab", 0.0 0.0 0.05, 1.0 1.0 0.1, flat, grass, 0.0) bp:b_ox 0 }
@@ -138,10 +238,10 @@ h:g_ate := { z ->
 
 # :: Char
 ## The pieces' names, a space between: the files are NAME.glb.
-l:names := "walker ground water bridge wall gate"
+l:names := "walker ground water bridge wall gate archer fire ice runner brute shield"
 # :: Box Char
 ## The same, a text each.
-l:list := "walker" "ground" "water" "bridge" "wall" "gate"
+l:list := "walker" "ground" "water" "bridge" "wall" "gate" "archer" "fire" "ice" "runner" "brute" "shield"
 # :: Char -> Char
 ## Python making the piece NAME and keying its clips; "" for another
 ## name.
@@ -152,12 +252,24 @@ l:m_odel := { name ->
   name m_atch "bridge" ? h:b_ridge 0
   name m_atch "wall" ? h:w_all 0
   name m_atch "gate" ? h:g_ate 0
+  name m_atch "archer" ? h:a_rcher 0
+  name m_atch "fire" ? h:f_ireTower 0
+  name m_atch "ice" ? h:i_ceTower 0
+  name m_atch "runner" ? h:r_unner 0
+  name m_atch "brute" ? h:b_rute 0
+  name m_atch "shield" ? h:s_hieldBearer 0
   ""
 }
 # :: Char -> Box Char
-## A piece's clips, by name: "idle 2.0" "walk 1.0" for the walker (a
-## name and its seconds), none for a tile.
-l:c_lips := { name -> name m_atch "walker" ? "idle 2.0" "walk 1.0"; 0 t_ake "idle 2.0" "walk 1.0" }
+## A piece's clips, by name, each a name and its seconds: idle and
+## walk for the walker, idle and fire for a tower, idle, walk and hit
+## for an enemy, none for a tile.
+l:c_lips := { name ->
+  name m_atch "walker" ? "idle 2.0" "walk 1.0"
+  (e_nclose name) m_ember? "archer" "fire" "ice" ? "idle 2.0" "fire 0.4"
+  (e_nclose name) m_ember? "runner" "brute" "shield" ? "idle 2.0" "walk 1.0" "hit 0.3"
+  0 t_ake "idle 2.0" "walk 1.0"
+}
 # :: Char -> Char
 ## Python making the piece NAME, writing it as out/NAME.glb with its
 ## clips, and reading its clips back into out/NAME-clips.txt.
@@ -167,7 +279,7 @@ l:e_xport := { name -> (l:m_odel name) c_at (bp:e_xportPiece name) c_at bp:c_lip
 ## then writing out/clips.txt:
 ## each piece's name and, under it, its clips as read back from its
 ## file.
-l:all := l:skins c_at l:textures c_at (l:e_xport "walker") c_at (l:e_xport "ground") c_at (l:e_xport "water") c_at (l:e_xport "bridge") c_at (l:e_xport "wall") c_at (l:e_xport "gate") c_at "with open(os.path.join(out, \"clips.txt\"), \"w\") as f:\n    for n in \"" c_at l:names c_at "\".split():\n        f.write(n + \"\\n\" + open(os.path.join(out, n + \"-clips.txt\")).read())\n"
+l:all := l:skins c_at l:textures c_at (l:e_xport "walker") c_at (l:e_xport "ground") c_at (l:e_xport "water") c_at (l:e_xport "bridge") c_at (l:e_xport "wall") c_at (l:e_xport "gate") c_at (l:e_xport "archer") c_at (l:e_xport "fire") c_at (l:e_xport "ice") c_at (l:e_xport "runner") c_at (l:e_xport "brute") c_at (l:e_xport "shield") c_at "with open(os.path.join(out, \"clips.txt\"), \"w\") as f:\n    for n in \"" c_at l:names c_at "\".split():\n        f.write(n + \"\\n\" + open(os.path.join(out, n + \"-clips.txt\")).read())\n"
 # :: Int -> Char
 ## Python rendering each piece alone as out/NAME.png, size pixels
 ## square on a transparent ground, from the front a little to the right

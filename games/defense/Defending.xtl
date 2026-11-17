@@ -283,25 +283,40 @@ h:c_aption := { s ->
   how c_at " 1 2 3 choose a tower, a click on open ground builds it, space sends a wave."
 }
 # :: (Any a, Num b, Num c, Any d, Num e) => (a, b, (c, d, e), Float, Float, Float) -> (a, Box Char, Box Char, Float, Char)
-## What to show (lib/View): the battlefield with every tower and every
-## enemy on the road as a piece, an enemy facing the way it walks, and
-## the line under it.
+## What to show (lib/View): the battlefield, every enemy and every
+## tower a piece, and the line under it. Every enemy of the level has
+## its piece from the start, in the level's order, so that a piece is
+## always the same enemy: one not on the road (not yet come, fallen, or
+## through the gate) waits far off the map, out of sight. An enemy on
+## the road faces the way it walks; a tower faces where it last shot
+## and plays its fire clip just after; and where a shot lands there is
+## a burst for a moment: fire for the fire tower, a splash for the ice
+## tower, dust for an arrow.
 l:v_iew := { s ->
   (stage, road, level, towers, foes, n) := s
   (_, _, cast) := level
   hp := f_irst_2 foes
   prog := 2 s_elect_2 foes
-  on := w_here h:o_ut (road, hp, prog)
-  at := road h:o_nRoad on s_elect prog
-  step := 0.05 * (on s_elect f_loor f_irst_2 cast) s_elect 1.6 0.8 1.1
-  walk := o_\ (8 c_at t_ally on) r_eshape (f_irst_2 at) c_at (2 s_elect_2 at) c_at (3 s_elect_2 at) c_at (4 s_elect_2 at) c_at (4 s_elect n) c_at ((f_irst_2 at) + step * 3 s_elect_2 at) c_at ((2 s_elect_2 at) + step * 4 s_elect_2 at) c_at (t_ally on) r_eshape 0.05
+  fn := t_ally hp
+  out := f_loat h:o_ut (road, hp, prog)
+  at := road h:o_nRoad 0.0 m_ax prog
+  kind := f_loor f_irst_2 cast
+  step := 0.05 * out * kind s_elect 1.6 0.8 1.1
+  x := (out * f_irst_2 at) - 300.0 * 1.0 - out
+  y := (out * 2 s_elect_2 at) - 300.0 * 1.0 - out
+  walk := o_\ (8 c_at fn) r_eshape x c_at y c_at (3 s_elect_2 at) c_at (4 s_elect_2 at) c_at (fn r_eshape 4 s_elect n) c_at (x + step * 3 s_elect_2 at) c_at (y + step * 4 s_elect_2 at) c_at fn r_eshape 0.05
   kn := t_ally towers
   tx := (3 s_elect_2 towers) - 0.5
   ty := (2 s_elect_2 towers) - 0.5
-  stand := o_\ (8 c_at kn) r_eshape tx c_at ty c_at ((5 s_elect_2 towers) - tx) c_at ((6 s_elect_2 towers) - ty) c_at (7 s_elect_2 towers) c_at tx c_at ty c_at kn r_eshape 0.05
-  models := ((on s_elect f_loor f_irst_2 cast) s_elect "runner" "brute" "shield") c_at (f_loor f_irst_2 towers) s_elect "archer" "fire" "ice"
-  clips := ((t_ally on) r_eshape e_nclose "walk") c_at (1 + (7 s_elect_2 towers) < 0.4) s_elect "idle" "fire"
-  vw:m_any (stage, models, clips, walk c_at stand, h:c_aption s)
+  age := 7 s_elect_2 towers
+  shot := f_loat age < 8.0
+  stand := o_\ (8 c_at kn) r_eshape tx c_at ty c_at (shot * (5 s_elect_2 towers) - tx) c_at ((1.0 - shot) + shot * (6 s_elect_2 towers) - ty) c_at age c_at tx c_at ty c_at kn r_eshape 0.05
+  lit := w_here age < 0.25
+  burst := o_\ (8 c_at t_ally lit) r_eshape (lit s_elect 5 s_elect_2 towers) c_at (lit s_elect 6 s_elect_2 towers) c_at ((t_ally lit) r_eshape 0.2) c_at ((t_ally lit) r_eshape 0.1) c_at ((t_ally lit) r_eshape 160.0) c_at ((t_ally lit) r_eshape 0.0) c_at ((t_ally lit) r_eshape 0.0) c_at f_loat lit
+  tk := f_loor f_irst_2 towers
+  models := (kind s_elect "runner" "brute" "shield") c_at (tk s_elect "archer" "fire" "ice") c_at (lit s_elect tk) s_elect "*dust" "*fire" "*splash"
+  clips := (fn r_eshape e_nclose "walk") c_at ((1 + age < 0.4) s_elect "idle" "fire") c_at (t_ally lit) r_eshape e_nclose ""
+  vw:m_any (stage, models, clips, walk c_at stand c_at burst, h:c_aption s)
 }
 # :: (Any a, Any c, Any d) => (a, b, c, d, Float, Float) -> (Int, (Box Char, Int), (Box Char, Int))
 ## How it ended: left while playing; lost, and the gate is breached in

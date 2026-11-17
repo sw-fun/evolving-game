@@ -6,3 +6,24 @@ water
 bridge
 wall
 gate
+archer
+clip idle 0.00-2.00 s: archer aim rotation, archer banner rotation
+clip fire 0.00-0.40 s: archer aim translation
+fire
+clip idle 0.00-2.00 s: fire flame rotation, fire flame scale
+clip fire 0.00-0.40 s: fire flame scale
+ice
+clip idle 0.00-2.00 s: ice crystal rotation, ice crystal translation
+clip fire 0.00-0.40 s: ice crystal scale
+runner
+clip walk 0.00-1.00 s: runner arm left rotation, runner arm right rotation, runner body translation, runner leg left rotation, runner leg right rotation
+clip idle 0.00-2.00 s: runner body scale
+clip hit 0.00-0.30 s: runner body rotation
+brute
+clip walk 0.00-1.00 s: brute arm left rotation, brute arm right rotation, brute body translation, brute leg left rotation, brute leg right rotation
+clip idle 0.00-2.00 s: brute body scale
+clip hit 0.00-0.30 s: brute body rotation
+shield
+clip walk 0.00-1.00 s: shield arm left rotation, shield arm right rotation, shield body translation, shield leg left rotation, shield leg right rotation
+clip idle 0.00-2.00 s: shield body scale
+clip hit 0.00-0.30 s: shield body rotation

@@ -276,6 +276,9 @@ l:m_any := { (stage, models, clips, pieces, caption) ->
 }
 # :: (Any a, Any b, Any c, Any e) => ((a, Box b, Box c, d, e), b, c, d) -> (a, Box b, Box c, d, e)
 ## A view with one more piece: (view, model, clip, its eight numbers).
+## A model that begins with a star is a burst of particles at its
+## place ("*fire", "*dust" ...: its heading the wind, t how many a
+## second, its last number a seed), which only the scene shows.
 ## The model "eye" is not a thing to draw but where you look from: its
 ## place and heading, its pitch in degrees where a piece has its
 ## clip's time, and the tick's length last. The scene is then seen
@@ -290,10 +293,11 @@ l:c_aption := { (_, _, _, _, caption) -> caption }
 
 ### The drawing in text
 
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i, Num j) => (((a, Int, b), c, d, e, f, g), h, i, j, Char) -> Char
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (((a, Int, b), c, d, e, f, g), Box Char, h, Float, Char) -> Char
 ## The view as text: the map's letters, a row a line, each piece as @ on
 ## the tile it stands on, and the caption under it.
-l:t_ext := { (stage, _, _, pieces, caption) ->
+l:t_ext := { (stage, models, _, every, caption) ->
+  pieces := ((h:s_olid models) & h:n_ear every) r_eplicate every
   (map, _, _, _, _, _) := stage
   drawing := w:d_raw map
   k := 2 s_elect s_hape drawing
@@ -303,6 +307,15 @@ l:t_ext := { (stage, _, _, pieces, caption) ->
   rows := (s_hape drawing) r_eshape (((n_ot on) * r_ange t_ally flat) + on * 1 + t_ally flat) s_elect flat c_at "@"
   ("\n" st:j_oin '{ i -> e_nclose i s_elect rows } e_ach r_ange f_irst s_hape drawing) c_at "\n" c_at caption
 }
+
+## Which of a view's pieces are things standing on the board: not a
+## burst (a model that begins with a star), which only a scene shows.
+h:s_olid := { models -> '{ m -> n_ot "*" m_atch 1 t_ake d_isclose m } e_ach models }
+
+## Which pieces are on or near the map: one far off it (a mode keeps a
+## piece waiting there, to be the same piece when it comes) is not in
+## the flat picture or the text.
+h:n_ear := { pieces -> ((f_irst_2 pieces) > -100.0) & (2 s_elect_2 pieces) > -100.0 }
 
 ### The picture
 
@@ -320,7 +333,10 @@ h:p_ieceSvg := { (px, py) model ->
 }
 ## The pieces' SVG, and the depth each is drawn at: just after the tile
 ## it stands on.
-h:p_iecesSvg := { (stage, models, pieces) ->
+h:p_iecesSvg := { (stage, all, every) ->
+  solid := (h:s_olid all) & h:n_ear every
+  models := solid r_eplicate all
+  pieces := solid r_eplicate every
   (map, frame, _, _, _, _) := stage
   xy := (1 2) s_elect_2 pieces
   p := frame h:t_o xy c_at_2 ((t_ally pieces) c_at 1) r_eshape map h:u_nder xy
@@ -338,7 +354,7 @@ l:p_icture := { view ->
   (stage, models, _, pieces, caption) := view
   (_, frame, tiles, depths, _, _) := stage
   all := tiles c_at h:p_iecesSvg (stage, models, pieces)
-  order := g_rade depths c_at h:d_epths pieces
+  order := g_rade depths c_at h:d_epths ((h:s_olid models) & h:n_ear pieces) r_eplicate pieces
   w := f_ormat h:w_hole 3 s_elect frame
   h := f_ormat h:w_hole 4 s_elect frame
   head := "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 " c_at w c_at " " c_at h c_at "\" width=\"" c_at w c_at "\" height=\"" c_at h c_at "\" font-family=\"sans-serif\">"
@@ -351,24 +367,35 @@ l:p_icture := { view ->
 
 h:n_ums := { (v, k) -> "nums('" c_at (f_ormat h:f_ine v) c_at "', " c_at (f_ormat k) c_at ")" }
 ## Where pieces stand in the scene, in the world's units: on their
-## tile's step, or on a smooth stage's surface.
+## tile's step, or on a smooth stage's surface. All of a view's pieces
+## are asked at once: the surface is worked out once a scene, not once
+## a piece.
 h:s_tands := { (map, smooth) xy -> smooth = 1 ? map tr:s_tand xy; 0.5 * map h:u_nder xy }
 ## The eye's call, in place of a piece's: eye(nums('x z y', 3)[0],
 ## nums('hx hz pitch', 3)[0], lens, dt): where it is (its own height
 ## above what it stands on), the way it looks, and the seconds it takes
 ## to come there. Of an eye's eight numbers t is its pitch in degrees.
-h:e_yeCall := { (map, smooth) n ->
-  y := h:tall + f_irst (map, smooth) h:s_tands 1 2 r_eshape 2 t_ake n
-  "eye(" c_at (h:n_ums ((2 t_ake n) c_at y, 3)) c_at "[0], " c_at (h:n_ums ((2 t_ake 2 d_rop n) c_at 5 s_elect n, 3)) c_at "[0], 60, " c_at (f_ormat h:f_ine 8 s_elect n) c_at ")\n"
+h:e_yeCall := { (y, n) ->
+  "eye(" c_at (h:n_ums ((2 t_ake n) c_at h:tall + y, 3)) c_at "[0], " c_at (h:n_ums ((2 t_ake 2 d_rop n) c_at 5 s_elect n, 3)) c_at "[0], 60, " c_at (f_ormat h:f_ine 8 s_elect n) c_at ")\n"
+}
+## A burst's call, in place of a piece's, for a model that begins with
+## a star ("*fire", "*smoke", "*dust", "*splash", "*embers"):
+## particles('kind', nums('x z y', 3)[0], rate, nums('wx wz', 2)[0],
+## seed), coming from half a tile above the ground at its place. Of its
+## eight numbers the heading is the wind, t is how many a second, and
+## the last is its seed (a whole number that tells one emitter of a
+## kind from another).
+h:b_urstCall := { (kind, y, n) ->
+  "particles('" c_at kind c_at "', " c_at (h:n_ums ((2 t_ake n) c_at 0.5 + y, 3)) c_at "[0], " c_at (f_ormat h:w_hole 5 s_elect n) c_at ", " c_at (h:n_ums (2 t_ake 2 d_rop n, 2)) c_at "[0], " c_at (f_ormat h:w_hole 8 s_elect n) c_at ")\n"
 }
 ## How high an eye is above the ground it stands on, in tiles.
 h:tall := 0.5
 ## One piece's call: piece('model', nums('x z y hx hz', 5)[0], 'clip',
-## t, nums('x2 z2 y2', 3)[0], dt).
-h:p_ieceCall := { (map, smooth) (model, clip, n) ->
-  model m_atch "eye" ? (map, smooth) h:e_yeCall n
-  y := f_irst (map, smooth) h:s_tands 1 2 r_eshape 2 t_ake n
-  y2 := f_irst (map, smooth) h:s_tands 1 2 r_eshape 2 t_ake 5 d_rop n
+## t, nums('x2 z2 y2', 3)[0], dt), from its model, its clip, the height
+## it stands at now and where it will be, and its eight numbers.
+h:p_ieceCall := { (model, clip, y, y2, n) ->
+  model m_atch "eye" ? h:e_yeCall (y, n)
+  "*" m_atch 1 t_ake model ? h:b_urstCall (1 d_rop model, y, n)
   from := (2 t_ake n) c_at y c_at 2 t_ake 2 d_rop n
   to := (2 t_ake 5 d_rop n) c_at y2
   "piece('" c_at model c_at "', " c_at (h:n_ums (from, 5)) c_at "[0], '" c_at clip c_at "', " c_at (f_ormat h:f_ine 5 s_elect n) c_at ", " c_at (h:n_ums (to, 3)) c_at "[0], " c_at (f_ormat h:f_ine 8 s_elect n) c_at ")\n"
@@ -384,6 +411,8 @@ h:p_ieceCall := { (map, smooth) (model, clip, n) ->
 ##   tiles('kind', 'color', nums(.., 3))    every tile of a kind: x z y
 ##   piece('model', from, 'clip', t, to, dt)  a piece: x z y hx hz now,
 ##     its clip and the time into it, and x z y in dt seconds
+##   particles('kind', place, rate, wind, seed)  for a piece whose
+##     model begins with a star: a burst there
 ##   eye(place, look, lens, dt)             for the piece "eye": the
 ##     scene seen from there, with perspective (after camera: it wins)
 ## x is east, z south, y up, in tiles.
@@ -396,6 +425,8 @@ l:s_cene := { (stage, models, clips, pieces, _) ->
   target := (0.5 * a + b) c_at 0.0 c_at 0.5 * b - a
   size := "view(" c_at (f_ormat h:w_hole w) c_at ", " c_at (f_ormat h:w_hole h) c_at ", '#1d1f2b')\n"
   camera := "camera(" c_at (h:n_ums (target, 3)) c_at "[0], " c_at (h:n_ums (0.6124 0.5 0.6124, 3)) c_at "[0], " c_at (f_ormat h:f_ine h:tw * 2.0 ^ 0.5) c_at ")\n"
-  calls := '{ i -> e_nclose (map, smooth) h:p_ieceCall (d_isclose f_irst (i - 1) d_rop models, d_isclose f_irst (i - 1) d_rop clips, i s_elect pieces) } e_ach r_ange t_ally pieces
+  now := (map, smooth) h:s_tands (1 2) s_elect_2 pieces
+  soon := (map, smooth) h:s_tands (6 7) s_elect_2 pieces
+  calls := '{ i -> e_nclose h:p_ieceCall (d_isclose f_irst (i - 1) d_rop models, d_isclose f_irst (i - 1) d_rop clips, i s_elect now, i s_elect soon, i s_elect pieces) } e_ach r_ange t_ally pieces
   size c_at camera c_at ground c_at t:j_oin calls
 }

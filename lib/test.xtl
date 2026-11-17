@@ -438,3 +438,13 @@ _ := t:l_ines '{ l -> e_nclose 60 t_ake (d_isclose l) c_at 60 r_eshape " " } e_a
 u:h_as := { (file, word) -> 0 < t_ally word st:f_ind vw:s_cene vw:e_mpty (md:s_tage file, "") }
 '{ w -> u:h_as ("../games/defense/defend.toml", d_isclose w) } e_ach "particles('snow'" "'snow', 'dirt'" "sun(" "'grass'"
 '{ w -> u:h_as ("../games/walk/bridge.toml", d_isclose w) } e_ach "particles('snow'" "'snow', 'dirt'" "sun(" "'grass'"
+
+# Bursts and far-off pieces in a view: a model that begins with a star
+# is particles in the scene (its heading the wind, t how many a second,
+# its last number a seed) and nothing in the text or the picture; a
+# piece kept far off the map is in the scene (to be the same piece when
+# it comes) and not in the text or the picture.
+mixed := vw:m_any (ground, "walker" "*fire" "walker", "walk" "" "walk", 3 8 r_eshape 1.5 1.5 1.0 0.0 0.0 1.5 1.5 0.05  2.5 1.5 0.2 0.1 160.0 0.0 0.0 3.0  -300.0 -300.0 1.0 0.0 0.0 -300.0 -300.0 0.05, "Mixed")
+vw:t_ext mixed
+_ := t:l_ines -3 t_ake st:l_ines vw:s_cene mixed
+t_ally "<ellipse" st:f_ind vw:p_icture mixed

@@ -11,6 +11,6 @@ l:o_ne : (Any a, Any b, Any c, Any e) => (a, b, c, d, e) -> (a, Box b, Box c, d,
 l:m_any : (Any a, Any e) => (a, b, c, d, e) -> (a, b, c, d, e)
 l:w_ith : (Any a, Any b, Any c, Any e) => ((a, Box b, Box c, d, e), b, c, d) -> (a, Box b, Box c, d, e)
 l:c_aption : (Any a, Any b, Any c, Any d, Any e) => (a, b, c, d, e) -> e
-l:t_ext : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i, Num j) => (((a, Int, b), c, d, e, f, g), h, i, j, Char) -> Char
+l:t_ext : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (((a, Int, b), c, d, e, f, g), Box Char, h, Float, Char) -> Char
 l:p_icture : (Any a, Num b, Truthy b, Num c) => (((a, Int, b), Float, Box Char, Float, Char, c), Box Char, Box Char, Float, Char) -> Char
 l:s_cene : (Any a, Num b, Truthy b, Num c) => (((a, Int, b), Float, Box Char, Float, Char, c), Box Char, Box Char, Float, Char) -> Char
