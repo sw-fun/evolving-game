@@ -1,0 +1,1 @@
+Saving: md:t_ext/md:f_rom; the castle program keeps its world via []N_PUT/[]N_GET of castle.save in a browser only (c_fg< web); host Session.kept and Game::resume; page stores it in localStorage, New game forgets, ?fresh for tests. Browser test covers reload and forget.
