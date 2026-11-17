@@ -24,11 +24,24 @@ along the road, so the same events always put it on the same tile.
 The road is not in the scenario: it is found on the zone's map, from
 its entrance to its gate (`lib/World`).
 
+## On foot
+
+A second mode on the same battlefield, [`Roaming.xtl`](Roaming.xtl)
+(the mode `roam`, the scenario [`roam.toml`](roam.toml)): you walk it
+yourself and look through your own eyes. W A S D walk, Shift runs, the
+arrow keys (or Q and E) and the mouse turn you; walls, water and
+cliffs stop you, and standing in the gate wins. Keys are held, so its
+events are a key going down and coming up (`choose 2 87`, `choose 3
+87` for W) and the pointer's movement (`move 40 0`); which key does
+what is the game's to say, not a page's. `roam.xtl` is it scripted and
+`explore.xtl` played.
+
 ## Play it
 
 ```bash
 just run walk          # the scripted game: scripts of events, shown
 just play walk         # play it at the terminal
+just run walk roam.xtl      # the battlefield on foot, scripted
 just run walk picture.xtl   # the scene and the picture at two moments, as text
 just test-game walk    # compare with the expected output
 ```

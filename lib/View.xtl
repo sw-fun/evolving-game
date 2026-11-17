@@ -246,6 +246,16 @@ l:e_mpty := { (stage, caption) -> (stage, 0 t_ake e_nclose "", 0 t_ake e_nclose 
 # :: (Any a, Any b, Any c, Any e) => (a, b, c, d, e) -> (a, Box b, Box c, d, e)
 ## A view of one piece: (stage, model, clip, its eight numbers, caption).
 l:o_ne := { (stage, model, clip, numbers, caption) -> (stage, 1 r_eshape e_nclose model, 1 r_eshape e_nclose clip, 1 8 r_eshape numbers, caption) }
+# :: (Any a, Any b, Any c, Any e) => ((a, Box b, Box c, d, e), b, c, d) -> (a, Box b, Box c, d, e)
+## A view with one more piece: (view, model, clip, its eight numbers).
+## The model "eye" is not a thing to draw but where you look from: its
+## place and heading, its pitch in degrees where a piece has its
+## clip's time, and the tick's length last. The scene is then seen
+## through it, in perspective, in place of the board's own camera; the
+## flat picture and the text mark where you stand.
+l:w_ith := { ((stage, models, clips, pieces, caption), model, clip, numbers) ->
+  (stage, models c_at e_nclose model, clips c_at e_nclose clip, pieces c_at 1 8 r_eshape numbers, caption)
+}
 # :: (Any a, Any b, Any c, Any d, Any e) => (a, b, c, d, e) -> e
 ## The view's caption: the line a mode says under its picture.
 l:c_aption := { (_, _, _, _, caption) -> caption }
@@ -315,9 +325,20 @@ h:n_ums := { (v, k) -> "nums('" c_at (f_ormat h:f_ine v) c_at "', " c_at (f_orma
 ## Where pieces stand in the scene, in the world's units: on their
 ## tile's step, or on a smooth stage's surface.
 h:s_tands := { (map, smooth) xy -> smooth = 1 ? map tr:s_tand xy; 0.5 * map h:u_nder xy }
+## The eye's call, in place of a piece's: eye(nums('x z y', 3)[0],
+## nums('hx hz pitch', 3)[0], lens, dt): where it is (its own height
+## above what it stands on), the way it looks, and the seconds it takes
+## to come there. Of an eye's eight numbers t is its pitch in degrees.
+h:e_yeCall := { (map, smooth) n ->
+  y := h:tall + f_irst (map, smooth) h:s_tands 1 2 r_eshape 2 t_ake n
+  "eye(" c_at (h:n_ums ((2 t_ake n) c_at y, 3)) c_at "[0], " c_at (h:n_ums ((2 t_ake 2 d_rop n) c_at 5 s_elect n, 3)) c_at "[0], 60, " c_at (f_ormat h:f_ine 8 s_elect n) c_at ")\n"
+}
+## How high an eye is above the ground it stands on, in tiles.
+h:tall := 0.5
 ## One piece's call: piece('model', nums('x z y hx hz', 5)[0], 'clip',
 ## t, nums('x2 z2 y2', 3)[0], dt).
 h:p_ieceCall := { (map, smooth) (model, clip, n) ->
+  model m_atch "eye" ? (map, smooth) h:e_yeCall n
   y := f_irst (map, smooth) h:s_tands 1 2 r_eshape 2 t_ake n
   y2 := f_irst (map, smooth) h:s_tands 1 2 r_eshape 2 t_ake 5 d_rop n
   from := (2 t_ake n) c_at y c_at 2 t_ake 2 d_rop n
@@ -335,6 +356,8 @@ h:p_ieceCall := { (map, smooth) (model, clip, n) ->
 ##   tiles('kind', 'color', nums(.., 3))    every tile of a kind: x z y
 ##   piece('model', from, 'clip', t, to, dt)  a piece: x z y hx hz now,
 ##     its clip and the time into it, and x z y in dt seconds
+##   eye(place, look, lens, dt)             for the piece "eye": the
+##     scene seen from there, with perspective (after camera: it wins)
 ## x is east, z south, y up, in tiles.
 l:s_cene := { (stage, models, clips, pieces, _) ->
   (map, frame, _, _, ground, smooth) := stage

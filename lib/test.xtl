@@ -402,3 +402,14 @@ tr:w_orn small
 (s_hape wc) c_at s_hape wt
 4 t_ake wc
 2 t_ake wt
+
+# An eye in a view: where you stand and look. The scene has an eye call
+# after its camera (x z y: half a tile above the ground it stands on;
+# the heading and a pitch of -10 degrees; a lens of 60; the tick), the
+# text marks the place, and the picture draws a figure there.
+looking := vw:w_ith (vw:e_mpty (ground, "You"), "eye", "", 1.5 1.5 0.0 -1.0 -10.0 0.0 0.0 0.05)
+vw:t_ext looking
+vw:s_cene looking
+1 = t_ally "<ellipse" st:f_ind vw:p_icture looking
+# With a walker as well: two pieces, the eye last.
+vw:s_cene vw:w_ith (seen, "eye", "", 0.5 0.5 1.0 0.0 0.0 0.0 0.0 0.05)

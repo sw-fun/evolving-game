@@ -11,6 +11,10 @@ xetal-play = { path = "../work/xetal/components/web/crates/xetal-play" }
 xetal-store = { path = "../work/xetal/components/base/crates/xetal-store" }
 wasm-bindgen = "0.2"
 
+# The tests play whole games through the evaluator: built for speed.
+[profile.dev]
+opt-level = 2
+
 # Its own workspace: it builds for the browser, against the pinned
 # X_eTaL clone (just xetal).
 [workspace]

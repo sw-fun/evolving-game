@@ -1,0 +1,25 @@
+#!/usr/bin/env xetal
+## The battlefield on foot: you walk it yourself, looking through your
+## own eyes, from the entrance to the castle gate. W A S D walk, Shift
+## runs, the arrow keys (or Q and E) and the mouse turn you; walls,
+## water and cliffs stop you. The events come from the host: on a page,
+## the clock's ticks, each key as it goes down and comes up, and the
+## pointer; at the command line, lines on standard input such as "tick
+## 0.05", "choose 2 87" (W down), "choose 3 87" (W up) and "move 40 0".
+## The rules are Roaming.xtl's, played by lib/Mode's loop.
+"rm:" u_se< "Roaming"
+"md:" u_se< "Mode"
+"t:" u_se< "Text"
+
+u:s_ay := { outcome ->
+  (status, _, _) := outcome
+  _ := p_rint! "The walk was " c_at (md:s_tatusName status) c_at "."
+  t_ally t:l_ines md:l_ines md:nothing md:a_fter outcome
+}
+u:p_lay := { file ->
+  wrong := rm:mode md:p_roblem file
+  0 < t_ally wrong ? t_ally t:l_ines e_nclose wrong
+  (_, state) := 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:p_lay rm:n_ew (file, md:nothing, 1)
+  u:s_ay rm:o_utcome state
+}
+_ := u:p_lay "roam.toml"

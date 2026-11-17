@@ -1,7 +1,7 @@
 number = 10
-slug = "cloth"
+slug = "particles"
 status = "pending"
-description = "the-look step 7: cloth. Banners that wave and tent flaps that move: pieces wi..."
+description = "the-look step 6: particles. A particles call (docs/look.md): an emitter's pla..."
 role = "production"
 context_files = []
 created_at = "2026-11-16T09:04:34"

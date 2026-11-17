@@ -12,17 +12,23 @@ pub mod store;
 
 pub use game::Game;
 
-/// The program the page plays: the walk, as the command line plays it.
-pub const PROGRAM: &str = "play.xtl";
+/// The programs the page can play, each with the rules library its help
+/// is in: the walk watched, and the battlefield on foot. The first is
+/// the one a page starts with.
+pub const PROGRAMS: &[(&str, &str)] = &[("play.xtl", "Walking"), ("explore.xtl", "Roaming")];
 
-/// The rules library the program plays: where its help is.
-pub const RULES: &str = "Walking";
+/// The program the page starts with.
+pub const PROGRAM: &str = PROGRAMS[0].0;
 
-/// How the game is played, said by the game (the mode's `help`).
+/// How a program's game is played, said by the game (its mode's
+/// `help`); nothing for a program the page does not have.
 #[must_use]
-pub fn help() -> String {
+pub fn help(program: &str) -> String {
+    let Some((_, rules)) = PROGRAMS.iter().find(|(p, _)| *p == program) else {
+        return String::new();
+    };
     xetal_store::install(std::sync::Arc::new(store::Session::default()));
-    let run = xetal_play::run(&format!("\"m:\" u_se< \"{RULES}\"\nm:help\n"), 1);
+    let run = xetal_play::run(&format!("\"m:\" u_se< \"{rules}\"\nm:help\n"), 1);
     run.out.trim().to_string()
 }
 

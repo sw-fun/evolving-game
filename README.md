@@ -150,8 +150,11 @@ just pages                           # the site as it is published, into pages/
 ```
 
 The walker follows the road by itself; the space bar stops and starts
-it, and a click on a tile makes the game say what the tile is. Add
-`?flat` to the address for the flat picture without 3D.
+it, and a click on a tile makes the game say what the tile is. **Walk
+it yourself** (or `?game=foot` on the address) puts you on the
+battlefield on foot: W A S D walk, Shift runs, the arrow keys and the
+mouse turn you; find the gate. Add `?flat` to the address for the flat
+picture without 3D.
 
 ## Documentation
 

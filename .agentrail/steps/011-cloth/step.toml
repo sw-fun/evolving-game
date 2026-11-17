@@ -1,7 +1,7 @@
 number = 11
-slug = "figures"
+slug = "cloth"
 status = "pending"
-description = "the-look step 8: figures. A walker with proportions, a rig and a walk with we..."
+description = "the-look step 7: cloth. Banners that wave and tent flaps that move: pieces wi..."
 role = "production"
 context_files = []
 created_at = "2026-11-16T09:04:34"

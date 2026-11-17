@@ -1,0 +1,22 @@
+# The battlefield on foot: you walk it yourself, looking through your
+# own eyes, from the entrance to the castle gate. Read by Roaming.xtl
+# through lib/Mode; every value is a list of strings.
+mode = ["roam"]
+title = ["The battlefield on foot"]
+
+# Where: the castle's zones (a path from this file) and the zone.
+zones = ["../../world/zones.toml"]
+zone = ["battlefield"]
+
+# The hour of the day, 0 to 24 (lib/Sky).
+time = ["14.5"]
+
+# How fast you walk, in tiles a second (Shift doubles it), and how fast
+# the arrow keys turn you, in degrees a second.
+speed = ["2.5"]
+turn = ["100"]
+
+# Won when you stand in the gate.
+win = ["gate"]
+loss = ["never"]
+reward = ["gold 1"]

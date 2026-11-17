@@ -1,0 +1,55 @@
+#!/usr/bin/env xetal
+## The battlefield on foot, scripted: the mode "roam" played through
+## lib/Mode's loop on scripts of events. Keys are held, so a script says
+## when one goes down ("choose 2 CODE") and comes up ("choose 3 CODE");
+## "move DX DY" is the pointer. A short walk is shown (the text view
+## marks where you stand); a wall, the river and a cliff stop you and
+## the bridge does not; and a whole walk to the gate is won.
+"rm:" u_se< "Roaming"
+"md:" u_se< "Mode"
+"st:" u_se< "Strings"
+"t:" u_se< "Text"
+"vw:" u_se< "View"
+
+scenario := "roam.toml"
+u:t_icks := { n -> n r_eshape e_nclose "tick 0.05" }
+## A quarter turn (the arrow key CODE held 0.9 s), and W held n ticks.
+u:t_urn := { code -> (e_nclose "choose 2 " c_at code) c_at (u:t_icks 18) c_at e_nclose "choose 3 " c_at code }
+u:g_o := { n -> (e_nclose "choose 2 87") c_at (u:t_icks n) c_at e_nclose "choose 3 87" }
+u:e_nd := { lines ->
+  (_, s) := 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_esult (lines, rm:n_ew (scenario, md:nothing, 1))
+  s
+}
+
+# The scenario is right for this mode; what it takes; how it is played.
+t_ally rm:mode md:p_roblem scenario
+_ := t:l_ines rm:l_egal rm:n_ew (scenario, md:nothing, 1)
+rm:help
+
+# W held for two seconds (five tiles north), let go; the right arrow
+# held 0.9 s (a quarter turn east); the pointer moved; W and Shift held
+# a second (five tiles, running). A key that is no command changes
+# nothing.
+short := (e_nclose "choose 2 87") c_at (u:t_icks 40) c_at "choose 3 87" "choose 2 39" c_at (u:t_icks 18) c_at "choose 3 39" "move 100 -40" "key a" "choose 2 87" "choose 2 16" c_at u:t_icks 20
+(clock, state) := 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_eplay (short, rm:n_ew (scenario, md:nothing, 1))
+clock
+rm:p_lace state
+# What a player is given to draw then: the eye, last in the scene.
+d_isclose f_irst -1 t_ake st:l_ines vw:s_cene rm:v_iew state
+
+# Stopped: walking north from the entrance for ten seconds ends against
+# the river (row 12), not in it.
+rm:p_lace u:e_nd (e_nclose "choose 2 87") c_at u:t_icks 200
+# Walking west from the entrance ends at the map's edge, column 1.
+rm:p_lace u:e_nd (u:t_urn "37") c_at (e_nclose "choose 2 87") c_at u:t_icks 200
+
+# The whole way: north, east along the road, north to the bridge's
+# row, west to the bridge, over it, north and east to the gate's
+# column, and north into the gate. Won there, and the walk stops.
+way := (u:g_o 32) c_at (u:t_urn "39") c_at (u:g_o 80) c_at (u:t_urn "37") c_at (u:g_o 24) c_at (u:t_urn "37") c_at (u:g_o 56) c_at (u:t_urn "39") c_at (u:g_o 48) c_at (u:t_urn "39") c_at (u:g_o 32) c_at (u:t_urn "37") c_at u:g_o 80
+home := u:e_nd way
+rm:p_lace home
+md:s_tatusName rm:s_tatus home
+(status, changes, rewards) := rm:o_utcome home
+_ := t:l_ines md:l_ines md:nothing md:a_fter (status, changes, rewards)
+vw:c_aption rm:v_iew home

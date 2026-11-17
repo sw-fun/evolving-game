@@ -1,0 +1,145 @@
+## Roaming: the battlefield on foot (the mode "roam"). You stand on the
+## map and look through your own eyes (lib/View's eye): W A S D walk,
+## the arrow keys or the mouse turn your head, Shift runs. Walls, water
+## and cliffs stop you; the bridge carries you over the river. Won when
+## you stand in the gate.
+##
+## Keys are held, so the events are a key going down and coming up:
+## the command "choose 2 CODE" for down and "choose 3 CODE" for up, CODE
+## the key's number (W is 87, the left arrow 37, Shift 16); "move DX DY"
+## is how far the pointer went, in pixels. Which key does what is
+## decided here, not by a page.
+##
+## The state is (zone, stage, numbers): where you are (x east and y
+## south, in tiles), your heading in radians (0 north, turning east)
+## and pitch in degrees, the seven things held (forward, back, left,
+## right, turn left, turn right, run), the time passed in milliseconds,
+## and your speed and turning speed. Each tick moves you by what is
+## held; a move that would take you into a tile that stops you is not
+## made, along x and along y separately, so you slide along a wall.
+## Import: "rm:" u_se< "Roaming"
+
+"md:" u_se< "Mode"
+"sk:" u_se< "Sky"
+"sm:" u_se< "Sim"
+"vw:" u_se< "View"
+"w:" u_se< "World"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "roam"
+# :: Char
+## How it is played, a line a thing to know.
+l:help := "You are on the battlefield, on foot. Find your way over the bridge to the castle gate.\nW A S D: walk forward, left, back, right. Shift: run.\nThe arrow keys, or Q and E, turn you. Click the picture to look round with the mouse (Esc lets it go).\nWalls, water and cliffs stop you."
+
+## The keys' numbers and what each holds: 1 forward, 2 back, 3 left, 4
+## right, 5 turn left, 6 turn right, 7 run.
+h:codes := 87 38 83 40 65 68 37 81 39 69 16
+h:holds := 1 1 2 2 3 4 5 5 6 6 7
+## The kinds of tile that stop you: water, wall, cliff.
+h:stops := 2 5 6
+
+### The numbers of a state
+
+h:a_t := { (_, _, n) -> 2 t_ake n }
+h:h_eading := { (_, _, n) -> 3 s_elect n }
+h:h_eld := { (_, _, n) -> 7 t_ake 4 d_rop n }
+## The place (row, column) of the tile a point (x, y) is on.
+h:p_lace := { xy -> (1 + f_loor 2 s_elect xy) c_at 1 + f_loor f_irst xy }
+## Can you stand at a point? On the map, and not on a tile that stops.
+h:o_pen := { stage xy ->
+  (map, _, _, _, _, _) := stage
+  rc := w:s_ize map
+  rk := h:p_lace xy
+  inside := (0.1 <= f_irst xy) & (0.1 <= 2 s_elect xy) & ((f_irst xy) <= (f_loat 2 s_elect rc) - 0.1) & (2 s_elect xy) <= (f_loat f_irst rc) - 0.1
+  n_ot inside ? 0 = 1
+  n_ot ((2 s_elect rk) s_elect (f_irst rk) s_elect w:t_iles map) m_ember? h:stops
+}
+
+### The protocol
+
+# :: (Any a, Any b, Num c) => (Char, a, b) -> (Char, ((Char, Int, Int), Float, Box Char, Float, Char, c), Float)
+## You at a scenario's entrance, facing north, in a world, with a seed.
+## A scenario that is wrong is the error bad-scenario.
+l:n_ew := { (file, world, seed) ->
+  map := md:m_ap file
+  stage := vw:l_it (vw:s_mooth map, sk:a_t file md:n_umber "time")
+  start := f_loat f_irst w:e_ntrances map
+  n := ((2 s_elect start) - 0.5) c_at ((f_irst start) - 0.5) c_at 0.0 0.0 c_at (7 r_eshape 0.0) c_at 0.0 c_at (file md:n_umber "speed") c_at file md:n_umber "turn"
+  (file md:f_ield "zone", stage, n)
+}
+## The numbers after a key goes down (1) or comes up (0).
+h:k_ey := { n (code, down) ->
+  slot := (h:codes i_ndexOf code) s_elect h:holds c_at 0
+  slot = 0 ? n
+  ((3 + slot) t_ake n) c_at down c_at (4 + slot) d_rop n
+}
+## The numbers after the pointer has gone dx, dy pixels: the head turns.
+h:l_ook := { n d ->
+  pitch := -60.0 m_ax 60.0 m_in (4 s_elect n) - 0.15 * 2 s_elect d
+  (2 t_ake n) c_at ((3 s_elect n) + 0.003 * f_irst d) c_at pitch c_at 4 d_rop n
+}
+## The numbers after s seconds: turned and moved by what is held.
+h:w_alk := { (stage, n) s ->
+  held := 7 t_ake 4 d_rop n
+  h := (3 s_elect n) + s * (p_i @) * (14 s_elect n) * ((6 s_elect held) - 5 s_elect held) / 180.0
+  ahead := (f_irst held) - 2 s_elect held
+  aside := (4 s_elect held) - 3 s_elect held
+  pace := s * (13 s_elect n) * 1.0 + 7 s_elect held
+  dx := pace * (ahead * s_in h) + aside * c_os h
+  dy := pace * (aside * s_in h) - ahead * c_os h
+  x := f_irst n
+  y := 2 s_elect n
+  x2 := x + dx * f_loat stage h:o_pen (x + dx) c_at y
+  y2 := y + dy * f_loat stage h:o_pen x2 c_at y + dy
+  x2 c_at y2 c_at h c_at (4 s_elect n) c_at held c_at ((12 s_elect n) + 1000.0 * s) c_at 12 d_rop n
+}
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i) => (a, ((b, Int, c), d, e, f, g, h), Float) -> (Char, Float, i) -> (a, ((b, Int, c), d, e, f, g, h), Float)
+## The state after an event: a key down or up, the pointer moved, or
+## time passed.
+l:s_tep := { (zone, stage, n) e ->
+  at := sm:n_umbers e
+  e sm:i_s "tick" ? (zone, stage, (stage, n) h:w_alk 0.001 * f_loat sm:m_illis e)
+  e sm:i_s "move" ? (zone, stage, n h:l_ook at)
+  (f_irst at) = 2.0 ? (zone, stage, n h:k_ey (f_loor 2 s_elect at, 1.0))
+  (f_irst at) = 3.0 ? (zone, stage, n h:k_ey (f_loor 2 s_elect at, 0.0))
+  (zone, stage, n)
+}
+# :: Any a => a -> Box Char
+## The events it takes: time, keys down and up, the pointer.
+l:l_egal := { s -> "tick S" "choose A N" "move X Y" }
+# :: (Any a, Any b, Num c) => (a, b, c) -> Int
+## Where you stand: a row and a column.
+l:p_lace := { s -> h:p_lace h:a_t s }
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i) => (a, ((b, Int, c), d, e, f, g, h), i) -> Int
+## Won when you stand in the gate; playing until then.
+l:s_tatus := { s ->
+  (_, stage, _) := s
+  (map, _, _, _, _, _) := stage
+  (l:p_lace s) m_atch w:g_ate map ? md:won
+  md:playing
+}
+## The way a heading faces, in words.
+h:f_acing := { h ->
+  k := (f_loor 0.5 + h * 4.0 / p_i @) m_od 8
+  d_isclose (1 + k) s_elect "north" "north-east" "east" "south-east" "south" "south-west" "west" "north-west"
+}
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (a, ((b, Int, c), d, e, f, g, h), Float) -> (((b, Int, c), d, e, f, g, h), Box Char, Box Char, Float, Char)
+## What to show (lib/View): the map seen through your eyes, and a line
+## saying where you are, which way you face and what to do.
+l:v_iew := { s ->
+  (_, stage, n) := s
+  rk := l:p_lace s
+  h := 3 s_elect n
+  where := @ f_ormat< "Row {f_irst rk}, column {2 s_elect rk}, facing {h:f_acing h}."
+  vw:w_ith (vw:e_mpty (stage, where c_at h:s_ays s), "eye", "", (2 t_ake n) c_at (s_in h) c_at (0.0 - c_os h) c_at (4 s_elect n) c_at 0.0 0.0 0.05)
+}
+h:s_ays := { s -> md:won = l:s_tatus s ? " You are in the gate."; " W A S D walk; the arrows or the mouse look. Find the gate." }
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i) => (a, ((b, Int, c), d, e, f, g, h), i) -> (Int, (Box Char, Int), (Box Char, Int))
+## How it ended: left, unless you reached the gate, which the world
+## remembers.
+l:o_utcome := { s ->
+  (zone, _, _) := s
+  n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
+  (md:won, md:nothing md:s_et ("fact.walked-in", 1), md:nothing md:s_et ("resource.gold", 1))
+}

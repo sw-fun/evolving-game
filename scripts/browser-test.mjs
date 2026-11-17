@@ -204,6 +204,30 @@ if (capture) {
   check((await caption()).startsWith("Row 10, column 7"), "the capture shows the walker on the bridge (images/screencapture.png)");
 }
 
+// On foot: the second game, seen through an eye, walked with held keys.
+const key = async (type, k, code, n) => send("Input.dispatchKeyEvent", { type, key: k, code, windowsVirtualKeyCode: n, nativeVirtualKeyCode: n });
+const ticks = (n) => page(`(() => { for (let i = 0; i < ${n}; i++) window.game.feed('tick 0.05'); return 1; })()`);
+check(await open("?hold&game=foot"), "the page starts on foot (?game=foot)");
+check((await caption()).startsWith("Row 20, column 4, facing north."), "you stand at the entrance, facing north");
+await sleep(300);
+check((await page("window.game.player().count().eye")) === 1 || /eye\(/.test(await page("window.game.picture()")), "the scene is seen through an eye");
+await key("keyDown", "w", "KeyW", 87);
+await ticks(40);
+check((await caption()).startsWith("Row 15, column 4"), "W held for two seconds walks five tiles north");
+await key("keyUp", "w", "KeyW", 87);
+await ticks(20);
+check((await caption()).startsWith("Row 15, column 4"), "let go, you stand still");
+await key("keyDown", "ArrowRight", "ArrowRight", 39);
+await ticks(18);
+await key("keyUp", "ArrowRight", "ArrowRight", 39);
+check((await caption()).includes("facing east"), "the right arrow turns you to the east");
+await page("document.getElementById('open-help').click(), 1");
+check((await page("document.querySelector('#help-text').textContent")).includes("W A S D"), "Help is this game's own");
+await page("document.getElementById('help').close(), 1");
+check(await page("document.getElementById('pick-foot').classList.contains('on') && !document.getElementById('pick-watch').classList.contains('on')"), "the header shows which game is played");
+await page("document.getElementById('pick-watch').click(), 1");
+check((await caption()).startsWith("Row 20, column 4; 37 steps to walk"), "the other button goes back to watching the walk");
+
 // The flat picture alone.
 check(await open("?flat&hold"), "the flat page starts");
 check(!(await page("!!document.querySelector('#view canvas')")), "no 3D is drawn there");

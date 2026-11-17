@@ -4,7 +4,7 @@ mod sources;
 
 use std::cell::RefCell;
 
-use evolving_web::{Game, PROGRAM};
+use evolving_web::{Game, PROGRAM, PROGRAMS};
 use wasm_bindgen::prelude::*;
 
 thread_local! {
@@ -15,10 +15,13 @@ fn with<T: Default>(f: impl FnOnce(&mut Game) -> T) -> T {
     GAME.with(|g| g.borrow_mut().as_mut().map(f).unwrap_or_default())
 }
 
-/// Start the game again from its beginning.
+/// Start a program from its beginning: one of the page's programs by
+/// name, or the first when it is not one of them.
 #[wasm_bindgen]
-pub fn start() {
-    GAME.with(|g| *g.borrow_mut() = Some(Game::start(PROGRAM, 1)));
+pub fn start(program: &str) {
+    let known = PROGRAMS.iter().any(|(p, _)| *p == program);
+    let program = if known { program } else { PROGRAM };
+    GAME.with(|g| *g.borrow_mut() = Some(Game::start(program, 1)));
 }
 
 /// Give the program an event's line; true once the program has ended.

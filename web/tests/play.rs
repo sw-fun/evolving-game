@@ -36,9 +36,35 @@ fn the_page_plays_the_walk_as_the_command_line_does() {
     // after the game, not in a test of its own running beside it.
     assert_eq!(evolving_web::title(), "Evolving Game: Walk");
     // How to play is the game's to say (the mode's help).
-    let help = evolving_web::help();
+    let help = evolving_web::help(PROGRAM);
     assert_eq!(help.lines().count(), 4, "{help}");
     assert!(help.contains("Space: stop the walker"), "{help}");
+    assert!(evolving_web::help("explore.xtl").contains("W A S D"));
+    assert_eq!(evolving_web::help("nothing.xtl"), "");
+}
+
+const ON_FOOT: &str = include_str!("../../games/walk/expected/explore.in");
+const ON_FOOT_EXPECTED: &str = include_str!("../../games/walk/expected/explore.out");
+
+#[test]
+fn the_page_walks_the_battlefield_as_the_command_line_does() {
+    let _turn = TURN
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let mut game = Game::start("explore.xtl", 1);
+    assert_eq!(game.error(), "");
+    for line in ON_FOOT.lines() {
+        if game.over() {
+            break;
+        }
+        game.feed(line);
+    }
+    assert!(game.over(), "the gate is reached before the events end");
+    assert_eq!(game.session().printed(), ON_FOOT_EXPECTED);
+    assert!(
+        game.session().picture().contains("\neye(nums("),
+        "seen through an eye"
+    );
 }
 
 #[test]

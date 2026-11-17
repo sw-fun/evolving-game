@@ -156,6 +156,19 @@ The scene is text, a call a line, that names no renderer
   size, written every tick), 18 ms an event at the command line where
   it was 11: the scene's unchanging lines should be sent once.
 
+- **A camera that walks** (the world-view step, begun): a view may
+  hold the piece `eye` (`vw:w_ith`): where you stand, the way you look,
+  a pitch. The scene then has an `eye` call after its `camera`, and
+  the player draws it in perspective; the flat picture and the text
+  mark where you stand. The mode `roam` (`games/walk/Roaming.xtl`) is
+  the battlefield on foot: held keys come as `choose 2 CODE` and
+  `choose 3 CODE`, the pointer as `move DX DY`, and the game decides
+  what each key does. The page offers both games, sends every game
+  both forms of a key, and takes the pointer when a scene has an eye.
+  Still to do for this step: the winter camp as the world to walk (it
+  needs tents, fires and figures), and a real pointer, which has only
+  been tried with made-up events.
+
 ## What exists to build on
 
 - **The board player** (`board.js`, X_eTaL-extensions): the four calls

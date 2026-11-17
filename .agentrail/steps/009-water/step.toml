@@ -1,7 +1,7 @@
 number = 9
-slug = "particles"
+slug = "water"
 status = "pending"
-description = "the-look step 6: particles. A particles call (docs/look.md): an emitter's pla..."
+description = "the-look step 5: water. The river as a surface that moves and reflects, with ..."
 role = "production"
 context_files = []
 created_at = "2026-11-16T09:04:34"

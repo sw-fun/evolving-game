@@ -108,6 +108,10 @@ The walk's `play.xtl`, the file the command line runs, as WebAssembly.
   lines; after each event, the scene to the board player
   (X_eTaL-extensions' `board.js`, Three.js, copied from its pinned
   clone at build time), or the flat picture where there is no WebGL.
+- Two programs to choose between (the walk watched, the battlefield
+  on foot); every key is given both as `key NAME` and as going down
+  and up (`choose 2 CODE`, `choose 3 CODE`), and a locked pointer's
+  movement as `move DX DY`: each game takes what it knows.
 - Round the game: Start again; Help (the mode's own `help`, asked of
   the program); Sources (the game's files drawn by X_eTaL's own
   decorator, colored by token, in JuliaMono); About (what runs here,

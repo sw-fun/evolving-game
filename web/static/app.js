@@ -2,7 +2,13 @@
 // WebAssembly; this file gives it events and shows what it draws, and
 // decides nothing about the game:
 //   - twenty times a second, the line "tick 0.05"; a key, "key NAME";
-//     a click on the board, "click X Y" in the picture's own units
+//     a click on the board, "click X Y" in the picture's own units;
+//     for a game that holds keys, each key as it goes down and comes
+//     up, "choose 2 CODE" and "choose 3 CODE" (the key's number), and
+//     how far a locked pointer went since the last tick, "move DX DY".
+//     Every game is given all of these; each takes what it knows
+//   - which of the page's programs to play: the header's two buttons
+//     (?game=foot starts with the second)
 //   - after each event, the picture the program showed (SVG). Its
 //     metadata is the scene, which the board player of X_eTaL-extensions
 //     (ext/board.js, Three.js) draws; the picture's own drawing of the
@@ -18,7 +24,9 @@ const TICK = 0.05;
 const q = new URLSearchParams(location.search);
 const el = (id) => document.getElementById(id);
 const view = el('view'), flat = el('flat'), stat = el('stat');
-let wasm = null, player = null, timer = 0, cost = 0, frames = '';
+let wasm = null, player = null, timer = 0, cost = 0, frames = '', eyed = false;
+let program = q.get('game') === 'foot' ? 'explore.xtl' : 'play.xtl';
+const held = new Set(), look = [0, 0];
 
 // Can this browser draw 3D?
 const solid = !q.has('flat') && (() => {
@@ -34,6 +42,8 @@ function draw() {
   const svg = wasm.picture();
   flat.innerHTML = svg;
   const calls = sceneOf(svg);
+  // a scene seen through an eye is one the pointer can look round in
+  eyed = /^eye\(/m.test(calls);
   if (solid && calls) {
     if (player) player.show(calls);
     else player = board(view, calls, { models: './models/', keep: q.has('hold'), onPoint: point, onFrame: (f) => { frames = `${f.rate.toFixed(0)} frames a second`; } });
@@ -45,11 +55,12 @@ function draw() {
 }
 
 // Give the program an event; when it has ended, stop the clock.
-function feed(line) {
+function feed(line, quiet = false) {
   if (!wasm) return;
   const before = performance.now();
   const over = wasm.feed(line);
   if (line.startsWith('tick ')) cost = cost ? cost * 0.9 + (performance.now() - before) * 0.1 : performance.now() - before;
+  if (quiet && !over) return;
   draw();
   if (over) { clearInterval(timer); timer = 0; el('log').open = true; document.body.classList.add('over'); }
 }
@@ -70,22 +81,47 @@ flat.parentElement.addEventListener('click', (e) => {
 const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter' };
 window.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || talking()) return;
-  const name = NAMES[e.key] || (/^[a-z0-9]$/.test(e.key) ? e.key : '');
-  if (!name) return;
+  const name = NAMES[e.key] || (/^[a-z0-9]$/i.test(e.key) ? e.key.toLowerCase() : '');
+  if (!name && e.key !== 'Shift') return;
   e.preventDefault();
-  feed(`key ${name}`);
+  if (name) feed(`key ${name}`, true);
+  held.add(e.keyCode);
+  feed(`choose 2 ${e.keyCode}`);
 });
+// A key coming up, for a game that holds keys; and every held key let
+// go when the window loses the keyboard, so nothing stays held.
+const release = (code) => { if (held.delete(code)) feed(`choose 3 ${code}`); };
+window.addEventListener('keyup', (e) => release(e.keyCode));
+window.addEventListener('blur', () => [...held].forEach(release));
+// Looking round: in a scene seen through an eye, a click takes the
+// pointer (Esc gives it back) and its movement is told to the game.
+el('stage').addEventListener('click', () => { if (eyed && solid && !document.pointerLockElement) el('stage').requestPointerLock?.(); });
+document.addEventListener('mousemove', (e) => {
+  if (document.pointerLockElement !== el('stage')) return;
+  look[0] += e.movementX;
+  look[1] += e.movementY;
+});
+// The clock: what the pointer did since the last tick, then the tick.
+function tick() {
+  if (document.hidden) return;
+  if (look[0] || look[1]) { feed(`move ${look[0]} ${look[1]}`, true); look[0] = 0; look[1] = 0; }
+  feed(`tick ${TICK}`);
+}
 
 // Start the program from its beginning, and the clock.
 function start() {
   clearInterval(timer);
   document.body.classList.remove('over');
   el('log').open = false;
-  wasm.start();
+  held.clear();
+  if (document.pointerLockElement) document.exitPointerLock();
+  for (const b of document.querySelectorAll('.pick button')) b.classList.toggle('on', b.dataset.program === program);
+  wasm.start(program);
   draw();
-  if (!q.has('hold')) timer = setInterval(() => { if (!document.hidden) feed(`tick ${TICK}`); }, TICK * 1000);
+  if (!q.has('hold')) timer = setInterval(tick, TICK * 1000);
 }
 el('again').addEventListener('click', (e) => { e.currentTarget.blur(); start(); });
+for (const b of document.querySelectorAll('.pick button')) b.addEventListener('click', () => { b.blur(); program = b.dataset.program; start(); });
 
 // The game's sources in a dialog: each file drawn by X_eTaL itself
 // (decorated, a span a token), colored by the page's stylesheet, in
@@ -129,7 +165,7 @@ el('open-sources').addEventListener('click', (e) => { e.currentTarget.blur(); so
 // page's own.
 function help() {
   const into = el('help-text');
-  into.replaceChildren(...wasm.help().split('\n').map((line) => Object.assign(document.createElement('p'), { textContent: line })));
+  into.replaceChildren(...wasm.help(program).split('\n').map((line) => Object.assign(document.createElement('p'), { textContent: line })));
   el('help').showModal();
 }
 el('open-help').addEventListener('click', (e) => { e.currentTarget.blur(); help(); });
@@ -145,7 +181,7 @@ const ready = () => {
   el('build').textContent = `Build: ${wasm.build()}`;
   el('about-build').textContent = wasm.build();
   el('pins').textContent = wasm.pins().split('\n').join(', ');
-  window.game = { feed, start, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player };
+  window.game = { feed, start, program: () => program, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player };
   start();
   if (q.has('sources')) sources();
   if (q.has('help')) help();

@@ -16,6 +16,7 @@ const SIBLINGS: &[&str] = &[
 /// Data files, as the walk (run from games/walk) names them.
 const DATA: &[(&str, &str)] = &[
     ("bridge.toml", "games/walk/bridge.toml"),
+    ("roam.toml", "games/walk/roam.toml"),
     ("../../world/zones.toml", "world/zones.toml"),
     ("../../world/battlefield.toml", "world/battlefield.toml"),
 ];

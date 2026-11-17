@@ -1,6 +1,6 @@
-number = 12
+number = 7
 slug = "world-view"
-status = "pending"
+status = "in-progress"
 description = "the-look step 9: the world view. A second kind of view (docs/plan.md, A showc..."
 role = "production"
 context_files = []

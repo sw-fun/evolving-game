@@ -34,6 +34,6 @@ pub fn pins() -> String {
 /// How the game is played, said by the game.
 #[wasm_bindgen]
 #[must_use]
-pub fn help() -> String {
-    evolving_web::help()
+pub fn help(program: &str) -> String {
+    evolving_web::help(program)
 }
