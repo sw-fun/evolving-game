@@ -1,0 +1,1 @@
+A camera that walks: vw:w_ith and the eye piece, the mode roam (games/walk/Roaming.xtl), the page's two programs, held keys and pointer look; published. The user tried it: mouse look works on real hardware. The winter camp as a world is not built; it moves to a later saga.

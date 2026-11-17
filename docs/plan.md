@@ -435,7 +435,27 @@ X_eTaL-libraries, Philox in bulk is slow (open; nothing waits on it);
 agentrail, em dashes in its generated briefing (open). None of the
 language.
 
-## Saga 2 -- the-look  [ACTIVE]
+## Saga 2 -- the-look  [CLOSED EARLY, 2026-11-16]
+
+Closed by the user's decision: "start Castle Defense now, do the look
+work as needed". Done: the targets (`docs/look.md`), terrain,
+materials, light, the page's Help, About and footer, the look
+switched on (lit, shadowed, smooth ground, water, ground to the
+horizon), and a camera that walks (the battlefield on foot, W A S D
+and the mouse; the user tried the mouse on real hardware and it
+works). X_eTaL-extensions landed every ask in a day. Not done, and
+carried into the sagas that need them: particles (arrows, fire,
+smoke: Castle Defense), figures with rigs (its enemies), cloth
+(banners), the river and wall past the map's edge, the winter camp
+and the town as worlds, `docs/games.md` (the games' designs), and
+sending a scene's unchanging lines once (a tick's picture is 120 KB).
+What it taught: ask the sibling early and build this side first (the
+asks landed faster than the steps that wanted them); look at every
+page before publishing; never chain a publish behind a pipe.
+
+The steps as planned (the first six, and the seventh in part, were
+done):
+
 
 The user, 2026-11-16: "go on to step 9, then start The look". Goal
 (see The look, and A showcase): the scene there is stops looking like
@@ -464,7 +484,17 @@ goldens, the flat picture's version).
 | 9  | world-view    | a mode with a camera that walks or flies, and one small world from a seed to try it on (a street of the town, or the snow before the walls); `lib/View`'s world scene |
 | 10 | look-docs     | the captures side by side with step 1's, the measures, the live demo, the retrospective, the next saga confirmed |
 
-## Saga 3 -- defend-the-bridge (Castle Defense, first playable)
+## Saga 3 -- defend-the-bridge (Castle Defense, first playable)  [ACTIVE]
+
+| #  | Step slug       | Delivers |
+| -- | --------------- | -------- |
+| 1  | defense-rules   | `games/defense`: the mode `defense` (`Defending.xtl`) on the shared libraries: enemies walk the battlefield's road in waves, towers built on grass shoot the enemy furthest along in range (towers against enemies as one table), damage, armor, splash and slow, gold and lives, won and lost; towers, enemies and waves as data; scripted goldens (a level won, a level lost) |
+| 2  | defense-view    | its view: enemies and towers as pieces on the lit battlefield, shots, a caption with gold, lives and the wave; choosing a tower and building by key and click; the page's third game; published |
+| 3  | defense-pieces  | the three towers and three enemies as models made through Blender (textures; rigs where the walk needs them), arrows and fire as particles |
+| 4  | defense-balance | many seeded games played headless; the five waves tuned; the level proven winnable by a golden and losable by neglect |
+| 5  | defense-polish  | what playing it shows is missing: upgrades or selling, a wave preview, sound if the audio extension allows, the river and wall past the edge |
+| 6  | defense-docs    | README, architecture, `docs/games.md` begun with this game as built, the retrospective |
+
 
 Goal: the research's first milestone, playable in the browser and at
 the command line: one map, one road, three tower types (archer, fire,

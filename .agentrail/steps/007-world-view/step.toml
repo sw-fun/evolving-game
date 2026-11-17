@@ -1,8 +1,9 @@
 number = 7
 slug = "world-view"
-status = "in-progress"
+status = "completed"
 description = "the-look step 9: the world view. A second kind of view (docs/plan.md, A showc..."
 role = "production"
 context_files = []
 created_at = "2026-11-16T09:04:34"
-commits = []
+completed_at = "2026-11-16T17:11:07"
+commits = ["15d409e7306f0b8de108a3df326468b410d05bb9"]
