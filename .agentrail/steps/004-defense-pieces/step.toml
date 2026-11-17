@@ -1,8 +1,9 @@
 number = 4
 slug = "defense-pieces"
-status = "in-progress"
+status = "completed"
 description = "defend-the-bridge step 3: the pieces. assets: the three towers and the three ..."
 role = "production"
 context_files = []
 created_at = "2026-11-16T17:11:07"
-commits = []
+completed_at = "2026-11-17T10:14:08"
+commits = ["af97fd0ca52309f88ab53481cdce16691003b6b7"]
