@@ -237,6 +237,25 @@ l:d_ressed := { (stage, lines) ->
   (map, frame, tiles, depths, ground, smooth) := stage
   (map, frame, tiles, depths, ground c_at lines, smooth)
 }
+# :: (Any a, Num c, Truthy c, Any d, Any e, Any f, Any g, Any h, Any i) => (((a, b, c), Float, d, e, f, g), Box Char, h, Float, i) -> Float -> Int
+## The label under a picture point: view vw:l_abelled (px, py), which
+## of the view's labels (its pieces written with #, counted in their
+## order) has the point on its words, or 0 for none. A label is as
+## wide as its words and as high as a line, so a place is chosen by a
+## click anywhere on its name; where two labels' words meet, the one
+## whose middle is nearer.
+l:l_abelled := { (stage, models, _, pieces, _) p ->
+  (map, frame, _, _, _, _) := stage
+  which := h:w_ritten models
+  0 = '+ r_/ which ? 0
+  xy := (1 2) s_elect_2 which r_eplicate pieces
+  at := frame h:t_o xy c_at_2 ((t_ally xy) c_at 1) r_eshape map h:u_nder xy
+  half := 3.0 + 2.9 * f_loat '{ w -> (t_ally d_isclose w) - 1 } e_ach which r_eplicate models
+  off := a_bs (f_irst_2 at) - f_irst p
+  on := (off <= half) & (a_bs ((2 s_elect_2 at) - 38.0) - 2 s_elect p) <= 8.0
+  0 = '+ r_/ on ? 0
+  f_irst w_here on & off = 'm_in r_/ off + 100000.0 * f_loat n_ot on
+}
 # :: (Any a, Any c, Any d, Any e, Any f, Any g, Any h) => ((a, b, c), d, e, f, g, h) -> Int
 ## The places of a stage's tiles in the order they are drawn, far to
 ## near, a row each (row, column).

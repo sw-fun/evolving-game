@@ -78,3 +78,12 @@ _ := u:s_ay lg:o_utcome u:h_all "tick 1" "key b"
 # The map then says the gold, the experience, and that there are new
 # deeds.
 vw:c_aption at:v_iew at:n_ew (file, earned, 1)
+
+# Clicks. On the far end of a place's name ("2 The battlefield on
+# foot" is written about picture point 124 195, and is some 150 wide):
+# that place is chosen. On the hall's name: the hall. Within a tile of
+# a place's marker: that place. On open country: none.
+at:c_hosen u:m_ap (1 r_eshape e_nclose "click 190 195", md:nothing)
+at:c_hosen u:m_ap (1 r_eshape e_nclose "click 30 165", md:nothing)
+at:c_hosen u:m_ap (1 r_eshape e_nclose "click 124 233", md:nothing)
+at:c_hosen u:m_ap (1 r_eshape e_nclose "click 400 60", md:nothing)

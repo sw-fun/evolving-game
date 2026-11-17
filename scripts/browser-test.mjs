@@ -215,8 +215,8 @@ check((await caption()).startsWith("The castle and its country: 3 of 17 places k
 await sleep(300);
 check((await page("window.game.player().count().pieces")) === 3, "each a marker on the map");
 check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x.textContent).join('|')")).includes("2 The battlefield on foot"), "with its number and name written over it");
-await click(104, 203);
-check((await caption()).includes("W A S D walk"), "a click on the second marker goes into the battlefield on foot");
+await click(190, 195);
+check((await caption()).includes("W A S D walk"), "a click on the far end of the second place's name goes into the battlefield on foot");
 await page("document.getElementById('leave').click(), 1");
 check((await caption()).startsWith("The castle and its country: 3 of 17"), "the Map button comes back to the map");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");

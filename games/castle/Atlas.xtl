@@ -2,7 +2,7 @@
 ## which you go from one game to the next. The venues (Venues.xtl) stand
 ## on the realm's map where their file says. You see the ones you know
 ## of: those known from the start, and those a venue you have won led
-## to. One that is open is gone to by a click on it, or by its number
+## to. One that is open is gone to by a click on it or on its name, or by its number
 ## (the command "choose 1 N"); one that is not says what it needs. The
 ## key D shows them all and opens them all, to try any of them (and D
 ## again goes back to what you have earned).
@@ -56,12 +56,21 @@ h:g_o := { s k ->
   k s_elect h:o_pen s ? (stage, file, places, standing, k c_at 0 c_at 2 d_rop n)
   (stage, file, places, standing, 0 c_at k c_at 2 d_rop n)
 }
-# :: (Any a, Num b, Any c, Any d, Any e, Num f, Any g, Num h) => (((a, Int, b), Float, c, d, e, f), g, Int, h, Int) -> (Char, Float, Char) -> (((a, Int, b), Float, c, d, e, f), g, Int, h, Int)
-## The state after an event: a click on a venue, or choose 1 N, goes to
-## it; the key D shows and hides all the venues.
+## The state after a click at a picture point: on a venue's name
+## (anywhere on its words), that venue; else the venue on the tile
+## clicked or the nearest within a tile of it.
+h:c_lick := { s p ->
+  (stage, _, _, _, _) := s
+  j := (l:v_iew s) vw:l_abelled p
+  j > 0 ? s h:g_o j s_elect w_here h:k_nown s
+  s h:g_o s h:a_t stage vw:t_ile p
+}
+# :: (Any a, Num b, Truthy b, Any c, Any d, Any e, Num f, Num g) => (((a, Int, b), Float, c, d, e, f), Char, Int, g, Int) -> (Char, Float, Char) -> (((a, Int, b), Float, c, d, e, f), Char, Int, g, Int)
+## The state after an event: a click on a venue or on its name, or
+## choose 1 N, goes to it; the key D shows and hides all the venues.
 l:s_tep := { s e ->
   (stage, file, places, standing, n) := s
-  e sm:i_s "click" ? s h:g_o s h:a_t stage vw:t_ile 2 t_ake sm:n_umbers e
+  e sm:i_s "click" ? s h:c_lick 2 t_ake sm:n_umbers e
   e sm:i_s "choose" ? s h:g_o f_loor 2 s_elect sm:n_umbers e
   "d" m_atch st:l_ower sm:t_ext e ? (stage, file, places, standing, 0 0 c_at (1 - 3 s_elect n) c_at 3 d_rop n)
   s
@@ -96,7 +105,7 @@ h:w_ords := { name ->
   name m_atch "resource.gold" ? "gold in the world"
   name
 }
-# :: (Any a, Num b, Num c) => (a, Char, b, c, Int) -> (a, Box Char, Box Char, Float, Char)
+# :: (Any a, Num b, Truthy b, Any c, Any d, Any e, Num f, Num g) => (((a, Int, b), Float, c, d, e, f), Char, Int, g, Int) -> (((a, Int, b), Float, c, d, e, f), Box Char, Box Char, Float, Char)
 ## What to show (lib/View): the realm's map with a piece for every
 ## venue known and its number and name written over it (and whether
 ## it is won, or locked), and the lines under it.
