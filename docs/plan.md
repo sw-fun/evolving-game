@@ -932,6 +932,14 @@ The framework (`games/castle`, Saga 3's castle-map step):
   scenery lines do not carry), crows, people, falling snow (the
   extensions ask).
 
+- **The long bridge, first version**: a card first (`Overture`, the
+  mode `card`: the bridge painting, `docs/images/block-bridge-far.jpg`,
+  the user's own, served to the page as `art/`), then the walk across
+  a long bridge over the river (`world/crossing.toml`, late in the
+  day) to the castle's gate. Owed: the chasm and cliffs of the
+  painting, the storm (rain, lightning), and the painting used again
+  between other games.
+
 What the user's second message adds, each a later step on this
 framework, none blocking it:
 

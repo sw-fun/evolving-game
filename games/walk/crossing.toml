@@ -1,0 +1,27 @@
+# The long bridge, on foot: late in the day, from the country across the river
+# far below to the castle's gate.
+# The battlefield on foot: you walk it yourself, looking through your
+# own eyes, from the entrance to the castle gate. Read by Roaming.xtl
+# through lib/Mode; every value is a list of strings.
+mode = ["roam"]
+title = ["The long bridge"]
+
+# Where: the castle's zones (a path from this file) and the zone.
+zones = ["../../world/zones.toml"]
+zone = ["crossing"]
+
+# The hour of the day, 0 to 24 (lib/Sky).
+time = ["16.75"]
+
+# The weather: snow, and how thick it falls from 0 to 1.
+weather = ["snow 0.0"]
+
+# How fast you walk, in tiles a second (Shift doubles it), and how fast
+# the arrow keys turn you, in degrees a second.
+speed = ["2.5"]
+turn = ["100"]
+
+# Won when you stand in the gate.
+win = ["gate"]
+loss = ["never"]
+reward = ["gold 1"]

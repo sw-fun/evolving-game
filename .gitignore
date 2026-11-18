@@ -41,3 +41,5 @@ __pycache__/
 web/ext/
 # the pieces, copied from assets/pieces for the page (scripts/web.sh)
 web/models/
+# the art a game shows, copied from docs/images for the page (scripts/web.sh)
+web/art/

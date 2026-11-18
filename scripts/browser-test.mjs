@@ -291,6 +291,30 @@ if (capture) {
 }
 await page("document.getElementById('leave').click(), 1");
 
+// The long bridge: a card with the bridge painting, then the walk.
+check(await open("?debug&fresh"), "the map opens for the long bridge");
+await page("window.game.feed('choose 1 9'), 1");
+check((await caption()).startsWith("The long bridge The crossing"), "the long bridge opens with its card");
+check(await page("(() => { const i = document.querySelector('#flat svg image'); return !!i && i.getAttribute('href') === 'art/block-bridge-far.jpg'; })()"), "the card shows the bridge painting");
+check(await page("fetch('art/block-bridge-far.jpg').then((r) => r.ok && r.headers.get('content-type').startsWith('image/'))"), "which the page serves");
+if (capture) {
+  await sleep(800);
+  const img = await send("Page.captureScreenshot", { format: "png" });
+  writeFileSync(join(root, "images/look/bridge-card.png"), Buffer.from(img.data, "base64"));
+}
+await space();
+check((await caption()).startsWith("Row 30, column 11, facing north."), "space goes on to the walk across");
+await page("window.game.feed('choose 2 87'), 1");
+await sleep(2500);
+await page("window.game.feed('choose 3 87'), 1");
+check(/^Row (1\d|2\d), column 11/.test(await caption()), "W held walks you onto the bridge");
+if (capture) {
+  await sleep(600);
+  const img = await send("Page.captureScreenshot", { format: "png" });
+  writeFileSync(join(root, "images/look/bridge-walk.png"), Buffer.from(img.data, "base64"));
+}
+await page("document.getElementById('leave').click(), 1");
+
 // In the second maze a real arrow key, held, turns you; Escape leaves
 // any game for the map.
 check(await open("?debug&fresh"), "the map opens, its clock running");

@@ -57,6 +57,11 @@ the next. This is the game the others are parts of.
   snow, walked on foot (the walk's `Roaming`, the scenario
   `../walk/camp.toml`) from the south to the palisade's gate.
 
+- **The long bridge.** A card with the bridge painting
+  ([`Overture.xtl`](Overture.xtl), `card`): space goes on, B goes back.
+  Then the walk across the bridge to the castle's gate (the scenario
+  `../walk/crossing.toml`).
+
 [`Venues.xtl`](Venues.xtl) reads the venues for the others.
 
 ## Play it

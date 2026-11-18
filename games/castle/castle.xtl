@@ -7,6 +7,7 @@
 "at:" u_se< "Atlas"
 "dd:" u_se< "Deeds"
 "dp:" u_se< "Depths"
+"ov:" u_se< "Overture"
 "ps:" u_se< "Passage"
 "rm:" u_se< "Roaming"
 "rc:" u_se< "Rays"
@@ -120,3 +121,13 @@ rm:p_lace u:c_ity (e_nclose "choose 2 68") c_at 8 r_eshape e_nclose "tick 0.5"
 # the south through the camp to the palisade's gate.
 u:c_amp := { lines -> u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_eplay (lines, rm:n_ew ("../walk/camp.toml", md:nothing, 1)) }
 _ := u:s_ay rm:o_utcome u:c_amp (e_nclose "choose 2 87") c_at 22 r_eshape e_nclose "tick 0.5"
+
+# The long bridge opens with a card (the bridge painting): space goes
+# on, B goes back; it brings nothing itself.
+u:c_ard := { lines -> u:l_ast 'ov:v_iew 'ov:l_egal 'ov:s_tatus 'ov:s_tep md:r_eplay (lines, ov:n_ew (file, md:nothing md:s_et ("campaign.go", 9), 1)) }
+_ := u:s_ay ov:o_utcome u:c_ard 1 r_eshape e_nclose "key space"
+_ := u:s_ay ov:o_utcome u:c_ard 1 r_eshape e_nclose "key b"
+# Then the walk across can be won: W held fifteen seconds takes you from
+# the south bank over the bridge to the castle's gate.
+u:a_cross := { lines -> u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_eplay (lines, rm:n_ew ("../walk/crossing.toml", md:nothing, 1)) }
+_ := u:s_ay rm:o_utcome u:a_cross (e_nclose "choose 2 87") c_at 30 r_eshape e_nclose "tick 0.5"

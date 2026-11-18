@@ -20,6 +20,7 @@
 "df:" u_se< "Defending"
 "dp:" u_se< "Depths"
 "lg:" u_se< "Ledger"
+"ov:" u_se< "Overture"
 "ps:" u_se< "Passage"
 "wr:" u_se< "Warren"
 "md:" u_se< "Mode"
@@ -45,6 +46,13 @@ u:k_eep := { world ->
   world
 }
 u:l_ast := { (_, s) -> s }
+## The long bridge: its card (the bridge painting) and then, gone on
+## from it, the walk across; left at the card, nothing happens.
+u:c_ross := { (world, k, path) ->
+  card := u:l_ast 'ov:v_iew 'ov:l_egal 'ov:s_tatus 'ov:s_tep md:p_lay ov:n_ew (file, world, k)
+  n_ot md:won = ov:s_tatus card ? (md:left, md:nothing, md:nothing)
+  rm:o_utcome u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:p_lay rm:n_ew (path, world, k)
+}
 ## A venue played to its end in a world: its mode chosen by its kind;
 ## every mode's outcome is the same kind of thing.
 u:v_isit := { (world, k) ->
@@ -55,6 +63,7 @@ u:v_isit := { (world, k) ->
   kind m_atch "maze" ? wr:o_utcome u:l_ast 'wr:v_iew 'wr:l_egal 'wr:s_tatus 'wr:s_tep md:p_lay wr:n_ew (file, world, k)
   kind m_atch "dungeon" ? dp:o_utcome u:l_ast 'dp:v_iew 'dp:l_egal 'dp:s_tatus 'dp:s_tep md:p_lay dp:n_ew (file, world, k)
   kind m_atch "raycaster" ? ps:o_utcome u:l_ast 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep md:p_lay ps:n_ew (file, world, k)
+  kind m_atch "crossing" ? u:c_ross (world, k, path)
   kind m_atch "board" ? lg:o_utcome u:l_ast 'lg:v_iew 'lg:l_egal 'lg:s_tatus 'lg:s_tep md:p_lay lg:n_ew (file, world, k)
   sk:o_utcome u:l_ast 'sk:v_iew 'sk:l_egal 'sk:s_tatus 'sk:s_tep md:p_lay sk:n_ew (file, world, k)
 }

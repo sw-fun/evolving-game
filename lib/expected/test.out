@@ -121,7 +121,8 @@ cliffs-and-tunnels
 realm
 city
 camp
-8
+crossing
+9
 The inner keep
 ../world/battlefield.toml
 0

@@ -2,7 +2,7 @@
 # names its map, a file beside this one; a zone whose map is not drawn
 # yet has none (""). The last, the realm, is the whole of it small: the
 # castle and its country, the map the venues are shown on.
-zones = ["battlefield", "outer-walls", "courtyard", "inner-keep", "cliffs-and-tunnels", "realm", "city", "camp"]
+zones = ["battlefield", "outer-walls", "courtyard", "inner-keep", "cliffs-and-tunnels", "realm", "city", "camp", "crossing"]
 zone-fields = ["title", "map"]
 
 [zone.battlefield]
@@ -36,3 +36,7 @@ map = "city.toml"
 [zone.camp]
 title = "The winter camp"
 map = "camp.toml"
+
+[zone.crossing]
+title = "The long bridge"
+map = "crossing.toml"

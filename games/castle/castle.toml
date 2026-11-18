@@ -136,8 +136,8 @@ about = "Real-time strategy: attack or defend across several elevations."
 
 [venue.crossing]
 title = "The long bridge"
-kind = "placeholder"
-scenario = ""
+kind = "crossing"
+scenario = "../walk/crossing.toml"
 row = "9"
 column = "12"
 from = "bridge-3"

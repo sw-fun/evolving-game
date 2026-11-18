@@ -20,6 +20,10 @@ rm -rf "$root/web/ext"; mkdir -p "$root/web/ext/vendor"
 cp "$from/board.js" "$root/web/ext/"
 cp -R "$from/board" "$root/web/ext/"
 cp -R "$from/vendor/three" "$root/web/ext/vendor/"
+# the art a game shows by name (art/NAME: the bridge painting, the
+# user's own, docs/images)
+rm -rf "$root/web/art"; mkdir -p "$root/web/art"
+cp "$root/docs/images/block-bridge-far.jpg" "$root/web/art/"
 # the pieces the board player loads by name (models/NAME.glb)
 rm -rf "$root/web/models"; mkdir -p "$root/web/models"
 cp "$root"/assets/pieces/*.glb "$root/web/models/"
