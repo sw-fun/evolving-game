@@ -211,16 +211,16 @@ if (capture) {
 // done, which is then counted; ?debug shows every place.
 check(await open("?hold&fresh"), "the page starts with the castle");
 check((await page("document.title")) === "Evolving Game: The castle: ready", "its title is the castle's");
-check((await caption()).startsWith("The castle and its country: 3 of 17 places known, 0 won. Gold 0, experience 0."), "the map shows three places to begin with, and your gold and experience");
+check((await caption()).startsWith("The castle and its country: 3 of 18 places known, 0 won. Gold 0, experience 0."), "the map shows three places to begin with, and your gold and experience");
 await sleep(300);
 check((await page("window.game.player().count().pieces")) === 3, "each a marker on the map");
 check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x.textContent).join('|')")).includes("2 The battlefield on foot"), "with its number and name written over it");
 await click(190, 195);
 check((await caption()).includes("W A S D walk"), "a click on the far end of the second place's name goes into the battlefield on foot");
 await page("document.getElementById('leave').click(), 1");
-check((await caption()).startsWith("The castle and its country: 3 of 17"), "the Map button comes back to the map");
+check((await caption()).startsWith("The castle and its country: 3 of 18"), "the Map button comes back to the map");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");
-check((await caption()).startsWith("The castle and its country: 17 of 17 places known"), "and every place is shown");
+check((await caption()).startsWith("The castle and its country: 18 of 18 places known"), "and every place is shown");
 await page("window.game.feed('choose 1 7'), 1");
 check((await caption()).startsWith("Siege Engineer (not built yet)."), "a place not built yet says what it will be");
 check((await page("document.querySelectorAll('#flat svg text:not([text-anchor])').length")) === 3, "in three lines under the map");
@@ -258,6 +258,23 @@ for (const [n, says, key, shot] of [[10, "Steps 0 | Facing", "w", "maze"], [13, 
   check((await caption()).startsWith("The castle and its country"), "and the Map button leaves it");
   check(await page("getComputedStyle(document.getElementById('view')).visibility === 'visible'"), "and the map's 3D board is back");
 }
+
+// The city inside the gate: the village walked on foot. W held walks
+// you up the way from the gate; a house stops you.
+check(await open("?debug&fresh"), "the map opens for the city");
+await page("window.game.feed('choose 1 18'), 1");
+check((await caption()).startsWith("Row 22, column 17, facing north."), "the city is entered at its gate");
+check((await page("window.game.player().count().pieces")) >= 0 && /tiles\('house'/.test(await page("document.querySelector('#flat svg metadata').textContent")), "its scene has the village's houses");
+await page("window.game.feed('choose 2 87'), 1");
+await sleep(900);
+await page("window.game.feed('choose 3 87'), 1");
+check(/^Row (1[6-9]|2[01]), column 17/.test(await caption()), "W held walks you up the way");
+if (capture) {
+  await sleep(600);
+  const img = await send("Page.captureScreenshot", { format: "png" });
+  writeFileSync(join(root, "images/look/city.png"), Buffer.from(img.data, "base64"));
+}
+await page("document.getElementById('leave').click(), 1");
 
 // In the second maze a real arrow key, held, turns you; Escape leaves
 // any game for the map.

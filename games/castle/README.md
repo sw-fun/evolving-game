@@ -48,6 +48,11 @@ the next. This is the game the others are parts of.
   with you). Their data are `maze.toml`, `dungeon.toml` and
   `raycaster.toml` here.
 
+- **The city.** Inside the gate, the village seen behind the wall is
+  walked on foot (the walk's `Roaming`, the scenario
+  `../walk/city.toml`): from the gate up the way to the keep's door,
+  its buildings in your way.
+
 [`Venues.xtl`](Venues.xtl) reads the venues for the others.
 
 ## Play it

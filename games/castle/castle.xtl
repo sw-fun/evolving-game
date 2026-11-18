@@ -8,6 +8,7 @@
 "dd:" u_se< "Deeds"
 "dp:" u_se< "Depths"
 "ps:" u_se< "Passage"
+"rm:" u_se< "Roaming"
 "rc:" u_se< "Rays"
 "wr:" u_se< "Warren"
 "lg:" u_se< "Ledger"
@@ -106,3 +107,11 @@ u:h_eld := u:l_ast 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep md:r_eplay ("choos
 (_, rays, held) := u:h_eld
 3 t_ake rc:y_ou rays
 held
+
+# The city inside the gate (the village on its own ground, on foot) can
+# be won: W held (choose 2 87) for three and a half seconds walks you
+# from the gate up the way to the keep's door. A step east from the
+# start runs into a house and stops.
+u:c_ity := { lines -> u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_eplay (lines, rm:n_ew ("../walk/city.toml", md:nothing, 1)) }
+_ := u:s_ay rm:o_utcome u:c_ity (e_nclose "choose 2 87") c_at 7 r_eshape e_nclose "tick 0.5"
+rm:p_lace u:c_ity (e_nclose "choose 2 68") c_at 8 r_eshape e_nclose "tick 0.5"

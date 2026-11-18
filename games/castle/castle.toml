@@ -26,7 +26,7 @@ village = ["seed 7", "wide 34", "deep 20"]
 time = ["10.5"]
 
 # The venues, in the order of their numbers on the map.
-venues = ["bridge-1", "on-foot", "bridge-2", "camp", "town", "bridge-3", "engineer", "commander", "crossing", "gate-maze", "rune-keep", "tactics", "dungeon", "ray-maze", "treasury", "automata", "hall"]
+venues = ["bridge-1", "on-foot", "bridge-2", "camp", "town", "bridge-3", "engineer", "commander", "crossing", "gate-maze", "rune-keep", "tactics", "dungeon", "ray-maze", "treasury", "automata", "hall", "city"]
 venue-fields = ["title", "kind", "scenario", "row", "column", "from", "needs", "marker", "about"]
 
 # Deeds: quests (known from the start, so you know what to try) and
@@ -150,8 +150,8 @@ title = "The gate maze"
 kind = "maze"
 scenario = ""
 row = "6"
-column = "12"
-from = "crossing"
+column = "15"
+from = "city"
 needs = ""
 marker = "gate"
 about = "The portcullis shuts behind you. A maze seen from inside, with torches, paintings and cobwebs to know your way by; its exits lead to the other games."
@@ -161,7 +161,7 @@ title = "Rune Keep"
 kind = "placeholder"
 scenario = ""
 row = "6"
-column = "18"
+column = "21"
 from = "gate-maze"
 needs = ""
 marker = "ice"
@@ -205,7 +205,7 @@ title = "The treasury"
 kind = "placeholder"
 scenario = ""
 row = "6"
-column = "15"
+column = "18"
 from = "dungeon"
 needs = "resource.gold"
 marker = "shield"
@@ -216,7 +216,7 @@ title = "Siege Automata"
 kind = "placeholder"
 scenario = ""
 row = "6"
-column = "21"
+column = "24"
 from = "ray-maze"
 needs = ""
 marker = "archer"
@@ -232,6 +232,17 @@ from = ""
 needs = ""
 marker = "shield"
 about = "Your experience, your quests and what you have achieved."
+
+[venue.city]
+title = "The city"
+kind = "roam"
+scenario = "../walk/city.toml"
+row = "6"
+column = "12"
+from = "crossing"
+needs = ""
+marker = "gate"
+about = "Inside the gate: the village you saw from the battlefield, walked on foot, from the gate to the keep's door."
 
 [deed.season-summer]
 title = "Hold the bridge in summer"

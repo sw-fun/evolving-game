@@ -1,9 +1,9 @@
 l:mode : Char
 l:help : Char
-l:n_ew : (Any a, Any b, Num c) => (Char, a, b) -> (Char, ((Char, Int, Int), Float, Box Char, Float, Char, c), Float)
-l:s_tep : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i) => (a, ((b, Int, c), d, e, f, g, h), Float) -> (Char, Float, i) -> (a, ((b, Int, c), d, e, f, g, h), Float)
+l:n_ew : (Any a, Any b, Num c, Truthy d) => (Char, a, b) -> (Char, ((Char, Int, Int), Float, Box Char, Float, Char, c), Float, d)
+l:s_tep : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Truthy i, Any j) => (a, ((b, Int, c), d, e, f, g, h), Float, i) -> (Char, Float, j) -> (a, ((b, Int, c), d, e, f, g, h), Float, i)
 l:l_egal : Any a => a -> Box Char
-l:p_lace : (Any a, Any b, Num c) => (a, b, c) -> Int
-l:s_tatus : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i) => (a, ((b, Int, c), d, e, f, g, h), i) -> Int
-l:v_iew : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (a, ((b, Int, c), d, e, f, g, h), Float) -> (((b, Int, c), d, e, f, g, h), Box Char, Box Char, Float, Char)
-l:o_utcome : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i) => (a, ((b, Int, c), d, e, f, g, h), i) -> (Int, (Box Char, Int), (Box Char, Int))
+l:p_lace : (Any a, Any b, Num c, Any d) => (a, b, c, d) -> Int
+l:s_tatus : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i, Any j) => (a, ((b, Int, c), d, e, f, g, h), i, j) -> Int
+l:v_iew : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i) => (a, ((b, Int, c), d, e, f, g, h), Float, i) -> (((b, Int, c), d, e, f, g, h), Box Char, Box Char, Float, Char)
+l:o_utcome : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i, Any j) => (a, ((b, Int, c), d, e, f, g, h), i, j) -> (Int, (Box Char, Int), (Box Char, Int))

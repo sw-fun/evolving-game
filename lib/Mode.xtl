@@ -222,10 +222,24 @@ l:s_tage := { file ->
   vw:l_it (stage, light)
 }
 ## A stage with the scenario's village behind its map's wall, if it
-## says one (village = ["seed 7", "wide 34", "deep 20"]: lib/Village).
+## says one (village = ["seed 7", "wide 34", "deep 20"]: lib/Village); with
+## "south N" too it stands on the map, its wall line N tiles south.
 h:v_illage := { (file, map) stage ->
   n_ot file l:h_as "village" ? stage
-  vw:d_ressed (stage, vg:c_alls (map, f_loor file l:r_ule ("village", "seed"), file l:r_ule ("village", "wide"), file l:r_ule ("village", "deep")))
+  vw:d_ressed (stage, vg:c_alls h:l_aid (file, map))
+}
+## A scenario's village as lib/Village takes it: (map, seed, wide, deep,
+## south); south is -1 unless the scenario says it (the village then
+## stands on the map itself: "south 22").
+h:l_aid := { (file, map) -> (map, f_loor file l:r_ule ("village", "seed"), file l:r_ule ("village", "wide"), file l:r_ule ("village", "deep"), f_loat file l:r_ule ("village", "south")) }
+# :: Truthy a => Char -> a
+## The tiles of a scenario's map its village's buildings stand on, a
+## matrix of the map's shape (1 where one does; none where the scenario
+## has no village): what a game on foot may not walk into.
+l:b_locked := { file ->
+  map := l:m_ap file
+  n_ot file l:h_as "village" ? (w:s_ize map) r_eshape 0 = 1
+  vg:b_locked h:l_aid (file, map)
 }
 h:w_eather := { file -> n_ot file l:h_as "weather" ? 0.0; file l:r_ule ("weather", "snow") }
 h:g_round := { (map, snow) -> snow > 0.0 ? vw:w_inter (map, snow); vw:s_mooth map }

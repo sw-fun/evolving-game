@@ -479,10 +479,21 @@ lots m_atch vg:l_ots (8, 34.0, 20.0)
 # and behind the castle's map it is one village, moved.
 realm := w:r_ead "../world/realm.toml"
 plain := w:r_ead "../world/battlefield.toml"
-here := vg:b_ehind (plain, 7, 34.0, 20.0)
-there := vg:b_ehind (realm, 7, 34.0, 20.0)
+here := vg:b_ehind (plain, 7, 34.0, 20.0, -1.0)
+there := vg:b_ehind (realm, 7, 34.0, 20.0, -1.0)
 0.000001 > 'm_ax r_/ a_bs r_avel (there - here) - (s_hape here) r_eshape 1.0 1.0 0.0 0.0 0.0
 # Its scene: a line for each kind of building, and smoke from chimneys.
-calls := st:l_ines vg:c_alls (plain, 7, 34.0, 20.0)
+calls := st:l_ines vg:c_alls (plain, 7, 34.0, 20.0, -1.0)
 _ := t:l_ines '{ line -> e_nclose 12 t_ake d_isclose line } e_ach 5 t_ake calls
 '+ r_/ '{ line -> "particles('smoke'" m_atch 17 t_ake d_isclose line } e_ach calls
+
+# The village on a map of its own (the city: its wall line at the map's
+# south edge, 22 tiles down): the tiles its buildings stand on, drawn
+# (# one, . open); the way from the entrance to the keep's door is
+# open; behind the battlefield a few stand on the rows of its map that
+# lie beyond its wall, where no one walks.
+city := w:r_ead "../world/city.toml"
+on := vg:b_locked (city, 7, 34.0, 20.0, 22.0)
+_ := t:l_ines '{ i -> e_nclose (1 + i s_elect on) s_elect ".#" } e_ach r_ange f_irst s_hape on
+'+ r_/ r_avel on * w:w_alked city
+'+ r_/ r_avel vg:b_locked (plain, 7, 34.0, 20.0, -1.0)

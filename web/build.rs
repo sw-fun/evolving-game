@@ -37,6 +37,9 @@ const DATA: &[(&str, &str)] = &[
     ("../defense/defend.toml", "games/defense/defend.toml"),
     ("../defense/level-3.toml", "games/defense/level-3.toml"),
     ("../walk/roam.toml", "games/walk/roam.toml"),
+    ("../walk/city.toml", "games/walk/city.toml"),
+    ("../walk/../../world/city.toml", "world/city.toml"),
+    ("../../world/city.toml", "world/city.toml"),
     ("../defense/../../world/zones.toml", "world/zones.toml"),
     (
         "../defense/../../world/battlefield.toml",

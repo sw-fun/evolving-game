@@ -70,11 +70,16 @@ l:l_ots := { (seed, wide, deep) ->
 
 ### Standing them
 
-## Where a map's gate is in its scene: the middle of the gate east and
-## west, the north face of its wall.
-h:o_rigin := { map ->
+## Where a village's own gate point is in a map's scene, (map, south):
+## east and west, the middle of the map's gate; north and south, the
+## north face of the gate's wall, or, where the map is the village's
+## own ground (south is not negative), the line that far south (the
+## map's south edge: the village then stands on the map).
+h:o_rigin := { (map, south) ->
   g := w:g_ate map
-  ((f_loat 2 s_elect g) - 0.5) c_at (f_loat f_irst g) - 1.0
+  x := (f_loat 2 s_elect g) - 0.5
+  south >= 0.0 ? x c_at south
+  x c_at (f_loat f_irst g) - 1.0
 }
 ## The height of the ground at a map's points (x, z a row), on the map
 ## and off it: on it, the surface (lib/Terrain); off it, the nearest
@@ -97,20 +102,45 @@ h:k_indCall := { (map, lots) k ->
   name := d_isclose k s_elect "house" "hall" "stall" "watch" "keep"
   "tiles('" c_at name c_at "', '#8a8f98', nums('" c_at (f_ormat h:f_ine r_avel rows) c_at "', 6), '" c_at name c_at "')\n"
 }
-# :: (Any a, Any b) => ((a, Int, b), Int, Float, Float) -> Float
-## A village's lots where they stand behind a map: l:l_ots's table with
-## x and z the scene's (moved to the map's gate).
-l:b_ehind := { (map, seed, wide, deep) ->
+# :: (Any a, Any b) => ((a, Int, b), Int, Float, Float, Float) -> Float
+## A village's lots where they stand by a map: (map, seed, wide, deep,
+## south), l:l_ots's table with x and z the scene's. south negative,
+## it stands behind the map's wall, from its gate; else on the map,
+## its own wall line that far south (h:o_rigin).
+l:b_ehind := { (map, seed, wide, deep, south) ->
   lots := l:l_ots (seed, wide, deep)
-  o := h:o_rigin map
+  o := h:o_rigin (map, south)
   o_\ (5 c_at t_ally lots) r_eshape ((f_irst o) + f_irst_2 lots) c_at ((2 s_elect o) + 2 s_elect_2 lots) c_at r_avel o_\ (3 4 5) s_elect_2 lots
 }
-# :: (Any a, Num b) => ((a, Int, b), Int, Float, Float) -> Char
-## A village as a scene's lines: (map, seed, wide, deep). Every lot of a
-## kind is one line (a model stood many times), and from one house or
-## hall in six smoke rises (the wind from the west).
-l:c_alls := { (map, seed, wide, deep) ->
-  lots := l:b_ehind (map, seed, wide, deep)
+# :: (Any a, Any b, Truthy c) => ((a, Int, b), Int, Float, Float, Float) -> c
+## The tiles of a map a village's buildings stand on, a matrix of the
+## map's shape, 1 where one does: (map, seed, wide, deep, south). A
+## house, a hall or a watch tower takes the tile it stands in, the keep
+## the tiles within two of its middle; a stall is open to walk under.
+## A game on foot does not let you into them.
+l:b_locked := { (map, seed, wide, deep, south) ->
+  lots := l:b_ehind (map, seed, wide, deep, south)
+  rc := w:s_ize map
+  rows := f_irst rc
+  cols := 2 s_elect rc
+  kind := f_loor 3 s_elect_2 lots
+  col := 1 + f_loor f_irst_2 lots
+  row := 1 + f_loor 2 s_elect_2 lots
+  inside := (col >= 1) & (col <= cols) & (row >= 1) & row <= rows
+  at := (inside & kind m_ember? 1 2 4) r_eplicate col + cols * row - 1
+  all := r_ange rows * cols
+  keep := f_irst (kind = 5) r_eplicate lots
+  cx := 0.5 + f_loat (all - 1) m_od cols
+  cz := 0.5 + f_loat (all - 1) d_iv cols
+  near := ((a_bs cx - f_irst keep) < 2.0) & (a_bs cz - 2 s_elect keep) < 2.0
+  rc r_eshape (all m_ember? at) | near
+}
+# :: (Any a, Num b) => ((a, Int, b), Int, Float, Float, Float) -> Char
+## A village as a scene's lines: (map, seed, wide, deep, south). Every
+## lot of a kind is one line (a model stood many times), and from one
+## house or hall in six smoke rises (the wind from the west).
+l:c_alls := { (map, seed, wide, deep, south) ->
+  lots := l:b_ehind (map, seed, wide, deep, south)
   built := t:j_oin '{ k -> e_nclose (map, lots) h:k_indCall k } e_ach r_ange 5
   homes := ((3 s_elect_2 lots) < 3.0) r_eplicate lots
   smoking := (0 = ((r_ange t_ally homes) m_od 6)) r_eplicate homes

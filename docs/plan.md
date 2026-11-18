@@ -914,6 +914,15 @@ The framework (`games/castle`, Saga 3's castle-map step):
   lib/Rng), and have no landmarks yet; their generated levels are not
   yet proven completable by a golden here (rule 9; owed).
 
+- **The city inside the gate, first version**: the village of the same
+  seed stood on a map of its own (`world/city.toml`; the scenario's
+  village says `south 22`), walked with the on-foot game from the
+  gate to the keep's door; houses, halls, towers and the keep stop you
+  (`vg:b_locked`), stalls do not. On the castle's map it comes after
+  the long bridge and before the gate maze. Owed: doors and stalls as
+  the entrances of the games, carts, crows, people, a caption of its
+  own; the tick there costs more than the budget.
+
 What the user's second message adds, each a later step on this
 framework, none blocking it:
 
