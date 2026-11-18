@@ -92,16 +92,26 @@ h:g_round := { map xz ->
   (map tr:h_eight xz) * 0.0 m_ax 1.0 - out / h:far
 }
 h:f_ine := { v -> (f_loat f_loor 0.5 + 1000.0 * v) / 1000.0 }
-## The scene's line for every lot of one kind: tiles('name', 'color',
-## nums('x z y base hx hz ...', 6), 'model').
-h:k_indCall := { (map, lots) k ->
+## The scene's line for every row of one kind: tiles('name', 'color',
+## nums('x z y base hx hz ...', 6), 'model'), names the kinds' models.
+h:k_indCall := { (map, lots, names) k ->
   mine := (k = f_loor 3 s_elect_2 lots) r_eplicate lots
   0 = t_ally mine ? ""
   y := map h:g_round (1 2) s_elect_2 mine
   rows := o_\ (6 c_at t_ally mine) r_eshape (f_irst_2 mine) c_at (2 s_elect_2 mine) c_at y c_at y c_at (4 s_elect_2 mine) c_at 5 s_elect_2 mine
-  name := d_isclose k s_elect "house" "hall" "stall" "watch" "keep"
+  name := d_isclose k s_elect names
   "tiles('" c_at name c_at "', '#8a8f98', nums('" c_at (f_ormat h:f_ine r_avel rows) c_at "', 6), '" c_at name c_at "')\n"
 }
+# :: (Any a, Num b) => ((a, Int, b), Float, Box Char) -> Char
+## Things stood on a map's ground, as a scene's lines: (map, rows,
+## names), rows a table as a village's lots (x, z, kind, hx, hz), names
+## the model of each kind. A line a kind: a model stood many times.
+## What a camp or any other scenery made of models is written with.
+l:s_tood := { (map, rows, names) -> t:j_oin '{ k -> e_nclose (map, rows, names) h:k_indCall k } e_ach r_ange t_ally names }
+# :: (Any a, Num b) => (a, Int, b) -> Float -> Float
+## The height of a map's ground at points (x, z a row), on the map and
+## off it.
+l:g_round := { map xz -> map h:g_round xz }
 # :: (Any a, Any b) => ((a, Int, b), Int, Float, Float, Float) -> Float
 ## A village's lots where they stand by a map: (map, seed, wide, deep,
 ## south), l:l_ots's table with x and z the scene's. south negative,
@@ -141,7 +151,7 @@ l:b_locked := { (map, seed, wide, deep, south) ->
 ## house or hall in six smoke rises (the wind from the west).
 l:c_alls := { (map, seed, wide, deep, south) ->
   lots := l:b_ehind (map, seed, wide, deep, south)
-  built := t:j_oin '{ k -> e_nclose (map, lots) h:k_indCall k } e_ach r_ange 5
+  built := l:s_tood (map, lots, "house" "hall" "stall" "watch" "keep")
   homes := ((3 s_elect_2 lots) < 3.0) r_eplicate lots
   smoking := (0 = ((r_ange t_ally homes) m_od 6)) r_eplicate homes
   y := map h:g_round (1 2) s_elect_2 smoking

@@ -1,0 +1,3 @@
+l:l_ayout : (Int, Float, Float, Int) -> Float
+l:b_locked : (Any a, Any c, Truthy d) => ((a, b, c), Int, Int) -> d
+l:c_alls : (Any a, Num b) => ((a, Int, b), Int, Int) -> Char

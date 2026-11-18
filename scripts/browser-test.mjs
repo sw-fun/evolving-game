@@ -276,6 +276,21 @@ if (capture) {
 }
 await page("document.getElementById('leave').click(), 1");
 
+// The winter camp: tents and fires in the snow, walked on foot.
+check(await open("?debug&fresh"), "the map opens for the camp");
+await page("window.game.feed('choose 1 4'), 1");
+check((await caption()).startsWith("Row 22, column 14, facing north."), "the winter camp is entered from the south");
+check(/tiles\('tent'/.test(await page("document.querySelector('#flat svg metadata').textContent")) && /particles\('fire'/.test(await page("document.querySelector('#flat svg metadata').textContent")), "its scene has tents and fires");
+await page("window.game.feed('choose 2 87'), 1");
+await sleep(1500);
+await page("window.game.feed('choose 3 87'), 1");
+if (capture) {
+  await sleep(600);
+  const img = await send("Page.captureScreenshot", { format: "png" });
+  writeFileSync(join(root, "images/look/camp.png"), Buffer.from(img.data, "base64"));
+}
+await page("document.getElementById('leave').click(), 1");
+
 // In the second maze a real arrow key, held, turns you; Escape leaves
 // any game for the map.
 check(await open("?debug&fresh"), "the map opens, its clock running");

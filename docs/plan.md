@@ -923,6 +923,15 @@ The framework (`games/castle`, Saga 3's castle-map step):
   the entrances of the games, carts, crows, people, a caption of its
   own; the tick there costs more than the budget.
 
+- **The winter camp, first version**: `lib/Camp` lays a camp out from
+  a seed (cook fires either side of the road, a ring of tents about
+  each, a banner by each, the cart), on `world/camp.toml`, in snow,
+  late in the day; walked with the on-foot game from the south to the
+  palisade's gate; tents and fires stop you. Owed: banners and tent
+  flaps that wave (a piece's clip needs the time each tick, which
+  scenery lines do not carry), crows, people, falling snow (the
+  extensions ask).
+
 What the user's second message adds, each a later step on this
 framework, none blocking it:
 

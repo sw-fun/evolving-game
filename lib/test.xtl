@@ -160,6 +160,7 @@ w:d_rawHeights field
 "st:" u_se< "Strings"
 # Mode: statuses by name; the world state, names to whole numbers: the
 # empty world is valid and every name in it is 0; set, add, read.
+"cp:" u_se< "Camp"
 "md:" u_se< "Mode"
 '{ n -> e_nclose md:s_tatusName n } e_ach md:playing c_at md:won c_at md:lost c_at md:left
 t_ally md:l_ines md:nothing
@@ -497,3 +498,21 @@ on := vg:b_locked (city, 7, 34.0, 20.0, 22.0)
 _ := t:l_ines '{ i -> e_nclose (1 + i s_elect on) s_elect ".#" } e_ach r_ange f_irst s_hape on
 '+ r_/ r_avel on * w:w_alked city
 '+ r_/ r_avel vg:b_locked (plain, 7, 34.0, 20.0, -1.0)
+
+# The camp (lib/Camp), from a seed: on a map 28 wide and 22 deep with
+# six fires, how many things and of each kind (tents, fires, banners,
+# the cart); the same seed is the same camp, another another; none
+# stands on the road; its scene's lines, and flames and smoke at the
+# fires.
+camp := cp:l_ayout (3, 28.0, 22.0, 6)
+s_hape camp
+'{ k -> '+ r_/ k = f_loor 3 s_elect_2 camp } e_ach r_ange 4
+camp m_atch cp:l_ayout (3, 28.0, 22.0, 6)
+camp m_atch cp:l_ayout (4, 28.0, 22.0, 6)
+campsite := w:r_ead "../world/camp.toml"
+tented := cp:b_locked (campsite, 3, 6)
+_ := t:l_ines '{ i -> e_nclose (1 + i s_elect tented) s_elect ".#" } e_ach r_ange f_irst s_hape tented
+'+ r_/ r_avel tented * w:w_alked campsite
+said := st:l_ines cp:c_alls (campsite, 3, 6)
+_ := t:l_ines '{ line -> e_nclose 14 t_ake d_isclose line } e_ach 4 t_ake said
+'+ r_/ '{ line -> "particles('fire'" m_atch 16 t_ake d_isclose line } e_ach said

@@ -265,6 +265,34 @@ h:k_eep := { z ->
     ((("keep pole", 0.0 0.0 4.9, 0.03 0.03 1.6, flat, iron, 0.0) bp:c_ylinder 0) c_at ("keep banner", 0.4 0.0 5.3, 0.76 0.03 0.5, flat, red, 0.0) bp:b_ox 0))
 }
 
+### The camp
+
+## The besiegers' camp: a tent of canvas (a cone on a short wall, a dark
+## way in toward -y, its pole through the top), a cook fire (a ring of
+## stones, logs, a flame that glows), and a banner on a pole.
+h:t_ent := { z ->
+  ((bp:p_iece "tent") c_at
+    (("tent wall", 0.0 0.0 0.2, 0.85 0.85 0.4, flat, 0.74 0.69 0.58, 0.0) bp:c_ylinder 0) c_at
+    (("tent roof", 0.0 0.0 0.95, 0.95 0.0 1.1, flat, 0.8 0.75 0.63, 0.0) bp:c_one 0) c_at
+    (("tent door", 0.0 -0.8 0.3, 0.36 0.14 0.6, flat, 0.16 0.13 0.1, 0.0) bp:b_ox 0) c_at
+    (("tent pole", 0.0 0.0 1.6, 0.02 0.02 0.3, flat, beam, 0.0) bp:c_ylinder 0) c_at
+    ("tent pennon", 0.1 0.0 1.68, 0.2 0.015 0.1, flat, red, 0.0) bp:b_ox 0)
+}
+h:c_ampfire := { z ->
+  ((bp:p_iece "campfire") c_at
+    (("campfire ring", 0.0 0.0 0.05, 0.34 0.07, flat, darkstone, 0.0) bp:t_orus 0) c_at
+    (("campfire log 1", 0.0 0.0 0.1, 0.5 0.09 0.09, 0.0 0.0 30.0, beam, 0.0) bp:b_ox 0) c_at
+    (("campfire log 2", 0.0 0.0 0.12, 0.5 0.09 0.09, 0.0 0.0 -35.0, beam, 0.0) bp:b_ox 0) c_at
+    (("campfire log 3", 0.0 0.0 0.14, 0.5 0.09 0.09, 0.0 0.0 88.0, beam, 0.0) bp:b_ox 0) c_at
+    ("campfire flame", 0.0 0.0 0.36, 0.16 0.0 0.42, flat, 1.0 0.55 0.12, 3.0) bp:c_one 0)
+}
+h:b_anner := { z ->
+  ((bp:p_iece "banner") c_at
+    (("banner pole", 0.0 0.0 1.2, 0.025 0.025 2.4, flat, beam, 0.0) bp:c_ylinder 0) c_at
+    (("banner yard", 0.2 0.0 2.3, 0.44 0.02 0.02, flat, beam, 0.0) bp:b_ox 0) c_at
+    ("banner cloth", 0.2 0.0 1.85, 0.4 0.02 0.86, flat, red, 0.0) bp:b_ox 0)
+}
+
 ### The siege cart
 
 ## What the attackers come out of: a war wagon, a bed on four wheels
@@ -324,10 +352,10 @@ h:g_ate := { z ->
 
 # :: Char
 ## The pieces' names, a space between: the files are NAME.glb.
-l:names := "walker ground water bridge wall gate archer fire ice runner brute shield house hall stall watch keep cart"
+l:names := "walker ground water bridge wall gate archer fire ice runner brute shield house hall stall watch keep cart tent campfire banner"
 # :: Box Char
 ## The same, a text each.
-l:list := "walker" "ground" "water" "bridge" "wall" "gate" "archer" "fire" "ice" "runner" "brute" "shield" "house" "hall" "stall" "watch" "keep" "cart"
+l:list := "walker" "ground" "water" "bridge" "wall" "gate" "archer" "fire" "ice" "runner" "brute" "shield" "house" "hall" "stall" "watch" "keep" "cart" "tent" "campfire" "banner"
 # :: Char -> Char
 ## Python making the piece NAME and keying its clips; "" for another
 ## name.
@@ -350,6 +378,9 @@ l:m_odel := { name ->
   name m_atch "watch" ? h:w_atch 0
   name m_atch "keep" ? h:k_eep 0
   name m_atch "cart" ? h:c_art 0
+  name m_atch "tent" ? h:t_ent 0
+  name m_atch "campfire" ? h:c_ampfire 0
+  name m_atch "banner" ? h:b_anner 0
   ""
 }
 # :: Char -> Box Char
@@ -371,7 +402,7 @@ l:e_xport := { name -> (l:m_odel name) c_at (bp:e_xportPiece name) c_at bp:c_lip
 ## then writing out/clips.txt:
 ## each piece's name and, under it, its clips as read back from its
 ## file.
-l:all := l:skins c_at l:textures c_at (l:e_xport "walker") c_at (l:e_xport "ground") c_at (l:e_xport "water") c_at (l:e_xport "bridge") c_at (l:e_xport "wall") c_at (l:e_xport "gate") c_at (l:e_xport "archer") c_at (l:e_xport "fire") c_at (l:e_xport "ice") c_at (l:e_xport "runner") c_at (l:e_xport "brute") c_at (l:e_xport "shield") c_at (l:e_xport "house") c_at (l:e_xport "hall") c_at (l:e_xport "stall") c_at (l:e_xport "watch") c_at (l:e_xport "keep") c_at (l:e_xport "cart") c_at "with open(os.path.join(out, \"clips.txt\"), \"w\") as f:\n    for n in \"" c_at l:names c_at "\".split():\n        f.write(n + \"\\n\" + open(os.path.join(out, n + \"-clips.txt\")).read())\n"
+l:all := l:skins c_at l:textures c_at (l:e_xport "walker") c_at (l:e_xport "ground") c_at (l:e_xport "water") c_at (l:e_xport "bridge") c_at (l:e_xport "wall") c_at (l:e_xport "gate") c_at (l:e_xport "archer") c_at (l:e_xport "fire") c_at (l:e_xport "ice") c_at (l:e_xport "runner") c_at (l:e_xport "brute") c_at (l:e_xport "shield") c_at (l:e_xport "house") c_at (l:e_xport "hall") c_at (l:e_xport "stall") c_at (l:e_xport "watch") c_at (l:e_xport "keep") c_at (l:e_xport "cart") c_at (l:e_xport "tent") c_at (l:e_xport "campfire") c_at (l:e_xport "banner") c_at "with open(os.path.join(out, \"clips.txt\"), \"w\") as f:\n    for n in \"" c_at l:names c_at "\".split():\n        f.write(n + \"\\n\" + open(os.path.join(out, n + \"-clips.txt\")).read())\n"
 # :: Int -> Char
 ## Python rendering each piece alone as out/NAME.png, size pixels
 ## square on a transparent ground, from the front a little to the right

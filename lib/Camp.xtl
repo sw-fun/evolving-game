@@ -1,0 +1,70 @@
+## Camp: the besiegers' camp, worked out as arrays from a seed: cook
+## fires either side of the road, a ring of tents about each, facing
+## it, a banner by each, and a cart by the road. It stands on its map
+## (x east, z south, in tiles, from the map's north-west corner).
+## Another seed is another camp. Scenery, as lib/Village is: models
+## stood many times, fire and smoke at the fires; a tent or a fire is
+## in your way on foot.
+## Import: "cp:" u_se< "Camp"
+
+"rg:" u_se< "Rng"
+"t:" u_se< "Text"
+"vg:" u_se< "Village"
+"w:" u_se< "World"
+
+## How many tents stand about a fire, and how far from it.
+h:ring := 5
+h:out := 2.3
+
+# :: (Int, Float, Float, Int) -> Float
+## Everything in a camp: (seed, wide, deep, fires) to a table, a row a
+## thing: x, z, its kind (1 a tent, 2 a fire, 3 a banner, 4 the cart),
+## and the way it faces (hx hz). wide and deep are the map's size,
+## fires how many fires; the road runs north down the middle.
+l:l_ayout := { (seed, wide, deep, fires) ->
+  i := (r_ange fires) - 1
+  u := (seed, 1) rg:u_nit r_ange fires
+  v := (seed, 2) rg:u_nit r_ange fires
+  side := (2.0 * f_loat i m_od 2) - 1.0
+  fx := (0.5 * wide) + side * 5.0 + 3.0 * u
+  fz := 4.0 + (5.0 * f_loat i d_iv 2) + 2.0 * v
+  n := fires * h:ring
+  j := (r_ange n) - 1
+  of := 1 + j d_iv h:ring
+  turn := (2.0 * (p_i @) * (f_loat j m_od h:ring) / f_loat h:ring) + 6.0 * (seed, 3) rg:u_nit r_ange n
+  tx := (of s_elect fx) + h:out * s_in turn
+  tz := (of s_elect fz) + h:out * c_os turn
+  tents := o_\ (5 c_at n) r_eshape tx c_at tz c_at (n r_eshape 1.0) c_at (0.0 - s_in turn) c_at 0.0 - c_os turn
+  blazes := o_\ (5 c_at fires) r_eshape fx c_at fz c_at (fires r_eshape 2.0) c_at (fires r_eshape 0.0) c_at fires r_eshape 1.0
+  lean := 6.0 * (seed, 4) rg:u_nit r_ange fires
+  flags := o_\ (5 c_at fires) r_eshape (fx + 1.2 * s_in lean) c_at (fz + 1.2 * c_os lean) c_at (fires r_eshape 3.0) c_at (s_in lean) c_at c_os lean
+  cart := 1 5 r_eshape ((0.5 * wide) + 1.4) c_at (deep - 3.0) c_at 4.0 0.0 -1.0
+  tents c_at blazes c_at flags c_at cart
+}
+# :: (Any a, Any c, Truthy d) => ((a, b, c), Int, Int) -> d
+## The tiles of a map a camp's tents, fires and cart stand on, a matrix
+## of the map's shape (1 where one does): (map, seed, fires).
+l:b_locked := { (map, seed, fires) ->
+  rc := w:s_ize map
+  all := l:l_ayout (seed, f_loat 2 s_elect rc, f_loat f_irst rc, fires)
+  solid := (n_ot 3.0 = 3 s_elect_2 all) r_eplicate all
+  col := 1 + f_loor f_irst_2 solid
+  row := 1 + f_loor 2 s_elect_2 solid
+  inside := (col >= 1) & (col <= 2 s_elect rc) & (row >= 1) & row <= f_irst rc
+  rc r_eshape (r_ange (f_irst rc) * 2 s_elect rc) m_ember? inside r_eplicate col + (2 s_elect rc) * row - 1
+}
+h:f_ine := { x -> (f_loat f_loor 0.5 + 1000.0 * x) / 1000.0 }
+# :: (Any a, Num b) => ((a, Int, b), Int, Int) -> Char
+## A camp as a scene's lines: (map, seed, fires). A line for each kind
+## of thing, and at every fire flames and smoke.
+l:c_alls := { (map, seed, fires) ->
+  rc := w:s_ize map
+  all := l:l_ayout (seed, f_loat 2 s_elect rc, f_loat f_irst rc, fires)
+  blazes := (2.0 = 3 s_elect_2 all) r_eplicate all
+  y := map vg:g_round (1 2) s_elect_2 blazes
+  b_urn := { k ->
+    at := f_ormat h:f_ine (2 t_ake k s_elect blazes) c_at 0.35 + k s_elect y
+    "particles('fire', nums('" c_at at c_at "', 3)[0], 60, nums('0.2 0.1', 2)[0], " c_at (f_ormat 200 + k) c_at ")\nparticles('smoke', nums('" c_at at c_at "', 3)[0], 6, nums('0.35 0.1', 2)[0], " c_at (f_ormat 300 + k) c_at ")\n"
+  }
+  (vg:s_tood (map, all, "tent" "campfire" "banner" "cart")) c_at t:j_oin '{ k -> e_nclose b_urn k } e_ach r_ange t_ally blazes
+}

@@ -53,6 +53,10 @@ the next. This is the game the others are parts of.
   `../walk/city.toml`): from the gate up the way to the keep's door,
   its buildings in your way.
 
+- **The winter camp.** The besiegers' tents and cook fires in the
+  snow, walked on foot (the walk's `Roaming`, the scenario
+  `../walk/camp.toml`) from the south to the palisade's gate.
+
 [`Venues.xtl`](Venues.xtl) reads the venues for the others.
 
 ## Play it

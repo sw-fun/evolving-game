@@ -9,6 +9,7 @@ library of X_eTaL-libraries at `LIBRARIES_COMMIT`).
 
 | Library | What it gives |
 | ------- | ------------- |
+| `Camp.xtl` | the besiegers' camp from a seed: cook fires either side of the road, a ring of tents about each, a banner by each, a cart (`cp:l_ayout`), the tiles they stand on (`cp:b_locked`), and its scene lines with flames and smoke (`cp:c_alls`) |
 | `Game.xtl` | the game's name, written once (`g:name`), and a game's title under it (`g:t_itle`) |
 | `Rng.xtl` | chance from a seed, the same everywhere: a word or a fraction for each count of a key `(seed, stream)` (`rg:w_ords`, `rg:u_nit`), a whole number from 1 to k (`rg:b_elow`), an order (`rg:o_rder`), the next counts (`rg:a_fter`). Over X_eTaL-libraries' `Random` (Philox); nothing is remembered, so a game saves only how many it has drawn |
 | `Sim.xtl` | the event loop every game runs in: events as tuples (`sm:t_ick`, `sm:c_lick`, `sm:k_ey`, `sm:c_hoose`, `sm:end`, `sm:b_ad`), their lines written and read back (`sm:l_ine`, `sm:p_arse`), the host's next event with a bad line as an event (`sm:n_ext`), the clock in whole milliseconds (`sm:start`, `sm:a_dvance`), and the loop over a step function on the host's events (`sm:r_un`, `sm:t_race` with the event log) or on a script (`sm:r_eplay`) |

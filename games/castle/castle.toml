@@ -81,8 +81,8 @@ about = "The same road in winter, and more of them."
 
 [venue.camp]
 title = "The winter camp"
-kind = "placeholder"
-scenario = ""
+kind = "roam"
+scenario = "../walk/camp.toml"
 row = "12"
 column = "15"
 from = "bridge-1"

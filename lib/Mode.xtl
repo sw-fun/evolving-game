@@ -42,6 +42,7 @@
 ## error "bad-scenario", its message naming the file and the field.
 ## Import: "md:" u_se< "Mode"
 
+"cp:" u_se< "Camp"
 "sk:" u_se< "Sky"
 "sm:" u_se< "Sim"
 "st:" u_se< "Strings"
@@ -215,7 +216,7 @@ l:m_ap := { file ->
 l:s_tage := { file ->
   map := l:m_ap file
   snow := 0.0 m_ax 1.0 m_in h:w_eather file
-  stage := (file, map) h:v_illage h:g_round (map, snow)
+  stage := (file, map) h:c_amp (file, map) h:v_illage h:g_round (map, snow)
   n_ot file l:h_as "time" ? stage
   light := sk:a_t file l:n_umber "time"
   snow > 0.0 ? vw:l_it (stage, sk:s_now (light, snow))
@@ -228,18 +229,31 @@ h:v_illage := { (file, map) stage ->
   n_ot file l:h_as "village" ? stage
   vw:d_ressed (stage, vg:c_alls h:l_aid (file, map))
 }
+## A stage with the scenario's camp on its map, if it says one (camp =
+## ["seed 3", "fires 6"]: lib/Camp).
+h:c_amp := { (file, map) stage ->
+  n_ot file l:h_as "camp" ? stage
+  vw:d_ressed (stage, cp:c_alls (map, f_loor file l:r_ule ("camp", "seed"), f_loor file l:r_ule ("camp", "fires")))
+}
 ## A scenario's village as lib/Village takes it: (map, seed, wide, deep,
 ## south); south is -1 unless the scenario says it (the village then
 ## stands on the map itself: "south 22").
 h:l_aid := { (file, map) -> (map, f_loor file l:r_ule ("village", "seed"), file l:r_ule ("village", "wide"), file l:r_ule ("village", "deep"), f_loat file l:r_ule ("village", "south")) }
-# :: Truthy a => Char -> a
-## The tiles of a scenario's map its village's buildings stand on, a
-## matrix of the map's shape (1 where one does; none where the scenario
-## has no village): what a game on foot may not walk into.
-l:b_locked := { file ->
-  map := l:m_ap file
+## The tiles a scenario's village stands on (none without one).
+h:v_illageOn := { (file, map) z ->
   n_ot file l:h_as "village" ? (w:s_ize map) r_eshape 0 = 1
   vg:b_locked h:l_aid (file, map)
+}
+# :: Truthy a => Char -> a
+## The tiles of a scenario's map its village's buildings stand on, a
+## and its camp's tents and fires, a matrix of the map's shape (1 where
+## one does; none where the scenario has neither): what a game on foot
+## may not walk into.
+l:b_locked := { file ->
+  map := l:m_ap file
+  village := (file, map) h:v_illageOn 0
+  n_ot file l:h_as "camp" ? village
+  village | cp:b_locked (map, f_loor file l:r_ule ("camp", "seed"), f_loor file l:r_ule ("camp", "fires"))
 }
 h:w_eather := { file -> n_ot file l:h_as "weather" ? 0.0; file l:r_ule ("weather", "snow") }
 h:g_round := { (map, snow) -> snow > 0.0 ? vw:w_inter (map, snow); vw:s_mooth map }

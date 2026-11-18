@@ -1,4 +1,6 @@
 l:l_ots : (Int, Float, Float) -> Float
+l:s_tood : (Any a, Num b) => ((a, Int, b), Float, Box Char) -> Char
+l:g_round : (Any a, Num b) => (a, Int, b) -> Float -> Float
 l:b_ehind : (Any a, Any b) => ((a, Int, b), Int, Float, Float, Float) -> Float
 l:b_locked : (Any a, Any b, Truthy c) => ((a, Int, b), Int, Float, Float, Float) -> c
 l:c_alls : (Any a, Num b) => ((a, Int, b), Int, Float, Float, Float) -> Char

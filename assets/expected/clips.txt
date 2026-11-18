@@ -33,3 +33,6 @@ stall
 watch
 keep
 cart
+tent
+campfire
+banner

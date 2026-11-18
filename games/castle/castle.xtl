@@ -115,3 +115,8 @@ held
 u:c_ity := { lines -> u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_eplay (lines, rm:n_ew ("../walk/city.toml", md:nothing, 1)) }
 _ := u:s_ay rm:o_utcome u:c_ity (e_nclose "choose 2 87") c_at 7 r_eshape e_nclose "tick 0.5"
 rm:p_lace u:c_ity (e_nclose "choose 2 68") c_at 8 r_eshape e_nclose "tick 0.5"
+
+# The winter camp can be won: W held eleven seconds walks the road from
+# the south through the camp to the palisade's gate.
+u:c_amp := { lines -> u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_eplay (lines, rm:n_ew ("../walk/camp.toml", md:nothing, 1)) }
+_ := u:s_ay rm:o_utcome u:c_amp (e_nclose "choose 2 87") c_at 22 r_eshape e_nclose "tick 0.5"
