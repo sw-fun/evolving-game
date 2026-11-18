@@ -948,8 +948,8 @@ The framework (`games/castle`, Saga 3's castle-map step):
   in hours away.
 - **The look wanted, a second reference** (the user, 2026-11-17: "for
   example of the kind of improved graphics I want the game to have"):
-  a painted bazaar below a castle (an image of the user's, not in the
-  repository: whether it may be published was not said). What it
+  a painted bazaar below a castle (`docs/images/block-castle-bazaar.jpg`;
+  the user's images are text-to-image work of the user's own, 2026-11-18). What it
   asks for, against what the game draws now: a tall castle of many
   spires on a rocky crag, mountains and forest beyond, mist and sun
   rays; a street of tents and awnings in many colors, hanging rugs,

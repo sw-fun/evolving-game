@@ -225,12 +225,11 @@ and armatures from Bpy (7 and 8), the walking camera (9).
 
 ## The paintings
 
-Four paintings of the user's say what the game should look like. Three
-are in the repository (`docs/images`, the user's own, published at the
-user's word) and the page shows them as they are; the fourth, a bazaar
-below a castle, is a reference kept outside it. Each is also a brief for
-models and generated views, so the game's own drawing comes to look
-like it.
+Four paintings of the user's say what the game should look like. All
+four are in the repository (`docs/images`): the user made them with
+text-to-image tools and they are the user's own to publish. The page
+shows three of them as they are. Each is also a brief for models and
+generated views, so the game's own drawing comes to look like it.
 
 - `block-bridge-far.jpg`, the long bridge: shown on the card before the
   crossing. Wanted in 3D: a high arched stone bridge over a chasm, cliffs
@@ -245,7 +244,8 @@ like it.
   pillars, stained glass and shafts of light, heaps of coins that grow
   with the coffers, chests, crowns and cups, suits of armor, shields
   and tapestries on the walls.
-- The bazaar (outside the repository): what the city should become: a
+- `block-castle-bazaar.jpg`, the bazaar below a castle: what the city
+  should become. Not shown in the game yet. Wanted: a
   street of tents and awnings in many colors, hanging rugs, lanterns,
   sacks and pots, crowds, animals, banners on every tower, mountains
   and forest beyond, mist and sun rays.
