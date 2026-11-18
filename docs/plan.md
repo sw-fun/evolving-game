@@ -901,6 +901,19 @@ The framework (`games/castle`, Saga 3's castle-map step):
   down from the maze is the dungeon; an exit from the dungeon is the
   second maze. The map stays as the overview and the debug jump.
 
+- **Breadth before polish** (the user, 2026-11-17: "pick a path that
+  reveals more parts of the game, even if each is not
+  polished/finished"; then, of the order below, "go on in that
+  order"): the gate maze, the dungeon and the second maze (X_eTaL-games'
+  maze, dungeon and raycaster, used as they are through a mode each:
+  `Warren`, `Depths`, `Passage`); the city inside the gate; the winter
+  camp; the long bridge; the treasury (the Idler); Rune Keep; then the
+  four new games. The three taken games draw themselves (lib/View
+  `vw:d_rawn`: a picture shown as it is, flat), look as their
+  originals do, take their chance from the program's seed (not
+  lib/Rng), and have no landmarks yet; their generated levels are not
+  yet proven completable by a golden here (rule 9; owed).
+
 What the user's second message adds, each a later step on this
 framework, none blocking it:
 

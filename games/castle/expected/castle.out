@@ -9,11 +9,11 @@
 7 placeholder: Siege Engineer
 8 placeholder: Siege Commander
 9 placeholder: The long bridge
-10 placeholder: The gate maze
+10 maze: The gate maze
 11 placeholder: Rune Keep
 12 placeholder: Dragonfire Tactics
-13 placeholder: The dungeon
-14 placeholder: The second maze
+13 dungeon: The dungeon
+14 raycaster: The second maze
 15 placeholder: The treasury
 16 placeholder: Siege Automata
 17 board: The hall of deeds
@@ -298,3 +298,14 @@ To The battlefield on foot.
 The castle and its country: 3 of 17 places known, 0 won. Gold 0, experience 0.
 To do: 1 Defend the Bridge: summer, 2 The battlefield on foot, 17 The hall of deeds. Click one.
 0
+The gate maze. Steps 0. W S: walk, A D: turn, M: map.
+The gate maze. Steps 1. W S: walk, A D: turn, M: map.
+outcome: left
+The dungeon. Health 12, gold 0, turns 0. Find the way out (>). Arrow keys or WASD to move; walk into a monster to fight.
+The dungeon. Health 12, gold 0, turns 1. A wall. 
+outcome: playing
+The second maze. W S: walk, Left Right: turn, A D: sidestep. Find the door.
+outcome: left
+The second maze. W S: walk, Left Right: turn, A D: sidestep. Find the door.
+1.5 1.5 0.2618
+0 0 0 0 0 0 0 0

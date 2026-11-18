@@ -18,7 +18,10 @@
 "at:" u_se< "Atlas"
 "dd:" u_se< "Deeds"
 "df:" u_se< "Defending"
+"dp:" u_se< "Depths"
 "lg:" u_se< "Ledger"
+"ps:" u_se< "Passage"
+"wr:" u_se< "Warren"
 "md:" u_se< "Mode"
 "rm:" u_se< "Roaming"
 "sk:" u_se< "Sketch"
@@ -49,6 +52,9 @@ u:v_isit := { (world, k) ->
   path := vn:s_cenario (file, k)
   kind m_atch "defense" ? df:o_utcome u:l_ast 'df:v_iew 'df:l_egal 'df:s_tatus 'df:s_tep md:p_lay df:n_ew (path, world, k)
   kind m_atch "roam" ? rm:o_utcome u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:p_lay rm:n_ew (path, world, k)
+  kind m_atch "maze" ? wr:o_utcome u:l_ast 'wr:v_iew 'wr:l_egal 'wr:s_tatus 'wr:s_tep md:p_lay wr:n_ew (file, world, k)
+  kind m_atch "dungeon" ? dp:o_utcome u:l_ast 'dp:v_iew 'dp:l_egal 'dp:s_tatus 'dp:s_tep md:p_lay dp:n_ew (file, world, k)
+  kind m_atch "raycaster" ? ps:o_utcome u:l_ast 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep md:p_lay ps:n_ew (file, world, k)
   kind m_atch "board" ? lg:o_utcome u:l_ast 'lg:v_iew 'lg:l_egal 'lg:s_tatus 'lg:s_tep md:p_lay lg:n_ew (file, world, k)
   sk:o_utcome u:l_ast 'sk:v_iew 'sk:l_egal 'sk:s_tatus 'sk:s_tep md:p_lay sk:n_ew (file, world, k)
 }

@@ -189,3 +189,13 @@ h:r_eplay := { step_ over_ (lines, clock, s) ->
 ## (lines, state), the lines a list of boxed texts (a log, a save). The
 ## same as r_un on a host given those lines.
 l:r_eplay := { step_ over_ (lines, s) -> 'over_ 'step_ h:r_eplay (lines, l:start, s) }
+
+# :: (Any a, Any b) => (a, b, Char) -> Char
+## A key event's name as the games of X_eTaL-games take it: the arrows
+## in capitals (UP DOWN LEFT RIGHT), any other key as it is.
+l:o_ld := { e ->
+  name := l:t_ext e
+  k := ("up" "down" "left" "right") i_ndexOf e_nclose name
+  k > 4 ? name
+  d_isclose k s_elect "UP" "DOWN" "LEFT" "RIGHT"
+}

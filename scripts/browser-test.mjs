@@ -221,8 +221,8 @@ await page("document.getElementById('leave').click(), 1");
 check((await caption()).startsWith("The castle and its country: 3 of 17"), "the Map button comes back to the map");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");
 check((await caption()).startsWith("The castle and its country: 17 of 17 places known"), "and every place is shown");
-await page("window.game.feed('choose 1 10'), 1");
-check((await caption()).startsWith("The gate maze (not built yet)."), "a place not built yet says what it will be");
+await page("window.game.feed('choose 1 7'), 1");
+check((await caption()).startsWith("Siege Engineer (not built yet)."), "a place not built yet says what it will be");
 check((await page("document.querySelectorAll('#flat svg text:not([text-anchor])').length")) === 3, "in three lines under the map");
 await space();
 check((await caption()).includes("1 won"), "called done, it is counted on the map");
@@ -240,11 +240,46 @@ if (capture) {
 await space();
 check((await caption()).startsWith("The castle and its country"), "a key goes back to the map");
 
+// The three games taken from X_eTaL-games, each entered from the map:
+// they draw themselves, so the page shows their picture flat.
+for (const [n, says, key, shot] of [[10, "Steps 0 | Facing", "w", "maze"], [13, "HP 12", "d", "dungeon"], [14, "Find the way out (the teal door)", "w", "raycaster"]]) {
+  check(await open("?hold&debug&fresh"), `the map opens for venue ${n}`);
+  await page(`window.game.feed('choose 1 ${n}'), 1`);
+  check((await caption()).includes(says), `venue ${n} is a game, which says: ${says}`);
+  check(await page("(() => { const r = document.querySelector('#flat svg').getBoundingClientRect(); return r.width > 300 && r.height > 200 && getComputedStyle(document.getElementById('flat')).display !== 'none'; })()"), "and its own picture is shown");
+  check(await page("getComputedStyle(document.getElementById('view')).visibility === 'hidden'"), "alone, the 3D board hidden behind it");
+  await page(`window.game.feed('key ${key}'), 1`);
+  if (capture) {
+    await sleep(300);
+    const img = await send("Page.captureScreenshot", { format: "png" });
+    writeFileSync(join(root, `images/look/${shot}.png`), Buffer.from(img.data, "base64"));
+  }
+  await page("document.getElementById('leave').click(), 1");
+  check((await caption()).startsWith("The castle and its country"), "and the Map button leaves it");
+  check(await page("getComputedStyle(document.getElementById('view')).visibility === 'visible'"), "and the map's 3D board is back");
+}
+
+// In the second maze a real arrow key, held, turns you; Escape leaves
+// any game for the map.
+check(await open("?debug&fresh"), "the map opens, its clock running");
+await page("window.game.feed('choose 1 14'), 1");
+const turnBefore = await page("document.querySelector('#flat svg').innerHTML.length + ':' + document.querySelector('#flat svg').innerHTML.slice(2000, 2600)");
+await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: "ArrowRight", code: "ArrowRight", windowsVirtualKeyCode: 39, nativeVirtualKeyCode: 39 });
+await sleep(700);
+await send("Input.dispatchKeyEvent", { type: "keyUp", key: "ArrowRight", code: "ArrowRight", windowsVirtualKeyCode: 39, nativeVirtualKeyCode: 39 });
+await sleep(200);
+const turnAfter = await page("document.querySelector('#flat svg').innerHTML.length + ':' + document.querySelector('#flat svg').innerHTML.slice(2000, 2600)");
+check(turnBefore !== turnAfter, "the right arrow held turns you in the second maze (what the rays see changes)");
+await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27 });
+await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27 });
+await sleep(200);
+check((await caption()).startsWith("The castle and its country"), "Escape leaves the game for the map");
+
 // What is won is kept: a place called done is still won after the page
 // is loaded again; New game forgets it.
 await page("try { localStorage.clear(); } catch {} 1");
 check(await open("?hold"), "the page starts, keeping what is won");
-await page("window.game.feed('key d'), window.game.feed('choose 1 10'), 1");
+await page("window.game.feed('key d'), window.game.feed('choose 1 7'), 1");
 await space();
 check((await caption()).includes("1 won"), "a place is won");
 check(await open("?hold"), "the page is loaded again");

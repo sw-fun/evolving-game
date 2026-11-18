@@ -57,6 +57,8 @@ function draw() {
   const calls = sceneOf(svg);
   // a scene seen through an eye is one the pointer can look round in
   eyed = /^eye\(/m.test(calls);
+  // a picture with no scene is one a game drew itself: shown alone
+  document.body.classList.toggle('drawn', !calls);
   if (solid && calls) {
     if (player) player.show(calls);
     else player = board(view, calls, { models: './models/', keep: q.has('hold'), onPoint: point, onFrame: (f) => { frames = `${f.rate.toFixed(0)} frames a second`; } });
@@ -111,6 +113,8 @@ new ResizeObserver(() => window.dispatchEvent(new Event('resize'))).observe(el('
 const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter' };
 window.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || talking()) return;
+  // Escape leaves any game for the map (the loop's own command)
+  if (e.key === 'Escape') { e.preventDefault(); feed('choose 0 0'); return; }
   const name = NAMES[e.key] || (/^[a-z0-9]$/i.test(e.key) ? e.key.toLowerCase() : '');
   if (!name && e.key !== 'Shift') return;
   e.preventDefault();

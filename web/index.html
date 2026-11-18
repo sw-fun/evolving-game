@@ -21,7 +21,10 @@
   .pick button { border-radius: 0; margin-left: -1px; }
   .pick button:first-child { border-radius: 6px 0 0 6px; margin-left: 0; }
   .pick button:last-child { border-radius: 0 6px 6px 0; }
-  #flat svg text { paint-order: stroke; stroke: #14151c; stroke-width: 4px; }
+  body:not(.drawn) #flat svg text { paint-order: stroke; stroke: #14151c; stroke-width: 4px; }
+  /* a picture a game drew itself (no scene): it alone, over a plain ground */
+  body.drawn #view { visibility: hidden; }
+  body.drawn #flat { background: #0e0f15; }
   .pick button.on { background: #e8e6df; color: #14151c; }
   /* a fixed place for the numbers, so the header is the same height when they change */
   #stat { color: #a0a4ab; font-size: 14px; font-variant-numeric: tabular-nums; margin-left: auto; flex: 0 0 21em; text-align: right; white-space: nowrap; overflow: hidden; }
@@ -80,7 +83,7 @@
 <header>
   <h1 id="title">Evolving Game</h1>
   <span class="pick" role="group" aria-label="Which game"><button id="pick-castle" type="button" data-program="castle/play.xtl">The castle</button><button id="pick-watch" type="button" data-program="play.xtl">Watch the walk</button><button id="pick-foot" type="button" data-program="explore.xtl">Walk it yourself</button><button id="pick-defense" type="button" data-program="defense/play.xtl">Castle Defense</button></span>
-  <button id="leave" type="button" title="Leave this game and go back to the map">Map</button>
+  <button id="leave" type="button" title="Leave this game and go back to the map (Esc)">Map (Esc)</button>
   <button id="again" type="button">Start again</button>
   <button id="forget" type="button" title="Forget what was won (gold, experience, places, deeds) and start over">New game</button>
   <button id="open-help" type="button">Help</button>

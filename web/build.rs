@@ -8,6 +8,13 @@ use std::path::{Path, PathBuf};
 /// The siblings' libraries the game imports, under the pinned clones.
 const SIBLINGS: &[&str] = &[
     "work/games/lib/Text.xtl",
+    "work/games/lib/Svg.xtl",
+    "work/games/lib/Ecs.xtl",
+    "work/games/lib/Ecs.xtlm",
+    // the three games of X_eTaL-games the castle plays as modes
+    "work/games/games/maze/Walls.xtl",
+    "work/games/games/dungeon/Crawl.xtl",
+    "work/games/games/raycaster/Rays.xtl",
     "work/libraries/libs/Strings/src/Strings.xtl",
     "work/libraries/libs/Random/src/Random.xtl",
     "work/libraries/libs/Bits/src/Bits.xtl",
@@ -22,6 +29,9 @@ const DATA: &[(&str, &str)] = &[
     // names from there, and what those name in turn (each path as the
     // program asks for it)
     ("castle.toml", "games/castle/castle.toml"),
+    ("maze.toml", "games/castle/maze.toml"),
+    ("dungeon.toml", "games/castle/dungeon.toml"),
+    ("raycaster.toml", "games/castle/raycaster.toml"),
     ("../../world/realm.toml", "world/realm.toml"),
     ("../defense/level-1.toml", "games/defense/level-1.toml"),
     ("../defense/defend.toml", "games/defense/defend.toml"),

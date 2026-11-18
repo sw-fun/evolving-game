@@ -38,6 +38,16 @@ the next. This is the game the others are parts of.
   page is opened again; New game forgets it. At the command line
   nothing is kept, so a run is only what its events make it.
 
+- **Three games taken from X_eTaL-games.** The gate maze
+  ([`Warren.xtl`](Warren.xtl), `maze`), the dungeon
+  ([`Depths.xtl`](Depths.xtl), `dungeon`) and the second maze
+  ([`Passage.xtl`](Passage.xtl), `raycaster`) are that repository's
+  maze, dungeon and raycaster, their rules libraries used as they are:
+  each mode here enters one from the map, hands it the keys, and makes
+  its way out an outcome (experience; the dungeon's gold comes out
+  with you). Their data are `maze.toml`, `dungeon.toml` and
+  `raycaster.toml` here.
+
 [`Venues.xtl`](Venues.xtl) reads the venues for the others.
 
 ## Play it

@@ -1,0 +1,58 @@
+## Depths: the dungeon (the mode "dungeon"), a rogue-like seen from
+## above. Its rules and its picture are X_eTaL-games' dungeon
+## (Crawl.xtl, used as it is at the pin); this is what makes it a mode
+## of the castle. Its maps and its kinds of monsters and things are
+## dungeon.toml here. The gold found is brought out.
+##
+## The state is (stage, the dungeon's own state).
+## Import: "dp:" u_se< "Depths"
+
+"cr:" u_se< "Crawl"
+"md:" u_se< "Mode"
+"sm:" u_se< "Sim"
+"vw:" u_se< "View"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "dungeon"
+# :: Char
+## How it is used, a line a thing to know.
+l:help := "The dungeon: find the way out (>).\nW A S D or the arrows: a step. Walk into a monster to fight it.\nPick up what heals and what is gold; the gold comes out with you.\nEsc or the Map button leaves it."
+
+# :: (Any a, Any b, Num c, Num d, Num e) => (Char, a, b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), (Float, d, e, Char, Int))
+## A new dungeon, from the program's seed.
+l:n_ew := { (file, world, seed) -> (md:s_tage file, cr:n_ew seed) }
+## The step a key asks for (row, column), or none.
+h:w_ay := { e ->
+  k := ("UP" "DOWN" "LEFT" "RIGHT" "w" "s" "a" "d") i_ndexOf e_nclose sm:o_ld e
+  f_loat ((1 + (k - 1) m_od 4) s_elect 4 2 r_eshape -1 0 1 0 0 -1 0 1) * k <= 8
+}
+# :: (Any a, Num b, Any c) => (a, (Float, Int, b, Char, Int)) -> (Char, c, Char) -> (a, (Float, Int, b, Char, Int))
+## The state after an event: a key is a turn (you, then the monsters).
+l:s_tep := { (stage, c) e ->
+  n_ot e sm:i_s "key" ? (stage, c)
+  0 < cr:s_tatus c ? (stage, c)
+  0.0 = '+ r_/ a_bs h:w_ay e ? (stage, c)
+  (stage, c cr:t_urn h:w_ay e)
+}
+# :: Any a => a -> Box Char
+## The events it takes.
+l:l_egal := { s -> "key w" "key s" "key a" "key d" "key up" "key down" "key left" "key right" }
+# :: (Any a, Num b, Any c, Any d, Any e, Any f) => (a, (b, c, d, e, f)) -> Int
+## Won on the way out; lost when beaten; playing until then.
+l:s_tatus := { (_, c) -> 1 = cr:s_tatus c ? md:won; 2 = cr:s_tatus c ? md:lost; md:playing }
+# :: Any a => (a, (Float, Int, Int, Char, Int)) -> (a, Box Char, Box Char, Float, Char)
+## What to show: the dungeon's own picture, and what just happened.
+l:v_iew := { (stage, c) ->
+  (_, _, _, said, _) := c
+  y := cr:y_ou c
+  vw:d_rawn (stage, cr:d_raw c, (@ f_ormat< "The dungeon. Health {f_irst y}, gold {2 s_elect y}, turns {3 s_elect y}. ") c_at said)
+}
+# :: (Any a, Num b, Any c, Any d) => (a, (b, Int, Int, c, d)) -> (Int, (Box Char, Int), (Box Char, Int))
+## Out of it: the gold found comes with you, and experience; beaten,
+## nothing does.
+l:o_utcome := { s ->
+  (_, c) := s
+  n_ot md:won = l:s_tatus s ? (l:s_tatus s, md:nothing, md:nothing)
+  (md:won, md:nothing md:s_et ("fact.dungeon-cleared", 1), (md:nothing md:s_et ("resource.gold", 2 s_elect cr:y_ou c)) md:s_et ("resource.xp", 25))
+}

@@ -6,6 +6,10 @@
 ## round them all is play.xtl.
 "at:" u_se< "Atlas"
 "dd:" u_se< "Deeds"
+"dp:" u_se< "Depths"
+"ps:" u_se< "Passage"
+"rc:" u_se< "Rays"
+"wr:" u_se< "Warren"
 "lg:" u_se< "Ledger"
 "md:" u_se< "Mode"
 "sk:" u_se< "Sketch"
@@ -87,3 +91,18 @@ at:c_hosen u:m_ap (1 r_eshape e_nclose "click 190 195", md:nothing)
 at:c_hosen u:m_ap (1 r_eshape e_nclose "click 30 165", md:nothing)
 at:c_hosen u:m_ap (1 r_eshape e_nclose "click 124 233", md:nothing)
 at:c_hosen u:m_ap (1 r_eshape e_nclose "click 400 60", md:nothing)
+
+# The three games taken from X_eTaL-games, as modes of the castle. Each
+# is entered, takes a few keys (its caption says how it stands), and,
+# left before its way out is found, brings nothing.
+_ := u:s_ay wr:o_utcome u:l_ast 'wr:v_iew 'wr:l_egal 'wr:s_tatus 'wr:s_tep md:r_eplay ("key w" "key d" "key up" "key m", wr:n_ew (file, md:nothing, 1))
+_ := u:s_ay dp:o_utcome u:l_ast 'dp:v_iew 'dp:l_egal 'dp:s_tatus 'dp:s_tep md:r_eplay ("key d" "key down" "key q", dp:n_ew (file, md:nothing, 1))
+_ := u:s_ay ps:o_utcome u:l_ast 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep md:r_eplay ("tick 0.05" "key w" "key right" "key w", ps:n_ew (file, md:nothing, 1))
+# In the second maze a key held (the page's choose 2 CODE; 39 is the
+# right arrow) turns you every tick until it is let go (choose 3 CODE):
+# where you are and which way you face, after two ticks held and one
+# more let go.
+u:h_eld := u:l_ast 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep md:r_eplay ("choose 2 39" "tick 0.05" "tick 0.05" "choose 3 39" "tick 0.05", ps:n_ew (file, md:nothing, 1))
+(_, rays, held) := u:h_eld
+3 t_ake rc:y_ou rays
+held

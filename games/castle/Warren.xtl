@@ -1,0 +1,47 @@
+## Warren: the gate maze (the mode "maze"), a maze seen from inside. Its
+## rules and its picture are X_eTaL-games' maze (Walls.xtl, used as it
+## is at the pin); this is what makes it a mode of the castle: it is
+## entered from the map, takes the page's keys, and its way out is an
+## outcome. Its size and colors are maze.toml here.
+##
+## The state is (stage, the maze's own state).
+## Import: "wr:" u_se< "Warren"
+
+"md:" u_se< "Mode"
+"mz:" u_se< "Walls"
+"sm:" u_se< "Sim"
+"vw:" u_se< "View"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "maze"
+# :: Char
+## How it is used, a line a thing to know.
+l:help := "The gate maze: find the way out.\nW or Up: a step forward. S or Down: a step back. A D or Left Right: turn.\nM: the map of what you have seen.\nEsc or the Map button leaves it."
+
+# :: (Any a, Any b, Num c, Num d, Num e, Truthy f, Num g) => (Char, a, b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), (Int, Int, d, e, f, g, Int))
+## A new maze, carved from the program's seed.
+l:n_ew := { (file, world, seed) -> (md:s_tage file, mz:n_ew seed) }
+# :: (Any a, Num b, Truthy c, Num d, Any e, Any f) => (a, (Int, Int, Int, b, c, d, e)) -> (Char, f, Char) -> (a, (Int, Int, Int, b, c, d, e))
+## The state after an event: a key moves or turns you.
+l:s_tep := { (stage, m) e ->
+  n_ot e sm:i_s "key" ? (stage, m)
+  (stage, m mz:k_ey sm:o_ld e)
+}
+# :: Any a => a -> Box Char
+## The events it takes.
+l:l_egal := { s -> "key w" "key s" "key a" "key d" "key up" "key down" "key left" "key right" "key m" }
+# :: (Any a, Any b, Eq c, Any d, Any e, Any f, Any g) => (a, (b, c, d, e, f, g, c)) -> Int
+## Won on the way out; playing until then.
+l:s_tatus := { (_, m) -> 0 < mz:s_tatus m ? md:won; md:playing }
+# :: (Any a, Truthy b, Num c) => (a, (Int, Int, Int, Int, b, c, Int)) -> (a, Box Char, Box Char, Float, Char)
+## What to show: the maze's own picture, and how far you have come.
+l:v_iew := { (stage, m) ->
+  vw:d_rawn (stage, mz:d_raw m, @ f_ormat< "The gate maze. Steps {f_irst mz:y_ou m}. W S: walk, A D: turn, M: map.")
+}
+# :: (Any a, Any b, Eq c, Any d, Any e, Any f, Any g) => (a, (b, c, d, e, f, g, c)) -> (Int, (Box Char, Int), (Box Char, Int))
+## Out of it: the maze is known walked, and it brings experience.
+l:o_utcome := { s ->
+  n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
+  (md:won, md:nothing md:s_et ("fact.maze-walked", 1), md:nothing md:s_et ("resource.xp", 20))
+}

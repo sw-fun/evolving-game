@@ -290,7 +290,7 @@ l:l_it := { (stage, light) ->
 # :: (Any a, Any b) => (a, b) -> (a, Box Char, Box Char, Float, b)
 ## A view with no pieces: (stage, caption).
 l:e_mpty := { (stage, caption) -> (stage, 0 t_ake e_nclose "", 0 t_ake e_nclose "", 0 8 r_eshape 0.0, caption) }
-# :: (Any a, Any b, Any c, Any e) => (a, b, c, d, e) -> (a, Box b, Box c, d, e)
+# :: (Any a, Any b, Any c) => (a, b, Char, Float, c) -> (a, Box b, Box Char, Float, c)
 ## A view of one piece: (stage, model, clip, its eight numbers, caption).
 l:o_ne := { (stage, model, clip, numbers, caption) -> (stage, 1 r_eshape e_nclose model, 1 r_eshape e_nclose clip, 1 8 r_eshape numbers, caption) }
 # :: (Any a, Any e) => (a, b, c, d, e) -> (a, b, c, d, e)
@@ -316,6 +316,11 @@ l:m_any := { (stage, models, clips, pieces, caption) ->
 l:w_ith := { ((stage, models, clips, pieces, caption), model, clip, numbers) ->
   (stage, models c_at e_nclose model, clips c_at e_nclose clip, pieces c_at 1 8 r_eshape numbers, caption)
 }
+# :: (Any a, Any b, Any c) => (a, b, c) -> (a, Box b, Box Char, Float, c)
+## A view that is a picture already drawn: (stage, svg, caption). The
+## picture is shown as it is (no scene: the page shows it flat), and
+## its text is its caption.
+l:d_rawn := { (stage, svg, caption) -> l:o_ne (stage, svg, "", 8 r_eshape 0.0, caption) }
 # :: (Any a, Any b, Any c, Any d, Any e) => (a, b, c, d, e) -> e
 ## The view's caption: the line a mode says under its picture.
 l:c_aption := { (_, _, _, _, caption) -> caption }
@@ -326,6 +331,7 @@ l:c_aption := { (_, _, _, _, caption) -> caption }
 ## The view as text: the map's letters, a row a line, each piece as @ on
 ## the tile it stands on, and the caption under it.
 l:t_ext := { (stage, models, _, every, caption) ->
+  0 < t_ally h:d_rawing models ? caption
   pieces := ((h:s_olid models) & h:n_ear every) r_eplicate every
   (map, _, _, _, _, _) := stage
   drawing := w:d_raw map
@@ -339,7 +345,16 @@ l:t_ext := { (stage, models, _, every, caption) ->
 
 ## Which of a view's pieces are things standing on the board: not a
 ## burst (a model that begins with a star), which only a scene shows.
-h:s_olid := { models -> '{ m -> n_ot (f_irst (d_isclose m) c_at " ") m_ember? "*#" } e_ach models }
+h:s_olid := { models -> '{ m -> n_ot (f_irst (d_isclose m) c_at " ") m_ember? "*#<" } e_ach models }
+## A view's own drawing, or an empty text: a model that begins with <
+## is a whole picture (an SVG), drawn by a game that draws itself (one
+## taken from X_eTaL-games), and is shown as it is in place of the
+## stage's.
+h:d_rawing := { models ->
+  is := '{ m -> "<" m_atch 1 t_ake d_isclose m } e_ach models
+  0 = '+ r_/ is ? ""
+  d_isclose f_irst is r_eplicate models
+}
 ## Which are labels: a model that begins with a hash is words written
 ## over the picture at its place (and over a 3D view of the scene, which
 ## the picture lies on), not a thing in the scene.
@@ -396,6 +411,7 @@ h:d_epths := { pieces -> 2.5 + (f_loat f_loor f_irst_2 pieces) + f_loat f_loor 2
 ## group; one that cannot shows the picture as it is.
 l:p_icture := { view ->
   (stage, models, _, pieces, caption) := view
+  0 < t_ally h:d_rawing models ? h:d_rawing models
   (_, frame, tiles, depths, _, _) := stage
   all := tiles c_at h:p_iecesSvg (stage, models, pieces)
   order := g_rade depths c_at h:d_epths ((h:s_olid models) & h:n_ear pieces) r_eplicate pieces

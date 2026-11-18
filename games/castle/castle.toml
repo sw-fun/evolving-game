@@ -147,7 +147,7 @@ about = "The crossing to the castle, over the chasm, under the storm: the way fr
 
 [venue.gate-maze]
 title = "The gate maze"
-kind = "placeholder"
+kind = "maze"
 scenario = ""
 row = "6"
 column = "12"
@@ -180,7 +180,7 @@ about = "Turn-based squads; fire spreads, ice blocks, lightning chains, wind ben
 
 [venue.dungeon]
 title = "The dungeon"
-kind = "placeholder"
+kind = "dungeon"
 scenario = ""
 row = "6"
 column = "8"
@@ -191,7 +191,7 @@ about = "Down the stair and through a door: a rogue-like seen from above. Fight 
 
 [venue.ray-maze]
 title = "The second maze"
-kind = "placeholder"
+kind = "raycaster"
 scenario = ""
 row = "6"
 column = "5"

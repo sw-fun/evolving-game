@@ -17,3 +17,4 @@ l:a_dvance : (Num a, Truthy a, Num b, Any c) => (a, Int, b) -> (Char, Float, c) 
 l:r_un : (Any a, Truthy b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> a -> ((Int, Int, Int), a)
 l:t_race : (Any a, Truthy b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> a -> ((Int, Int, Int), a)
 l:r_eplay : (Any a, Truthy b) => (a -> (Char, Float, Char) -> a) -> (a -> b) -> (Box Char, a) -> ((Int, Int, Int), a)
+l:o_ld : (Any a, Any b) => (a, b, Char) -> Char

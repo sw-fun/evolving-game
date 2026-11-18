@@ -20,5 +20,8 @@ path="$root/lib"
 # repository
 for d in "$root"/games/*/; do case "$(basename "$d")" in _*) ;; *) path="$path:${d%/}" ;; esac; done
 path="$path:$root/work/games/lib"
+# the three games of X_eTaL-games the castle plays as its own modes
+# (their rules libraries, used as they are)
+for g in maze dungeon raycaster; do path="$path:$root/work/games/games/$g"; done
 for d in "$root"/work/libraries/libs/*/src; do path="$path:$d"; done
 echo "$path"
