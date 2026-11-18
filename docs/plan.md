@@ -940,6 +940,32 @@ The framework (`games/castle`, Saga 3's castle-map step):
   painting, the storm (rain, lightning), and the painting used again
   between other games.
 
+- **The treasury (the Idler), first version**: `Hoard` (the mode
+  `idle`, `games/castle/treasury.toml`): coins by the second, mints
+  that make them faster (each dearer), carried out as gold; the mints
+  are kept in the world. "While you play elsewhere" is counted in
+  places won since the last visit (time enters only as ticks, D6), not
+  in hours away.
+- **The look wanted, a second reference** (the user, 2026-11-17: "for
+  example of the kind of improved graphics I want the game to have"):
+  a painted bazaar below a castle (an image of the user's, not in the
+  repository: whether it may be published was not said). What it
+  asks for, against what the game draws now: a tall castle of many
+  spires on a rocky crag, mountains and forest beyond, mist and sun
+  rays; a street of tents and awnings in many colors, hanging rugs,
+  lanterns, sacks and pots; crowds of robed people, camels and
+  donkeys; banners on every tower.
+
+- **The paintings in the game** (the user, 2026-11-18: add the keep
+  and the treasury paintings "to images used in this game (or to be
+  turned into 3D models or procedural views)"): `docs/images` now
+  holds the bridge, the keep and the treasury (`docs/look.md`, The
+  paintings). A walk's scenario may name one (`art`): the castle shows
+  it on a card before the walk (the bridge before the crossing, the
+  keep before the city), and the treasury's picture lies over its
+  painting. Each is also the brief for the models and generated views
+  that should come to look like it.
+
 What the user's second message adds, each a later step on this
 framework, none blocking it:
 

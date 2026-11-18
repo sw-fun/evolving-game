@@ -1,12 +1,14 @@
 ## Overture: a card before a place (the mode "card"): a painting, the
 ## place's name and what it is, shown before you go in. Space goes on
 ## into the place; B (or Esc, the loop's own) goes back to the map. The
-## long bridge opens with the bridge painting (docs/images, the user's
-## own), which the page serves as art/block-bridge-far.jpg. Which venue
-## it stands for is the world's campaign.go, as the map left it.
+## painting is the one the venue's scenario names (art =
+## ["art/block-bridge-far.jpg"]: the paintings in docs/images, the
+## user's own, which the page serves under art/); a place whose
+## scenario names none has no card. Which venue it stands for is the
+## world's campaign.go, as the map left it.
 ##
-## The state is (stage, title, about, numbers): 1 when gone on, 1 when
-## left.
+## The state is (stage, title, about, art, numbers): 1 when gone on, 1
+## when left.
 ## Import: "ov:" u_se< "Overture"
 
 "md:" u_se< "Mode"
@@ -20,42 +22,47 @@ l:mode := "card"
 # :: Char
 ## How it is used, a line a thing to know.
 l:help := "A card before a place: what it is.\nSpace: go on in. B or Esc: back to the map."
-## The painting shown.
-h:art := "art/block-bridge-far.jpg"
 
-# :: (Any a, Num b, Num c) => (Char, (Box Char, Int), a) -> (((Char, Int, Int), Float, Box Char, Float, Char, b), Char, Char, c)
+# :: (Any a, Num b, Num c) => (Char, (Box Char, Int), a) -> (((Char, Int, Int), Float, Box Char, Float, Char, b), Char, Char, Char, c)
 ## The card of the venue the world is going to (campaign.go).
 l:n_ew := { (file, world, seed) ->
   k := 1 m_ax (vn:c_ount file) m_in world md:g_et "campaign.go"
-  (md:s_tage file, vn:t_itle (file, k), vn:a_bout (file, k), 0 0)
+  (md:s_tage file, vn:t_itle (file, k), vn:a_bout (file, k), l:a_rt vn:s_cenario (file, k), 0 0)
 }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Num g) => (a, b, c, d) -> (e, f, Char) -> (a, b, c, g)
+# :: Char -> Char
+## The painting a scenario names (its art), or an empty text for none.
+l:a_rt := { path ->
+  0 = t_ally path ? ""
+  n_ot path md:h_as "art" ? ""
+  path md:f_ield "art"
+}
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Num h) => (a, b, c, d, e) -> (f, g, Char) -> (a, b, c, d, h)
 ## The state after an event: space goes on; B leaves.
-l:s_tep := { (stage, title, about, n) e ->
-  " " m_atch sm:t_ext e ? (stage, title, about, 1 0)
-  (stage, title, about, 0 1)
+l:s_tep := { (stage, title, about, art, n) e ->
+  " " m_atch sm:t_ext e ? (stage, title, about, art, 1 0)
+  (stage, title, about, art, 0 1)
 }
 # :: Any a => a -> Box Char
 ## The events it takes: space, and B.
 l:l_egal := { s -> "key space" "key b" "key B" }
-# :: (Any a, Any b, Any c, Num d) => (a, b, c, d) -> Int
+# :: (Any a, Any b, Any c, Any d, Num e) => (a, b, c, d, e) -> Int
 ## Won when gone on (the place is then played); left when left.
-l:s_tatus := { (_, _, _, n) -> 0 < f_irst n ? md:won; 0 < 2 s_elect n ? md:left; md:playing }
+l:s_tatus := { (_, _, _, _, n) -> 0 < f_irst n ? md:won; 0 < 2 s_elect n ? md:left; md:playing }
 ## The card's picture: the painting over the whole of it, darkened at
 ## the foot, and the words there.
-h:c_ard := { (title, about) ->
+h:c_ard := { (title, about, painting) ->
   head := "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 800\" width=\"1200\" height=\"800\" font-family=\"Georgia, serif\">"
-  art := "<rect width=\"1200\" height=\"800\" fill=\"#0e0f15\"/><image href=\"" c_at h:art c_at "\" x=\"0\" y=\"0\" width=\"1200\" height=\"800\" preserveAspectRatio=\"xMidYMid slice\"/>"
+  art := "<rect width=\"1200\" height=\"800\" fill=\"#0e0f15\"/><image href=\"" c_at painting c_at "\" x=\"0\" y=\"0\" width=\"1200\" height=\"800\" preserveAspectRatio=\"xMidYMid slice\"/>"
   shade := "<rect y=\"560\" width=\"1200\" height=\"240\" fill=\"#0e0f15\" opacity=\"0.72\"/>"
   name := "<text x=\"60\" y=\"630\" font-size=\"52\" fill=\"#f2ead8\">" c_at title c_at "</text>"
   line := "<text x=\"60\" y=\"690\" font-size=\"24\" fill=\"#d8d2c4\">" c_at about c_at "</text>"
-  how := "<text x=\"60\" y=\"750\" font-size=\"22\" fill=\"#c9a66b\">Space: go on across.   B or Esc: back to the map.</text>"
+  how := "<text x=\"60\" y=\"750\" font-size=\"22\" fill=\"#c9a66b\">Space: go on.   B or Esc: back to the map.</text>"
   head c_at art c_at shade c_at name c_at line c_at how c_at "</svg>"
 }
-# :: (Any a, Any b) => (a, Char, Char, b) -> (a, Box Char, Box Char, Float, Char)
+# :: (Any a, Any b) => (a, Char, Char, Char, b) -> (a, Box Char, Box Char, Float, Char)
 ## What to show: the card, and its words as text.
-l:v_iew := { (stage, title, about, _) -> vw:d_rawn (stage, h:c_ard (title, about), title c_at ". " c_at about c_at " Space: go on across. B or Esc: back to the map.") }
-# :: (Any a, Any b, Any c, Num d) => (a, b, c, d) -> (Int, (Box Char, Int), (Box Char, Int))
+l:v_iew := { (stage, title, about, art, _) -> vw:d_rawn (stage, h:c_ard (title, about, art), title c_at ". " c_at about c_at " Space: go on. B or Esc: back to the map.") }
+# :: (Any a, Any b, Any c, Any d, Num e) => (a, b, c, d, e) -> (Int, (Box Char, Int), (Box Char, Int))
 ## A card brings nothing: gone on, the place is played and brings what
 ## it brings.
 l:o_utcome := { s -> (l:s_tatus s, md:nothing, md:nothing) }

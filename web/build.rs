@@ -29,6 +29,7 @@ const DATA: &[(&str, &str)] = &[
     // names from there, and what those name in turn (each path as the
     // program asks for it)
     ("castle.toml", "games/castle/castle.toml"),
+    ("treasury.toml", "games/castle/treasury.toml"),
     ("maze.toml", "games/castle/maze.toml"),
     ("dungeon.toml", "games/castle/dungeon.toml"),
     ("raycaster.toml", "games/castle/raycaster.toml"),

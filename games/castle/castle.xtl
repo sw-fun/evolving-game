@@ -7,6 +7,7 @@
 "at:" u_se< "Atlas"
 "dd:" u_se< "Deeds"
 "dp:" u_se< "Depths"
+"hd:" u_se< "Hoard"
 "ov:" u_se< "Overture"
 "ps:" u_se< "Passage"
 "rm:" u_se< "Roaming"
@@ -131,3 +132,11 @@ _ := u:s_ay ov:o_utcome u:c_ard 1 r_eshape e_nclose "key b"
 # the south bank over the bridge to the castle's gate.
 u:a_cross := { lines -> u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_eplay (lines, rm:n_ew ("../walk/crossing.toml", md:nothing, 1)) }
 _ := u:s_ay rm:o_utcome u:a_cross (e_nclose "choose 2 87") c_at 30 r_eshape e_nclose "tick 0.5"
+
+# The treasury (the idle game): ten seconds bring ten coins; a mint
+# costs ten, after which coins come twice as fast; carried out, the
+# coins are gold and the mint is kept. Five places won since the last
+# visit, with that mint, leave 5 * 15 * 2 = 150 coins waiting.
+u:h_oard := { (lines, world) -> u:l_ast 'hd:v_iew 'hd:l_egal 'hd:s_tatus 'hd:s_tep md:r_eplay (lines, hd:n_ew ("treasury.toml", world, 1)) }
+_ := u:s_ay hd:o_utcome u:h_oard ("tick 5.0" "tick 5.0" "key 1" "tick 5.0" "key 1" "key space", md:nothing)
+vw:c_aption hd:v_iew u:h_oard (1 r_eshape e_nclose "tick 0.0", (md:nothing md:s_et ("idle.mints", 1)) md:s_et ("stat.won", 5))

@@ -263,7 +263,16 @@ for (const [n, says, key, shot] of [[10, "Steps 0 | Facing", "w", "maze"], [13, 
 // you up the way from the gate; a house stops you.
 check(await open("?debug&fresh"), "the map opens for the city");
 await page("window.game.feed('choose 1 18'), 1");
-check((await caption()).startsWith("Row 22, column 17, facing north."), "the city is entered at its gate");
+check((await caption()).startsWith("The city Inside the gate"), "the city opens with its card");
+check(await page("document.querySelector('#flat svg image').getAttribute('href') === 'art/block-castle-keep.jpg'"), "the card shows the keep painting");
+check(await page("fetch('art/block-castle-keep.jpg').then((r) => r.ok)"), "which the page serves");
+if (capture) {
+  await sleep(800);
+  const img = await send("Page.captureScreenshot", { format: "png" });
+  writeFileSync(join(root, "images/look/city-card.png"), Buffer.from(img.data, "base64"));
+}
+await space();
+check((await caption()).startsWith("Row 22, column 17, facing north."), "space goes on into the city, at its gate");
 check((await page("window.game.player().count().pieces")) >= 0 && /tiles\('house'/.test(await page("document.querySelector('#flat svg metadata').textContent")), "its scene has the village's houses");
 await page("window.game.feed('choose 2 87'), 1");
 await sleep(900);
@@ -312,6 +321,20 @@ if (capture) {
   await sleep(600);
   const img = await send("Page.captureScreenshot", { format: "png" });
   writeFileSync(join(root, "images/look/bridge-walk.png"), Buffer.from(img.data, "base64"));
+}
+await page("document.getElementById('leave').click(), 1");
+
+// The treasury: coins come in with the clock; 1 buys a mint.
+check(await open("?debug&fresh&hold"), "the map opens for the treasury");
+await page("window.game.feed('choose 1 15'), window.game.feed('tick 6.0'), 1");
+check(/^The treasury6coins/.test(await page("document.querySelector('#flat svg').textContent")), "six seconds bring six coins");
+await page("window.game.feed('tick 6.0'), window.game.feed('key 1'), 1");
+check(/Mints: 1/.test(await page("document.querySelector('#flat svg').textContent")), "1 buys a mint");
+check(await page("document.querySelector('#flat svg image').getAttribute('href') === 'art/block-castle-treasury.jpg'"), "the treasury painting is behind it");
+if (capture) {
+  await sleep(300);
+  const img = await send("Page.captureScreenshot", { format: "png" });
+  writeFileSync(join(root, "images/look/treasury.png"), Buffer.from(img.data, "base64"));
 }
 await page("document.getElementById('leave').click(), 1");
 

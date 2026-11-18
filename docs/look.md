@@ -222,3 +222,30 @@ and armatures from Bpy (7 and 8), the walking camera (9).
   repository's choice).
 - Whether textures are tracked here or made at build time
   (`just assets` needs Blender; the gate must not).
+
+## The paintings
+
+Four paintings of the user's say what the game should look like. Three
+are in the repository (`docs/images`, the user's own, published at the
+user's word) and the page shows them as they are; the fourth, a bazaar
+below a castle, is a reference kept outside it. Each is also a brief for
+models and generated views, so the game's own drawing comes to look
+like it.
+
+- `block-bridge-far.jpg`, the long bridge: shown on the card before the
+  crossing. Wanted in 3D: a high arched stone bridge over a chasm, cliffs
+  and falls either side, a storm with lightning over it.
+- `block-castle-keep.jpg`, the keep: shown on the card before the city.
+  Wanted in 3D: a tall square keep of dark stone on a crag, its
+  battlements on corbels, round turrets with conical roofs, lit narrow
+  windows, ivy, a torn banner, dusk under heavy clouds, mist in the
+  trees below.
+- `block-castle-treasury.jpg`, the treasury: behind the idle game's
+  picture. Wanted as a generated room: a vaulted hall of pale stone on
+  pillars, stained glass and shafts of light, heaps of coins that grow
+  with the coffers, chests, crowns and cups, suits of armor, shields
+  and tapestries on the walls.
+- The bazaar (outside the repository): what the city should become: a
+  street of tents and awnings in many colors, hanging rugs, lanterns,
+  sacks and pots, crowds, animals, banners on every tower, mountains
+  and forest beyond, mist and sun rays.

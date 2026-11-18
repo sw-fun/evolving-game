@@ -1,0 +1,21 @@
+# The treasury: the idle game. Read by Hoard.xtl through lib/Mode;
+# every value is a string. Coins come in by the second; a mint makes
+# them come faster; and every place won elsewhere since your last visit
+# has filled the coffers while you were away.
+mode = ["idle"]
+title = ["The treasury"]
+
+# Shown over the castle's own map (a path from this file).
+zones = ["../../world/zones.toml"]
+zone = ["realm"]
+time = ["11.0"]
+
+# Coins a second, before any mint, and for each mint more.
+rate = ["1.0"]
+# What the first mint costs, and how much more each next one costs
+# (each costs this many times the last).
+mint = ["10.0"]
+growth = ["1.6"]
+# Coins waiting for each place won since the last visit, for each mint
+# (and one for none).
+away = ["15.0"]

@@ -57,10 +57,18 @@ the next. This is the game the others are parts of.
   snow, walked on foot (the walk's `Roaming`, the scenario
   `../walk/camp.toml`) from the south to the palisade's gate.
 
-- **The long bridge.** A card with the bridge painting
-  ([`Overture.xtl`](Overture.xtl), `card`): space goes on, B goes back.
-  Then the walk across the bridge to the castle's gate (the scenario
-  `../walk/crossing.toml`).
+- **Cards.** A walk whose scenario names a painting (`art`) opens with
+  a card of it ([`Overture.xtl`](Overture.xtl), `card`): space goes
+  on, B goes back. The long bridge opens with the bridge painting, the
+  city with the keep.
+- **The long bridge.** The walk across the bridge to the castle's gate
+  (the scenario `../walk/crossing.toml`).
+
+- **The treasury.** An idle game ([`Hoard.xtl`](Hoard.xtl), `idle`,
+  [`treasury.toml`](treasury.toml)): coins come in by the second, 1
+  buys a mint to make them come faster, space or B carries them out as
+  gold. Places won elsewhere since your last visit leave coins
+  waiting. Its picture lies over the treasury painting.
 
 [`Venues.xtl`](Venues.xtl) reads the venues for the others.
 

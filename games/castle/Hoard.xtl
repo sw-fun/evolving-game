@@ -1,0 +1,99 @@
+## Hoard: the treasury (the mode "idle"), the idle game. Coins come in
+## by the second while you are there, the faster for every mint you
+## have bought; and every place you have won elsewhere since your last
+## visit has filled the coffers while you were away (time enters only
+## as ticks, so "away" is counted in places won, not in hours). You
+## carry the coins out as gold; the mints stay, kept in the world
+## (idle.mints, and idle.seen, the places won at the last visit). What
+## the rates and costs are is treasury.toml.
+##
+## The state is (stage, numbers): the coins, the mints, the seconds
+## spent, the coins found waiting, 1 when carried out, and the rate, a
+## mint's cost, its growth.
+## Import: "hd:" u_se< "Hoard"
+
+"md:" u_se< "Mode"
+"sm:" u_se< "Sim"
+"t:" u_se< "Text"
+"vw:" u_se< "View"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "idle"
+# :: Char
+## How it is used, a line a thing to know.
+l:help := "The treasury: coins come in by the second, faster for every mint.\n1: buy a mint (each costs more than the last).\nSpace or B: carry the coins out as gold. Esc: leave them.\nEvery place you win elsewhere fills the coffers while you are away."
+
+# :: (Num a, Any b, Num c) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Float)
+## The treasury from its file and the world: the mints you have, and
+## what came in while you were away.
+l:n_ew := { (file, world, seed) ->
+  mints := f_loat world md:g_et "idle.mints"
+  since := f_loat 0 m_ax (world md:g_et "stat.won") - world md:g_et "idle.seen"
+  waiting := since * (file md:n_umber "away") * 1.0 + mints
+  (md:s_tage file, waiting c_at mints c_at 0.0 c_at waiting c_at 0.0 c_at (file md:n_umber "rate") c_at (file md:n_umber "mint") c_at file md:n_umber "growth")
+}
+# :: (Any a, Num b) => (a, b) -> b
+## What the next mint costs.
+l:c_ost := { (_, n) -> (7 s_elect n) * (8 s_elect n) ^ 2 s_elect n }
+# :: Any a => (a, Float) -> Float
+## Coins a second.
+l:r_ate := { (_, n) -> (6 s_elect n) * 1.0 + 2 s_elect n }
+# :: Any a => (a, Float) -> (Char, Float, Char) -> (a, Float)
+## The state after an event: a tick brings coins; 1 buys a mint if you
+## have its cost; space or B carries the coins out.
+l:s_tep := { s e ->
+  (stage, n) := s
+  e sm:i_s "tick" ? (stage, ((f_irst n) + (l:r_ate s) * f_irst sm:n_umbers e) c_at (2 s_elect n) c_at ((3 s_elect n) + f_irst sm:n_umbers e) c_at 3 d_rop n)
+  n_ot e sm:i_s "key" ? s
+  "1" m_atch sm:t_ext e ? s h:b_uy l:c_ost s
+  (stage, (4 t_ake n) c_at 1.0 c_at 5 d_rop n)
+}
+## A mint bought for its cost, if the coins are there.
+h:b_uy := { (stage, n) cost ->
+  cost > f_irst n ? (stage, n)
+  (stage, ((f_irst n) - cost) c_at (1.0 + 2 s_elect n) c_at 2 d_rop n)
+}
+# :: Any a => a -> Box Char
+## The events it takes.
+l:l_egal := { s -> "tick DT" "key 1" "key space" "key b" "key B" }
+# :: Any a => (a, Float) -> Int
+## Won when carried out; playing until then.
+l:s_tatus := { (_, n) -> 0.0 < 5 s_elect n ? md:won; md:playing }
+## The treasury's picture: the treasury painting (docs/images, the
+## user's own) behind, and over it the coins, the mints as coins in a
+## row, and what to do.
+h:p_icture := { s ->
+  (_, n) := s
+  coins := f_loor f_irst n
+  mints := f_loor 2 s_elect n
+  head := "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1000 640\" width=\"1000\" height=\"640\" font-family=\"Georgia, serif\"><rect width=\"1000\" height=\"640\" fill=\"#17130d\"/><image href=\"art/block-castle-treasury.jpg\" width=\"1000\" height=\"640\" preserveAspectRatio=\"xMidYMid slice\"/><rect x=\"30\" y=\"30\" width=\"940\" height=\"580\" rx=\"18\" fill=\"#140f08\" opacity=\"0.62\" stroke=\"#c9a66b\" stroke-width=\"3\"/>"
+  title := "<text x=\"500\" y=\"105\" font-size=\"44\" text-anchor=\"middle\" fill=\"#e9d6a6\">The treasury</text>"
+  pile := "<text x=\"500\" y=\"250\" font-size=\"110\" text-anchor=\"middle\" fill=\"#f2c14e\">" c_at (f_ormat coins) c_at "</text><text x=\"500\" y=\"295\" font-size=\"26\" text-anchor=\"middle\" fill=\"#c9a66b\">coins, " c_at (f_ormat (f_loat f_loor 10.0 * l:r_ate s) / 10.0) c_at " a second</text>"
+  m_int := { i -> "<circle cx=\"" c_at (f_ormat 140 + 60 * i - 1) c_at "\" cy=\"390\" r=\"22\" fill=\"#d9a53a\" stroke=\"#7a5a1c\" stroke-width=\"4\"/>" }
+  row := t:j_oin (e_nclose "") c_at '{ i -> e_nclose m_int i } e_ach r_ange 0 m_ax 13 m_in mints
+  label := "<text x=\"110\" y=\"350\" font-size=\"24\" fill=\"#c9a66b\">Mints: " c_at (f_ormat mints) c_at "</text>"
+  away := "<text x=\"500\" y=\"470\" font-size=\"24\" text-anchor=\"middle\" fill=\"#a8c27a\">" c_at (h:a_way s) c_at "</text>"
+  how := "<text x=\"500\" y=\"560\" font-size=\"24\" text-anchor=\"middle\" fill=\"#e9d6a6\">1: buy a mint (" c_at (f_ormat f_loor 0.5 + l:c_ost s) c_at " coins).   Space or B: carry the coins out.   Esc: leave them.</text>"
+  head c_at title c_at pile c_at label c_at row c_at away c_at how c_at "</svg>"
+}
+## What came in while you were away, said.
+h:a_way := { (_, n) ->
+  0.0 = 4 s_elect n ? "Nothing came in while you were away: win places elsewhere to fill the coffers."
+  @ f_ormat< "{f_loor 4 s_elect n} coins came in while you were away."
+}
+# :: Any a => (a, Float) -> (a, Box Char, Box Char, Float, Char)
+## What to show: the treasury's picture, and the same in words.
+l:v_iew := { s ->
+  (stage, n) := s
+  vw:d_rawn (stage, h:p_icture s, @ f_ormat< "The treasury. {f_loor f_irst n} coins, {(f_loat f_loor 10.0 * l:r_ate s) / 10.0} a second; {f_loor 2 s_elect n} mints, the next {f_loor 0.5 + l:c_ost s}. 1: buy a mint. Space or B: carry the coins out.")
+}
+# :: Any a => (a, Float) -> (Int, (Box Char, Int), (Box Char, Int))
+## Carried out: the coins as gold, a little experience, and the mints
+## and the places won so far kept for next time.
+l:o_utcome := { s ->
+  (_, n) := s
+  n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
+  kept := (md:nothing md:s_et ("idle.mints", f_loor 2 s_elect n)) md:s_et ("idle.seen", 0)
+  (md:won, kept, (md:nothing md:s_et ("resource.gold", f_loor f_irst n)) md:s_et ("resource.xp", 5))
+}

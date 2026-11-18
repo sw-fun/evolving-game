@@ -136,7 +136,7 @@ about = "Real-time strategy: attack or defend across several elevations."
 
 [venue.crossing]
 title = "The long bridge"
-kind = "crossing"
+kind = "roam"
 scenario = "../walk/crossing.toml"
 row = "9"
 column = "12"
@@ -202,8 +202,8 @@ about = "Another maze, seen another way, beyond the dungeon."
 
 [venue.treasury]
 title = "The treasury"
-kind = "placeholder"
-scenario = ""
+kind = "idle"
+scenario = "treasury.toml"
 row = "6"
 column = "18"
 from = "dungeon"

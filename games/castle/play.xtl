@@ -19,6 +19,7 @@
 "dd:" u_se< "Deeds"
 "df:" u_se< "Defending"
 "dp:" u_se< "Depths"
+"hd:" u_se< "Hoard"
 "lg:" u_se< "Ledger"
 "ov:" u_se< "Overture"
 "ps:" u_se< "Passage"
@@ -46,8 +47,14 @@ u:k_eep := { world ->
   world
 }
 u:l_ast := { (_, s) -> s }
-## The long bridge: its card (the bridge painting) and then, gone on
-## from it, the walk across; left at the card, nothing happens.
+## The treasury: its outcome, and the places won so far marked seen
+## (the outcome cannot know them; idle.seen is reset to them here).
+u:h_oard := { (world, k, path) ->
+  (status, changes, rewards) := hd:o_utcome u:l_ast 'hd:v_iew 'hd:l_egal 'hd:s_tatus 'hd:s_tep md:p_lay hd:n_ew (path, world, k)
+  (status, changes md:s_et ("idle.seen", (world md:g_et "stat.won")), rewards)
+}
+## A place on foot whose scenario names a painting: its card, and then,
+## gone on from it, the walk; left at the card, nothing happens.
 u:c_ross := { (world, k, path) ->
   card := u:l_ast 'ov:v_iew 'ov:l_egal 'ov:s_tatus 'ov:s_tep md:p_lay ov:n_ew (file, world, k)
   n_ot md:won = ov:s_tatus card ? (md:left, md:nothing, md:nothing)
@@ -59,11 +66,12 @@ u:v_isit := { (world, k) ->
   kind := vn:k_ind (file, k)
   path := vn:s_cenario (file, k)
   kind m_atch "defense" ? df:o_utcome u:l_ast 'df:v_iew 'df:l_egal 'df:s_tatus 'df:s_tep md:p_lay df:n_ew (path, world, k)
+  (kind m_atch "roam") & 0 < t_ally ov:a_rt path ? u:c_ross (world, k, path)
   kind m_atch "roam" ? rm:o_utcome u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:p_lay rm:n_ew (path, world, k)
   kind m_atch "maze" ? wr:o_utcome u:l_ast 'wr:v_iew 'wr:l_egal 'wr:s_tatus 'wr:s_tep md:p_lay wr:n_ew (file, world, k)
   kind m_atch "dungeon" ? dp:o_utcome u:l_ast 'dp:v_iew 'dp:l_egal 'dp:s_tatus 'dp:s_tep md:p_lay dp:n_ew (file, world, k)
   kind m_atch "raycaster" ? ps:o_utcome u:l_ast 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep md:p_lay ps:n_ew (file, world, k)
-  kind m_atch "crossing" ? u:c_ross (world, k, path)
+  kind m_atch "idle" ? u:h_oard (world, k, path)
   kind m_atch "board" ? lg:o_utcome u:l_ast 'lg:v_iew 'lg:l_egal 'lg:s_tatus 'lg:s_tep md:p_lay lg:n_ew (file, world, k)
   sk:o_utcome u:l_ast 'sk:v_iew 'sk:l_egal 'sk:s_tatus 'sk:s_tep md:p_lay sk:n_ew (file, world, k)
 }

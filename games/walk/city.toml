@@ -5,6 +5,9 @@
 # own eyes, from the entrance to the castle gate. Read by Roaming.xtl
 # through lib/Mode; every value is a list of strings.
 mode = ["roam"]
+# The painting shown on the card before it (in the castle; the page
+# serves docs/images under art/): the keep painting.
+art = ["art/block-castle-keep.jpg"]
 title = ["The city on foot"]
 
 # Where: the castle's zones (a path from this file) and the zone.
