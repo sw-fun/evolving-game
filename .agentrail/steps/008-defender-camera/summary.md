@@ -1,0 +1,1 @@
+Castle Defense seen from behind the wall: a scenario's facing = out turns its map half round (w:t_urned, md:m_ap); the village stands behind a turned map's gate; the three levels face out; scripted placements turned; play unchanged.
