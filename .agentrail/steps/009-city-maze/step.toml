@@ -1,0 +1,8 @@
+number = 9
+slug = "city-maze"
+status = "pending"
+description = "defend-the-bridge step (the user 2026-11-18): the city's bugs: 'when you are ..."
+role = "production"
+context_files = []
+created_at = "2026-11-18T18:58:12"
+commits = []

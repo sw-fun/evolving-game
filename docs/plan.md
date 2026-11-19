@@ -976,6 +976,37 @@ The framework (`games/castle`, Saga 3's castle-map step):
   painting. Each is also the brief for the models and generated views
   that should come to look like it.
 
+- **Menus, characters and sides** (the user, 2026-11-18, asking for a
+  revamp of the main menu, then "yes to all" to the proposal):
+  - The flow: a splash screen; profiles (each named, each its own
+    save; a new name typed in the game); a character for the profile;
+    home; the side for the session (defend or attack) and the
+    difficulty (novice, easy, normal, hard, impossible; novice cannot
+    lose; harder brings more XP); a level map; a menu bar always there
+    (home, hall of deeds, settings, help, leave).
+  - Callings: Soldier, Merchant, Spy, Thief, Witch/Warlock (the title
+    the player's choice: Witch, Warlock or Mage), Engineer and Herald.
+    Each gives a small bonus on each side, as data. Any calling plays
+    either side.
+  - A build on a seven-step slider from masculine to feminine, and
+    pronouns chosen apart from it (he, she, they).
+  - Two level maps, one road a side, numbered in order (the
+    defender's out from the keep, the attacker's in from the camp),
+    tutorial and easy levels open; the numbered map of venues stays as
+    the novice and debug overview.
+  - Every game has both sides: Castle Defense (towers, seen from
+    behind the wall looking out; or creeps and waves against a
+    scripted defender, seen from the camp toward the castle), the
+    mazes, the dungeon, the walks, and the idle games: the treasury is
+    the defender's; the attacker gets a war chest of its own. Gold
+    from either is spent in the other games.
+  - The city becomes a maze of its houses: you start at a house and
+    find the way to the keep; the wall you came through stands behind
+    you.
+  The steps, in order: defender-camera, city-maze, front-door,
+  character, home-and-sides, level-maps, attack-defense,
+  sides-everywhere, attacker-idle.
+
 What the user's second message adds, each a later step on this
 framework, none blocking it:
 

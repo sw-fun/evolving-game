@@ -1,0 +1,8 @@
+number = 10
+slug = "front-door"
+status = "pending"
+description = "defend-the-bridge step (the user 2026-11-18, menus agreed: 'yes to all'): a s..."
+role = "production"
+context_files = []
+created_at = "2026-11-18T18:58:12"
+commits = []

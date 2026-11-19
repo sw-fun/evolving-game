@@ -1,0 +1,1 @@
+defend-the-bridge step: the two level maps in place of the numbered map: one road a side, numbered in order, the defender's out from the keep, the attacker's in from the camp; tutorial and easy levels open, the rest locked with what opens them; the old map kept as the novice and debug overview. Finish with the gate, a commit including .agentrail/, then agentrail complete.

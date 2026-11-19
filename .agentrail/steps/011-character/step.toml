@@ -1,0 +1,8 @@
+number = 11
+slug = "character"
+status = "pending"
+description = "defend-the-bridge step: the character for a profile: a calling (Soldier, Merc..."
+role = "production"
+context_files = []
+created_at = "2026-11-18T18:58:12"
+commits = []

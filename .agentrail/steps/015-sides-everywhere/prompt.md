@@ -1,0 +1,1 @@
+defend-the-bridge step: both sides for the other games: the gate maze (defender closes doors and sets traps or catches the intruder; attacker reaches the exit with the key past patrols), the second maze, the dungeon (clear the vault, or raid it), the walks (patrol and find the spy, or sneak through). Finish with the gate, a commit including .agentrail/, then agentrail complete.

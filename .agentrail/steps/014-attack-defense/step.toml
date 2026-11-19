@@ -1,0 +1,8 @@
+number = 14
+slug = "attack-defense"
+status = "pending"
+description = "defend-the-bridge step: Castle Defense as the attacker: pick creeps and when ..."
+role = "production"
+context_files = []
+created_at = "2026-11-18T18:58:12"
+commits = []

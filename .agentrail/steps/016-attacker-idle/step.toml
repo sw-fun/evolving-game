@@ -1,0 +1,8 @@
+number = 16
+slug = "attacker-idle"
+status = "pending"
+description = "defend-the-bridge step (the user 2026-11-18: 'we need different idle games fo..."
+role = "production"
+context_files = []
+created_at = "2026-11-18T18:58:12"
+commits = []

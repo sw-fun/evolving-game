@@ -1,0 +1,1 @@
+defend-the-bridge step: Castle Defense as the attacker: pick creeps and when each wave goes within a budget, against towers a scripted defender places (deterministic), seen from the camp toward the castle. Finish with the gate, a commit including .agentrail/, then agentrail complete.
