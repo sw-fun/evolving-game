@@ -1,7 +1,7 @@
 # The treasury: the idle game. Read by Hoard.xtl through lib/Mode;
-# every value is a string. Coins come in by the second; a mint makes
-# them come faster; and every place won elsewhere since your last visit
-# has filled the coffers while you were away.
+# every value is a string. Coins come in by the second; what you buy
+# makes them come faster; and every place won elsewhere since your last
+# visit has filled the coffers while you were away.
 mode = ["idle"]
 title = ["The treasury"]
 
@@ -10,12 +10,35 @@ zones = ["../../world/zones.toml"]
 zone = ["realm"]
 time = ["11.0"]
 
-# Coins a second, before any mint, and for each mint more.
+# Coins a second before anything is bought.
 rate = ["1.0"]
-# What the first mint costs, and how much more each next one costs
-# (each costs this many times the last).
-mint = ["10.0"]
+# How much dearer each next one of a thing is (this many times the last).
 growth = ["1.6"]
-# Coins waiting for each place won since the last visit, for each mint
-# (and one for none).
+# Coins a strike by hand (the key C, or a click on the treasury).
+strike = ["1"]
+# Renown: every deed in the hall of deeds (a quest done or an
+# achievement earned) makes the coins come this much faster (0.02: two
+# in a hundred more for each).
+renown = ["0.02"]
+# Coins waiting for each place won since the last visit, for each coin a
+# second you make.
 away = ["15.0"]
+
+# Relics, found in the other games: each is held once the world says
+# what it needs (a fact a game sets when won), and each multiplies one
+# thing: what things cost (cost), the coins a second (rate), the coins
+# waiting from places won (away), or the coins a strike (strike).
+relics = ["The dungeon's hoard", "The gate maze's map", "The bridge toll", "The second maze's key"]
+relic-needs = ["fact.dungeon-cleared", "fact.maze-walked", "fact.bridge-held", "fact.passage-walked"]
+relic-kinds = ["cost", "rate", "away", "strike"]
+relic-amounts = ["0.9", "1.1", "2.0", "5.0"]
+
+# What there is to buy, a ladder: each thing by its key (1, 2, 3 ...),
+# what the first costs, the coins a second each brings, whether each
+# doubles everything (1) instead, and how many of the thing before it
+# you must own before it can be bought (0 for the first).
+names = ["Mint", "Counting house", "Merchant fleet", "Royal bank"]
+costs = ["10", "150", "2000", "40000"]
+gives = ["1", "8", "50", "0"]
+doubles = ["0", "0", "0", "1"]
+needs = ["0", "5", "5", "5"]

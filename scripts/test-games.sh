@@ -49,6 +49,10 @@ for slug in ${slugs[@]+"${slugs[@]}"}; do
     # A picture shown ([]S_HOW) is reported as "drawn PATH" on stderr; the
     # path is this machine's, so those lines are not part of the golden.
     grep -v '^drawn .*\.svg$' "$tmp/err.raw" > "$tmp/err" || true
+    if [ "${XETAL_BLESS:-}" = 1 ] && grep -q '^error\[' "$tmp/err"; then
+      # a run that failed is never blessed: it would write an empty golden
+      echo "FAIL: $slug/$name: the run failed, not blessed"; sed -n 1,12p "$tmp/err"; fail=1; continue
+    fi
     if [ "${XETAL_BLESS:-}" = 1 ]; then
       mkdir -p "$d/expected"; cp "$tmp/out" "$exp.out"
       if [ -s "$tmp/err" ]; then cp "$tmp/err" "$exp.err"; else rm -f "$exp.err"; fi

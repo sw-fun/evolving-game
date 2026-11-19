@@ -329,8 +329,13 @@ check(await open("?debug&fresh&hold"), "the map opens for the treasury");
 await page("window.game.feed('choose 1 15'), window.game.feed('tick 6.0'), 1");
 check(/^The treasury6coins/.test(await page("document.querySelector('#flat svg').textContent")), "six seconds bring six coins");
 await page("window.game.feed('tick 6.0'), window.game.feed('key 1'), 1");
-check(/Mints: 1/.test(await page("document.querySelector('#flat svg').textContent")), "1 buys a mint");
+check(/1: Mint x1/.test(await page("document.querySelector('#flat svg').textContent")), "1 buys a mint");
+check(/2: Counting house: opens with 5 of Mint \(4 more\)/.test(await page("document.querySelector('#flat svg').textContent")), "and the counting house says what opens it");
 check(await page("document.querySelector('#flat svg image').getAttribute('href') === 'art/block-castle-treasury.jpg'"), "the treasury painting is behind it");
+const struck = Number((await page("document.querySelector('#flat svg').textContent")).match(/^The treasury(\d+)coins/)[1]);
+await page("window.game.feed('key c'), window.game.feed('key c'), 1");
+check(Number((await page("document.querySelector('#flat svg').textContent")).match(/^The treasury(\d+)coins/)[1]) === struck + 2, "C strikes a coin by hand");
+check(/Renown: none yet/.test(await page("document.querySelector('#flat svg').textContent")) && /Relics: none yet/.test(await page("document.querySelector('#flat svg').textContent")), "it says what renown and relics would do");
 if (capture) {
   await sleep(300);
   const img = await send("Page.captureScreenshot", { format: "png" });

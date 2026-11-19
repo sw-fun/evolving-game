@@ -1,10 +1,13 @@
 l:mode : Char
 l:help : Char
-l:n_ew : (Num a, Any b, Num c) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Float)
-l:c_ost : (Any a, Num b) => (a, b) -> b
-l:r_ate : Any a => (a, Float) -> Float
-l:s_tep : Any a => (a, Float) -> (Char, Float, Char) -> (a, Float)
+l:h_eld : (Num a, Truthy b) => (Char, (Box Char, a)) -> b
+l:n_ew : (Num a, Any b, Num c) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Float, Float, (Box Char, Float, Float, Float, Float))
+l:r_ate : Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float)) -> Float
+l:c_osts : (Any a, Num b, Any c, Any d, Any e, Any f) => (a, b, b, (c, b, d, e, f)) -> b
+l:o_pen : (Any a, Any b, Any c, Any d, Any e, Any f, Truthy g) => (a, b, Float, (c, d, e, f, Float)) -> g
+l:s_tep : Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float)) -> (Char, Float, Char) -> (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float))
 l:l_egal : Any a => a -> Box Char
-l:s_tatus : Any a => (a, Float) -> Int
-l:v_iew : Any a => (a, Float) -> (a, Box Char, Box Char, Float, Char)
-l:o_utcome : Any a => (a, Float) -> (Int, (Box Char, Int), (Box Char, Int))
+l:s_tatus : (Any a, Any b, Any c) => (a, Float, b, c) -> Int
+l:l_ine : (Any a, Num c) => (a, Float, Float, (Box b, Float, c, Float, Float)) -> Int -> Char
+l:v_iew : Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float)) -> (((Char, Int, Int), Float, Box Char, Float, Char, a), Box Char, Box Char, Float, Char)
+l:o_utcome : (Any a, Num b, Any c) => (a, Float, b, c) -> (Int, (Box Char, Int), (Box Char, Int))

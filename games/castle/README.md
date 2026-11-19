@@ -65,9 +65,14 @@ the next. This is the game the others are parts of.
   (the scenario `../walk/crossing.toml`).
 
 - **The treasury.** An idle game ([`Hoard.xtl`](Hoard.xtl), `idle`,
-  [`treasury.toml`](treasury.toml)): coins come in by the second, 1
-  buys a mint to make them come faster, space or B carries them out as
-  gold. Places won elsewhere since your last visit leave coins
+  [`treasury.toml`](treasury.toml)): coins come in by the second;
+  1 2 3 4 buy a mint, a counting house, a merchant fleet and a royal
+  bank, each opening when you own five of the one before; space or B
+  carries the coins out as gold. C, or a click, strikes a coin by hand.
+  Every deed in the hall of deeds is renown (the coins come faster), and
+  relics found in the dungeon, the mazes and at the bridge each make one
+  thing better: what things cost, the rate, what waits for you, or a
+  strike. Places won elsewhere since your last visit leave coins
   waiting. Its picture lies over the treasury painting.
 
 [`Venues.xtl`](Venues.xtl) reads the venues for the others.

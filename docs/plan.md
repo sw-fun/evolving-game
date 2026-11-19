@@ -946,6 +946,16 @@ The framework (`games/castle`, Saga 3's castle-map step):
   are kept in the world. "While you play elsewhere" is counted in
   places won since the last visit (time enters only as ticks, D6), not
   in hours away.
+- **The treasury as an idle game** (the user, 2026-11-18, asking what
+  else from Cookie Clicker could be had, then "y, go" to the order
+  proposed): a ladder of things to buy (mint, counting house, merchant
+  fleet, royal bank, each opening at five of the one before), coins
+  struck by hand, renown (every deed makes the coins come faster),
+  relics found in the other games (each better at one thing: cost,
+  rate, the coins waiting, a strike). Still to come, in that order:
+  upgrades and a golden coin (chance from the seed, lib/Rng), then
+  prestige (give up the treasury for a lasting multiplier). All of it
+  is data in `games/castle/treasury.toml`.
 - **The look wanted, a second reference** (the user, 2026-11-17: "for
   example of the kind of improved graphics I want the game to have"):
   a painted bazaar below a castle (`docs/images/block-castle-bazaar.jpg`;

@@ -139,4 +139,22 @@ _ := u:s_ay rm:o_utcome u:a_cross (e_nclose "choose 2 87") c_at 30 r_eshape e_nc
 # visit, with that mint, leave 5 * 15 * 2 = 150 coins waiting.
 u:h_oard := { (lines, world) -> u:l_ast 'hd:v_iew 'hd:l_egal 'hd:s_tatus 'hd:s_tep md:r_eplay (lines, hd:n_ew ("treasury.toml", world, 1)) }
 _ := u:s_ay hd:o_utcome u:h_oard ("tick 5.0" "tick 5.0" "key 1" "tick 5.0" "key 1" "key space", md:nothing)
-vw:c_aption hd:v_iew u:h_oard (1 r_eshape e_nclose "tick 0.0", (md:nothing md:s_et ("idle.mints", 1)) md:s_et ("stat.won", 5))
+vw:c_aption hd:v_iew u:h_oard (1 r_eshape e_nclose "tick 0.0", (md:nothing md:s_et ("idle.1", 1)) md:s_et ("stat.won", 5))
+# The ladder: a counting house cannot be bought before five mints (2
+# does nothing); with five mints it opens, and bought it brings 8 coins
+# a second more. A mint kept from before the ladder (idle.mints) counts.
+rich := (md:nothing md:s_et ("idle.mints", 5)) md:s_et ("stat.won", 20)
+vw:c_aption hd:v_iew u:h_oard (1 r_eshape e_nclose "key 2", (md:nothing md:s_et ("idle.1", 4)) md:s_et ("stat.won", 20))
+vw:c_aption hd:v_iew u:h_oard (1 r_eshape e_nclose "key 2", rich)
+# Struck by hand: C three times and a click bring four coins. Renown:
+# with five deeds earned, the coins come a tenth faster (ten seconds
+# with one mint: 2 * 1.1 * 10 = 22 coins).
+vw:c_aption hd:v_iew u:h_oard ("key c" "key c" "key c" "click 400 300", md:nothing)
+famed := (((((md:nothing md:s_et ("idle.1", 1)) md:s_et ("deed.cross", 1)) md:s_et ("deed.purse", 1)) md:s_et ("deed.veteran", 1)) md:s_et ("deed.way-in", 1)) md:s_et ("deed.first-win", 1)
+vw:c_aption hd:v_iew u:h_oard (1 r_eshape e_nclose "tick 10.0", famed)
+# Relics: the dungeon cleared (its hoard: things cost 9 in 10) and the
+# bridge held (its toll: twice the coins waiting) make a first mint
+# cost 9, and five places won leave 5 * 15 * 1 * 2 = 150 coins waiting.
+found := ((md:nothing md:s_et ("fact.dungeon-cleared", 1)) md:s_et ("fact.bridge-held", 1)) md:s_et ("stat.won", 5)
+hd:h_eld ("treasury.toml", found)
+vw:c_aption hd:v_iew u:h_oard (1 r_eshape e_nclose "tick 0.0", found)
