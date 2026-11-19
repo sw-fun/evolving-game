@@ -397,16 +397,17 @@ check(await page("document.getElementById('pick-foot').classList.contains('on') 
 await page("document.getElementById('pick-watch').click(), 1");
 check((await caption()).startsWith("Row 20, column 4; 37 steps to walk"), "the other button goes back to watching the walk");
 
-// Castle Defense: the third game. A real click on grass beside the
-// road builds the tower chosen; the space bar sends a wave; enemies
+// Castle Defense: the third game, seen from behind the wall looking
+// out (the map turned). A real click on grass beside the road builds
+// the tower chosen; the space bar sends a wave; enemies
 // come and the tower's shots pay.
 check(await open("?hold&game=defense&fresh"), "the page starts Castle Defense (?game=defense)");
 check((await page("document.title")) === "Evolving Game: Castle Defense: ready", "its title is the game's");
 check((await caption()).startsWith("Gold 100, lives 10, wave 0 of 5. Building: archer (40 gold)."), "it starts with 100 gold and no wave sent");
-await click(224, 263);
+await click(464, 203);
 check((await caption()).startsWith("Gold 60,") && (await caption()).endsWith("Built."), "a click on open ground beside the road builds an archer tower for 40 gold");
-check((await page("window.game.picture()")).includes("piece('archer', nums('4.5 14.5 "), "on the tile clicked (row 15, column 5), though the header has wrapped since the board was made");
-await click(204, 273);
+check((await page("window.game.picture()")).includes("piece('archer', nums('7.5 5.5 "), "on the tile clicked (row 6, column 8 of the map seen from behind the wall), though the header has wrapped since the board was made");
+await click(444, 193);
 check((await caption()).endsWith("Towers stand on open ground."), `a click on the road builds nothing, and the game says why (${await caption()}; ${JSON.stringify(await page("window.game.said()"))})`);
 await key("keyDown", "2", "Digit2", 50);
 await key("keyUp", "2", "Digit2", 50);

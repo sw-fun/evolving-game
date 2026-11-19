@@ -1003,6 +1003,11 @@ The framework (`games/castle`, Saga 3's castle-map step):
   - The city becomes a maze of its houses: you start at a house and
     find the way to the keep; the wall you came through stands behind
     you.
+  The defender's view is the map turned half round (a scenario's
+  `facing = ["out"]`, lib/World `w:t_urned`): the same camera then
+  looks from behind the wall out at the road, and the flat picture,
+  clicks and the 3D view agree; the village stands on the far side of
+  a turned map's gate. Castle Defense's three levels face out.
   The steps, in order: defender-camera, city-maze, front-door,
   character, home-and-sides, level-maps, attack-defense,
   sides-everywhere, attacker-idle.

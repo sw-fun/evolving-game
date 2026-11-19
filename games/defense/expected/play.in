@@ -1,6 +1,6 @@
 key 1
-choose 15 5
-choose 15 8
+choose 6 16
+choose 6 13
 click 3 4
 key space
 tick 0.05
@@ -203,7 +203,7 @@ tick 0.05
 tick 0.05
 tick 0.05
 tick 0.05
-choose 15 11
+choose 6 10
 key space
 jump
 tick 0.05

@@ -121,6 +121,11 @@ l:p_laces := { (_, kinds, _) kind ->
 # :: (Any a, Any b) => (a, Int, b) -> Int
 ## The gate's place.
 l:g_ate := { map -> f_irst map l:p_laces h:gate }
+# :: Any a => (a, b, c) -> (a, b, c)
+## A map turned half round, its rows and columns both reversed: the
+## same ground seen from its far side (a defender's, from behind the
+## castle's wall looking out).
+l:t_urned := { (name, kinds, heights) -> (name, r_ev r_ev_2 kinds, r_ev r_ev_2 heights) }
 # :: (Any a, Any b) => (a, Int, b) -> Int
 ## The entrances' places, a row each, in reading order.
 l:e_ntrances := { map -> map l:p_laces h:entrance }

@@ -516,3 +516,15 @@ _ := t:l_ines '{ i -> e_nclose (1 + i s_elect tented) s_elect ".#" } e_ach r_ang
 said := st:l_ines cp:c_alls (campsite, 3, 6)
 _ := t:l_ines '{ line -> e_nclose 14 t_ake d_isclose line } e_ach 4 t_ake said
 '+ r_/ '{ line -> "particles('fire'" m_atch 16 t_ake d_isclose line } e_ach said
+
+# A map turned half round (a defender's view, from behind the wall): its
+# rows and columns reversed, so the gate is near the bottom and the
+# entrance at the top; turned twice it is as it was. The village behind
+# it stands south of the gate, turned with it: each building where it
+# stood, mirrored through the gate.
+turned := w:t_urned plain
+_ := t:l_ines '{ i -> e_nclose i s_elect w:d_raw turned } e_ach 1 2 3 18 19 20
+w:g_ate turned
+(w:d_raw w:t_urned turned) m_atch w:d_raw plain
+round := vg:b_ehind (turned, 7, 34.0, 20.0, -1.0)
+0.000001 > 'm_ax r_/ a_bs r_avel ((2 t_ake_2 round) + 2 t_ake_2 here) - (s_hape 2 t_ake_2 here) r_eshape 20.0 20.0

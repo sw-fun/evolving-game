@@ -9,6 +9,9 @@ title = ["Defend the Bridge: snow"]
 # Where: the castle's zones (a path from this file) and the zone.
 zones = ["../../world/zones.toml"]
 zone = ["battlefield"]
+# Seen as the defender sees it: from behind the castle's wall, looking
+# out at the road the enemy comes along (the map turned half round).
+facing = ["out"]
 
 # What stands behind the wall: the village, made from a seed, so many
 # tiles wide and deep (lib/Village). The same line in every scenario

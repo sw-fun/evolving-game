@@ -8,6 +8,7 @@ l:h_eights : (Any a, Any b, Any c) => (a, b, c) -> c
 l:s_ize : (Any a, Any c) => (a, b, c) -> Int
 l:p_laces : (Any a, Any b) => (a, Int, b) -> Int -> Int
 l:g_ate : (Any a, Any b) => (a, Int, b) -> Int
+l:t_urned : Any a => (a, b, c) -> (a, b, c)
 l:e_ntrances : (Any a, Any b) => (a, Int, b) -> Int
 l:w_alked : Truthy a => (Char, Int, Int) -> a
 l:s_teps : (Char, Int, Int) -> Int

@@ -1,6 +1,6 @@
 number = 8
 slug = "defender-camera"
-status = "pending"
+status = "in-progress"
 description = "defend-the-bridge step (the user 2026-11-18: 'The angle of view should be awa..."
 role = "production"
 context_files = []

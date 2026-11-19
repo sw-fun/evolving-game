@@ -195,15 +195,20 @@ h:d_ir := { file -> ('m_ax r_/ 0 c_at w_here file = f_irst "/") t_ake file }
 ## the scenario it is written from the scenario's own directory).
 l:z_ones := { file -> (h:d_ir file) c_at file l:f_ield "zones" }
 # :: Char -> (Char, Int, Int)
-## The map a scenario is played on: its zone's, read and checked. A
-## wrong map is the scenario's error.
+## The map a scenario is played on: its zone's, read and checked, and
+## turned half round when the scenario says facing = ["out"] (seen from
+## behind its wall, as a defender sees it). A wrong map is the
+## scenario's error.
 l:m_ap := { file ->
   zones := l:z_ones file
   zone := file l:f_ield "zone"
-  '{ @ -> zones w:z_oneMap zone } []T_RAP '{ err ->
+  map := '{ @ -> zones w:z_oneMap zone } []T_RAP '{ err ->
     n_ot "bad-map" m_atch []E_CODE err ? []H_ALT err
     (file, "zone") h:f_ail []E_MESSAGE err
   }
+  n_ot file l:h_as "facing" ? map
+  n_ot "out" m_atch file l:f_ield "facing" ? (file, "facing") h:f_ail "it says how the map is seen: \"out\" (from behind its wall, looking out), or leave it out"
+  w:t_urned map
 }
 # :: Num a => Char -> ((Char, Int, Int), Float, Box Char, Float, Char, a)
 ## A scenario's stage (lib/View), ready to draw: its zone's map made

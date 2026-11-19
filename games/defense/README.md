@@ -1,7 +1,9 @@
 # Castle Defense
 
 Enemies come up the battlefield's road in waves, over the bridge, to
-the castle gate. You build towers on the open ground to stop them, in the snow. This is
+the castle gate. You build towers on the open ground to stop them, in the snow,
+and you see it as a defender does: from behind the castle's wall, looking out
+at the road (each level says `facing = ["out"]`). This is
 its first level, Defend the Bridge: three towers, three enemies, five
 waves.
 

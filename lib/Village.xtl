@@ -79,8 +79,13 @@ h:o_rigin := { (map, south) ->
   g := w:g_ate map
   x := (f_loat 2 s_elect g) - 0.5
   south >= 0.0 ? x c_at south
+  h:t_urned map ? x c_at f_loat f_irst g
   x c_at (f_loat f_irst g) - 1.0
 }
+## Is a map turned (its entrance north of its gate, as a map seen from
+## behind its wall is)? Its village then stands south of the gate, and
+## turned too.
+h:t_urned := { map -> (f_irst f_irst w:e_ntrances map) < f_irst w:g_ate map }
 ## The height of the ground at a map's points (x, z a row), on the map
 ## and off it: on it, the surface (lib/Terrain); off it, the nearest
 ## tile's, falling to the world beyond over the band.
@@ -120,7 +125,8 @@ l:g_round := { map xz -> map h:g_round xz }
 l:b_ehind := { (map, seed, wide, deep, south) ->
   lots := l:l_ots (seed, wide, deep)
   o := h:o_rigin (map, south)
-  o_\ (5 c_at t_ally lots) r_eshape ((f_irst o) + f_irst_2 lots) c_at ((2 s_elect o) + 2 s_elect_2 lots) c_at r_avel o_\ (3 4 5) s_elect_2 lots
+  s := 1.0 - 2.0 * f_loat (south < 0.0) & h:t_urned map
+  o_\ (5 c_at t_ally lots) r_eshape ((f_irst o) + s * f_irst_2 lots) c_at ((2 s_elect o) + s * 2 s_elect_2 lots) c_at (3 s_elect_2 lots) c_at (s * 4 s_elect_2 lots) c_at s * 5 s_elect_2 lots
 }
 # :: (Any a, Any b, Truthy c) => ((a, Int, b), Int, Float, Float, Float) -> c
 ## The tiles of a map a village's buildings stand on, a matrix of the
