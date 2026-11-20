@@ -1,6 +1,6 @@
 number = 10
 slug = "front-door"
-status = "pending"
+status = "in-progress"
 description = "defend-the-bridge step (the user 2026-11-18, menus agreed: 'yes to all'): a s..."
 role = "production"
 context_files = []

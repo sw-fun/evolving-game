@@ -27,6 +27,7 @@
 "md:" u_se< "Mode"
 "rm:" u_se< "Roaming"
 "sk:" u_se< "Sketch"
+"sp:" u_se< "Splash"
 "sm:" u_se< "Sim"
 "t:" u_se< "Text"
 "vn:" u_se< "Venues"
@@ -104,4 +105,6 @@ u:s_tay := { world ->
 }
 wrong := at:mode md:p_roblem file
 _ := t:l_ines (0 < t_ally wrong) r_eplicate e_nclose wrong
+## The splash first, then the map.
+_ := sp:o_utcome u:l_ast 'sp:v_iew 'sp:l_egal 'sp:s_tatus 'sp:s_tep md:p_lay sp:n_ew (file, md:nothing, 1)
 _ := t:l_ines md:l_ines u:r_ound u:k_ept @

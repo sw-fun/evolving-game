@@ -84,7 +84,10 @@ const until = async (expression, ms = 20000) => {
 };
 const open = async (query) => {
   await send("Page.navigate", { url: base + query });
-  return until("document.title.endsWith(': ready')");
+  const ready = await until("document.title.endsWith(': ready')");
+  // the castle opens with its splash: any key goes on (checked once, below)
+  if (ready && await page("!!document.querySelector('#flat svg#splash')")) await page("window.game.feed('key space'), 1");
+  return ready;
 };
 // The caption the program wrote in its picture.
 // (the picture's other words, labels over its pieces, are centered: text-anchor)
@@ -359,6 +362,20 @@ await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Esca
 await sleep(200);
 check((await caption()).startsWith("The castle and its country"), "Escape leaves the game for the map");
 
+// The castle opens with its splash: the keep painting, the name, and
+// how to begin; a click goes on to the map.
+await send("Page.navigate", { url: base + "?fresh" });
+check(await until("document.title.endsWith(': ready')"), "the castle loads");
+check(await page("!!document.querySelector('#flat svg#splash image[href=\"art/block-castle-keep.jpg\"]')"), "it opens with its splash, over the keep painting");
+check(/Evolving Game/.test(await page("document.querySelector('#flat svg').textContent")) && /press any key, to begin/.test(await page("document.querySelector('#flat svg').textContent")), "which says the game's name and how to begin");
+if (capture) {
+  await sleep(800);
+  const img = await send("Page.captureScreenshot", { format: "png" });
+  writeFileSync(join(root, "images/look/splash.png"), Buffer.from(img.data, "base64"));
+}
+await click(600, 400);
+check((await caption()).startsWith("The castle and its country"), "a click goes on to the map");
+
 // What is won is kept: a place called done is still won after the page
 // is loaded again; New game forgets it.
 await page("try { localStorage.clear(); } catch {} 1");
@@ -369,6 +386,7 @@ check((await caption()).includes("1 won"), "a place is won");
 check(await open("?hold"), "the page is loaded again");
 check((await caption()).includes("1 won") && /experience 2\b/.test(await caption()), "and it is still won, with its experience");
 await page("document.getElementById('forget').click(), 1");
+await page("window.game.feed('key space'), 1");
 check((await caption()).includes("0 won") && /experience 0\b/.test(await caption()), "New game forgets it");
 check(await open("?hold"), "and loaded again");
 check((await caption()).includes("0 won"), "it stays forgotten");

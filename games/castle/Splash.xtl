@@ -1,0 +1,43 @@
+## Splash: the first thing the castle shows (the mode "splash"): the keep
+## painting (docs/images, the user's own) over the whole picture, the
+## game's name, and how to begin. Any key or a click goes on (won);
+## leaving it (Esc, the loop's own) goes on too.
+##
+## The state is (stage, numbers): 1 when gone on.
+## Import: "sp:" u_se< "Splash"
+
+"md:" u_se< "Mode"
+"sm:" u_se< "Sim"
+"vw:" u_se< "View"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "splash"
+# :: Char
+## How it is used, a line a thing to know.
+l:help := "The splash: any key, or a click, begins."
+
+# :: (Any a, Any b, Num c, Num d) => (Char, a, b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), d)
+## The splash, over the castle's stage.
+l:n_ew := { (file, world, seed) -> (md:s_tage file, 1 r_eshape 0) }
+# :: (Any a, Num b, Any c, Any d) => (a, b) -> (Char, c, d) -> (a, b)
+## The state after an event: a key or a click goes on.
+l:s_tep := { (stage, n) e ->
+  (e sm:i_s "key") | e sm:i_s "click" ? (stage, 1 r_eshape 1)
+  (stage, n)
+}
+# :: Any a => a -> Box Char
+## The events it takes: any key, a click.
+l:l_egal := { s -> "key KEY" "click X Y" }
+# :: (Any a, Num b) => (a, b) -> Int
+## Won when gone on; playing until then.
+l:s_tatus := { (_, n) -> 0 < f_irst n ? md:won; md:playing }
+## The splash's picture: the painting, darkened toward the foot, the
+## name, and how to begin.
+h:p_icture := "<svg id=\"splash\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 800\" width=\"1200\" height=\"800\" font-family=\"Georgia, serif\"><rect width=\"1200\" height=\"800\" fill=\"#0e0f15\"/><image href=\"art/block-castle-keep.jpg\" width=\"1200\" height=\"800\" preserveAspectRatio=\"xMidYMid slice\"/><defs><linearGradient id=\"fade\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0.45\" stop-color=\"#0e0f15\" stop-opacity=\"0\"/><stop offset=\"1\" stop-color=\"#0e0f15\" stop-opacity=\"0.9\"/></linearGradient></defs><rect width=\"1200\" height=\"800\" fill=\"url(#fade)\"/><text x=\"600\" y=\"600\" font-size=\"84\" text-anchor=\"middle\" fill=\"#f2ead8\" stroke=\"#0e0f15\" stroke-width=\"3\" paint-order=\"stroke\">Evolving Game</text><text x=\"600\" y=\"650\" font-size=\"28\" text-anchor=\"middle\" fill=\"#d8d2c4\">The castle, its country, and the games of its siege</text><text x=\"600\" y=\"730\" font-size=\"26\" text-anchor=\"middle\" fill=\"#c9a66b\">Click, or press any key, to begin</text></svg>"
+# :: (Any a, Any b) => (a, b) -> (a, Box Char, Box Char, Float, Char)
+## What to show: the splash, and the same in words.
+l:v_iew := { (stage, _) -> vw:d_rawn (stage, h:p_icture, "Evolving Game. Click, or press any key, to begin.") }
+# :: (Any a, Num b) => (a, b) -> (Int, (Box Char, Int), (Box Char, Int))
+## The splash brings nothing.
+l:o_utcome := { s -> (l:s_tatus s, md:nothing, md:nothing) }

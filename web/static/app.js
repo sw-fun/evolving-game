@@ -95,8 +95,9 @@ function keep() {
 function point(x, y) { feed(`click ${x.toFixed(1)} ${y.toFixed(1)}`); }
 
 // A click on the flat picture: the same units, through the SVG's own map.
+// (in 3D, only a picture a game draws itself: the board takes the rest)
 flat.parentElement.addEventListener('click', (e) => {
-  if (solid) return;
+  if (solid && !document.body.classList.contains('drawn')) return;
   const svg = flat.querySelector('svg');
   if (!svg) return;
   const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
@@ -153,7 +154,8 @@ function start() {
   lastKept = (store && store.getItem(KEPT)) || '';
   wasm.start(program, lastKept);
   named();
-  if (q.has('debug') && program === 'castle/play.xtl') wasm.feed('key d');
+  // ?debug goes past the splash and shows every place at once
+  if (q.has('debug') && program === 'castle/play.xtl') { wasm.feed('key space'); wasm.feed('key d'); }
   draw();
   if (!q.has('hold')) timer = setInterval(tick, TICK * 1000);
 }
