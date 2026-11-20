@@ -1,0 +1,1 @@
+City as a maze of houses (sidewinder from the seed), wall and gap behind you, start far in the maze facing the way on, a goal line, solver golden proves the keep reachable. Village everywhere uses the maze lots.
