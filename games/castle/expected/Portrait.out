@@ -1,0 +1,2 @@
+l:s_vg : (Num a, Num d) => (a, Int, Char, b, c, d) -> Char
+l:c_ard : Num a => (a, Int, Char) -> Char

@@ -1,0 +1,19 @@
+## The portraits the character-creation screen shows (Portrait.xtl):
+## a card for a few callings and builds, and what pins them: the same
+## choice draws the same figure, a beard only at the masculine end,
+## and a calling or build out of 1..7 drawn as the nearest one.
+"pt:" u_se< "Portrait"
+"st:" u_se< "Strings"
+
+# A soldier at build 1 (bearded), a spy at 4, a witch at 7, a herald
+# at 2: whole cards, as the screen would show them.
+pt:c_ard (1, 1, "#3f4a8a")
+pt:c_ard (3, 4, "#7a2e3a")
+pt:c_ard (5, 7, "#2e6a4a")
+pt:c_ard (7, 2, "#8a6a2e")
+# The same choice draws the same figure.
+(pt:s_vg (6, 3, "#3f4a8a", 100, 300, 200)) m_atch pt:s_vg (6, 3, "#3f4a8a", 100, 300, 200)
+# Out of range is the nearest end: calling 0 is the soldier, build 9 is 7.
+(pt:s_vg (0, 9, "#3f4a8a", 100, 300, 200)) m_atch pt:s_vg (1, 7, "#3f4a8a", 100, 300, 200)
+# The beard (drawn at a set opacity) is there at builds 1 to 3 only.
+'{ b -> " opacity=\"" st:i_nfix? pt:s_vg (2, b, "#3f4a8a", 0, 0, 100) } e_ach 1 2 3 4 5 6 7
