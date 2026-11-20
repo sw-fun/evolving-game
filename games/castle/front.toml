@@ -1,0 +1,23 @@
+# The front door: the screens before the castle (Front.xtl). Read through
+# lib/Mode; every value is a string, or a list of strings.
+mode = ["front"]
+title = ["The front door"]
+
+# Drawn over the castle's own map (a path from this file).
+zones = ["../../world/zones.toml"]
+zone = ["realm"]
+
+# The callings a character may have, what each is, and the help it gives
+# when defending and when attacking.
+callings = ["Soldier", "Merchant", "Spy", "Thief", "Witch/Warlock", "Engineer", "Herald"]
+calling-about = ["towers hit harder; troops are tougher", "the treasury earns more; things cost less", "maze maps start revealed; patrols are seen sooner", "more gold in the dungeon; a bigger haul in a heist", "ice and fire are stronger; storms help you", "towers and engines are cheaper to build", "deeds bring more renown; allies come sooner"]
+# How a character is spoken of, chosen apart from the build.
+pronouns = ["he", "she", "they"]
+# The title of a Witch/Warlock: the player's choice.
+titles = ["Witch", "Warlock", "Mage"]
+# The cloak's color: its name, and its color.
+cloaks = ["crimson", "indigo", "forest", "ochre", "slate", "plum"]
+cloak-colors = ["#9b2335", "#3f4a8a", "#2f6b3a", "#b8862b", "#5b6470", "#6b3a6e"]
+# The difficulties, and what each means.
+levels = ["Novice", "Easy", "Normal", "Hard", "Impossible"]
+level-about = ["you cannot lose, and hints are shown", "fewer and weaker enemies, more gold", "as the game is meant", "more and stronger enemies, less gold", "for those who have won everything else"]

@@ -85,10 +85,21 @@ const until = async (expression, ms = 20000) => {
 const open = async (query) => {
   await send("Page.navigate", { url: base + query });
   const ready = await until("document.title.endsWith(': ready')");
-  // the castle opens with its splash: any key goes on (checked once, below)
+  // the castle opens with its splash and then the front door: any key
+  // goes on, and a profile "test" (made, or chosen if it is there) plays
+  // as a defender (both checked once, below)
   if (ready && await page("!!document.querySelector('#flat svg#splash')")) await page("window.game.feed('key space'), 1");
+  if (ready && await page("!!document.querySelector('#flat svg#front')")) await enter();
   return ready;
 };
+// Through the front door as the profile "test", a Soldier, defending
+// at Normal: made new, or chosen when the save has it.
+const enter = async () => {
+  const fresh = !(await page("document.querySelector('#flat svg').textContent")).includes("Test: ");
+  const keys = fresh ? ["enter", "t", "e", "s", "t", "enter", "1", "5", "1", "1", "3"] : ["1", "1", "1", "3"];
+  for (const k of keys) await page(`window.game.feed('key ${k}'), 1`);
+};
+const key = async (type, k, code, n) => send("Input.dispatchKeyEvent", { type, key: k, code, windowsVirtualKeyCode: n, nativeVirtualKeyCode: n });
 // The caption the program wrote in its picture.
 // (the picture's other words, labels over its pieces, are centered: text-anchor)
 const caption = () => page("[...document.querySelectorAll('#flat svg text:not([text-anchor])')].map((x) => x.textContent).join(' ')");
@@ -374,7 +385,43 @@ if (capture) {
   writeFileSync(join(root, "images/look/splash.png"), Buffer.from(img.data, "base64"));
 }
 await click(600, 400);
-check((await caption()).startsWith("The castle and its country"), "a click goes on to the map");
+check((await caption()).startsWith("Who is playing?"), "a click goes on to the front door: who is playing");
+const front = async (name) => {
+  if (!capture) return;
+  await sleep(300);
+  const img = await send("Page.captureScreenshot", { format: "png" });
+  writeFileSync(join(root, `images/look/front-${name}.png`), Buffer.from(img.data, "base64"));
+};
+await front("profiles");
+check((await caption()).includes("New profile"), "with a new profile to make");
+await page("window.game.feed('key enter'), 1");
+check((await caption()).startsWith("A new profile"), "Enter on it asks for a name");
+for (const k of ["a", "l", "d", "r", "x"]) await key("keyDown", k, `Key${k.toUpperCase()}`, k.toUpperCase().charCodeAt(0)), await key("keyUp", k, `Key${k.toUpperCase()}`, k.toUpperCase().charCodeAt(0));
+await key("keyDown", "Backspace", "Backspace", 8); await key("keyUp", "Backspace", "Backspace", 8);
+await key("keyDown", "a", "KeyA", 65); await key("keyUp", "a", "KeyA", 65);
+check((await caption()).includes("Name: aldra_"), "a name is typed with real keys, Backspace erasing");
+await front("name");
+await key("keyDown", "Enter", "Enter", 13); await key("keyUp", "Enter", "Enter", 13);
+check((await caption()).startsWith("Choose a calling"), "Enter goes on to the calling");
+await front("calling");
+await page("window.game.feed('key 5'), 1");
+check((await caption()).startsWith("Aldra the Witch (they)"), "a Witch/Warlock is called by the title chosen");
+await page("window.game.feed('key right'), window.game.feed('key down'), window.game.feed('key right'), 1");
+check((await caption()).startsWith("Aldra the Witch (he)"), "Left and Right change the look: the build, the pronouns");
+await front("look");
+await page("window.game.feed('key 5'), 1");
+check((await caption()).startsWith("Aldra the Witch (he) Level 1."), "Done goes home");
+await front("home");
+await page("window.game.feed('key 1'), 1");
+check((await caption()).startsWith("Defend or attack?"), "Play asks for the side");
+await front("side");
+await page("window.game.feed('key 1'), 1");
+check((await caption()).startsWith("How hard?"), "then how hard");
+await front("difficulty");
+await page("window.game.feed('key 3'), 1");
+check((await caption()).startsWith("The castle and its country"), "and then the castle");
+await page("document.getElementById('leave').click(), 1");
+check((await caption()).startsWith("Aldra the Witch (he) Level 1."), "the Map (Esc) button from the castle goes back home");
 
 // What is won is kept: a place called done is still won after the page
 // is loaded again; New game forgets it.
@@ -387,12 +434,12 @@ check(await open("?hold"), "the page is loaded again");
 check((await caption()).includes("1 won") && /experience 2\b/.test(await caption()), "and it is still won, with its experience");
 await page("document.getElementById('forget').click(), 1");
 await page("window.game.feed('key space'), 1");
+await enter();
 check((await caption()).includes("0 won") && /experience 0\b/.test(await caption()), "New game forgets it");
 check(await open("?hold"), "and loaded again");
 check((await caption()).includes("0 won"), "it stays forgotten");
 
 // On foot: the second game, seen through an eye, walked with held keys.
-const key = async (type, k, code, n) => send("Input.dispatchKeyEvent", { type, key: k, code, windowsVirtualKeyCode: n, nativeVirtualKeyCode: n });
 const ticks = (n) => page(`(() => { for (let i = 0; i < ${n}; i++) window.game.feed('tick 0.05'); return 1; })()`);
 check(await open("?hold&game=foot&fresh"), "the page starts on foot (?game=foot)");
 check((await caption()).startsWith("Row 20, column 4, facing north."), "you stand at the entrance, facing north");

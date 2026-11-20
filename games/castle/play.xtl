@@ -19,6 +19,7 @@
 "dd:" u_se< "Deeds"
 "df:" u_se< "Defending"
 "dp:" u_se< "Depths"
+"fr:" u_se< "Front"
 "hd:" u_se< "Hoard"
 "lg:" u_se< "Ledger"
 "ov:" u_se< "Overture"
@@ -33,6 +34,7 @@
 "vn:" u_se< "Venues"
 
 file := "castle.toml"
+u:l_ast := { (_, s) -> s }
 ## In a browser the world is kept between visits: written after every
 ## game and read at the start, as the text "castle.save" in the host's
 ## store. At the command line nothing is kept, so a run is only what
@@ -44,10 +46,39 @@ u:k_ept := { @ ->
 }
 u:k_eep := { world ->
   n_ot web ? world
-  _ := (md:t_ext world) []N_PUT "castle.save"
+  _ := (md:t_ext (fr:m_igrate u:k_ept @, u:n_ame world) fr:i_n world) []N_PUT "castle.save"
   world
 }
-u:l_ast := { (_, s) -> s }
+## The profile a world is (its front.name.NAME), "player" if none.
+u:n_ame := { (names, values) ->
+  is := '{ x -> "front.name." m_atch 11 t_ake (d_isclose x) c_at "           " } e_ach names
+  0 = '+ r_/ is ? "player"
+  11 d_rop d_isclose f_irst is r_eplicate names
+}
+## The front door (who plays, their character, what to play), over the
+## whole save; then what was chosen: the castle's map, the hall of
+## deeds, or the treasury, and back to the profile's home after. The
+## events ended, the profile's world as it stands.
+u:d_oor := { save ->
+  (_, ended) := 'fr:v_iew 'fr:l_egal 'fr:s_tatus 'fr:s_tep md:p_lay fr:n_ew ("front.toml", save, 1)
+  (status, picks, _) := fr:o_utcome ended
+  n_ot status = md:won ? u:a_gain save
+  name := u:n_ame picks
+  world := u:k_eep (save fr:o_ut name) md:m_erge picks
+  go := world md:g_et "front.go"
+  go = 2 ? u:h_ome u:k_eep (world, 17) u:a_fter u:v_isit (world, 17)
+  go = 3 ? u:h_ome u:k_eep (world, 15) u:a_fter u:v_isit (world, 15)
+  u:r_ound world
+}
+## The front door again, at the profile's home (straight away: the
+## front door itself ends the game when the events have ended).
+u:h_ome := { world -> u:d_oor (fr:m_igrate u:k_ept @) md:s_et ("front.home." c_at u:n_ame world, 1) }
+## The front door left (Esc): again from the start, unless the events
+## have ended.
+u:a_gain := { save ->
+  (sm:n_ext @) sm:i_s "end" ? save
+  u:d_oor save
+}
 ## The treasury: its outcome, and the places won so far marked seen
 ## (the outcome cannot know them; idle.seen is reset to them here).
 u:h_oard := { (world, k, path) ->
@@ -98,13 +129,10 @@ u:r_ound := { world ->
 }
 ## The map was left without a place chosen: the events have ended (the
 ## next is the end again), and so does the game; or it was the command
-## to leave, which at the map goes nowhere, and the map is shown again.
-u:s_tay := { world ->
-  (sm:n_ext @) sm:i_s "end" ? world
-  u:r_ound world
-}
+## to leave (Esc), which goes back to the profile's home.
+u:s_tay := { world -> u:h_ome world }
 wrong := at:mode md:p_roblem file
 _ := t:l_ines (0 < t_ally wrong) r_eplicate e_nclose wrong
 ## The splash first, then the map.
 _ := sp:o_utcome u:l_ast 'sp:v_iew 'sp:l_egal 'sp:s_tatus 'sp:s_tep md:p_lay sp:n_ew (file, md:nothing, 1)
-_ := t:l_ines md:l_ines u:r_ound u:k_ept @
+_ := t:l_ines md:l_ines u:d_oor fr:m_igrate u:k_ept @

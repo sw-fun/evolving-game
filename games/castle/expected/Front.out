@@ -1,0 +1,14 @@
+l:mode : Char
+l:help : Char
+l:p_rofiles : Any a => (Box Char, a) -> Box Char
+l:f_ield : Num a => (Box Char, a) -> (Char, Char) -> a
+l:o_ut : (Box Char, a) -> Char -> (Box Char, a)
+l:i_n : Num a => ((Box Char, a), Char) -> (Box Char, a) -> (Box Char, a)
+l:m_igrate : (Box Char, Int) -> (Box Char, Int)
+l:n_ew : (Num a, Any b, Num c, Num d, Num e) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), d, e, Char, a, (Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char), (Box Char, a))
+l:l_ines : (Any a, Num b, Any c, Any d) => (a, b, c, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, d, Box Char, Box Char), (Box Char, Int)) -> Box Char
+l:s_tep : (Any a, Any b) => (a, Int, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, b, Box Char, Box Char), (Box Char, Int)) -> (Char, Float, Char) -> (a, Int, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, b, Box Char, Box Char), (Box Char, Int))
+l:l_egal : Any a => a -> Box Char
+l:s_tatus : (Any a, Any b, Any c, Any d, Num e, Any f, Any g) => (a, b, c, d, e, f, g) -> Int
+l:v_iew : (Any a, Num b, Any c) => (a, b, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, c, Box Char, Box Char), (Box Char, Int)) -> (a, Box Char, Box Char, Float, Char)
+l:o_utcome : (Any a, Any b, Any c, Any d, Any e) => (a, b, c, Char, Int, d, e) -> (Int, (Box Char, Int), (Box Char, Int))

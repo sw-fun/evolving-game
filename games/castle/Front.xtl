@@ -1,0 +1,282 @@
+## Front: the front door (the mode "front"): the screens between the
+## splash and the castle. Who is playing (a profile, or a new one: a
+## name typed in the game), the character (a calling; a build from
+## masculine to feminine; pronouns, chosen apart; a title for a
+## Witch/Warlock; a cloak), the profile's home (play, the hall of
+## deeds, the treasury, settings, another profile), and for play the
+## side (defend or attack) and how hard. What there is to choose is
+## front.toml.
+##
+## Every profile lives in the one save, its names prefixed p.NAME. (a
+## world of worlds); the castle's program takes the chosen profile's
+## world out and puts it back. Here the save is only read.
+##
+## Up and Down choose a line, Left and Right change a line that has a
+## value, Enter (or Space, or a click on the line, or its number) takes
+## it, Backspace goes back (and, typing a name, erases).
+##
+## The state is (stage, screen, line, name, picks, data, save): the
+## screen (1 profiles, 2 the name, 3 the calling, 4 the look, 5 home, 6
+## the side, 7 how hard, 8 settings), the line chosen, the name typed
+## or chosen, the picks (calling, build, pronoun, title, cloak, side,
+## difficulty, the default difficulty, and what to go to: 1 play, 2
+## the hall of deeds, 3 the treasury), front.toml's lists, and the save.
+## Import: "fr:" u_se< "Front"
+
+"md:" u_se< "Mode"
+"sm:" u_se< "Sim"
+"st:" u_se< "Strings"
+"t:" u_se< "Text"
+"vw:" u_se< "View"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "front"
+# :: Char
+## How it is used, a line a thing to know.
+l:help := "The front door: who is playing, their character, and what to play.\nUp Down: choose a line. Left Right: change it. Enter, Space, a click or its number: take it.\nBackspace: back (or erase, typing a name)."
+
+### The save: profiles in one world
+
+# :: Any a => (Box Char, a) -> Box Char
+## The profiles a save holds, by name (each has p.NAME.profile).
+l:p_rofiles := { (names, values) ->
+  is := '{ x -> ("p." m_atch 2 t_ake (d_isclose x) c_at "  ") & ".profile" m_atch -8 t_ake "        " c_at d_isclose x } e_ach names
+  '{ x -> e_nclose -8 d_rop 2 d_rop d_isclose x } e_ach is r_eplicate names
+}
+# :: Num a => (Box Char, a) -> (Char, Char) -> a
+## A number of a profile's world in the save: save l:f_ield (name, key).
+l:f_ield := { save (name, key) -> save md:g_et "p." c_at name c_at "." c_at key }
+# :: (Box Char, a) -> Char -> (Box Char, a)
+## A profile's own world, out of the save (its names without p.NAME.).
+l:o_ut := { (names, values) name ->
+  pre := "p." c_at name c_at "."
+  mine := '{ x -> pre m_atch (t_ally pre) t_ake (d_isclose x) c_at (t_ally pre) r_eshape " " } e_ach names
+  ('{ x -> e_nclose (t_ally pre) d_rop d_isclose x } e_ach mine r_eplicate names, mine r_eplicate values)
+}
+# :: Num a => ((Box Char, a), Char) -> (Box Char, a) -> (Box Char, a)
+## The save with a profile's world put back in it (in place of what it
+## held for that name), the profile marked.
+l:i_n := { (save, name) (names, values) ->
+  (sn, sv) := save
+  pre := "p." c_at name c_at "."
+  other := '{ x -> n_ot pre m_atch (t_ally pre) t_ake (d_isclose x) c_at (t_ally pre) r_eshape " " } e_ach sn
+  kept := (other r_eplicate sn, other r_eplicate sv)
+  mine := ('{ x -> e_nclose pre c_at d_isclose x } e_ach names, values)
+  (kept md:m_erge mine) md:s_et (pre c_at "profile", 1)
+}
+# :: (Box Char, Int) -> (Box Char, Int)
+## A save from before profiles (names without p.): its world becomes the
+## profile "player". Any other save is as it was.
+l:m_igrate := { (names, values) ->
+  0 = t_ally names ? (names, values)
+  0 < t_ally l:p_rofiles (names, values) ? (names, values)
+  (md:nothing, "player") l:i_n (names, values)
+}
+
+### The data
+
+## A list from front.toml.
+h:l_ist := { (file, field) -> file []L_IST field }
+
+# :: (Num a, Any b, Num c, Num d, Num e) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), d, e, Char, a, (Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char), (Box Char, a))
+## The front door, from its file and the save: at the profiles, or, if
+## the save says front.home.NAME, at that profile's home.
+l:n_ew := { (file, save, seed) ->
+  data := (h:l_ist (file, "callings"), h:l_ist (file, "calling-about"), h:l_ist (file, "pronouns"), h:l_ist (file, "titles"), h:l_ist (file, "cloaks"), h:l_ist (file, "cloak-colors"), h:l_ist (file, "levels"), h:l_ist (file, "level-about"))
+  (names, _) := save
+  home := '{ x -> "front.home." m_atch 11 t_ake (d_isclose x) c_at "           " } e_ach names
+  0 = '+ r_/ home ? (md:s_tage file, 1, 1, "", 1 4 3 1 1 1 3 3 0, data, save)
+  name := 11 d_rop d_isclose f_irst home r_eplicate names
+  (md:s_tage file, 5, 1, name, h:p_icks (save, name), data, save)
+}
+## A profile's picks, from the save.
+h:p_icks := { (save, name) ->
+  get := '{ k -> 1 m_ax save l:f_ield (name, d_isclose k) } e_ach "character.calling" "character.build" "character.pronoun" "character.title" "character.cloak"
+  get c_at 1 c_at (3 m_ax 3 m_in save l:f_ield (name, "settings.level")) c_at (1 m_ax save l:f_ield (name, "settings.level")) c_at 0
+}
+
+### The lines of each screen
+
+# :: (Any a, Num b, Any c, Any d) => (a, b, c, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, d, Box Char, Box Char), (Box Char, Int)) -> Box Char
+## The lines of the screen shown.
+l:l_ines := { (_, screen, _, name, picks, data, save) ->
+  (callings, abouts, pronouns, titles, cloaks, _, levels, levelAbouts) := data
+  screen = 1 ? ('{ n -> e_nclose h:s_ummary (save, d_isclose n, callings) } e_ach l:p_rofiles save) c_at "New profile" "Settings"
+  screen = 2 ? e_nclose "Name: " c_at name c_at "_"
+  screen = 3 ? '{ k -> e_nclose (d_isclose k s_elect callings) c_at ": " c_at d_isclose k s_elect abouts } e_ach r_ange t_ally callings
+  screen = 4 ? h:l_ook (picks, data)
+  screen = 5 ? "Play" "Hall of deeds" "Treasury" "Settings" "Another profile"
+  screen = 6 ? "Defend the castle: build towers, hold the walls" "Attack the castle: raise an army, break the gate"
+  screen = 7 ? '{ k -> e_nclose (d_isclose k s_elect levels) c_at ": " c_at d_isclose k s_elect levelAbouts } e_ach r_ange t_ally levels
+  (e_nclose "Default difficulty: " c_at d_isclose (8 s_elect picks) s_elect levels) c_at e_nclose "Back"
+}
+## A profile's line: its name, calling and level.
+h:s_ummary := { (save, name, callings) ->
+  k := 1 m_ax (t_ally callings) m_in save l:f_ield (name, "character.calling")
+  level := 1 + (save l:f_ield (name, "resource.xp")) d_iv 100
+  (h:c_ap name) c_at ": " c_at (d_isclose k s_elect callings) c_at ", level " c_at f_ormat level
+}
+## A name with its first letter a capital.
+h:c_ap := { name -> 0 = t_ally name ? name; (st:u_pper 1 t_ake name) c_at 1 d_rop name }
+## The title's line: a Witch/Warlock's chosen title, or none.
+h:t_itleLine := { (picks, titles) -> 5 = f_irst picks ? "Title: " c_at d_isclose (4 s_elect picks) s_elect titles; "Title: (only for a Witch/Warlock)" }
+## The look's lines: build, pronouns, title, cloak, and Done.
+h:l_ook := { (picks, data) ->
+  (callings, _, pronouns, titles, cloaks, _, _, _) := data
+  b := 2 s_elect picks
+  slider := t:j_oin '{ k -> (1 + k = b) s_elect "- " "O " } e_ach r_ange 7
+  title := h:t_itleLine (picks, titles)
+  (e_nclose "Build: masculine  " c_at slider c_at " feminine") c_at (e_nclose "Pronouns: " c_at d_isclose (3 s_elect picks) s_elect pronouns) c_at (e_nclose title) c_at (e_nclose "Cloak: " c_at d_isclose (5 s_elect picks) s_elect cloaks) c_at e_nclose "Done"
+}
+
+### Events
+
+# :: (Any a, Any b) => (a, Int, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, b, Box Char, Box Char), (Box Char, Int)) -> (Char, Float, Char) -> (a, Int, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, b, Box Char, Box Char), (Box Char, Int))
+## The state after an event.
+l:s_tep := { s e ->
+  (stage, screen, line, name, picks, data, save) := s
+  n := t_ally l:l_ines s
+  e sm:i_s "click" ? s h:c_lick sm:n_umbers e
+  n_ot e sm:i_s "key" ? s
+  key := sm:t_ext e
+  (screen = 2) & 1 = t_ally key ? s h:t_ype key
+  key m_atch "UP" ? (stage, screen, 1 + (line - 2) m_od n, name, picks, data, save)
+  key m_atch "DOWN" ? (stage, screen, 1 + line m_od n, name, picks, data, save)
+  key m_atch "LEFT" ? s h:c_hange -1
+  key m_atch "RIGHT" ? s h:c_hange 1
+  key m_atch "BACKSPACE" ? h:b_ack s
+  digit := ("1" "2" "3" "4" "5" "6" "7" "8" "9") i_ndexOf e_nclose key
+  digit <= n ? h:t_ake (stage, screen, digit, name, picks, data, save)
+  (key m_atch "ENTER") | key m_atch " " ? h:t_ake s
+  s
+}
+## A click on a line takes it.
+h:c_lick := { s xy ->
+  (stage, screen, line, name, picks, data, save) := s
+  k := 1 + f_loor ((2 s_elect xy) - 222.0) / 58.0
+  (k < 1) | k > t_ally l:l_ines s ? s
+  h:t_ake (stage, screen, k, name, picks, data, save)
+}
+## A letter or digit typed into the name (twelve at most).
+h:t_ype := { (stage, screen, line, name, picks, data, save) key ->
+  n_ot (f_irst key) m_ember? "abcdefghijklmnopqrstuvwxyz0123456789" ? (stage, screen, line, name, picks, data, save)
+  12 <= t_ally name ? (stage, screen, line, name, picks, data, save)
+  (stage, screen, line, name c_at key, picks, data, save)
+}
+## The picks with the i-th set to v.
+h:s_et := { picks (i, v) -> (picks * 0 + (r_ange 9) != i) + v * 0 + (r_ange 9) = i }
+## A line with a value changed (by Left or Right, or taken): the look's
+## build, pronouns, title and cloak, or the default difficulty.
+h:c_hange := { s by ->
+  (stage, screen, line, name, picks, data, save) := s
+  (_, _, pronouns, titles, cloaks, _, levels, _) := data
+  (screen = 8) & line = 1 ? (stage, screen, line, name, picks h:s_et (8, 1 + ((8 s_elect picks) + by - 1) m_od t_ally levels), data, save)
+  n_ot (screen = 4) & line < 5 ? s
+  size := line s_elect 7 c_at (t_ally pronouns) c_at (t_ally titles) c_at t_ally cloaks
+  i := line + 1
+  (stage, screen, line, name, picks h:s_et (i, 1 + ((i s_elect picks) + by - 1) m_od size), data, save)
+}
+## Back a screen (and, typing a name, erase a letter).
+h:b_ack := { (stage, screen, line, name, picks, data, save) ->
+  (screen = 2) & 0 < t_ally name ? (stage, screen, line, -1 d_rop name, picks, data, save)
+  (screen = 8) & 0 < t_ally name ? (stage, 5, 1, name, picks, data, save)
+  to := screen s_elect 1 1 2 3 1 5 6 1
+  to = 1 ? (stage, 1, 1, "", picks, data, save)
+  (stage, to, 1, name, picks, data, save)
+}
+## The line chosen taken.
+h:t_ake := { s ->
+  (stage, screen, line, name, picks, data, save) := s
+  them := l:p_rofiles save
+  np := t_ally them
+  (screen = 1) & line <= np ? (stage, 5, 1, d_isclose line s_elect them, h:p_icks (save, d_isclose line s_elect them), data, save)
+  (screen = 1) & line = np + 1 ? (stage, 2, 1, "", 1 4 3 1 1 1 3 3 0, data, save)
+  screen = 1 ? (stage, 8, 1, name, picks, data, save)
+  (screen = 2) & 0 = t_ally name ? s
+  (screen = 2) & (e_nclose name) m_ember? them ? s
+  screen = 2 ? (stage, 3, f_irst picks, name, picks, data, save)
+  screen = 3 ? (stage, 4, 1, name, picks h:s_et (1, line), data, save)
+  (screen = 4) & line = 5 ? (stage, 5, 1, name, picks, data, save)
+  screen = 4 ? s h:c_hange 1
+  (screen = 5) & line = 1 ? (stage, 6, 1, name, picks, data, save)
+  (screen = 5) & line = 2 ? (stage, screen, line, name, picks h:s_et (9, 2), data, save)
+  (screen = 5) & line = 3 ? (stage, screen, line, name, picks h:s_et (9, 3), data, save)
+  (screen = 5) & line = 4 ? (stage, 8, 1, name, picks, data, save)
+  screen = 5 ? (stage, 1, 1, "", picks, data, save)
+  screen = 6 ? (stage, 7, 8 s_elect picks, name, picks h:s_et (6, line), data, save)
+  screen = 7 ? (stage, screen, line, name, (picks h:s_et (7, line)) h:s_et (9, 1), data, save)
+  line = 1 ? s h:c_hange 1
+  0 < t_ally name ? (stage, 5, 1, name, picks, data, save)
+  (stage, 1, 1, "", picks, data, save)
+}
+# :: Any a => a -> Box Char
+## The events it takes.
+l:l_egal := { s -> "key KEY" "click X Y" }
+# :: (Any a, Any b, Any c, Any d, Num e, Any f, Any g) => (a, b, c, d, e, f, g) -> Int
+## Done (won) when something to go to is chosen: play, the hall, the
+## treasury; playing until then.
+l:s_tatus := { (_, _, _, _, picks, _, _) -> 0 < 9 s_elect picks ? md:won; md:playing }
+
+### The picture
+
+## A character's calling as said: a Witch/Warlock by the title chosen.
+h:c_alling := { (picks, callings, titles) -> 5 = f_irst picks ? d_isclose (4 s_elect picks) s_elect titles; d_isclose (f_irst picks) s_elect callings }
+## Each screen's heading, and the line under it.
+h:h_eading := { (_, screen, _, name, picks, data, save) ->
+  (callings, _, pronouns, titles, _, _, levels, _) := data
+  calling := h:c_alling (picks, callings, titles)
+  who := (h:c_ap name) c_at " the " c_at calling c_at " (" c_at (d_isclose (3 s_elect picks) s_elect pronouns) c_at ")"
+  xp := save l:f_ield (name, "resource.xp")
+  gold := save l:f_ield (name, "resource.gold")
+  screen = 1 ? ("Who is playing?", "Choose a profile, or make a new one.")
+  screen = 2 ? ("A new profile", "Type a name (letters and digits), then Enter.")
+  screen = 3 ? ("Choose a calling", "Each helps a little when you defend and when you attack.")
+  screen = 4 ? (who, "Up and Down choose a line; Left and Right change it; Enter on Done.")
+  screen = 5 ? (who, @ f_ormat< "Level {1 + xp d_iv 100}. Experience {xp}, gold {gold}.")
+  screen = 6 ? ("Defend or attack?", "Choose your side for this game.")
+  screen = 7 ? ("How hard?", "Your settings say " c_at (d_isclose (8 s_elect picks) s_elect levels) c_at ".")
+  ("Settings", "Left and Right change a setting.")
+}
+## A line's text, in the picture.
+h:r_ow := { (lines, line) k ->
+  y := 250 + 58 * k - 1
+  mark := h:m_ark (k = line, y)
+  mark c_at "<text x=\"130\" y=\"" c_at (f_ormat y) c_at "\" font-size=\"30\" fill=\"" c_at (d_isclose (1 + k = line) s_elect "#e9e2d0" "#f2c14e") c_at "\">" c_at (f_ormat k) c_at ". " c_at (d_isclose k s_elect lines) c_at "</text>"
+}
+## How to choose, said at the foot.
+h:h_ow := { screen -> screen = 2 ? "Type the name. Backspace: erase. Enter: go on."; "Up Down: choose. Enter, a click or its number: take it. Backspace: back." }
+## The highlight behind the chosen line.
+h:m_ark := { (on, y) -> n_ot on ? ""; "<rect x=\"100\" y=\"" c_at (f_ormat y - 40) c_at "\" width=\"1000\" height=\"54\" rx=\"10\" fill=\"#c9a66b\" opacity=\"0.28\" stroke=\"#f2c14e\" stroke-width=\"2\"/>" }
+## The screen's picture: a painting behind, darkened; the heading; the
+## lines, the chosen one lit; how to choose.
+h:p_icture := { s ->
+  (_, screen, line, _, _, _, _) := s
+  (head, under) := h:h_eading s
+  lines := l:l_ines s
+  how := h:h_ow screen
+  back := "<svg id=\"front\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 800\" width=\"1200\" height=\"800\" font-family=\"Georgia, serif\"><rect width=\"1200\" height=\"800\" fill=\"#0e0f15\"/><image href=\"art/block-castle-bazaar.jpg\" width=\"1200\" height=\"800\" preserveAspectRatio=\"xMidYMid slice\"/><rect width=\"1200\" height=\"800\" fill=\"#0e0f15\" opacity=\"0.74\"/>"
+  words := "<text x=\"100\" y=\"115\" font-size=\"54\" fill=\"#f2ead8\">" c_at head c_at "</text><text x=\"102\" y=\"165\" font-size=\"25\" fill=\"#c9b98f\">" c_at under c_at "</text>"
+  rows := t:j_oin '{ k -> e_nclose (lines, line) h:r_ow k } e_ach r_ange t_ally lines
+  foot := "<text x=\"100\" y=\"765\" font-size=\"22\" fill=\"#a8a08a\">" c_at how c_at "</text>"
+  back c_at words c_at rows c_at foot c_at "</svg>"
+}
+# :: (Any a, Num b, Any c) => (a, b, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, c, Box Char, Box Char), (Box Char, Int)) -> (a, Box Char, Box Char, Float, Char)
+## What to show: the screen, and its heading and chosen line in words.
+l:v_iew := { s ->
+  (stage, _, line, _, _, _, _) := s
+  (head, under) := h:h_eading s
+  vw:d_rawn (stage, h:p_icture s, head c_at ". " c_at under c_at " " c_at d_isclose line s_elect l:l_ines s)
+}
+# :: (Any a, Any b, Any c, Any d, Any e) => (a, b, c, Char, Int, d, e) -> (Int, (Box Char, Int), (Box Char, Int))
+## What was chosen, as the profile's world: front.name.NAME, the
+## character (calling, build, pronoun, title, cloak), the default
+## difficulty, the side and difficulty for this game, and where to go
+## (front.go: 1 play, 2 the hall of deeds, 3 the treasury).
+l:o_utcome := { s ->
+  (_, _, _, name, picks, _, _) := s
+  n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
+  keys := "character.calling" "character.build" "character.pronoun" "character.title" "character.cloak" "session.side" "session.level" "settings.level" "front.go"
+  set := '{ k -> e_nclose d_isclose k s_elect keys } e_ach r_ange 9
+  (md:won, ((set, picks) md:m_erge md:nothing) md:s_et ("front.name." c_at name, 1), md:nothing)
+}

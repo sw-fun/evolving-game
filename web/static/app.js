@@ -111,7 +111,7 @@ flat.parentElement.addEventListener('click', (e) => {
 new ResizeObserver(() => window.dispatchEvent(new Event('resize'))).observe(el('stage'));
 
 // Keys the game may be given; none is a browser's or a system's.
-const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter' };
+const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter', Backspace: 'backspace' };
 window.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || talking()) return;
   // Escape leaves any game for the map (the loop's own command)
@@ -155,7 +155,9 @@ function start() {
   wasm.start(program, lastKept);
   named();
   // ?debug goes past the splash and shows every place at once
-  if (q.has('debug') && program === 'castle/play.xtl') { wasm.feed('key space'); wasm.feed('key d'); }
+  // ?debug goes past the splash and the front door (a profile "debug",
+  // played as a defender) and shows every place at once
+  if (q.has('debug') && program === 'castle/play.xtl') { for (const k of ['space', 'enter', 'd', 'e', 'b', 'u', 'g', 'enter', '1', '5', '1', '1', '3', 'd']) wasm.feed(`key ${k}`); }
   draw();
   if (!q.has('hold')) timer = setInterval(tick, TICK * 1000);
 }
