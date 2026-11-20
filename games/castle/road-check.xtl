@@ -1,0 +1,73 @@
+#!/usr/bin/env xetal
+## The level maps, scripted: each side's road of levels in a new world
+## and in one with places won; the selection moved along the road; a
+## locked level that cannot be taken; an open one taken by a key, its
+## number or a click on its circle, and where that sends the campaign.
+"md:" u_se< "Mode"
+"rd:" u_se< "Roads"
+"t:" u_se< "Text"
+"vn:" u_se< "Venues"
+"vw:" u_se< "View"
+
+file := "levels.toml"
+u:l_ast := { (_, s) -> s }
+u:s_ay := { (status, changes, rewards) ->
+  _ := p_rint! "outcome: " c_at md:s_tatusName status
+  _ := t:l_ines '{ l -> e_nclose "  changes " c_at d_isclose l } e_ach md:l_ines changes
+  t_ally t:l_ines '{ l -> e_nclose "  brings " c_at d_isclose l } e_ach md:l_ines rewards
+}
+u:r_oad := { (lines, world) -> u:l_ast 'rd:l_egal 'rd:s_tatus 'rd:s_tep md:r_esult (lines, rd:n_ew (file, world, 1)) }
+# A road's lines, one a level: its number, label, and how it stands.
+u:l_ines := { s -> t_ally t:l_ines '{ k -> e_nclose s rd:l_ine k } e_ach r_ange rd:c_ount s }
+defender := md:nothing md:s_et ("session.side", 1)
+attacker := md:nothing md:s_et ("session.side", 2)
+
+# The file is right for the mode.
+t_ally rd:mode md:p_roblem file
+# A new world, defending (and a world that names no side defends too):
+# the first two levels are open, the rest locked, each saying what
+# opens it; the first is chosen.
+_ := u:l_ines rd:n_ew (file, defender, 1)
+vw:c_aption rd:v_iew rd:n_ew (file, md:nothing, 1)
+# Attacking: the camp and the battlefield on foot are open; the places
+# with no attack version yet say so.
+_ := u:l_ines rd:n_ew (file, attacker, 1)
+vw:c_aption rd:v_iew rd:n_ew (file, attacker, 1)
+
+# A locked level can be chosen (the arrows, its number) but not taken:
+# right twice reaches the storm bridge, enter does nothing, and the key
+# 4 chooses the long bridge and does nothing more.
+vw:c_aption rd:v_iew u:r_oad ("key right" "key right" "key enter", defender)
+md:s_tatusName rd:s_tatus u:r_oad ("key right" "key right" "key enter" "key 4", defender)
+# Left from the first stays on the first; down goes on along the road.
+vw:c_aption rd:v_iew u:r_oad ("key left" "key down", defender)
+# An open one taken: the second level by right then enter sends the
+# campaign to the snow bridge (venue 3 in castle.toml); by its number,
+# the same.
+_ := u:s_ay rd:o_utcome u:r_oad ("key right" "key enter", defender)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key 2", defender)
+# Space takes the chosen one: the winter camp, for the attacker.
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key space", attacker)
+# Backspace leaves, changing nothing; and B.
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key backspace", defender)
+md:s_tatusName rd:s_tatus u:r_oad (1 r_eshape e_nclose "key b", defender)
+
+# With the summer bridge won, the storm bridge opens (two are always
+# open ahead); the next to play (the snow bridge) is chosen. The storm
+# bridge taken by its number is venue 6.
+one := defender md:s_et ("venue.bridge-1.done", 1)
+_ := u:l_ines rd:n_ew (file, one, 1)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key 3", one)
+vn:t_itle ("castle.toml", 6)
+
+# Clicks, in picture units: the circles stand 220 apart in a row of
+# five, the second row back from the right. Within 45 of the second's
+# center (380 250) takes it; on the third (locked) only chooses it; on
+# open ground does nothing. The sixth (the gate maze, under the fifth)
+# opens once the city is won; a click on it then takes it (venue 10).
+rd:c_enters rd:n_ew (file, defender, 1)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "click 400 280", defender)
+vw:c_aption rd:v_iew u:r_oad (1 r_eshape e_nclose "click 600 250", defender)
+vw:c_aption rd:v_iew u:r_oad (1 r_eshape e_nclose "click 270 400", defender)
+far := (((one md:s_et ("venue.bridge-2.done", 1)) md:s_et ("venue.bridge-3.done", 1)) md:s_et ("venue.crossing.done", 1)) md:s_et ("venue.city.done", 1)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "click 1040 500", far)

@@ -1,0 +1,245 @@
+## Roads: the level maps (the mode "roads"), one a side. The side is
+## the world's session.side (1 defends, 2 attacks; none defends); its
+## road is a list of the castle's venues in the order they are played
+## (levels.toml), the tutorial first and the hard ones last, drawn as a
+## winding path of numbered circles over a painting. The first two are
+## open; every next one opens when the one before it is won, or the
+## one before that (the world's venue.ID.done), so two are always open
+## ahead. An attacker's place with no attack version
+## yet says so, and plays the defender's.
+##
+## The arrows choose along the road; enter, space, a level's number or
+## a click on its circle takes it, if it is open (a locked one is only
+## chosen); B or backspace leaves (and Esc, the loop's own). Taken, the campaign goes to it: the
+## outcome sets campaign.go to the venue's number in castle.toml.
+##
+## The state is (stage, numbers, road): the numbers are the level
+## chosen, the level taken (0 for none), 1 when left, and the side; the
+## road is the venues' ids, labels and tiers, and for each 1 or 0: its
+## attack version is coming, it is done, it is open; and its venue's
+## number in castle.toml.
+## Import: "rd:" u_se< "Roads"
+
+"md:" u_se< "Mode"
+"sm:" u_se< "Sim"
+"st:" u_se< "Strings"
+"t:" u_se< "Text"
+"vn:" u_se< "Venues"
+"vw:" u_se< "View"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "roads"
+# :: Char
+## How it is used, a line a thing to know.
+l:help := "The road of levels for your side, in order: the first two are open, and each next one opens when one of the two before it is won.\nArrows: choose. Enter, space, its number or a click on it: go there. B, Backspace or Esc: back."
+
+h:tiers := "tutorial" "easy" "normal" "hard"
+h:f_ail := { (file, field) what -> "bad-scenario" []S_IGNAL file c_at ": " c_at field c_at ": " c_at what }
+## The directory part of a path, with its last slash.
+h:d_ir := { file -> ('m_ax r_/ 0 c_at w_here file = f_irst "/") t_ake file }
+## The first of the entries a mask marks, said as the field
+## road.ID.what, or the empty text when none is marked.
+h:f_irstBad := { (name, ids, what) bad ->
+  at := w_here bad
+  0 = t_ally at ? ""
+  name c_at "." c_at (d_isclose (f_irst at) s_elect ids) c_at "." c_at what
+}
+## A road's entries, read and checked: (ids, labels, tiers, coming,
+## index), index the venues' numbers in the castle's file.
+h:e_ntries := { (file, name) ->
+  ids := file md:l_ist name
+  0 = t_ally ids ? (file, name) h:f_ail "a road with no places"
+  t := '{ @ -> ((e_nclose file) c_at e_nclose name c_at "-level") []T_ABLE ((e_nclose name) c_at e_nclose "entry-fields") } []T_RAP '{ err -> "bad-scenario" []S_IGNAL []E_MESSAGE err }
+  castle := (h:d_ir file) c_at file md:f_ield "castle"
+  names := vn:n_ames castle
+  index := names i_ndexOf ids
+  far := w_here index > t_ally names
+  0 < t_ally far ? (file, name) h:f_ail "no venue " c_at (d_isclose (f_irst far) s_elect ids) c_at " in " c_at castle
+  labels := 1 s_elect_2 t
+  tiers := 2 s_elect_2 t
+  said := 3 s_elect_2 t
+  blank := (name, ids, "label") h:f_irstBad '{ x -> 0 = t_ally d_isclose x } e_ach labels
+  0 < t_ally blank ? (file, blank) h:f_ail "a label is wanted"
+  tier := (name, ids, "tier") h:f_irstBad (h:tiers i_ndexOf tiers) > t_ally h:tiers
+  0 < t_ally tier ? (file, tier) h:f_ail "the tier is one of tutorial, easy, normal, hard"
+  coming := '{ x -> "yes" m_atch d_isclose x } e_ach said
+  odd := (name, ids, "coming") h:f_irstBad (n_ot coming) & '{ x -> n_ot ("no" m_atch d_isclose x) | 0 = t_ally d_isclose x } e_ach said
+  0 < t_ally odd ? (file, odd) h:f_ail "coming is \"yes\" or \"no\""
+  (ids, labels, tiers, 0 + coming, index)
+}
+# :: (Num a, Any b, Num c, Num d, Truthy d, Num e, Truthy e, Num f, Truthy f) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Int, (Box Char, Box Char, Box Char, d, e, f, Int))
+## The road of a world, from the file: (stage, numbers, road), the
+## next level to play chosen (the first open one not done).
+l:n_ew := { (file, world, seed) ->
+  side := 1 + 0 + 2 = world md:g_et "session.side"
+  name := d_isclose side s_elect "defend" "attack"
+  (ids, labels, tiers, coming, index) := h:e_ntries (file, name)
+  done := 0 + '{ id -> 0 < world md:g_et "venue." c_at (d_isclose id) c_at ".done" } e_ach ids
+  k := r_ange t_ally ids
+  open := 0 + (0 < done) | (k <= 2) | (0 < 0 c_at -1 d_rop done) | 0 < 0 0 c_at -2 d_rop done
+  next := w_here (0 < open) & 0 = done
+  (md:s_tage file, (f_irst next c_at 1) c_at 0 0 c_at side, (ids, labels, tiers, coming, done, open, index))
+}
+## The road's open levels, 1 or 0 each.
+h:o_pen := { (_, _, (_, _, _, _, _, open, _)) -> open }
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any i) => (a, b, (c, d, e, f, g, h, i)) -> Int
+## How many levels the road has.
+l:c_ount := { s -> t_ally h:o_pen s }
+## The state with the k-th level chosen.
+h:c_hoose := { (stage, n, road) k -> (stage, k c_at 1 d_rop n, road) }
+## The state with the k-th level chosen, and taken if it is open; a
+## number that is no level changes nothing.
+h:t_ake := { s k ->
+  (stage, n, road) := s
+  k < 1 ? s
+  k > l:c_ount s ? s
+  0 = k s_elect h:o_pen s ? s h:c_hoose k
+  (stage, k c_at k c_at 2 d_rop n, road)
+}
+## The state with the choice moved d along the road, not off its ends.
+h:m_ove := { s d ->
+  (_, n, _) := s
+  s h:c_hoose 1 m_ax (l:c_ount s) m_in d + f_irst n
+}
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any i) => (a, b, (c, d, e, f, g, h, i)) -> Int
+## Where each level's circle stands in the picture, a row each (x, y):
+## five to a row, 220 apart, each next row going back the other way, so
+## the road winds down the picture in order.
+l:c_enters := { s ->
+  k := (r_ange l:c_ount s) - 1
+  row := f_loor (f_loat k) / 5.0
+  across := k - 5 * row
+  back := row - 2 * f_loor (f_loat row) / 2.0
+  column := across + back * 4 - 2 * across
+  o_\ (2 c_at l:c_ount s) r_eshape (160 + 220 * column) c_at 250 + 250 * row
+}
+## The state after a click at a picture point: the level whose circle is
+## within 45 of it taken (or chosen), else nothing.
+h:c_lick := { s xy ->
+  at := f_loat l:c_enters s
+  across := (f_irst xy) - 1 s_elect_2 at
+  down := (2 s_elect xy) - 2 s_elect_2 at
+  near := w_here 2025.0 >= (across * across) + down * down
+  0 = t_ally near ? s
+  s h:t_ake f_irst near
+}
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Num g, Any h) => (a, Int, (b, c, d, e, f, g, h)) -> (Char, Float, Char) -> (a, Int, (b, c, d, e, f, g, h))
+## The state after an event: the arrows choose, enter or space takes the
+## chosen level, a number or a click takes that one, B or backspace leaves.
+l:s_tep := { s e ->
+  (stage, n, road) := s
+  e sm:i_s "click" ? s h:c_lick 2 t_ake sm:n_umbers e
+  n_ot e sm:i_s "key" ? s
+  key := st:l_ower sm:t_ext e
+  (key m_atch "left") | key m_atch "up" ? s h:m_ove -1
+  (key m_atch "right") | key m_atch "down" ? s h:m_ove 1
+  (key m_atch "enter") | key m_atch " " ? s h:t_ake f_irst n
+  (key m_atch "b") | key m_atch "backspace" ? (stage, (2 t_ake n) c_at 1 c_at 3 d_rop n, road)
+  s h:t_ake ("1" "2" "3" "4" "5" "6" "7" "8" "9") i_ndexOf e_nclose key
+}
+# :: Any a => a -> Box Char
+## The events it takes: a click, and a key (any: the arrows, enter,
+## space, the numbers, B and backspace do something, the rest nothing;
+## the host names a key in small letters, a script's line in capitals).
+l:l_egal := { s -> "click X Y" "key NAME" }
+# :: (Any a, Num b, Any c) => (a, b, c) -> Int
+## Won when a level is taken (it is then played); left when left.
+l:s_tatus := { (_, n, _) -> 0 < 2 s_elect n ? md:won; 0 < 3 s_elect n ? md:left; md:playing }
+## How the k-th level stands, said: done, open (and its tier), or
+## locked and what opens it.
+h:s_tanding := { s k ->
+  (_, _, (_, _, tiers, _, done, open, _)) := s
+  0 < k s_elect done ? "done"
+  0 < k s_elect open ? "open, " c_at d_isclose k s_elect tiers
+  @ f_ormat< "locked, win {k - 2} or {k - 1} first"
+}
+## Whether the k-th level's attack version is coming, said (or nothing).
+h:c_oming := { s k ->
+  (_, _, (_, _, _, coming, _, _, _)) := s
+  0 < k s_elect coming ? ", attack version coming"
+  ""
+}
+## The k-th level's label.
+h:l_abel := { s k ->
+  (_, _, (_, labels, _, _, _, _, _)) := s
+  d_isclose k s_elect labels
+}
+# :: (Any a, Any b, Any c, Num d, Num e, Num f, Any g) => (a, b, (c, Box Char, Box Char, d, e, f, g)) -> Int -> Char
+## The k-th level's line: its number, label, and how it stands.
+l:l_ine := { s k -> (f_ormat k) c_at " " c_at (s h:l_abel k) c_at ": " c_at (s h:s_tanding k) c_at s h:c_oming k }
+## The title of the side's road.
+h:t_itle := { (_, n, _) -> d_isclose (4 s_elect n) s_elect "Defend the castle" "Attack the castle" }
+h:how := "Arrows: choose. Enter, space, a number or a click: go. B or Esc: back."
+## A text drawn at a point: x, y, size, color, anchored in the middle
+## or (anchor "") from its left.
+## A drawing when a flag is 1, else nothing.
+h:i_f := { yes drawing -> 0 = yes ? ""; drawing }
+h:t_ext := { (x, y, size, color, middle) words ->
+  anchor := d_isclose (1 + 0 + middle) s_elect "" " text-anchor=\"middle\""
+  "<text x=\"" c_at (f_ormat x) c_at "\" y=\"" c_at (f_ormat y) c_at "\" font-size=\"" c_at (f_ormat size) c_at "\" fill=\"" c_at color c_at "\"" c_at anchor c_at ">" c_at words c_at "</text>"
+}
+## The k-th level drawn: its circle (gold open, gray locked, green
+## done with a check), its number, its label under it, and how it
+## stands under that.
+h:l_evel := { s k ->
+  (_, n, (_, _, _, coming, done, open, _)) := s
+  (x, y) := (1 s_elect k s_elect l:c_enters s, 2 s_elect k s_elect l:c_enters s)
+  kind := 1 + (k s_elect open) + k s_elect done
+  fill := d_isclose kind s_elect "#55524c" "#c9a66b" "#4f7a3a"
+  ink := d_isclose kind s_elect "#a19c92" "#1c160c" "#f2ead8"
+  words := d_isclose kind s_elect "#9a958b" "#f2ead8" "#cfe3bf"
+  ring := "<circle cx=\"" c_at (f_ormat x) c_at "\" cy=\"" c_at (f_ormat y) c_at "\" r=\"52\" fill=\"none\" stroke=\"#fff6d8\" stroke-width=\"6\"/>"
+  chosen := (0 + k = f_irst n) h:i_f ring
+  disc := "<circle cx=\"" c_at (f_ormat x) c_at "\" cy=\"" c_at (f_ormat y) c_at "\" r=\"40\" fill=\"" c_at fill c_at "\" stroke=\"#1c160c\" stroke-width=\"3\"/>"
+  number := (x, y + 12, 34, ink, 1) h:t_ext f_ormat k
+  tick := "<circle cx=\"" c_at (f_ormat x + 32) c_at "\" cy=\"" c_at (f_ormat y - 32) c_at "\" r=\"16\" fill=\"#2f5a22\" stroke=\"#f2ead8\" stroke-width=\"2\"/><path d=\"M " c_at (f_ormat x + 24) c_at " " c_at (f_ormat y - 32) c_at " l 6 7 l 11 -13\" fill=\"none\" stroke=\"#f2ead8\" stroke-width=\"4\"/>"
+  check := (k s_elect done) h:i_f tick
+  label := (x, y + 72, 22, words, 1) h:t_ext s h:l_abel k
+  stands := (x, y + 98, 17, words, 1) h:t_ext s h:s_tanding k
+  later := (x, y + 120, 16, "#9fc3e8", 1) h:t_ext "attack version coming"
+  note := (k s_elect coming) h:i_f later
+  chosen c_at disc c_at number c_at check c_at label c_at stands c_at note
+}
+## The road from the circle before the k-th to it: straight along a
+## row, and a bend out past the end of the row where the road turns
+## back, so it never runs through a label.
+h:s_egment := { at k ->
+  (x, y) := (1 s_elect k s_elect at, 2 s_elect k s_elect at)
+  (x0, y0) := (1 s_elect (k - 1) s_elect at, 2 s_elect (k - 1) s_elect at)
+  y = y0 ? " L " c_at (f_ormat x) c_at " " c_at f_ormat y
+  bend := x0 + 150 * (2 * 0 + x0 > 600) - 1
+  " C " c_at (f_ormat bend) c_at " " c_at (f_ormat y0) c_at " " c_at (f_ormat bend) c_at " " c_at (f_ormat y) c_at " " c_at (f_ormat x) c_at " " c_at f_ormat y
+}
+## The road's picture: the side's painting darkened, the title, the
+## road winding through the circles in order, and the chosen level and
+## what to do at the foot.
+h:p_icture := { s ->
+  (_, n, _) := s
+  painting := d_isclose (4 s_elect n) s_elect "art/block-castle-keep.jpg" "art/block-castle-bazaar.jpg"
+  head := "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 800\" width=\"1200\" height=\"800\" font-family=\"Georgia, serif\"><rect width=\"1200\" height=\"800\" fill=\"#0e0f15\"/><image href=\"" c_at painting c_at "\" x=\"0\" y=\"0\" width=\"1200\" height=\"800\" preserveAspectRatio=\"xMidYMid slice\"/><rect width=\"1200\" height=\"800\" fill=\"#0e0f15\" opacity=\"0.72\"/>"
+  title := (60, 110, 54, "#f2ead8", 0) h:t_ext h:t_itle s
+  at := l:c_enters s
+  way := "M " c_at (f_ormat 1 s_elect 1 s_elect at) c_at " " c_at (f_ormat 2 s_elect 1 s_elect at) c_at t:j_oin '{ k -> e_nclose at h:s_egment k } e_ach 1 d_rop r_ange l:c_ount s
+  road := "<path d=\"" c_at way c_at "\" fill=\"none\" stroke=\"#6e5530\" stroke-width=\"22\" stroke-linecap=\"round\" opacity=\"0.85\"/><path d=\"" c_at way c_at "\" fill=\"none\" stroke=\"#d8bf86\" stroke-width=\"4\" stroke-dasharray=\"14 12\"/>"
+  levels := t:j_oin '{ k -> e_nclose s h:l_evel k } e_ach r_ange l:c_ount s
+  said := (60, 712, 28, "#f2c14e", 0) h:t_ext s l:l_ine f_irst n
+  how := (60, 756, 22, "#d8d2c4", 0) h:t_ext h:how
+  head c_at title c_at road c_at levels c_at said c_at how c_at "</svg>"
+}
+# :: (Any a, Any b, Num c, Any d) => (a, Int, (b, Box Char, Box Char, c, Int, Int, d)) -> (a, Box Char, Box Char, Float, Char)
+## What to show: the road's picture, and in words its title, every
+## level's line, the chosen one and what to do.
+l:v_iew := { s ->
+  (stage, n, _) := s
+  lines := t:j_oin '{ k -> e_nclose (s l:l_ine k) c_at ". " } e_ach r_ange l:c_ount s
+  vw:d_rawn (stage, h:p_icture s, (h:t_itle s) c_at ". " c_at lines c_at "Chosen: " c_at (s l:l_ine f_irst n) c_at ". " c_at h:how)
+}
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g) => (a, Int, (b, c, d, e, f, g, Int)) -> (Int, (Box Char, Int), (Box Char, Int))
+## A level taken: the campaign goes to its venue (campaign.go, its
+## number in castle.toml); left, nothing changes.
+l:o_utcome := { s ->
+  (_, n, (_, _, _, _, _, _, index)) := s
+  n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
+  (md:won, md:nothing md:s_et ("campaign.go", (2 s_elect n) s_elect index), md:nothing)
+}

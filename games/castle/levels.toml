@@ -1,0 +1,114 @@
+# The level maps: the road of levels each side plays, in order. Read
+# by Roads.xtl through lib/Mode; every value is a string, or a list of
+# strings. The first two places of a road are open from the start;
+# every next one opens when the one before it is won (the world's
+# venue.ID.done). To add a level: add its venue in castle.toml, then
+# its id to a road here and its entry below.
+mode = ["roads"]
+title = ["The roads"]
+
+# Where: the castle's zones (a path from this file) and the zone the
+# stage is made from.
+zones = ["../../world/zones.toml"]
+zone = ["realm"]
+
+# The castle's venues (a path from this file): a road names its places
+# by their ids there.
+castle = ["castle.toml"]
+
+# The roads, a list of venue ids each, in the order they are played:
+# the tutorial first, the hard ones last.
+defend = ["bridge-1", "bridge-2", "bridge-3", "crossing", "city", "gate-maze", "dungeon", "ray-maze", "treasury"]
+attack = ["camp", "on-foot", "crossing", "city", "gate-maze", "dungeon", "ray-maze", "treasury"]
+
+# An entry of a road (a table defend-level.ID or attack-level.ID, ID
+# the venue's id): its label (short: it is written under its circle),
+# its tier (tutorial, easy, normal or hard), and coming: "yes" where the
+# attacker's version is not built yet (the defender's is played then),
+# "no" (or nothing) where it is.
+entry-fields = ["label", "tier", "coming"]
+
+[defend-level.bridge-1]
+label = "Summer bridge"
+tier = "tutorial"
+coming = "no"
+
+[defend-level.bridge-2]
+label = "Snow bridge"
+tier = "easy"
+coming = "no"
+
+[defend-level.bridge-3]
+label = "Storm bridge"
+tier = "normal"
+coming = "no"
+
+[defend-level.crossing]
+label = "Long bridge"
+tier = "normal"
+coming = "no"
+
+[defend-level.city]
+label = "The city"
+tier = "normal"
+coming = "no"
+
+[defend-level.gate-maze]
+label = "Gate maze"
+tier = "hard"
+coming = "no"
+
+[defend-level.dungeon]
+label = "The dungeon"
+tier = "hard"
+coming = "no"
+
+[defend-level.ray-maze]
+label = "Second maze"
+tier = "hard"
+coming = "no"
+
+[defend-level.treasury]
+label = "Treasury"
+tier = "hard"
+coming = "no"
+
+[attack-level.camp]
+label = "Winter camp"
+tier = "tutorial"
+coming = "no"
+
+[attack-level.on-foot]
+label = "On foot"
+tier = "easy"
+coming = "no"
+
+[attack-level.crossing]
+label = "Long bridge"
+tier = "normal"
+coming = "yes"
+
+[attack-level.city]
+label = "The city"
+tier = "normal"
+coming = "yes"
+
+[attack-level.gate-maze]
+label = "Gate maze"
+tier = "hard"
+coming = "yes"
+
+[attack-level.dungeon]
+label = "The dungeon"
+tier = "hard"
+coming = "yes"
+
+[attack-level.ray-maze]
+label = "Second maze"
+tier = "hard"
+coming = "yes"
+
+[attack-level.treasury]
+label = "Treasury"
+tier = "hard"
+coming = "yes"
