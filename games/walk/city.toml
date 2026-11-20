@@ -1,10 +1,15 @@
 # The city inside the gate, on foot: the village of seed 7 (the one seen
-# behind the wall), stood on its own ground ("south 22": its wall line
+# behind the wall), stood on its own ground ("south 21": its wall line
 # is this map's south edge), walked from the gate to the keep's door.
 # The battlefield on foot: you walk it yourself, looking through your
 # own eyes, from the entrance to the castle gate. Read by Roaming.xtl
 # through lib/Mode; every value is a list of strings.
 mode = ["roam"]
+# You start deep in the maze (at the street farthest from the keep's
+# door, by a house) and find the way to the keep.
+start = ["far"]
+# What to find, said under the picture.
+goal = ["Find the way through the streets to the keep's door."]
 # The painting shown on the card before it (in the castle; the page
 # serves docs/images under art/): the keep painting.
 art = ["art/block-castle-keep.jpg"]
@@ -17,7 +22,7 @@ zone = ["city"]
 # What stands behind the wall: the village, made from a seed, so many
 # tiles wide and deep (lib/Village). The same line in every scenario
 # is the same village.
-village = ["seed 7", "wide 34", "deep 20", "south 22"]
+village = ["seed 7", "wide 35", "deep 21", "south 21"]
 
 # The hour of the day, 0 to 24 (lib/Sky).
 time = ["14.5"]

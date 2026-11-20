@@ -50,8 +50,8 @@ the next. This is the game the others are parts of.
 
 - **The city.** Inside the gate, the village seen behind the wall is
   walked on foot (the walk's `Roaming`, the scenario
-  `../walk/city.toml`): from the gate up the way to the keep's door,
-  its buildings in your way.
+  `../walk/city.toml`): its houses make a maze; you start deep in it
+  and find the way through the streets to the keep's door.
 
 - **The winter camp.** The besiegers' tents and cook fires in the
   snow, walked on foot (the walk's `Roaming`, the scenario

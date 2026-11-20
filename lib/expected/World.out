@@ -12,6 +12,7 @@ l:t_urned : Any a => (a, b, c) -> (a, b, c)
 l:e_ntrances : (Any a, Any b) => (a, Int, b) -> Int
 l:w_alked : Truthy a => (Char, Int, Int) -> a
 l:s_teps : (Char, Int, Int) -> Int
+l:d_istance : Truthy a => (Char, Int, Int) -> a -> Int
 l:r_oad : (Char, Int, Int) -> Int -> Int
 l:d_raw : (Any a, Any b) => (a, Int, b) -> Char
 l:d_rawRoad : (Char, Int, Int) -> Int -> Char

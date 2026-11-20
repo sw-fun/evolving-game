@@ -66,6 +66,9 @@ h:s_pot := { mask ->
 ## rows of tiles of one length and of known letters, the heights of the
 ## same shape and digits, exactly one gate, an entrance, and a road from
 ## every entrance to the gate. Anything else is the error "bad-map".
+## A map walked on foot over its open ground (walked = ["ground"], as
+## the city is) needs no road: its entrance must reach its gate over
+## any ground.
 l:r_ead := { file ->
   name := d_isclose f_irst (file h:l_ist "name") c_at e_nclose ""
   tiles := file h:r_ows "tiles"
@@ -82,7 +85,8 @@ l:r_ead := { file ->
   1 < gates ? (file, "tiles") h:f_ail @ f_ormat< "{gates} gates (G), a map has one"
   0 = '+ r_/ r_avel kinds = h:entrance ? (file, "tiles") h:f_ail "no entrance (S)"
   map := (name, kinds, heights)
-  lost := (kinds = h:entrance) & h:far <= l:s_teps map
+  over := '{ @ -> "ground" m_atch d_isclose f_irst file []L_IST "walked" } []T_RAP '{ err -> []R_ECOVER 0 = 1 }
+  lost := (kinds = h:entrance) & h:far <= map l:d_istance (l:w_alked map) | over & kinds = 1
   '| r_/ r_avel lost ? (file, "tiles") h:f_ail "the entrance at " c_at (h:s_pot lost) c_at " has no road to the gate"
   map
 }
@@ -154,6 +158,11 @@ l:s_teps := { map ->
   (_, kinds, _) := map
   (l:w_alked map) h:f_lood h:far * kinds != h:gate
 }
+# :: Truthy a => (Char, Int, Int) -> a -> Int
+## How many steps from every tile to the gate over the tiles open (a
+## matrix of the map's shape, 1 where one may step): map w:d_istance
+## open. Far (999) where the gate cannot be reached.
+l:d_istance := { (_, kinds, _) open -> (open | kinds = h:gate) h:f_lood h:far * kinds != h:gate }
 ## The tiles from tile i to the gate, as numbers along the raveled
 ## map: each step to the first neighbor (north, east, south, west) that
 ## is one step nearer.

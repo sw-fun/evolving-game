@@ -1,6 +1,6 @@
 number = 9
 slug = "city-maze"
-status = "pending"
+status = "in-progress"
 description = "defend-the-bridge step (the user 2026-11-18): the city's bugs: 'when you are ..."
 role = "production"
 context_files = []

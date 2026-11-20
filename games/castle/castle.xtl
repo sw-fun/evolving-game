@@ -20,6 +20,7 @@
 "t:" u_se< "Text"
 "vn:" u_se< "Venues"
 "vw:" u_se< "View"
+"w:" u_se< "World"
 
 file := "castle.toml"
 u:l_ast := { (_, s) -> s }
@@ -110,14 +111,18 @@ u:h_eld := u:l_ast 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep md:r_eplay ("choos
 3 t_ake rc:y_ou rays
 held
 
-# The city inside the gate (the village on its own ground, on foot) can
-# be won: W held (choose 2 87) for three and a half seconds walks you
-# from the gate up the way to the keep's door. A step east from the
-# start runs into a house and stops.
+# The city inside the gate: the village is a maze of its houses. You
+# start deep in it (the street farthest from the keep's door); holding
+# W runs you into a house at once. The keep can be reached: from where
+# you start it is so many steps (a solver, every street flooded from
+# the keep's door), not the 999 of a street cut off.
 u:c_ity := { lines -> u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_eplay (lines, rm:n_ew ("../walk/city.toml", md:nothing, 1)) }
-_ := u:s_ay rm:o_utcome u:c_ity (e_nclose "choose 2 87") c_at 7 r_eshape e_nclose "tick 0.5"
-rm:p_lace u:c_ity (e_nclose "choose 2 68") c_at 8 r_eshape e_nclose "tick 0.5"
-
+rm:p_lace u:c_ity 1 r_eshape e_nclose "tick 0.0"
+rm:p_lace u:c_ity (e_nclose "choose 2 87") c_at 4 r_eshape e_nclose "tick 0.5"
+town := md:m_ap "../walk/city.toml"
+ways := town w:d_istance (n_ot (w:t_iles town) m_ember? 2 5 6) & n_ot md:b_locked "../walk/city.toml"
+here := rm:p_lace u:c_ity 1 r_eshape e_nclose "tick 0.0"
+(2 s_elect here) s_elect (f_irst here) s_elect ways
 # The winter camp can be won: W held eleven seconds walks the road from
 # the south through the camp to the palisade's gate.
 u:c_amp := { lines -> u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_eplay (lines, rm:n_ew ("../walk/camp.toml", md:nothing, 1)) }

@@ -10,7 +10,8 @@
 ## is how far the pointer went, in pixels. Which key does what is
 ## decided here, not by a page.
 ##
-## The state is (zone, stage, numbers, blocked), blocked the tiles a
+## The state is (goal, stage, numbers, blocked): what to find, as the
+## scenario says it (goal = ["..."]; else the gate); blocked the tiles a
 ## village's buildings stand on (lib/Village), which stop you as walls
 ## do; numbers: where you are (x east and y
 ## south, in tiles), your heading in radians (0 north, turning east)
@@ -62,15 +63,36 @@ h:o_pen := { (stage, blocked) xy ->
 
 ### The protocol
 
+## Where you start (row, column, heading): the map's entrance, facing
+## north; or, where the scenario says start = ["far"], the open tile
+## farthest from the gate (a city's: deep in the maze of its houses),
+## facing the street that leads on from it.
+h:s_tart := { (file, map, blocked) z ->
+  n_ot file md:h_as "start" ? (f_loat f_irst w:e_ntrances map) c_at 0.0
+  open := (n_ot (w:t_iles map) m_ember? h:stops) & n_ot blocked
+  d := map w:d_istance open
+  best := 'm_ax r_/ r_avel d * d < 999
+  at := f_irst w_here r_avel d = best
+  cols := 2 s_elect w:s_ize map
+  r := 1 + (at - 1) d_iv cols
+  c := 1 + (at - 1) m_od cols
+  rows := r + -1 0 1 0
+  cs := c + 0 1 0 -1
+  inside := (rows >= 1) & (rows <= f_irst w:s_ize map) & (cs >= 1) & cs <= cols
+  steps := '{ k -> (1 m_ax cols m_in k s_elect cs) s_elect (1 m_ax (f_irst w:s_ize map) m_in k s_elect rows) s_elect d } e_ach r_ange 4
+  way := f_irst g_rade steps + 999 * n_ot inside
+  (f_loat r) c_at (f_loat c) c_at 0.5 * (p_i @) * f_loat way - 1
+}
 # :: (Any a, Any b, Num c, Truthy d) => (Char, a, b) -> (Char, ((Char, Int, Int), Float, Box Char, Float, Char, c), Float, d)
-## You at a scenario's entrance, facing north, in a world, with a seed.
+## You at a scenario's entrance (or deep in its maze), facing north, in a world, with a seed.
 ## A scenario that is wrong is the error bad-scenario.
 l:n_ew := { (file, world, seed) ->
   map := md:m_ap file
   stage := md:s_tage file
-  start := f_loat f_irst w:e_ntrances map
-  n := ((2 s_elect start) - 0.5) c_at ((f_irst start) - 0.5) c_at 0.0 0.0 c_at (7 r_eshape 0.0) c_at 0.0 c_at (file md:n_umber "speed") c_at file md:n_umber "turn"
-  (file md:f_ield "zone", stage, n, md:b_locked file)
+  blocked := md:b_locked file
+  start := (file, map, blocked) h:s_tart 0
+  n := ((2 s_elect start) - 0.5) c_at ((f_irst start) - 0.5) c_at (3 s_elect start) c_at 0.0 c_at (7 r_eshape 0.0) c_at 0.0 c_at (file md:n_umber "speed") c_at file md:n_umber "turn"
+  (h:g_oal file, stage, n, blocked)
 }
 ## The numbers after a key goes down (1) or comes up (0).
 h:k_ey := { n (code, down) ->
@@ -112,10 +134,10 @@ l:s_tep := { (zone, stage, n, blocked) e ->
 # :: Any a => a -> Box Char
 ## The events it takes: time, keys down and up, the pointer.
 l:l_egal := { s -> "tick S" "choose A N" "move X Y" }
-# :: (Any a, Any b, Num c, Any d) => (a, b, c, d) -> Int
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (Char, ((a, Int, b), c, d, e, f, g), Float, h) -> Int
 ## Where you stand: a row and a column.
 l:p_lace := { s -> h:p_lace h:a_t s }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i, Any j) => (a, ((b, Int, c), d, e, f, g, h), i, j) -> Int
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (Char, ((a, Int, b), c, d, e, f, g), Float, h) -> Int
 ## Won when you stand in the gate; playing until then.
 l:s_tatus := { s ->
   (_, stage, _, _) := s
@@ -128,7 +150,7 @@ h:f_acing := { h ->
   k := (f_loor 0.5 + h * 4.0 / p_i @) m_od 8
   d_isclose (1 + k) s_elect "north" "north-east" "east" "south-east" "south" "south-west" "west" "north-west"
 }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i) => (a, ((b, Int, c), d, e, f, g, h), Float, i) -> (((b, Int, c), d, e, f, g, h), Box Char, Box Char, Float, Char)
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (Char, ((a, Int, b), c, d, e, f, g), Float, h) -> (((a, Int, b), c, d, e, f, g), Box Char, Box Char, Float, Char)
 ## What to show (lib/View): the map seen through your eyes, and a line
 ## saying where you are, which way you face and what to do.
 l:v_iew := { s ->
@@ -138,8 +160,14 @@ l:v_iew := { s ->
   where := @ f_ormat< "Row {f_irst rk}, column {2 s_elect rk}, facing {h:f_acing h}."
   vw:w_ith (vw:e_mpty (stage, where c_at h:s_ays s), "eye", "", (2 t_ake n) c_at (s_in h) c_at (0.0 - c_os h) c_at (4 s_elect n) c_at 0.0 0.0 0.05)
 }
-h:s_ays := { s -> md:won = l:s_tatus s ? " You are in the gate."; " W A S D walk; the arrows or the mouse look. Find the gate." }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i, Any j) => (a, ((b, Int, c), d, e, f, g, h), i, j) -> (Int, (Box Char, Int), (Box Char, Int))
+h:s_ays := { s ->
+  (zone, _, _, _) := s
+  md:won = l:s_tatus s ? " You are there."
+  " W A S D walk; the arrows or the mouse look. " c_at zone
+}
+## What to find, as the scenario says it (goal = ["..."]), or the gate.
+h:g_oal := { file -> n_ot file md:h_as "goal" ? "Find the gate."; file md:f_ield "goal" }
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (Char, ((a, Int, b), c, d, e, f, g), Float, h) -> (Int, (Box Char, Int), (Box Char, Int))
 ## How it ended: left, unless you reached the gate, which the world
 ## remembers.
 l:o_utcome := { s ->

@@ -1008,6 +1008,13 @@ The framework (`games/castle`, Saga 3's castle-map step):
   looks from behind the wall out at the road, and the flat picture,
   clicks and the 3D view agree; the village stands on the far side of
   a turned map's gate. Castle Defense's three levels face out.
+  The city is a maze of its houses (lib/Village: a sidewinder maze
+  carved from the seed, houses on its closed blocks, stalls along the
+  wall's street, towers at the corners, the keep in a square at the
+  north); the same village stands behind the wall everywhere. You
+  start at the street farthest from the keep's door, facing the way
+  on; the wall with its gap is the city map's south edge; a solver
+  golden proves the keep reachable (53 steps for seed 7).
   The steps, in order: defender-camera, city-maze, front-door,
   character, home-and-sides, level-maps, attack-defense,
   sides-everywhere, attacker-idle.

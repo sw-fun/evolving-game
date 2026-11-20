@@ -272,12 +272,12 @@ if (capture) {
   writeFileSync(join(root, "images/look/city-card.png"), Buffer.from(img.data, "base64"));
 }
 await space();
-check((await caption()).startsWith("Row 22, column 17, facing north."), "space goes on into the city, at its gate");
+check(/^Row 2, column 10, facing \w+\./.test(await caption()) && (await caption()).includes("Find the way through the streets to the keep's door."), "space goes on into the city, deep in its maze, and it says what to find");
 check((await page("window.game.player().count().pieces")) >= 0 && /tiles\('house'/.test(await page("document.querySelector('#flat svg metadata').textContent")), "its scene has the village's houses");
 await page("window.game.feed('choose 2 87'), 1");
 await sleep(900);
 await page("window.game.feed('choose 3 87'), 1");
-check(/^Row (1[6-9]|2[01]), column 17/.test(await caption()), "W held walks you up the way");
+check(/^Row \d+, column \d+/.test(await caption()) && !(await caption()).startsWith("Row 2, column 10,"), "W held walks you on along the street you face");
 if (capture) {
   await sleep(600);
   const img = await send("Page.captureScreenshot", { format: "png" });
