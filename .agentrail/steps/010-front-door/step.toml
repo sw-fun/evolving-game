@@ -1,8 +1,9 @@
 number = 10
 slug = "front-door"
-status = "in-progress"
+status = "completed"
 description = "defend-the-bridge step (the user 2026-11-18, menus agreed: 'yes to all'): a s..."
 role = "production"
 context_files = []
 created_at = "2026-11-18T18:58:12"
-commits = []
+completed_at = "2026-11-21T06:41:48"
+commits = ["c849ff188c907ff71d1368332be14c8b055ed0a4"]

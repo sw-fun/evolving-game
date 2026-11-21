@@ -1,0 +1,1 @@
+Front door: splash, profiles, typed name, calling, look, home, side, difficulty; road of levels per side (Roads, levels.toml); drawn portraits (Portrait). Published c849ff1, live browser test ok (153 checks).
