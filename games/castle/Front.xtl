@@ -24,6 +24,7 @@
 ## Import: "fr:" u_se< "Front"
 
 "md:" u_se< "Mode"
+"pt:" u_se< "Portrait"
 "sm:" u_se< "Sim"
 "st:" u_se< "Strings"
 "t:" u_se< "Text"
@@ -247,7 +248,13 @@ h:r_ow := { (lines, line) k ->
 ## How to choose, said at the foot.
 h:h_ow := { screen -> screen = 2 ? "Type the name. Backspace: erase. Enter: go on."; "Up Down: choose. Enter, a click or its number: take it. Backspace: back." }
 ## The highlight behind the chosen line.
-h:m_ark := { (on, y) -> n_ot on ? ""; "<rect x=\"100\" y=\"" c_at (f_ormat y - 40) c_at "\" width=\"1000\" height=\"54\" rx=\"10\" fill=\"#c9a66b\" opacity=\"0.28\" stroke=\"#f2c14e\" stroke-width=\"2\"/>" }
+h:m_ark := { (on, y) -> n_ot on ? ""; "<rect x=\"100\" y=\"" c_at (f_ormat y - 40) c_at "\" width=\"760\" height=\"54\" rx=\"10\" fill=\"#c9a66b\" opacity=\"0.28\" stroke=\"#f2c14e\" stroke-width=\"2\"/>" }
+## The character standing at the right, on the look and home screens.
+h:f_igure := { (_, screen, _, _, picks, data, _) ->
+  n_ot screen m_ember? 4 5 ? ""
+  (_, _, _, _, _, colors, _, _) := data
+  pt:s_vg (f_irst picks, 2 s_elect picks, d_isclose (5 s_elect picks) s_elect colors, 1000, 700, 440)
+}
 ## The screen's picture: a painting behind, darkened; the heading; the
 ## lines, the chosen one lit; how to choose.
 h:p_icture := { s ->
@@ -259,9 +266,9 @@ h:p_icture := { s ->
   words := "<text x=\"100\" y=\"115\" font-size=\"54\" fill=\"#f2ead8\">" c_at head c_at "</text><text x=\"102\" y=\"165\" font-size=\"25\" fill=\"#c9b98f\">" c_at under c_at "</text>"
   rows := t:j_oin '{ k -> e_nclose (lines, line) h:r_ow k } e_ach r_ange t_ally lines
   foot := "<text x=\"100\" y=\"765\" font-size=\"22\" fill=\"#a8a08a\">" c_at how c_at "</text>"
-  back c_at words c_at rows c_at foot c_at "</svg>"
+  back c_at words c_at rows c_at (h:f_igure s) c_at foot c_at "</svg>"
 }
-# :: (Any a, Num b, Any c) => (a, b, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, c, Box Char, Box Char), (Box Char, Int)) -> (a, Box Char, Box Char, Float, Char)
+# :: (Any a, Num b) => (a, b, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char), (Box Char, Int)) -> (a, Box Char, Box Char, Float, Char)
 ## What to show: the screen, and its heading and chosen line in words.
 l:v_iew := { s ->
   (stage, _, line, _, _, _, _) := s

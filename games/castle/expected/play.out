@@ -1,14 +1,14 @@
 Evolving Game. Click, or press any key, to begin.
 Who is playing?. Choose a profile, or make a new one. New profile
 A new profile. Type a name (letters and digits), then Enter. Name: _
-A new profile. Type a name (letters and digits), then Enter. Name: a_
-A new profile. Type a name (letters and digits), then Enter. Name: al_
-A new profile. Type a name (letters and digits), then Enter. Name: ald_
-A new profile. Type a name (letters and digits), then Enter. Name: aldr_
-A new profile. Type a name (letters and digits), then Enter. Name: aldra_
+A new profile. Type a name (letters and digits), then Enter. Name: d_
+A new profile. Type a name (letters and digits), then Enter. Name: de_
+A new profile. Type a name (letters and digits), then Enter. Name: deb_
+A new profile. Type a name (letters and digits), then Enter. Name: debu_
+A new profile. Type a name (letters and digits), then Enter. Name: debug_
 Choose a calling. Each helps a little when you defend and when you attack. Soldier: towers hit harder; troops are tougher
-Aldra the Spy (they). Up and Down choose a line; Left and Right change it; Enter on Done. Build: masculine  - - - O - - -  feminine
-Aldra the Spy (they). Level 1. Experience 0, gold 0. Play
+Debug the Spy (they). Up and Down choose a line; Left and Right change it; Enter on Done. Build: masculine  - - - O - - -  feminine
+Debug the Spy (they). Level 1. Experience 0, gold 0. Play
 Defend or attack?. Choose your side for this game. Defend the castle: build towers, hold the walls
 How hard?. Your settings say Normal. Normal: as the game is meant
 ........................
@@ -253,5 +253,5 @@ Row 30, column 11, facing north. W A S D walk; the arrows or the mouse look. Fin
 .@..@......S..@..@......
 The castle and its country: 18 of 18 places known, 0 won. Gold 0, experience 0. (Every place shown: D hides them again.)
 Click a place to go there.
-Aldra the Soldier (he). Level 1. Experience 0, gold 0. Play
-front.home.aldra 1
+Debug the Soldier (he). Level 1. Experience 0, gold 0. Play
+front.home.debug 1

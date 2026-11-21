@@ -92,11 +92,12 @@ const open = async (query) => {
   if (ready && await page("!!document.querySelector('#flat svg#front')")) await enter();
   return ready;
 };
-// Through the front door as the profile "test", a Soldier, defending
-// at Normal: made new, or chosen when the save has it.
+// Through the front door as the profile "debug" (which plays on the
+// map of every venue), a Soldier, defending at Normal: made new, or
+// chosen when the save has it.
 const enter = async () => {
-  const fresh = !(await page("document.querySelector('#flat svg').textContent")).includes("Test: ");
-  const keys = fresh ? ["enter", "t", "e", "s", "t", "enter", "1", "5", "1", "1", "3"] : ["1", "1", "1", "3"];
+  const fresh = !(await page("document.querySelector('#flat svg').textContent")).includes("Debug: ");
+  const keys = fresh ? ["enter", "d", "e", "b", "u", "g", "enter", "1", "5", "1", "1", "3"] : ["1", "1", "1", "3"];
   for (const k of keys) await page(`window.game.feed('key ${k}'), 1`);
 };
 const key = async (type, k, code, n) => send("Input.dispatchKeyEvent", { type, key: k, code, windowsVirtualKeyCode: n, nativeVirtualKeyCode: n });
@@ -408,6 +409,7 @@ await page("window.game.feed('key 5'), 1");
 check((await caption()).startsWith("Aldra the Witch (they)"), "a Witch/Warlock is called by the title chosen");
 await page("window.game.feed('key right'), window.game.feed('key down'), window.game.feed('key right'), 1");
 check((await caption()).startsWith("Aldra the Witch (he)"), "Left and Right change the look: the build, the pronouns");
+check(await page("!!document.querySelector('#flat svg g')"), "the character is drawn beside the look");
 await front("look");
 await page("window.game.feed('key 5'), 1");
 check((await caption()).startsWith("Aldra the Witch (he) Level 1."), "Done goes home");
@@ -419,9 +421,15 @@ await page("window.game.feed('key 1'), 1");
 check((await caption()).startsWith("How hard?"), "then how hard");
 await front("difficulty");
 await page("window.game.feed('key 3'), 1");
-check((await caption()).startsWith("The castle and its country"), "and then the castle");
+check((await caption()).startsWith("Defend the castle"), "and then the defender's road of levels");
+check(await page("document.querySelector('#flat svg image').getAttribute('href') === 'art/block-castle-keep.jpg'"), "over the keep painting");
+await front("road");
+await page("window.game.feed('key enter'), 1");
+check((await caption()).startsWith("Gold 100, lives 10, wave 0 of 5."), "Enter on the first level plays it: Castle Defense in summer");
 await page("document.getElementById('leave').click(), 1");
-check((await caption()).startsWith("Aldra the Witch (he) Level 1."), "the Map (Esc) button from the castle goes back home");
+check((await caption()).startsWith("Defend the castle"), "Map (Esc) leaves the level for the road");
+await page("document.getElementById('leave').click(), 1");
+check((await caption()).startsWith("Aldra the Witch (he) Level 1."), "and again goes back home");
 
 // What is won is kept: a place called done is still won after the page
 // is loaded again; New game forgets it.

@@ -24,6 +24,7 @@
 "lg:" u_se< "Ledger"
 "ov:" u_se< "Overture"
 "ps:" u_se< "Passage"
+"rd:" u_se< "Roads"
 "wr:" u_se< "Warren"
 "md:" u_se< "Mode"
 "rm:" u_se< "Roaming"
@@ -120,12 +121,18 @@ u:a_fter := { (world, k) outcome ->
 ## The map, then the venue chosen, then the map again, until the events
 ## end.
 u:r_ound := { world ->
-  chose := at:o_utcome u:l_ast 'at:v_iew 'at:l_egal 'at:s_tatus 'at:s_tep md:p_lay at:n_ew (file, world, 1)
+  chose := u:c_hoose world
   (status, going, _) := chose
   n_ot status = md:won ? u:s_tay world
   k := going md:g_et "campaign.go"
   there := world md:m_erge going
   u:r_ound u:k_eep (there, k) u:a_fter u:v_isit (there, k)
+}
+## Where the next place is chosen: the side's road of levels (Roads.xtl),
+## or, for the profile named debug, the map of every venue (Atlas.xtl).
+u:c_hoose := { world ->
+  "debug" m_atch u:n_ame world ? at:o_utcome u:l_ast 'at:v_iew 'at:l_egal 'at:s_tatus 'at:s_tep md:p_lay at:n_ew (file, world, 1)
+  rd:o_utcome u:l_ast 'rd:v_iew 'rd:l_egal 'rd:s_tatus 'rd:s_tep md:p_lay rd:n_ew ("levels.toml", world, 1)
 }
 ## The map was left without a place chosen: the events have ended (the
 ## next is the end again), and so does the game; or it was the command
