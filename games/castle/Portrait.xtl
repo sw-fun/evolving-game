@@ -1,0 +1,208 @@
+## Portrait: a character drawn standing, seen from the front, for the
+## character-creation screen. A calling (1 Soldier, 2 Merchant, 3 Spy,
+## 4 Thief, 5 Witch or Warlock, 6 Engineer, 7 Herald) adds what it
+## carries and wears; a build, 1 to 7 on a slider from masculine to
+## feminine, changes the body by small steps: shoulders and jaw
+## narrower, waist and hips shaped, hair longer and fuller, brows
+## finer, the tunic longer, a beard only at 1 and 2 and stubble at 3.
+## The cloak is the player's color.
+##
+## The figure is drawn in its own units, 100 tall with the feet at
+## (0, 0) and the head up (y negative), the right half and its mirror,
+## and placed and scaled once.
+## Import: "pt:" u_se< "Portrait"
+
+## The fixed colors: outline, skin, hair, tunic, trousers, boots and
+## belt, and gold.
+h:line := "#2b2230"
+h:skin := "#e9b993"
+h:hair := "#4a2f1e"
+h:tunic := "#d8ccb0"
+h:legs := "#5b4b3e"
+h:boot := "#3b2a20"
+h:belt := "#5a3b22"
+h:gold := "#d6a73c"
+h:wood := "#6b4a2b"
+h:steel := "#cfd6de"
+
+## A number (or numbers) as text, to a tenth; and to a thousandth.
+h:n_um := { v -> f_ormat (f_loat f_loor 0.5 + 10.0 * v) / 10.0 }
+h:f_ine := { v -> f_ormat (f_loat f_loor 0.5 + 1000.0 * v) / 1000.0 }
+## A shape drawn on the right and again mirrored to the left.
+h:b_oth := { s -> s c_at "<g transform=\"scale(-1 1)\">" c_at s c_at "</g>" }
+## A filled path.
+h:p_ath := { (fill, d) -> "<path d=\"" c_at d c_at "\" fill=\"" c_at fill c_at "\"/>" }
+## A path stroked only, in a color and width.
+h:s_troke := { (color, width, d) -> "<path d=\"" c_at d c_at "\" fill=\"none\" stroke=\"" c_at color c_at "\" stroke-width=\"" c_at (h:n_um width) c_at "\"/>" }
+
+## The body's measures, from the build t (0 masculine to 1 feminine):
+## the half widths of head, jaw, neck, shoulders, chest, waist and hips.
+h:h_ead := { t -> 6.0 - 0.7 * t }
+h:j_aw := { t -> 3.0 - 1.1 * t }
+h:n_eck := { t -> 2.3 - 0.6 * t }
+h:s_houlder := { t -> 12.5 - 2.6 * t }
+h:c_hest := { t -> 10.6 - 1.8 * t }
+h:w_aist := { t -> 8.6 - 2.0 * t }
+h:h_ip := { t -> 9.0 + 1.6 * t }
+## The head and what is on it drawn a fifth larger, about the chin:
+## a stylized figure, its face easier to read.
+h:b_ig := { s -> "<g transform=\"translate(0 -83.5) scale(1.2) translate(0 83.5)\">" c_at s c_at "</g>" }
+## Where the hands are: x of the right hand (the left is its mirror).
+h:h_and := { t -> 2.6 + h:s_houlder t }
+
+## The soft shadow on the ground.
+h:shadow := "<ellipse cx=\"0\" cy=\"0\" rx=\"17\" ry=\"3\" fill=\"#000000\" fill-opacity=\"0.3\" stroke=\"none\"/>"
+
+## The cloak, behind the body, in the player's color.
+h:c_loak := { (t, cloak) ->
+  sw := h:s_houlder t
+  nw := h:n_eck t
+  h:b_oth h:p_ath (cloak, @ f_ormat< "M0 -82 L{h:n_um 1.5 + nw} -82 C{h:n_um 1.0 + sw} -81 {h:n_um 2.5 + sw} -76 {h:n_um 3.0 + sw} -66 L{h:n_um 6.0 + sw} -6 Q{h:n_um 0.5 * sw} -3.5 0 -4.5")
+}
+
+## The hair behind the head: none below the ears at 1, to the
+## shoulders and fuller at 7.
+h:b_ackHair := { t ->
+  r := h:h_ead t
+  hl := -94.0 + 21.0 * t
+  hb := r + 0.8 + 2.4 * t
+  h:b_oth h:p_ath (h:hair, @ f_ormat< "M0 -101.8 C{h:n_um 0.9 * r} -101.8 {h:n_um r + 1.6} -99 {h:n_um r + 1.5} -93 L{h:n_um hb} {h:n_um hl - 1.5} Q{h:n_um hb} {h:n_um hl} {h:n_um hb - 1.5} {h:n_um hl} L0 {h:n_um hl}")
+}
+
+## The legs and the boots.
+h:l_egs := { t ->
+  hw := h:h_ip t
+  leg := h:p_ath (h:legs, @ f_ormat< "M0.6 -50 L{h:n_um hw - 0.6} -50 L{h:n_um 6.0 - 0.4 * t} -4 L1.8 -4 L1.0 -37 Z")
+  boot := h:p_ath (h:boot, "M1.6 -7 L6.2 -7 L6.6 -1.6 Q8.2 -1.4 8.2 0 L1.4 0 Z")
+  h:b_oth leg c_at boot
+}
+
+## The neck, the tunic (longer toward 7), the neckline and the belt.
+h:b_ody := { t ->
+  nw := h:n_eck t
+  sw := h:s_houlder t
+  cw := h:c_hest t
+  ww := h:w_aist t
+  hw := h:h_ip t
+  hy := -42.0 + 13.0 * t
+  hem := hw + 0.5 + 3.5 * t
+  neck := @ f_ormat< "<rect x=\"{h:n_um 0.0 - nw}\" y=\"-86.5\" width=\"{h:n_um 2.0 * nw}\" height=\"8\" fill=\"{h:skin}\"/>"
+  tunic := h:p_ath (h:tunic, @ f_ormat< "M0 -80.5 L{h:n_um 0.8 + nw} -80.5 C{h:n_um sw - 2.0} -80.5 {h:n_um sw} -80 {h:n_um sw} -76.5 C{h:n_um cw} -70 {h:n_um ww + 0.4} -63 {h:n_um ww} -58 C{h:n_um ww + 0.3} -54 {h:n_um hw} -51 {h:n_um hw} -48 L{h:n_um hem} {h:n_um hy} Q{h:n_um 0.5 * hem} {h:n_um hy + 0.8} 0 {h:n_um hy + 0.5}")
+  belt := h:p_ath (h:belt, @ f_ormat< "M0 -58.6 L{h:n_um ww + 0.25} -58.6 L{h:n_um ww + 0.15} -55.6 L0 -55.6")
+  neck c_at (h:b_oth tunic c_at belt) c_at (h:s_troke (h:line, 0.4, "M-2 -80.5 L0 -77.5 L2 -80.5")) c_at "<rect x=\"-1.3\" y=\"-58.9\" width=\"2.6\" height=\"3.6\" rx=\"0.4\" fill=\"" c_at h:gold c_at "\"/>"
+}
+
+## The arms in their sleeves, and the hands.
+h:a_rms := { t ->
+  sw := h:s_houlder t
+  hx := h:h_and t
+  aw := 4.6 - 0.8 * t
+  d := @ f_ormat< "M{h:n_um sw - 1.2} -77.5 Q{h:n_um sw + 2.4} -66 {h:n_um hx} -47"
+  hand := @ f_ormat< "<circle cx=\"{h:n_um hx}\" cy=\"-45.2\" r=\"{h:n_um 2.1 - 0.2 * t}\" fill=\"{h:skin}\"/>"
+  h:b_oth (h:s_troke (h:line, aw + 1.2, d)) c_at (h:s_troke (h:tunic, aw, d)) c_at hand
+}
+
+## The head: ears, a face narrowing to the chin toward 7.
+h:h_eadShape := { t ->
+  r := h:h_ead t
+  jw := h:j_aw t
+  ear := @ f_ormat< "<ellipse cx=\"{h:n_um r - 0.1}\" cy=\"-91.8\" rx=\"0.9\" ry=\"1.6\" fill=\"{h:skin}\"/>"
+  face := h:p_ath (h:skin, @ f_ormat< "M0 -100.6 C{h:n_um 0.6 * r} -100.6 {h:n_um r} -98 {h:n_um r} -92.5 C{h:n_um r} -88.5 {h:n_um jw + 1.2} -85.2 {h:n_um jw} -84.3 Q{h:n_um 0.6 * jw} -83 0 -83")
+  h:b_oth ear c_at face
+}
+
+## Eyes, brows (finer toward 7), nose, mouth and a touch of color in
+## the cheeks.
+h:f_ace := { t ->
+  eye := "<ellipse cx=\"2.15\" cy=\"-92\" rx=\"0.75\" ry=\"0.6\" fill=\"" c_at h:line c_at "\" stroke=\"none\"/>"
+  brow := h:s_troke (h:hair, 0.95 - 0.5 * t, "M1.1 -94.1 Q2.3 -94.9 3.6 -94.3")
+  cheek := @ f_ormat< "<circle cx=\"3.3\" cy=\"-88.8\" r=\"1.2\" fill=\"#e0786a\" fill-opacity=\"{h:n_um 0.08 + 0.14 * t}\" stroke=\"none\"/>"
+  nose := h:s_troke ("#b78366", 0.35, "M0.2 -91.2 Q0.9 -89 0 -88.6")
+  mouth := h:s_troke ("#a4574c", 0.55, "M-1.3 -86.4 Q0 -85.7 1.3 -86.4")
+  (h:b_oth eye c_at brow c_at cheek) c_at nose c_at mouth
+}
+
+## A beard and moustache at 1, trimmed at 2, stubble at 3, none after.
+h:b_eard := { (b, t) ->
+  b > 3 ? ""
+  r := h:h_ead t
+  jw := h:j_aw t
+  o := b s_elect 1.0 0.7 0.2
+  beard := h:p_ath (h:hair, @ f_ormat< "M{h:n_um r - 0.2} -91.6 C{h:n_um r + 0.1} -87.5 {h:n_um jw + 1.6} -83.2 0 -82.4 L0 -85.2 Q1.7 -85.4 2.1 -87.1 Q{h:n_um r - 1.4} -87.6 {h:n_um r - 1.1} -91.6")
+  moustache := h:p_ath (h:hair, "M0.1 -87.0 Q1.4 -87.6 2.4 -86.4 Q1.2 -86.6 0.1 -86.5 Z")
+  "<g stroke=\"none\" opacity=\"" c_at (h:n_um o) c_at "\">" c_at (h:b_oth beard c_at moustache) c_at "</g>"
+}
+
+## The hair over the forehead, fuller toward 7.
+h:f_rontHair := { t ->
+  r := h:h_ead t
+  f := 0.8 * t
+  h:b_oth h:p_ath (h:hair, @ f_ormat< "M0 -102 C{h:n_um 0.3 + f + 0.9 * r} -102.2 {h:n_um r + 1.2 + f} -99.5 {h:n_um r + 0.8 + 0.5 * f} -92.5 Q{h:n_um r - 0.2} -96.5 {h:n_um 0.45 * r} -97.4 Q1.5 -96.8 0 -97.6")
+}
+
+## Behind the body: the spy's hood.
+h:b_ehind := { (c, t, cloak) ->
+  n_ot c = 3 ? ""
+  r := h:h_ead t
+  sw := h:s_houlder t
+  nw := h:n_eck t
+  h:b_oth h:p_ath (cloak, @ f_ormat< "M0 -104.5 C{h:n_um r + 2.8} -104.5 {h:n_um r + 3.4} -98 {h:n_um r + 2.8} -90 C{h:n_um r + 2.4} -85 {h:n_um nw + 4.0} -82 {h:n_um sw - 0.5} -79.5 L0 -79.5")
+}
+
+## Over the tunic: the soldier's tabard, the merchant's purse, the
+## engineer's apron.
+h:o_ver := { (c, t, cloak) ->
+  ww := h:w_aist t
+  hw := h:h_ip t
+  nw := h:n_eck t
+  c = 1 ? (h:b_oth h:p_ath (cloak, @ f_ormat< "M0 -80.2 L5.4 -80.2 L{h:n_um ww - 0.4} -58 L6.0 -36 L0 -35")) c_at "<path d=\"M-0.9 -75 h1.8 v12 h-1.8 Z M-3.5 -70.5 h7 v1.8 h-7 Z\" fill=\"" c_at h:gold c_at "\" stroke=\"none\"/>"
+  c = 2 ? "<path d=\"M5.4 -54.2 L8.6 -54.2\" stroke=\"" c_at h:belt c_at "\"/><ellipse cx=\"7\" cy=\"-51\" rx=\"2.6\" ry=\"3.2\" fill=\"#8a5a2a\"/><circle cx=\"7\" cy=\"-50.6\" r=\"1\" fill=\"" c_at h:gold c_at "\"/>"
+  c = 6 ? (h:b_oth (h:p_ath ("#8a6440", @ f_ormat< "M0 -71 L5.2 -71 L5.6 -58 L{h:n_um hw + 0.2} -50 L{h:n_um hw + 1.4} -30 Q{h:n_um 0.5 * hw} -29 0 -29.4")) c_at h:s_troke ("#8a6440", 1.0, @ f_ormat< "M4.6 -70.6 L{h:n_um nw + 0.6} -80.6")) c_at "<rect x=\"-3.6\" y=\"-50\" width=\"7.2\" height=\"5.2\" fill=\"#7a5534\"/>"
+  ""
+}
+
+## In the hands, under the fingers: sword, staff, dagger, hammer, horn,
+## banner.
+h:h_eld := { (c, t, cloak) ->
+  x := h:h_and t
+  c = 1 ? @ f_ormat< "<path d=\"M{h:n_um x - 0.7} -42 L{h:n_um x + 0.7} -42 L{h:n_um x + 0.5} -16 L{h:n_um x} -14 L{h:n_um x - 0.5} -16 Z\" fill=\"{h:steel}\"/><rect x=\"{h:n_um x - 3.0}\" y=\"-43.2\" width=\"6\" height=\"1.3\" fill=\"#8c7a5a\"/><circle cx=\"{h:n_um x}\" cy=\"-48.4\" r=\"0.9\" fill=\"#8c7a5a\"/>"
+  c = 4 ? @ f_ormat< "<path d=\"M{h:n_um x - 0.9} -43 L{h:n_um x + 0.9} -43 L{h:n_um x + 0.5} -33 L{h:n_um x} -30.5 L{h:n_um x - 0.5} -33 Z\" fill=\"{h:steel}\"/><rect x=\"{h:n_um x - 1.8}\" y=\"-43.9\" width=\"3.6\" height=\"1\" fill=\"{h:line}\"/>"
+  c = 5 ? @ f_ormat< "<rect x=\"{h:n_um x - 0.8}\" y=\"-92\" width=\"1.6\" height=\"91\" fill=\"{h:wood}\"/><circle cx=\"{h:n_um x}\" cy=\"-94.5\" r=\"3.8\" fill=\"#9ad7ff\" fill-opacity=\"0.3\" stroke=\"none\"/><path d=\"M{h:n_um x} -98.5 L{h:n_um x + 1.8} -94.5 L{h:n_um x} -90.5 L{h:n_um x - 1.8} -94.5 Z\" fill=\"#a8e2ff\"/>"
+  c = 6 ? @ f_ormat< "<rect x=\"{h:n_um x - 0.6}\" y=\"-48\" width=\"1.2\" height=\"15\" fill=\"#7a5534\"/><rect x=\"{h:n_um x - 3.6}\" y=\"-35\" width=\"7.2\" height=\"4.4\" rx=\"0.5\" fill=\"#8b939c\"/>"
+  c = 7 ? (@ f_ormat< "<path d=\"M{h:n_um x - 1.0} -46 Q{h:n_um x + 4.0} -48 {h:n_um x + 5.5} -56 L{h:n_um x + 3.8} -56.5 Q{h:n_um x + 3.0} -50 {h:n_um x - 1.0} -48.4 Z\" fill=\"{h:gold}\"/><ellipse cx=\"{h:n_um x + 4.7}\" cy=\"-57.2\" rx=\"2.4\" ry=\"1.1\" fill=\"#e4b84a\"/>") c_at "<g transform=\"scale(-1 1)\">" c_at (@ f_ormat< "<rect x=\"{h:n_um x - 0.6}\" y=\"-104\" width=\"1.2\" height=\"103\" fill=\"{h:wood}\"/><circle cx=\"{h:n_um x}\" cy=\"-105\" r=\"1.2\" fill=\"{h:gold}\"/><path d=\"M{h:n_um x + 0.6} -101 L{h:n_um x + 12.0} -101 L{h:n_um x + 12.0} -80 L{h:n_um x + 6.3} -84 L{h:n_um x + 0.6} -80 Z\" fill=\"{cloak}\"/><circle cx=\"{h:n_um x + 6.3}\" cy=\"-93\" r=\"2.2\" fill=\"{h:gold}\"/>") c_at "</g>"
+  ""
+}
+
+## Over the head: the spy's hood and half-mask, the thief's scarf, the
+## merchant's fine hat, the witch's pointed hat.
+h:o_nTop := { (c, t, cloak) ->
+  r := h:h_ead t
+  nw := h:n_eck t
+  c = 2 ? @ f_ormat< "<ellipse cx=\"0\" cy=\"-99.4\" rx=\"{h:n_um r + 6.5}\" ry=\"2.0\" fill=\"#7a2f5f\"/><path d=\"M{h:n_um 0.6 - r} -99.5 C{h:n_um 0.6 - r} -107.5 {h:n_um r - 0.6} -107.5 {h:n_um r - 0.6} -99.5 Z\" fill=\"#7a2f5f\"/><rect x=\"{h:n_um 0.6 - r}\" y=\"-101.6\" width=\"{h:n_um 2.0 * r - 1.2}\" height=\"1.6\" fill=\"{h:gold}\"/><path d=\"M{h:n_um r - 1.5} -102 Q{h:n_um r + 5.0} -106 {h:n_um r + 7.5} -114 Q{h:n_um r + 1.5} -103.5 {h:n_um r - 1.0} -100.6 Z\" fill=\"#e9d9a8\"/>"
+  c = 3 ? (h:b_oth (h:p_ath (cloak, @ f_ormat< "M0 -104.5 C{h:n_um r + 2.8} -104.5 {h:n_um r + 3.4} -98 {h:n_um r + 2.8} -90 L{h:n_um r + 0.6} -90 C{h:n_um r + 0.9} -96.5 {h:n_um r - 0.4} -99.8 0 -99.8")) c_at (@ f_ormat< "<path d=\"M0 -94.6 L{h:n_um r + 0.3} -94.8 L{h:n_um r + 0.2} -90.6 Q2 -90 0 -90.6 Z\" fill=\"#1f1d26\" stroke=\"none\"/><ellipse cx=\"2.15\" cy=\"-92.2\" rx=\"1.1\" ry=\"0.8\" fill=\"#efe6d2\" stroke=\"none\"/><circle cx=\"2.15\" cy=\"-92.2\" r=\"0.5\" fill=\"{h:line}\" stroke=\"none\"/>"))
+  c = 4 ? (h:b_oth h:p_ath ("#2c2b35", @ f_ormat< "M0 -88.4 C2.5 -88.8 {h:n_um r - 0.3} -89.4 {h:n_um r + 0.1} -88.6 C{h:n_um r + 0.5} -84.5 {h:n_um nw + 3.4} -80.6 {h:n_um nw + 3.6} -78.5 L0 -78")) c_at h:p_ath ("#2c2b35", "M2 -80 L5 -66 L7.5 -67 L4.5 -80 Z")
+  c = 5 ? @ f_ormat< "<ellipse cx=\"0\" cy=\"-100\" rx=\"{h:n_um r + 6.5}\" ry=\"1.9\" fill=\"#4a3a72\"/><path d=\"M{h:n_um 0.2 - r} -100.3 Q-1 -108 2.5 -119 Q1.5 -110 {h:n_um r - 0.2} -100.3 Z\" fill=\"#4a3a72\"/><path d=\"M{h:n_um 0.4 - r} -101.9 L{h:n_um r - 0.5} -101.9 L{h:n_um r - 0.3} -100.4 L{h:n_um 0.3 - r} -100.4 Z\" fill=\"{cloak}\"/>"
+  ""
+}
+
+# :: (Num a, Num d) => (a, Int, Char, b, c, d) -> Char
+## The figure, about size tall, standing with its feet at (x, y): the
+## calling (1..7), the build (1 masculine .. 7 feminine), the cloak's
+## color; an SVG group.
+l:s_vg := { (calling, build, cloak, x, y, size) ->
+  b := 1 m_ax 7 m_in build
+  c := 1 m_ax 7 m_in calling
+  t := (f_loat b - 1) / 6.0
+  open := @ f_ormat< "<g transform=\"translate({f_ormat x} {f_ormat y}) scale({h:f_ine (f_loat size) / 100.0})\" stroke=\"{h:line}\" stroke-width=\"0.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\">"
+  back := h:shadow c_at (h:c_loak (t, cloak)) c_at h:b_ig (h:b_ackHair t) c_at h:b_ehind (c, t, cloak)
+  body := (h:l_egs t) c_at (h:b_ody t) c_at (h:o_ver (c, t, cloak)) c_at (h:h_eld (c, t, cloak)) c_at h:a_rms t
+  head := h:b_ig (h:h_eadShape t) c_at (h:f_ace t) c_at (h:b_eard (b, t)) c_at (h:f_rontHair t) c_at h:o_nTop (c, t, cloak)
+  open c_at back c_at body c_at head c_at "</g>"
+}
+
+# :: Num a => (a, Int, Char) -> Char
+## A card to look at: the figure on a dark rounded backdrop, a whole
+## 300 by 400 SVG.
+l:c_ard := { (calling, build, cloak) ->
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 400\" width=\"300\" height=\"400\"><rect width=\"300\" height=\"400\" rx=\"18\" fill=\"#1b1a24\"/><ellipse cx=\"150\" cy=\"210\" rx=\"120\" ry=\"170\" fill=\"#3a3550\" fill-opacity=\"0.35\"/>" c_at (l:s_vg (calling, build, cloak, 150, 378, 270)) c_at "</svg>"
+}

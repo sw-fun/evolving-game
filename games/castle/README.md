@@ -90,6 +90,20 @@ the next. This is the game the others are parts of.
   `campaign.go`; B, backspace or Esc goes back.
   [`road-check.xtl`](road-check.xtl) plays both roads on scripts of
   events.
+- **Portraits.** [`Portrait.xtl`](Portrait.xtl) draws a character
+  standing, seen from the front, as SVG: `pt:s_vg` places the figure
+  in a picture and `pt:c_ard` gives a whole 300 by 400 card. A calling
+  (1 Soldier, 2 Merchant, 3 Spy, 4 Thief, 5 Witch or Warlock,
+  6 Engineer, 7 Herald) adds what it carries and wears: a sword and a
+  tabard, a coin purse and a fine hat, a hood and a half-mask, a
+  dagger and a dark scarf, a staff and a pointed hat, a hammer and an
+  apron, a horn and a banner. A build from 1 (masculine) to 7
+  (feminine) changes the body by small steps: shoulders and jaw
+  narrower, the waist shaped, the hair longer, the brows finer, a
+  beard at 1 and 2 and stubble at 3. The cloak is in the color given.
+  [`portrait-check.xtl`](portrait-check.xtl) prints a few cards;
+  [`images/look/portraits.png`](../../images/look/portraits.png) shows
+  every build of the soldier and the witch, and every calling.
 
 [`Venues.xtl`](Venues.xtl) reads the venues for the others.
 
