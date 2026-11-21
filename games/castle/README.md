@@ -75,6 +75,22 @@ the next. This is the game the others are parts of.
   strike. Places won elsewhere since your last visit leave coins
   waiting. Its picture lies over the treasury painting.
 
+- **The level maps.** Each side has a road of levels
+  ([`Roads.xtl`](Roads.xtl), `roads`, [`levels.toml`](levels.toml)):
+  the castle's places in the order they are played, from a tutorial to
+  the hard ones, drawn as a winding path of numbered circles over a
+  painting (the keep for the defender, the bazaar for the attacker).
+  The world's `session.side` says which (1 defends, 2 attacks). The
+  first two are open; each next one opens when one of the two before it
+  is won, so two are always open ahead. A done one has a check, an open
+  one is gold, a locked one is gray and says what opens it, and an
+  attacker's place with no attack version yet says so (the defender's
+  is played). The arrows choose; enter, space, a level's number or a
+  click on its circle goes there, if it is open, by setting
+  `campaign.go`; B, backspace or Esc goes back.
+  [`road-check.xtl`](road-check.xtl) plays both roads on scripts of
+  events.
+
 [`Venues.xtl`](Venues.xtl) reads the venues for the others.
 
 ## Play it
@@ -95,7 +111,8 @@ leaves any game for the map. Each game's own events are its own.
 
 ## Data
 
-[`castle.toml`](castle.toml): the venues. The games' scenarios are
+[`castle.toml`](castle.toml): the venues. [`levels.toml`](levels.toml):
+each side's road of levels, by the venues' ids. The games' scenarios are
 their own (`../defense/level-1.toml`, `../walk/roam.toml` ...).
 
 ## Workarounds
