@@ -1,0 +1,8 @@
+number = 15
+slug = "effects"
+status = "pending"
+description = "defend-the-bridge step: difficulty (settings.level, Novice..Impossible) and t..."
+role = "production"
+context_files = []
+created_at = "2026-11-21T08:04:38"
+commits = []

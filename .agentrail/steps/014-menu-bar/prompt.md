@@ -1,0 +1,1 @@
+defend-the-bridge step (the user 2026-11-18 menus; 2026-11-21 'go'): a menu bar on every front-door screen and on the road of levels (Home, Hall, Settings, Help, Leave), and a Settings screen: default difficulty, the character's pronoun and look, sound placeholder; drawn by X_eTaL, clickable, with goldens.

@@ -1,0 +1,1 @@
+defend-the-bridge step: difficulty (settings.level, Novice..Impossible) and the calling's bonuses take effect in the games, as data (a table in TOML read by X_eTaL): Castle Defense's starting gold and lives, enemy hit points; walks and mazes as fits. Goldens per level.
