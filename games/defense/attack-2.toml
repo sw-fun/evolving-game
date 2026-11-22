@@ -1,0 +1,106 @@
+# Storm the Bridge in snow: Castle Defense played as the attacker, its
+# second level. You send creeps out of the siege cart, up the
+# battlefield's road and over the bridge, to the castle gate; the
+# defender builds towers by the plan below. Read by Attacking.xtl
+# through lib/Mode; every value is a string, or a list of strings.
+mode = ["attack"]
+title = ["Storm the Bridge: snow"]
+
+# Where: the castle's zones (a path from this file) and the zone. No
+# facing: seen as the attacker sees it, from the camp, looking at the
+# castle (the map as it is drawn).
+zones = ["../../world/zones.toml"]
+zone = ["battlefield"]
+
+# What stands behind the wall: the village, made from a seed, so many
+# tiles wide and deep (lib/Village). The same line in every scenario
+# is the same village.
+village = ["seed 7", "wide 35", "deep 21"]
+
+# The hour of the day, 0 to 24 (lib/Sky).
+time = ["14.5"]
+
+# The weather: snow, and how thick it falls from 0 to 1.
+weather = ["snow 0.8"]
+
+# The purse: the world's gold, and never less than this.
+start = ["gold 200"]
+
+# Won when so many creeps reach the gate.
+win = ["through 5"]
+
+# The seconds between two creeps coming out of the cart.
+gap = ["1.0"]
+
+# The defender's plan: a tower each, by its name, the row and column of
+# open ground it stands on (the map as drawn: row 1 the north, behind
+# the wall), and the second it stands.
+defender = ["archer 15 5 0", "archer 14 10 0", "fire 12 8 15", "ice 8 9 30", "archer 6 12 45"]
+
+# The towers and the creeps, by name; their numbers are below.
+towers = ["archer", "fire", "ice"]
+tower-fields = ["name", "cost", "range", "damage", "cooldown", "splash", "slow"]
+enemies = ["runner", "brute", "shield"]
+enemy-fields = ["name", "hp", "speed", "armor", "bounty", "letter", "cost"]
+
+# A tower: what it costs the defender, how far it reaches (tiles), the
+# damage of a shot, the seconds between shots, how far round its target
+# a shot also hurts (0: the target alone), and the seconds a hit slows
+# a creep to half its speed (0: not at all).
+[tower.archer]
+name = "Archer tower"
+cost = "40"
+range = "3.2"
+damage = "4"
+cooldown = "0.6"
+splash = "0"
+slow = "0"
+
+[tower.fire]
+name = "Fire tower"
+cost = "70"
+range = "2.4"
+damage = "6"
+cooldown = "1.5"
+splash = "1.2"
+slow = "0"
+
+[tower.ice]
+name = "Ice tower"
+cost = "50"
+range = "2.6"
+damage = "1"
+cooldown = "1.0"
+splash = "0"
+slow = "2.5"
+
+# A creep: hit points, speed (tiles a second), armor (taken off every
+# hit, which never does less than 1), the gold it pays the defender
+# when it falls, its letter in a defender's waves, and what it costs
+# you to send.
+[enemy.runner]
+name = "Runner"
+hp = "10"
+speed = "1.6"
+armor = "0"
+bounty = "5"
+letter = "r"
+cost = "10"
+
+[enemy.brute]
+name = "Brute"
+hp = "40"
+speed = "0.8"
+armor = "1"
+bounty = "12"
+letter = "b"
+cost = "30"
+
+[enemy.shield]
+name = "Shield bearer"
+hp = "24"
+speed = "1.1"
+armor = "3"
+bounty = "10"
+letter = "s"
+cost = "25"

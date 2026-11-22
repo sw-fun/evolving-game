@@ -1,0 +1,373 @@
+## Attacking: Castle Defense from the other side (the mode "attack").
+## You are the besieger: you send creeps out of the siege cart, up the
+## map's road, over the bridge, to the castle gate, paying for each
+## from a purse of gold. The defender builds towers by a written plan
+## (the level says which tower, on which tile, at what second), and they
+## shoot as Defending's do: the creep furthest along within reach,
+## whenever their time between shots is up. Won when enough creeps
+## reach the gate (the level's win = ["through N"]); lost when the
+## purse cannot pay for another creep and none is left on the road.
+##
+## Every tower against every creep is one table: how far apart they
+## are. A tick is a few expressions over it, whatever their number.
+## The level's file is Defending's (its towers and enemies tables, the
+## battlefield's map), with a cost a creep, the defender's plan and the
+## win; it is seen from the camp, looking at the castle (the map not
+## turned: no facing).
+##
+## The state is (stage, road, level, towers, foes, numbers):
+##   level    (tower table, enemy table, plan): a row a kind of tower
+##            (cost, range, damage, cooldown, splash, slow) and of
+##            creep (hit points, speed, armor, bounty, cost); the plan
+##            is a row a tower the defender builds: its kind, row,
+##            column and the second it stands
+##   towers   a row a tower of the plan: kind, row, column, the seconds
+##            till it may shoot again, where its last shot went (x y),
+##            and the seconds since
+##   foes     a row a creep that can be paid for (the purse over the
+##            cheapest): its kind (0 not sent yet), hit points left,
+##            how far along the road it is in tiles (-1 before it
+##            comes), the seconds it is still slowed, and the second it
+##            comes out of the cart
+##   numbers  gold, the creep chosen (1 to 3), the time in seconds, how
+##            many have been sent, the last thing said (a number into
+##            h:said), the gap between creeps, how many must get
+##            through, the cost of the cheapest creep
+## Import: "ak:" u_se< "Attacking"
+
+"md:" u_se< "Mode"
+"sm:" u_se< "Sim"
+"st:" u_se< "Strings"
+"vw:" u_se< "View"
+"w:" u_se< "World"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "attack"
+# :: Char
+## How it is played, a line a thing to know.
+l:help := "You besiege the castle: send creeps out of the siege cart, up the road and over the bridge, to the gate. The defender builds towers as the fight goes on.\n1, 2, 3: choose a creep: runner (quick, frail), brute (slow, strong), shield bearer (armored). Or click its name.\nSpace (or a click on Send): send one of the kind chosen, if your gold pays for it.\nGet enough of them to the gate to win; when your gold is spent and none is left on the road, the siege has failed."
+
+## What the game last said, by number (the first is nothing).
+h:said := "" "Sent." "Not enough gold." "Every creep you can pay for is sent."
+## The buttons drawn on the board, in order: the three creeps, and Send.
+h:names := "runner" "brute" "shield bearer"
+
+### Reading the level
+
+h:f_ail := { (file, field) what -> "bad-scenario" []S_IGNAL file c_at ": " c_at field c_at ": " c_at what }
+## A scenario's table (rows and fields named by two lists) as numbers:
+## the columns named by their numbers (the first, a name, is 1); a cell
+## that is not a number is the scenario's error. (The same reader as
+## Defending's, with the columns chosen: docs/plan.md, D20.)
+h:t_able := { file (what, rows, fields, columns) ->
+  texts := '{ @ -> ((e_nclose file) c_at e_nclose what) []T_ABLE ((e_nclose rows) c_at e_nclose fields) } []T_RAP '{ err -> "bad-scenario" []S_IGNAL []E_MESSAGE err }
+  cells := r_avel columns s_elect_2 texts
+  ((f_irst s_hape texts) c_at t_ally columns) r_eshape '{ x -> (file, what) h:n_umber d_isclose x } e_ach cells
+}
+h:n_umber := { (file, what) text ->
+  n := '{ @ -> f_loat n_umbers text } []T_RAP '{ err -> []R_ECOVER 0 r_eshape 0.0 }
+  n_ot 1 = t_ally n ? "bad-scenario" []S_IGNAL file c_at ": " c_at what c_at ": \"" c_at text c_at "\" is not a number"
+  f_irst n
+}
+## One line of the defender's plan, "archer 15 5 0": a tower by its
+## name, the row and column of open ground it stands on, and the second
+## it stands; as (kind, row, column, second). Anything else is the
+## scenario's error, naming the line.
+h:p_lanned := { (file, towers, map) line ->
+  words := st:w_ords line
+  n_ot 4 = t_ally words ? (file, "defender") h:f_ail "\"" c_at line c_at "\": a tower, a row, a column and a second"
+  kind := towers i_ndexOf 1 t_ake words
+  f_irst kind > t_ally towers ? (file, "defender") h:f_ail "\"" c_at line c_at "\": no tower is called " c_at d_isclose f_irst words
+  at := '{ x -> (file, "defender") h:n_umber d_isclose x } e_ach 1 d_rop words
+  (r, c) := (f_loor f_irst at, f_loor 2 s_elect at)
+  rc := w:s_ize map
+  far := (r < 1) | (c < 1) | (r > f_irst rc) | c > 2 s_elect rc
+  far ? (file, "defender") h:f_ail "\"" c_at line c_at "\": off the map"
+  n_ot 1 = c s_elect r s_elect w:t_iles map ? (file, "defender") h:f_ail "\"" c_at line c_at "\": not open ground"
+  (f_loat kind) c_at at
+}
+## The plan: a row a tower, (kind, row, column, second).
+h:p_lan := { (file, map) ->
+  lines := file md:l_ist "defender"
+  towers := file md:l_ist "towers"
+  c_olumn := { j -> '{ x -> j s_elect (file, towers, map) h:p_lanned d_isclose x } e_ach lines }
+  o_\ (4 c_at t_ally lines) r_eshape (c_olumn 1) c_at (c_olumn 2) c_at (c_olumn 3) c_at c_olumn 4
+}
+
+### The parts of a state
+
+## Where creeps so far along a road are on the board, a row each: x,
+## y, and the way each faces (hx hy): between the middles of two tiles.
+h:o_nRoad := { road prog ->
+  i := 1 + 0 m_ax ((t_ally road) - 2) m_in f_loor prog
+  from := f_loat i s_elect road
+  to := f_loat (i + 1) s_elect road
+  part := 0.0 m_ax prog - f_loat i - 1
+  at := (from + (o_\ (2 c_at t_ally prog) r_eshape part c_at part) * to - from) - 0.5
+  o_\ (4 c_at t_ally prog) r_eshape (2 s_elect_2 at) c_at (f_irst_2 at) c_at (2 s_elect_2 to - from) c_at f_irst_2 to - from
+}
+## Which creeps are on the road: come, alive, and not yet at the gate.
+h:o_ut := { (road, hp, prog) -> (prog >= 0.0) & (hp > 0.0) & prog < f_loat (t_ally road) - 1 }
+## The creeps through the gate.
+h:t_hrough := { (road, foes) -> ((f_irst_2 foes) > 0.0) & (3 s_elect_2 foes) >= f_loat (t_ally road) - 1 }
+## The defender's towers standing at a time.
+h:s_tanding := { (plan, now) -> now >= 4 s_elect_2 plan }
+
+### The protocol
+
+# :: (Num a, Any b, Num c) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Int, (Float, Float, Float), Float, Float, Float)
+## A level from a scenario's file, in a world, with a seed: its map lit
+## as its hour is and seen from the camp, its road, its towers',
+## creeps' and plan's numbers, nothing sent. The purse is the world's
+## gold (resource.gold), and never less than the level's start = ["gold
+## N"]. A scenario that is wrong is the error bad-scenario.
+l:n_ew := { (file, world, seed) ->
+  map := md:m_ap file
+  stage := md:s_tage file
+  towers := file h:t_able ("tower", "towers", "tower-fields", 2 3 4 5 6 7)
+  enemies := file h:t_able ("enemy", "enemies", "enemy-fields", 2 3 4 5 7)
+  plan := h:p_lan (file, map)
+  need := file md:r_ule ("win", "through")
+  need < 1.0 ? (file, "win") h:f_ail "how many must get through: \"through N\", N at least 1"
+  gold := (file md:r_ule ("start", "gold")) m_ax f_loat world md:g_et "resource.gold"
+  cheap := 'm_in r_/ 5 s_elect_2 enemies
+  slots := 1 m_ax f_loor gold / cheap
+  foes := o_\ (5 c_at slots) r_eshape (slots r_eshape 0.0) c_at (slots r_eshape 0.0) c_at (slots r_eshape -1.0) c_at (slots r_eshape 0.0) c_at slots r_eshape 0.0
+  made := o_\ (7 c_at t_ally plan) r_eshape (f_irst_2 plan) c_at (2 s_elect_2 plan) c_at (3 s_elect_2 plan) c_at ((t_ally plan) r_eshape 0.0) c_at ((t_ally plan) r_eshape 0.0) c_at ((t_ally plan) r_eshape 0.0) c_at (t_ally plan) r_eshape 9.0
+  n := gold c_at 1.0 0.0 0.0 0.0 c_at (file md:n_umber "gap") c_at need c_at cheap
+  (stage, map w:r_oad 1, (towers, enemies, plan), made, foes, n)
+}
+
+### A tick
+
+## The towers that stand shoot: (road, tower table, creep table,
+## towers, standing, kind, hp, prog, slow) and the seconds passed, to
+## (towers, hp, slow). Every tower against every creep is the table of
+## how far apart they are; a tower that may shoot takes the creep
+## furthest along within its reach; its shot hurts that creep, and
+## with a splash all within that of it; a hit never does less than 1
+## after armor; a tower that slows, slows what it hits. (Defending's
+## rule, with the towers that do not stand yet left out.)
+h:s_hoot := { (road, tt, et, towers, standing, kind, hp, prog, slow) dt ->
+  kn := t_ally towers
+  fn := t_ally hp
+  k := f_loor f_irst_2 towers
+  w_ide := { v -> (kn c_at fn) r_eshape fn r_eplicate v }
+  t_all := { v -> (kn c_at fn) r_eshape v }
+  cool := 0.0 m_ax (4 s_elect_2 towers) - dt
+  out := h:o_ut (road, hp, prog)
+  at := road h:o_nRoad prog
+  cx := f_irst_2 at
+  cy := 2 s_elect_2 at
+  dx := ((3 s_elect_2 towers) - 0.5) '- t_able cx
+  dy := ((2 s_elect_2 towers) - 0.5) '- t_able cy
+  far := ((dx * dx) + dy * dy) ^ 0.5
+  can := (far <= w_ide k s_elect 2 s_elect_2 tt) & (t_all out) & (w_ide standing) & w_ide cool <= 0.0
+  score := (f_loat can) * 1.0 + t_all prog
+  best := 'm_ax r_/_2 score
+  fires := best > 0.0
+  hit := can & score = w_ide best
+  count := 1.0 m_ax '+ r_/_2 f_loat hit
+  gx := ('+ r_/_2 (f_loat hit) * t_all cx) / count
+  gy := ('+ r_/_2 (f_loat hit) * t_all cy) / count
+  sx := gx '- t_able cx
+  sy := gy '- t_able cy
+  splash := k s_elect 5 s_elect_2 tt
+  also := ((((sx * sx) + sy * sy) ^ 0.5) <= w_ide splash) & (t_all out) & w_ide fires & splash > 0.0
+  struck := f_loat hit | also
+  each := 1.0 m_ax (w_ide k s_elect 3 s_elect_2 tt) - t_all (1 m_ax kind) s_elect 3 s_elect_2 et
+  hp2 := hp - '+ r_/ struck * each
+  slow2 := slow m_ax 'm_ax r_/ struck * w_ide k s_elect 6 s_elect_2 tt
+  shot := f_loat fires
+  cool2 := (shot * k s_elect 4 s_elect_2 tt) + (1.0 - shot) * cool
+  tx := (shot * gx) + (1.0 - shot) * 5 s_elect_2 towers
+  ty := (shot * gy) + (1.0 - shot) * 6 s_elect_2 towers
+  age := (1.0 - shot) * dt + 7 s_elect_2 towers
+  towers2 := o_\ (7 c_at kn) r_eshape (f_irst_2 towers) c_at (2 s_elect_2 towers) c_at (3 s_elect_2 towers) c_at cool2 c_at tx c_at ty c_at age
+  (towers2, hp2, slow2)
+}
+## The state after dt seconds: creeps due come out of the cart onto the
+## road; those on it walk (at half speed while slowed); one that
+## reaches the gate is through; then the towers that stand shoot.
+h:t_ick := { s dt ->
+  (stage, road, level, towers, foes, n) := s
+  (tt, et, plan) := level
+  now := dt + 3 s_elect n
+  long := f_loat (t_ally road) - 1
+  kind := f_loor f_irst_2 foes
+  due := (kind > 0) & now >= 5 s_elect_2 foes
+  hp := 2 s_elect_2 foes
+  slow := 4 s_elect_2 foes
+  come := (3 s_elect_2 foes) m_ax (f_loat due) - 1.0
+  out := h:o_ut (road, hp, come)
+  pace := ((1 m_ax kind) s_elect 2 s_elect_2 et) * 1.0 - 0.5 * f_loat slow > 0.0
+  prog := come + (f_loat out) * pace * dt
+  leaked := out & prog >= long
+  (towers2, hp2, slow2) := (road, tt, et, towers, h:s_tanding (plan, now), kind, hp, prog, 0.0 m_ax slow - dt) h:s_hoot dt
+  foes2 := o_\ (5 c_at t_ally hp) r_eshape (f_irst_2 foes) c_at hp2 c_at prog c_at slow2 c_at 5 s_elect_2 foes
+  (stage, road, level, towers2, foes2, (2 t_ake n) c_at now c_at 3 d_rop n)
+}
+
+### What a player does
+
+## The numbers with what was last said set.
+h:s_aying := { n k -> (4 t_ake n) c_at (f_loat k) c_at 5 d_rop n }
+## One creep of the kind chosen sent, if the gold pays for it: it comes
+## out of the cart now, or a gap after the one sent before it.
+h:s_end := { s ->
+  (stage, road, level, towers, foes, n) := s
+  (_, et, _) := level
+  kind := f_loor 2 s_elect n
+  cost := kind s_elect 5 s_elect_2 et
+  sent := f_loor 4 s_elect n
+  sent >= t_ally foes ? (stage, road, level, towers, foes, n h:s_aying 3)
+  cost > f_irst n ? (stage, road, level, towers, foes, n h:s_aying 2)
+  now := 3 s_elect n
+  last := (1 m_ax sent) s_elect 5 s_elect_2 foes
+  due := now m_ax (f_loat sent > 0) * last + 6 s_elect n
+  this := f_loat (r_ange t_ally foes) = sent + 1
+  p_ut := { (v, x) -> (this * x) + (1.0 - this) * v }
+  foes2 := o_\ (5 c_at t_ally foes) r_eshape (p_ut (f_irst_2 foes, f_loat kind)) c_at (p_ut (2 s_elect_2 foes, kind s_elect 1 s_elect_2 et)) c_at (3 s_elect_2 foes) c_at (4 s_elect_2 foes) c_at p_ut (5 s_elect_2 foes, due)
+  (stage, road, level, towers, foes2, (((f_irst n) - cost) c_at (2 t_ake 1 d_rop n) c_at (f_loat sent + 1) c_at 4 d_rop n) h:s_aying 1)
+}
+## A creep chosen: 1, 2 or 3.
+h:c_hoose := { s kind ->
+  (stage, road, level, towers, foes, n) := s
+  (_, et, _) := level
+  (kind < 1) | kind > t_ally et ? s
+  (stage, road, level, towers, foes, ((f_irst n) c_at (f_loat kind) c_at 2 d_rop n) h:s_aying 0)
+}
+## A click: on a creep's name chooses it, on Send sends one; anywhere
+## else does nothing.
+h:c_lick := { s p ->
+  j := (l:v_iew s) vw:l_abelled p
+  j = 4 ? h:s_end s
+  s h:c_hoose j
+}
+# :: (Any a, Num c, Truthy c, Any d, Any e, Any f, Any g, Num h) => (((a, b, c), Float, d, e, f, g), h, (Float, Float, Float), Float, Float, Float) -> (Char, Float, Char) -> (((a, b, c), Float, d, e, f, g), h, (Float, Float, Float), Float, Float, Float)
+## The state after an event: time passes; a key chooses a creep (1 2
+## 3) or sends one (space); a click on a creep's name or on Send does
+## the same.
+l:s_tep := { s e ->
+  e sm:i_s "tick" ? s h:t_ick 0.001 * f_loat sm:m_illis e
+  e sm:i_s "click" ? s h:c_lick 2 t_ake sm:n_umbers e
+  " " m_atch sm:t_ext e ? h:s_end s
+  s h:c_hoose "123" i_ndexOf f_irst (sm:t_ext e) c_at " "
+}
+# :: Any a => a -> Box Char
+## The events it takes: time, the keys 1 2 3 and space, a click.
+l:l_egal := { s -> "tick S" "key 1" "key 2" "key 3" "key space" "click X Y" }
+# :: (Any a, Num c, Truthy c, Any d, Any e, Any f, Any g, Num h) => (((a, b, c), Float, d, e, f, g), h, (Float, Float, Float), Float, Float, Float) -> Int
+## Won when enough creeps are through; lost when the gold cannot pay
+## for the cheapest and none sent is still to come or on the road;
+## playing until then.
+l:s_tatus := { s ->
+  (_, road, _, _, foes, n) := s
+  through := '+ r_/ h:t_hrough (road, foes)
+  through >= f_loor 7 s_elect n ? md:won
+  waiting := ((f_irst_2 foes) > 0.0) & ((3 s_elect_2 foes) < 0.0) | h:o_ut (road, 2 s_elect_2 foes, 3 s_elect_2 foes)
+  ((f_irst n) < 8 s_elect n) & 0 = '+ r_/ waiting ? md:lost
+  md:playing
+}
+
+### What it shows
+
+# :: (Any a, Num c, Truthy c, Any d, Any e, Any f, Any g, Num h) => (((a, b, c), Float, d, e, f, g), h, (Float, Float, Float), Float, Float, Float) -> Int
+## The game in numbers: gold, creeps sent, on the road, fallen, through,
+## and the defender's towers standing.
+l:c_ount := { s ->
+  (_, road, level, _, foes, n) := s
+  (_, _, plan) := level
+  sent := (f_irst_2 foes) > 0.0
+  hp := 2 s_elect_2 foes
+  prog := 3 s_elect_2 foes
+  through := h:t_hrough (road, foes)
+  fell := sent & (prog >= 0.0) & (hp <= 0.0) & n_ot through
+  (f_loor f_irst n) c_at (f_loor 4 s_elect n) c_at ('+ r_/ h:o_ut (road, hp, prog)) c_at ('+ r_/ fell) c_at ('+ r_/ through) c_at '+ r_/ h:s_tanding (plan, 3 s_elect n)
+}
+## The line under the picture: how it stands, the creep chosen and its
+## cost, and what was last said.
+h:c_aption := { s ->
+  (_, _, level, _, _, n) := s
+  (_, et, _) := level
+  c := l:c_ount s
+  kind := f_loor 2 s_elect n
+  name := d_isclose kind s_elect h:names
+  how := @ f_ormat< "Gold {f_irst c}, through {5 s_elect c} of {f_loor 7 s_elect n}, sent {2 s_elect c}, towers {6 s_elect c}. Sending: {name} ({f_loor kind s_elect 5 s_elect_2 et} gold)."
+  end := d_isclose (1 + l:s_tatus s) s_elect "" " The gate is yours: enough of them got through." " The siege has failed: the gold is spent." ""
+  said := d_isclose (1 + f_loor 5 s_elect n) s_elect h:said
+  0 < t_ally end ? how c_at end
+  0 < t_ally said ? how c_at " " c_at said
+  how c_at " 1 2 3 choose a creep, space sends it."
+}
+## The buttons: a label each, on the board's near edge, a creep's name
+## and cost, then Send; the one chosen is marked.
+h:b_uttons := { (map, et, kind) ->
+  rc := f_loat w:s_ize map
+  x := (3.0 * f_loat (r_ange 4) - 4) + (2 s_elect rc) - 0.5
+  y := 4 r_eshape (f_irst rc) - 0.5
+  costs := '{ k -> e_nclose f_ormat f_loor k s_elect 5 s_elect_2 et } e_ach r_ange 3
+  mark := '{ k -> e_nclose d_isclose (1 + k = kind) s_elect "" "> " } e_ach r_ange 3
+  words := ('{ k -> e_nclose "#" c_at (d_isclose k s_elect mark) c_at (f_ormat k) c_at " " c_at (d_isclose k s_elect h:names) c_at " (" c_at (d_isclose k s_elect costs) c_at " gold)" } e_ach r_ange 3) c_at e_nclose "#Send"
+  (words, o_\ (8 c_at 4) r_eshape x c_at y c_at (4 r_eshape 0.0) c_at (4 r_eshape 1.0) c_at (4 r_eshape 0.0) c_at x c_at y c_at 4 r_eshape 0.05)
+}
+# :: (Any a, Num c, Truthy c, Any d, Any e, Any f, Any g, Num h) => (((a, b, c), Float, d, e, f, g), h, (Float, Float, Float), Float, Float, Float) -> (((a, b, c), Float, d, e, f, g), Box Char, Box Char, Float, Char)
+## What to show (lib/View): the battlefield seen from the camp, every
+## creep sent and every tower of the plan a piece, the siege cart, the
+## buttons, and the line under it. A creep keeps its piece from when it
+## is sent (pieces are only ever added, at the end); one not on the
+## road (not yet come, fallen, or through the gate) waits far off the
+## map, out of sight, and so does a tower that does not stand yet. A
+## creep on the road faces the way it walks; a tower faces where it
+## last shot and plays its fire clip just after; and where a shot lands
+## there is a burst for a moment: fire for the fire tower, a splash for
+## the ice tower, dust for an arrow.
+l:v_iew := { s ->
+  (stage, road, level, towers, foes, n) := s
+  (map, _, _, _, _, _) := stage
+  (_, et, plan) := level
+  sent := w_here (f_irst_2 foes) > 0.0
+  kind := sent s_elect f_loor f_irst_2 foes
+  hp := sent s_elect 2 s_elect_2 foes
+  prog := sent s_elect 3 s_elect_2 foes
+  fn := t_ally hp
+  out := f_loat h:o_ut (road, hp, prog)
+  at := road h:o_nRoad 0.0 m_ax prog
+  step := 0.05 * out * kind s_elect 2 s_elect_2 et
+  x := (out * f_irst_2 at) - 300.0 * 1.0 - out
+  y := (out * 2 s_elect_2 at) - 300.0 * 1.0 - out
+  walk := o_\ (8 c_at fn) r_eshape x c_at y c_at (3 s_elect_2 at) c_at (4 s_elect_2 at) c_at (fn r_eshape 3 s_elect n) c_at (x + step * 3 s_elect_2 at) c_at (y + step * 4 s_elect_2 at) c_at fn r_eshape 0.05
+  kn := t_ally towers
+  up := f_loat h:s_tanding (plan, 3 s_elect n)
+  tx := (up * (3 s_elect_2 towers) - 0.5) - 300.0 * 1.0 - up
+  ty := (up * (2 s_elect_2 towers) - 0.5) - 300.0 * 1.0 - up
+  age := 7 s_elect_2 towers
+  shot := f_loat age < 8.0
+  stand := o_\ (8 c_at kn) r_eshape tx c_at ty c_at (shot * (5 s_elect_2 towers) - tx) c_at ((1.0 - shot) + shot * (6 s_elect_2 towers) - ty) c_at age c_at tx c_at ty c_at kn r_eshape 0.05
+  lit := w_here age < 0.25
+  burst := o_\ (8 c_at t_ally lit) r_eshape (lit s_elect 5 s_elect_2 towers) c_at (lit s_elect 6 s_elect_2 towers) c_at ((t_ally lit) r_eshape 0.2) c_at ((t_ally lit) r_eshape 0.1) c_at ((t_ally lit) r_eshape 160.0) c_at ((t_ally lit) r_eshape 0.0) c_at ((t_ally lit) r_eshape 0.0) c_at f_loat lit
+  tk := f_loor f_irst_2 towers
+  models := (kind s_elect "runner" "brute" "shield") c_at (tk s_elect "archer" "fire" "ice") c_at (lit s_elect tk) s_elect "*dust" "*fire" "*splash"
+  clips := (fn r_eshape e_nclose "walk") c_at ((1 + age < 0.4) s_elect "idle" "fire") c_at (t_ally lit) r_eshape e_nclose ""
+  from := road h:o_nRoad 1 r_eshape 0.0
+  cx := (f_irst_2 from) - 0.7 * 3 s_elect_2 from
+  cy := (2 s_elect_2 from) - 0.7 * 4 s_elect_2 from
+  cart := 1 8 r_eshape cx c_at cy c_at (3 s_elect_2 from) c_at (4 s_elect_2 from) c_at 0.0 c_at cx c_at cy c_at 0.05
+  (words, buttons) := h:b_uttons (map, et, f_loor 2 s_elect n)
+  vw:m_any (stage, models c_at (e_nclose "cart") c_at words, clips c_at (e_nclose "") c_at 4 r_eshape e_nclose "", walk c_at stand c_at burst c_at cart c_at buttons, h:c_aption s)
+}
+# :: (Any a, Num c, Truthy c, Any d, Any e, Any f, Any g, Num h) => (((a, b, c), Float, d, e, f, g), h, (Float, Float, Float), Float, Float, Float) -> (Int, (Box Char, Int), (Box Char, Int))
+## How it ended: left while playing; lost, and nothing changes in the
+## world (the gold was never spent there); won, and the bridge is
+## stormed and the world's gold is what was left at the end (it was
+## spent here, so it is set, not added to), and it brings experience:
+## 5 a creep through, and 10 more.
+l:o_utcome := { s ->
+  (_, road, _, _, foes, n) := s
+  status := l:s_tatus s
+  status = md:playing ? (md:left, md:nothing, md:nothing)
+  status = md:lost ? (md:lost, md:nothing, md:nothing)
+  xp := 10 + 5 * '+ r_/ h:t_hrough (road, foes)
+  (md:won, (md:nothing md:s_et ("fact.bridge-stormed", 1)) md:s_et ("resource.gold", f_loor f_irst n), md:nothing md:s_et ("resource.xp", xp))
+}

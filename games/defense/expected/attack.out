@@ -1,0 +1,59 @@
+0
+0
+tick S
+key 1
+key 2
+key 3
+key space
+click X Y
+You besiege the castle: send creeps out of the siege cart, up the road and over the bridge, to the gate. The defender builds towers as the fight goes on.
+1, 2, 3: choose a creep: runner (quick, frail), brute (slow, strong), shield bearer (armored). Or click its name.
+Space (or a click on Send): send one of the kind chosen, if your gold pays for it.
+Get enough of them to the gate to win; when your gold is spent and none is left on the road, the siege has failed.
+....................
+....................
+....................
+##########G#########
+^^^^^.....:.....^^^^
+^^^.......:......^^^
+^^....:::::.......^^
+^.....:............^
+......:.............
+~~~~~~=~~~~~~~~~~~~~
+~~~~~~=~~~~~~~~~~~~~
+......:.............
+......::::::::......
+.........@...:......
+....@........:......
+...:::::::::::......
+...:................
+...:................
+...:................
+...S................
+Gold 150, through 0 of 5, sent 0, towers 2. Sending: runner (10 gold). 1 2 3 choose a creep, space sends it.
+150 0 0 0 0 2
+400 0 0 0 0 2
+150 0 0 0 0 2
+level attack-1.toml: 807 events
+0 6 0 1 5 3
+Gold 0, through 5 of 5, sent 6, towers 3. Sending: shield bearer (25 gold). The gate is yours: enough of them got through.
+outcome: won
+fact.bridge-stormed 1
+resource.gold 0
+resource.xp 35
+level attack-1.toml: 517 events
+0 15 0 15 0 2
+Gold 0, through 0 of 5, sent 15, towers 2. Sending: runner (10 gold). The siege has failed: the gold is spent.
+outcome: lost
+level attack-2.toml: 914 events
+5 9 0 4 5 4
+Gold 5, through 5 of 5, sent 9, towers 4. Sending: shield bearer (25 gold). The gate is yours: enough of them got through.
+outcome: won
+fact.bridge-stormed 1
+resource.gold 5
+resource.xp 35
+level attack-2.toml: 571 events
+0 20 0 20 0 3
+Gold 0, through 0 of 5, sent 20, towers 3. Sending: runner (10 gold). The siege has failed: the gold is spent.
+outcome: lost
+0

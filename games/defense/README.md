@@ -5,7 +5,8 @@ the castle gate. You build towers on the open ground to stop them, in the snow,
 and you see it as a defender does: from behind the castle's wall, looking out
 at the road (each level says `facing = ["out"]`). This is
 its first level, Defend the Bridge: three towers, three enemies, five
-waves.
+waves. It is also played from the other side, as the besieger (Storm
+the Bridge, below).
 
 ## How it works
 
@@ -61,6 +62,43 @@ waves (a letter an enemy), and a table each for the towers (cost,
 range, damage, cooldown, splash, slow) and the enemies (hit points,
 speed, armor, bounty, letter). The map and its road are the
 battlefield's, [`world/battlefield.toml`](../../world/battlefield.toml).
+
+## The other side: Storm the Bridge
+
+The same battlefield played as the besieger, the mode `attack`
+([`Attacking.xtl`](Attacking.xtl)), seen from the camp toward the
+castle (its levels say no `facing`, so the map is as drawn). You send
+creeps out of the siege cart, up the road and over the bridge, to the
+gate; the defender builds towers by a written plan, and they shoot as
+the defender's towers do.
+
+- `key 1`, `key 2`, `key 3` choose the runner (quick, frail), the brute
+  (slow, strong) or the shield bearer (armored); `key space` sends one
+  of the kind chosen, if your gold pays for it. The creeps' names and a
+  Send button are drawn on the board's near edge, and a click on one
+  does the same.
+- Creeps come out of the cart a gap apart, in the order sent. A tower
+  takes the creep furthest along within its reach; armor is taken off
+  every hit, never below 1, so shield bearers shrug off arrows.
+- Your purse is the gold you hold in the castle's world, and never
+  less than the level's `start`. Won when the level's number of creeps
+  (`win = ["through N"]`) reach the gate: the bridge is stormed and the
+  gold left is yours. Lost when your gold cannot pay for another creep
+  and none is left on the road.
+
+Its levels: [`attack-1.toml`](attack-1.toml) (summer) and
+[`attack-2.toml`](attack-2.toml) (snow). Each is the defender's level
+format with a `cost` for each creep, the defender's plan (`defender`:
+a tower, its row and column, the second it stands) and the win. In the
+castle they are the attack road's second and third places.
+
+```bash
+just test-game defense  # also plays each level won and lost (expected/attack.in)
+```
+
+[`attack.xtl`](attack.xtl) plays the levels on events from standard
+input: a line `level FILE` starts that level, and the events after it
+are played on it.
 
 ## Workarounds
 

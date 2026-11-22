@@ -226,6 +226,29 @@ defaults drawn from the repositories above.
   as `docs/images/castle-siege.png`: the zones, the palette and the
   pieces' shapes are taken from it, in the chunky, flat-colored look
   the generated pieces have, not copied stroke for stroke.
+- D20. Castle Defense has an attacker's side, its own mode `attack`
+  (`games/defense/Attacking.xtl`), beside the defender's `defense`
+  (the user's "every game has both sides", 2026-11-18). The attacker
+  sends creeps (1 2 3 choose runner, brute or shield bearer; space,
+  or a click on the drawn buttons, sends one) out of the siege cart,
+  paying each one's `cost` (a seventh enemy field) from a purse that
+  is the world's gold but never less than the level's `start = ["gold
+  N"]`. The defender is scripted, deterministically: the level's
+  `defender` list says each tower, its tile and the second it stands.
+  Won when the level's `win = ["through N"]` creeps reach the gate
+  (the bridge stormed, the purse's rest kept as the world's gold, 10
+  experience and 5 a creep through); lost when the purse cannot pay
+  for the cheapest creep and none is left to come or on the road
+  (the world is not changed). The attacker's levels say no `facing`:
+  the map as drawn, seen from the camp toward the castle. Its two
+  levels (`attack-1.toml`, `attack-2.toml`, venues `bridge-attack-1`
+  and `-2`) follow the camp on the attack road, each proven won and
+  lost by `expected/attack.in`. For now `Attacking.xtl` repeats
+  `Defending.xtl`'s small readers and its tower rule (`h:t_able`,
+  `h:n_umber`, `h:o_nRoad`, `h:o_ut`, `h:s_hoot`, the last with the
+  towers not yet standing left out), because `Defending.xtl` was
+  being changed at the same time; the shared part is to move to a
+  `lib/` library both use, in a step of its own.
 
 ## The seams that make the games one game
 
