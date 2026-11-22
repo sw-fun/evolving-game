@@ -956,6 +956,24 @@ The framework (`games/castle`, Saga 3's castle-map step):
   upgrades and a golden coin (chance from the seed, lib/Rng), then
   prestige (give up the treasury for a lasting multiplier). All of it
   is data in `games/castle/treasury.toml`.
+- **The war chest, the attacker's idle game** (the menus decision
+  below: "the attacker gets a war chest of its own"): `Warchest` (the
+  mode `chest`, `games/castle/warchest.toml`) is Hoard's game on a file
+  of its own, not a copy: `Hoard` now reads from its file what it
+  keeps in the world (`keep`: `idle` for the treasury, `chest` for the
+  war chest), its painting, the word for what comes in, the hand
+  action's key and the words its picture says, so the two never share
+  a world name. The chest's ladder is foragers, raiding party, siege
+  workshop, mercenary company and war council (doubles; opens at three
+  companies); R raids by hand; deeds raise war banners; trophies come
+  from the gate walked, the dungeon and the two mazes. Its outcome
+  marks the places won so far seen (`chest.seen`) itself, so the
+  castle's program needs only its dispatch line. Gold reaches the
+  other games the one way every mode's does: both idle games' outcomes
+  bring `resource.gold`, `md:a_fter` adds it to the world, and Castle
+  Defense starts a level with the world's gold (a golden: 7 + 10 + 10
+  = 27). It is the attack road's last place (`levels.toml`), where the
+  treasury stood with its attack version coming.
 - **The look wanted, a second reference** (the user, 2026-11-17: "for
   example of the kind of improved graphics I want the game to have"):
   a painted bazaar below a castle (`docs/images/block-castle-bazaar.jpg`;

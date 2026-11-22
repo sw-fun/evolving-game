@@ -26,6 +26,7 @@
 "ps:" u_se< "Passage"
 "rd:" u_se< "Roads"
 "wr:" u_se< "Warren"
+"wc:" u_se< "Warchest"
 "md:" u_se< "Mode"
 "rm:" u_se< "Roaming"
 "sk:" u_se< "Sketch"
@@ -113,6 +114,7 @@ u:v_isit := { (world, k) ->
   kind m_atch "dungeon" ? u:d_own (world, k, path)
   kind m_atch "raycaster" ? ps:o_utcome u:l_ast 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep md:p_lay ps:n_ew (file, world, k)
   kind m_atch "idle" ? u:h_oard (world, k, path)
+  kind m_atch "chest" ? wc:o_utcome u:l_ast 'wc:v_iew 'wc:l_egal 'wc:s_tatus 'wc:s_tep md:p_lay wc:n_ew (path, world, k)
   kind m_atch "board" ? lg:o_utcome u:l_ast 'lg:v_iew 'lg:l_egal 'lg:s_tatus 'lg:s_tep md:p_lay lg:n_ew (file, world, k)
   sk:o_utcome u:l_ast 'sk:v_iew 'sk:l_egal 'sk:s_tatus 'sk:s_tep md:p_lay sk:n_ew (file, world, k)
 }

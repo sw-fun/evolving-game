@@ -1,13 +1,14 @@
 l:mode : Char
 l:help : Char
 l:h_eld : (Num a, Truthy b) => (Char, (Box Char, a)) -> b
-l:n_ew : (Num a, Any b, Num c) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Float, Float, (Box Char, Float, Float, Float, Float))
-l:r_ate : Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float)) -> Float
-l:c_osts : (Any a, Num b, Any c, Any d, Any e, Any f) => (a, b, b, (c, b, d, e, f)) -> b
-l:o_pen : (Any a, Any b, Any c, Any d, Any e, Any f, Truthy g) => (a, b, Float, (c, d, e, f, Float)) -> g
-l:s_tep : Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float)) -> (Char, Float, Char) -> (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float))
+l:k_eeps : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i) => (a, b, c, (d, e, f, g, h, Box i)) -> i
+l:n_ew : (Num a, Any b, Num c) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Float, Float, (Box Char, Float, Float, Float, Float, Box Char))
+l:r_ate : Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float, Box Char)) -> Float
+l:c_osts : (Any a, Num b, Any c, Any d, Any e, Any f, Any g) => (a, b, b, (c, b, d, e, f, g)) -> b
+l:o_pen : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Truthy h) => (a, b, Float, (c, d, e, f, Float, g)) -> h
+l:s_tep : Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float, Box Char)) -> (Char, Float, Char) -> (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float, Box Char))
 l:l_egal : Any a => a -> Box Char
 l:s_tatus : (Any a, Any b, Any c) => (a, Float, b, c) -> Int
-l:l_ine : (Any a, Num c) => (a, Float, Float, (Box b, Float, c, Float, Float)) -> Int -> Char
-l:v_iew : Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float)) -> (((Char, Int, Int), Float, Box Char, Float, Char, a), Box Char, Box Char, Float, Char)
-l:o_utcome : (Any a, Num b, Any c) => (a, Float, b, c) -> (Int, (Box Char, Int), (Box Char, Int))
+l:l_ine : (Any a, Num c) => (a, Float, Float, (Box b, Float, c, Float, Float, Box d)) -> Int -> Char
+l:v_iew : Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float, Box Char)) -> (((Char, Int, Int), Float, Box Char, Float, Char, a), Box Char, Box Char, Float, Char)
+l:o_utcome : (Any a, Num b, Any c, Any d, Any e, Any f, Any g) => (a, Float, b, (c, d, e, f, g, Box Char)) -> (Int, (Box Char, Int), (Box Char, Int))

@@ -10,6 +10,23 @@ zones = ["../../world/zones.toml"]
 zone = ["realm"]
 time = ["11.0"]
 
+# What the treasury keeps in the world: its names start with this
+# (idle.1, idle.2 ... and idle.seen). The painting behind the picture
+# (docs/images, served as art/), the word for what comes in, the key of
+# the hand action, and the words the picture says.
+keep = ["idle"]
+picture = ["art/block-castle-treasury.jpg"]
+unit = ["coins"]
+hand = ["c"]
+how = ["C or a click: strike a coin.   1 2 3 4: buy.   Space or B: carry them out."]
+carry = ["Space or B: carry the coins out."]
+relic-word = ["Relics"]
+relics-none = ["Relics: none yet. Win the dungeon, the mazes and the bridge to find them."]
+renown-word = ["Renown:"]
+renown-count = ["deeds"]
+renown-none = ["Renown: none yet. Every deed in the hall of deeds makes the coins come faster."]
+away-none = ["Nothing came in while you were away: win places elsewhere to fill the coffers."]
+
 # Coins a second before anything is bought.
 rate = ["1.0"]
 # How much dearer each next one of a thing is (this many times the last).

@@ -11,6 +11,12 @@
 ## places won at the last visit; idle.mints, from before the ladder,
 ## counts as mints).
 ##
+## The camp's war chest (Warchest.xtl, the attacker's idle game) is the
+## same game with its own file: the file names what it keeps in the
+## world (keep: idle for the treasury), the painting, the word for what
+## comes in, the key of the hand action and the words the picture says,
+## so the two never share a name of the world.
+##
 ## Coins can also be struck by hand (the key C, or a click on the
 ## picture), and every deed earned in the hall of deeds is renown,
 ## which makes all the coins come a little faster. Relics found in the
@@ -24,9 +30,10 @@
 ## one is, the renown (what the rate is multiplied by), the coins a
 ## strike (both with their relics), how many deeds the renown is for,
 ## what things cost (by the relics: 1 for full price), and how many
-## relics are held; owned is how many of each thing you have; the ladder is
-## the things' names, first costs, coins a second, doubling, and how
-## many of the thing before each needs.
+## relics are held, the places won by now, and how many relics there
+## are; owned is how many of each thing you have; the ladder is the
+## things' names, first costs, coins a second, doubling, how many of
+## the thing before each needs, and the file's words (h:w_ords).
 ## Import: "hd:" u_se< "Hoard"
 
 "md:" u_se< "Mode"
@@ -46,38 +53,51 @@ l:help := "The treasury: coins come in by the second.\nC, or a click on the trea
 l:h_eld := { (file, world) -> '{ x -> 0 < world md:g_et d_isclose x } e_ach file []L_IST "relic-needs" }
 ## How many deeds a world has earned (its names deed.ID).
 h:d_eeds := { (names, values) -> '+ r_/ (values > 0) & '{ x -> "deed." m_atch 5 t_ake (d_isclose x) c_at "     " } e_ach names }
+## The file's words, in this order: what it keeps in the world, its
+## title, its painting, the word for what comes in, the hand action's
+## key, the line saying what to do, the line saying how to carry out,
+## then for relics, renown and the coins from away the words said.
+h:w_ords := { file -> '{ f -> e_nclose file md:f_ield d_isclose f } e_ach "keep" "title" "picture" "unit" "hand" "how" "carry" "relic-word" "relics-none" "renown-word" "renown-count" "renown-none" "away-none" }
+## The i-th of a state's words.
+h:w_ord := { (_, _, _, (_, _, _, _, _, words)) i -> d_isclose i s_elect words }
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i) => (a, b, c, (d, e, f, g, h, Box i)) -> i
+## What a state keeps in the world: the start of its names (idle for
+## the treasury).
+l:k_eeps := { s -> s h:w_ord 1 }
 ## A list of numbers from the file.
 h:n_ums := { (file, field) -> n_umbers t:j_oin '{ x -> e_nclose (d_isclose x) c_at " " } e_ach file []L_IST field }
-# :: (Num a, Any b, Num c) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Float, Float, (Box Char, Float, Float, Float, Float))
+# :: (Num a, Any b, Num c) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Float, Float, (Box Char, Float, Float, Float, Float, Box Char))
 ## The treasury from its file and the world: what you own, and what came
 ## in while you were away.
 l:n_ew := { (file, world, seed) ->
   names := file []L_IST "names"
-  ladder := (names, h:n_ums (file, "costs"), h:n_ums (file, "gives"), h:n_ums (file, "doubles"), h:n_ums (file, "needs"))
+  words := h:w_ords file
+  keep := (d_isclose f_irst words) c_at "."
+  ladder := (names, h:n_ums (file, "costs"), h:n_ums (file, "gives"), h:n_ums (file, "doubles"), h:n_ums (file, "needs"), words)
   k := t_ally names
-  had := '{ i -> f_loat world md:g_et "idle." c_at f_ormat i } e_ach r_ange k
-  owned := had m_ax (f_loat world md:g_et "idle.mints") * f_loat 1 = r_ange k
+  had := '{ i -> f_loat world md:g_et keep c_at f_ormat i } e_ach r_ange k
+  owned := had m_ax (f_loat world md:g_et keep c_at "mints") * f_loat 1 = r_ange k
   deeds := f_loat h:d_eeds world
   held := l:h_eld (file, world)
   kinds := file []L_IST "relic-kinds"
   amounts := h:n_ums (file, "relic-amounts")
   m_ul := { kind -> '* r_/ 1.0 c_at (held & '{ k -> kind m_atch d_isclose k } e_ach kinds) r_eplicate amounts }
-  more := (file md:n_umber "rate") c_at (file md:n_umber "growth") c_at ((m_ul "rate") * 1.0 + deeds * file md:n_umber "renown") c_at ((m_ul "strike") * file md:n_umber "strike") c_at deeds c_at (m_ul "cost") c_at f_loat '+ r_/ held
+  more := (file md:n_umber "rate") c_at (file md:n_umber "growth") c_at ((m_ul "rate") * 1.0 + deeds * file md:n_umber "renown") c_at ((m_ul "strike") * file md:n_umber "strike") c_at deeds c_at (m_ul "cost") c_at (f_loat '+ r_/ held) c_at (f_loat world md:g_et "stat.won") c_at f_loat t_ally kinds
   bare := (md:s_tage file, 0.0 0.0 0.0 0.0 c_at more, owned, ladder)
-  since := f_loat 0 m_ax (world md:g_et "stat.won") - world md:g_et "idle.seen"
+  since := f_loat 0 m_ax (world md:g_et "stat.won") - world md:g_et keep c_at "seen"
   waiting := (m_ul "away") * since * (file md:n_umber "away") * l:r_ate bare
   (md:s_tage file, waiting c_at 0.0 c_at waiting c_at 0.0 c_at more, owned, ladder)
 }
-# :: Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float)) -> Float
+# :: Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float, Box Char)) -> Float
 ## Coins a second: the rate before anything, and what each thing owned
 ## brings, doubled for every bank, and all of it by the renown.
-l:r_ate := { (_, n, owned, (_, _, gives, doubles, _)) -> (7 s_elect n) * ((5 s_elect n) + '+ r_/ owned * gives) * 2.0 ^ '+ r_/ owned * doubles }
-# :: (Any a, Num b, Any c, Any d, Any e, Any f) => (a, b, b, (c, b, d, e, f)) -> b
+l:r_ate := { (_, n, owned, (_, _, gives, doubles, _, _)) -> (7 s_elect n) * ((5 s_elect n) + '+ r_/ owned * gives) * 2.0 ^ '+ r_/ owned * doubles }
+# :: (Any a, Num b, Any c, Any d, Any e, Any f, Any g) => (a, b, b, (c, b, d, e, f, g)) -> b
 ## What the next one of each thing costs.
-l:c_osts := { (_, n, owned, (_, costs, _, _, _)) -> (10 s_elect n) * costs * (6 s_elect n) ^ owned }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Truthy g) => (a, b, Float, (c, d, e, f, Float)) -> g
+l:c_osts := { (_, n, owned, (_, costs, _, _, _, _)) -> (10 s_elect n) * costs * (6 s_elect n) ^ owned }
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Truthy h) => (a, b, Float, (c, d, e, f, Float, g)) -> h
 ## Which things can be bought yet: those with enough of the thing before.
-l:o_pen := { (_, _, owned, (_, _, _, _, needs)) -> (0.0 c_at -1 d_rop owned) >= needs }
+l:o_pen := { (_, _, owned, (_, _, _, _, needs, _)) -> (0.0 c_at -1 d_rop owned) >= needs }
 ## A coin struck by hand (or as many as a strike makes).
 h:s_trike := { (stage, n, owned, ladder) z -> (stage, ((f_irst n) + 8 s_elect n) c_at 1 d_rop n, owned, ladder) }
 ## One of the k-th thing bought, if it is open and the coins are there.
@@ -88,16 +108,17 @@ h:b_uy := { s k ->
   cost > f_irst n ? s
   (stage, ((f_irst n) - cost) c_at 1 d_rop n, owned + f_loat k = r_ange t_ally owned, ladder)
 }
-# :: Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float)) -> (Char, Float, Char) -> (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float))
-## The state after an event: a tick brings coins; a number buys that
-## thing; space or B carries the coins out.
+# :: Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float, Box Char)) -> (Char, Float, Char) -> (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float, Box Char))
+## The state after an event: a tick brings coins; the hand action's key
+## (or a click) strikes; a number buys that thing; space or B carries
+## the coins out.
 l:s_tep := { s e ->
   (stage, n, owned, ladder) := s
   dt := '{ @ -> f_irst sm:n_umbers e } []T_RAP '{ err -> []R_ECOVER 0.0 }
   e sm:i_s "tick" ? (stage, ((f_irst n) + dt * l:r_ate s) c_at ((2 s_elect n) + dt) c_at 2 d_rop n, owned, ladder)
   e sm:i_s "click" ? s h:s_trike 0
   n_ot e sm:i_s "key" ? s
-  "c" m_atch sm:t_ext e ? s h:s_trike 0
+  (s h:w_ord 5) m_atch sm:t_ext e ? s h:s_trike 0
   k := ("1" "2" "3" "4" "5" "6" "7" "8" "9") i_ndexOf e_nclose sm:t_ext e
   k <= t_ally owned ? s h:b_uy k
   said := sm:t_ext e
@@ -111,76 +132,81 @@ l:l_egal := { s -> "tick DT" "click X Y" "key c" "key 1" "key 2" "key 3" "key 4"
 ## Won when carried out; playing until then.
 l:s_tatus := { (_, n, _, _) -> 0.0 < 4 s_elect n ? md:won; md:playing }
 ## What the k-th thing brings, said.
-h:g_ives := { ((_, _, _, (_, _, gives, doubles, _)), k) ->
+h:g_ives := { ((_, _, _, (_, _, gives, doubles, _, _)), k) ->
   0.0 < k s_elect doubles ? "doubles everything"
   @ f_ormat< "+{f_loor k s_elect gives} a second"
 }
-# :: (Any a, Num c) => (a, Float, Float, (Box b, Float, c, Float, Float)) -> Int -> Char
+# :: (Any a, Num c) => (a, Float, Float, (Box b, Float, c, Float, Float, Box d)) -> Int -> Char
 ## The k-th thing's line: its key, name and how many you own, and what
 ## the next costs and brings; or, not open yet, what it needs.
 l:l_ine := { s k ->
-  (_, _, owned, (names, _, _, _, needs)) := s
+  (_, _, owned, (names, _, _, _, needs, _)) := s
   name := d_isclose k s_elect names
   have := f_loor k s_elect owned
   n_ot k s_elect l:o_pen s ? @ f_ormat< "{k}: {name}: opens with {f_loor k s_elect needs} of {d_isclose (k - 1) s_elect names} ({f_loor (k s_elect needs) - (k - 1) s_elect owned} more)"
-  @ f_ormat< "{k}: {name} x{have}: the next costs {f_loor 0.5 + k s_elect l:c_osts s} coins, {h:g_ives (s, k)}"
+  @ f_ormat< "{k}: {name} x{have}: the next costs {f_loor 0.5 + k s_elect l:c_osts s} {s h:w_ord 4}, {h:g_ives (s, k)}"
 }
 ## The rate, rounded to a tenth.
 h:s_hown := { s -> (f_loat f_loor 10.0 * l:r_ate s) / 10.0 }
-## The treasury's picture: the treasury painting (docs/images, the
-## user's own) behind, and over it the coins, the ladder (a thing that
+## The picture: the file's painting (docs/images, the user's own)
+## behind, and over it the coins, the ladder (a thing that
 ## can be bought now in gold, one not open yet in gray), and what to do.
 h:p_icture := { s ->
   (_, n, owned, _) := s
-  head := "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1000 640\" width=\"1000\" height=\"640\" font-family=\"Georgia, serif\"><rect width=\"1000\" height=\"640\" fill=\"#17130d\"/><image href=\"art/block-castle-treasury.jpg\" width=\"1000\" height=\"640\" preserveAspectRatio=\"xMidYMid slice\"/><rect x=\"30\" y=\"30\" width=\"940\" height=\"580\" rx=\"18\" fill=\"#140f08\" opacity=\"0.66\" stroke=\"#c9a66b\" stroke-width=\"3\"/>"
-  title := "<text x=\"500\" y=\"95\" font-size=\"42\" text-anchor=\"middle\" fill=\"#e9d6a6\">The treasury</text>"
-  pile := "<text x=\"500\" y=\"205\" font-size=\"96\" text-anchor=\"middle\" fill=\"#f2c14e\">" c_at (f_ormat f_loor f_irst n) c_at "</text><text x=\"500\" y=\"245\" font-size=\"26\" text-anchor=\"middle\" fill=\"#c9a66b\">coins, " c_at (f_ormat h:s_hown s) c_at " a second</text>"
+  head := "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1000 640\" width=\"1000\" height=\"640\" font-family=\"Georgia, serif\"><rect width=\"1000\" height=\"640\" fill=\"#17130d\"/><image href=\"" c_at (s h:w_ord 3) c_at "\" width=\"1000\" height=\"640\" preserveAspectRatio=\"xMidYMid slice\"/><rect x=\"30\" y=\"30\" width=\"940\" height=\"580\" rx=\"18\" fill=\"#140f08\" opacity=\"0.66\" stroke=\"#c9a66b\" stroke-width=\"3\"/>"
+  title := "<text x=\"500\" y=\"95\" font-size=\"42\" text-anchor=\"middle\" fill=\"#e9d6a6\">" c_at (s h:w_ord 2) c_at "</text>"
+  pile := "<text x=\"500\" y=\"205\" font-size=\"96\" text-anchor=\"middle\" fill=\"#f2c14e\">" c_at (f_ormat f_loor f_irst n) c_at "</text><text x=\"500\" y=\"245\" font-size=\"26\" text-anchor=\"middle\" fill=\"#c9a66b\">" c_at (s h:w_ord 4) c_at ", " c_at (f_ormat h:s_hown s) c_at " a second</text>"
   open := l:o_pen s
   can := open & (l:c_osts s) <= f_irst n
+  step := f_loor 176 / t_ally owned
   r_ow := { k ->
     color := d_isclose (1 + (k s_elect open) + k s_elect can) s_elect "#8f8a80" "#e9d6a6" "#f2c14e"
-    "<text x=\"90\" y=\"" c_at (f_ormat 300 + 44 * k - 1) c_at "\" font-size=\"25\" fill=\"" c_at color c_at "\">" c_at (s l:l_ine k) c_at "</text>"
+    "<text x=\"90\" y=\"" c_at (f_ormat 300 + step * k - 1) c_at "\" font-size=\"25\" fill=\"" c_at color c_at "\">" c_at (s l:l_ine k) c_at "</text>"
   }
   rows := t:j_oin '{ k -> e_nclose r_ow k } e_ach r_ange t_ally owned
   fame := "<text x=\"500\" y=\"470\" font-size=\"22\" text-anchor=\"middle\" fill=\"#d8c08a\">" c_at (h:f_ame s) c_at "</text>"
   found := "<text x=\"500\" y=\"535\" font-size=\"20\" text-anchor=\"middle\" fill=\"#b9c7d8\">" c_at (h:r_elics s) c_at "</text>"
   away := "<text x=\"500\" y=\"503\" font-size=\"23\" text-anchor=\"middle\" fill=\"#a8c27a\">" c_at (h:a_way s) c_at "</text>"
-  how := "<text x=\"500\" y=\"582\" font-size=\"23\" text-anchor=\"middle\" fill=\"#e9d6a6\">C or a click: strike a coin.   1 2 3 4: buy.   Space or B: carry them out.</text>"
+  how := "<text x=\"500\" y=\"582\" font-size=\"23\" text-anchor=\"middle\" fill=\"#e9d6a6\">" c_at (s h:w_ord 6) c_at "</text>"
   head c_at title c_at pile c_at rows c_at fame c_at away c_at found c_at how c_at "</svg>"
 }
 ## The relics held, said.
-h:r_elics := { (_, n, _, _) ->
-  0.0 = 11 s_elect n ? "Relics: none yet. Win the dungeon, the mazes and the bridge to find them."
-  @ f_ormat< "Relics: {f_loor 11 s_elect n} of 4 found. Things cost {f_loor 0.5 + 100.0 * 10 s_elect n} in a hundred of their price."
+h:r_elics := { s ->
+  (_, n, _, _) := s
+  0.0 = 11 s_elect n ? s h:w_ord 9
+  @ f_ormat< "{s h:w_ord 8}: {f_loor 11 s_elect n} of {f_loor 13 s_elect n} found. Things cost {f_loor 0.5 + 100.0 * 10 s_elect n} in a hundred of their price."
 }
 ## The renown, said.
-h:f_ame := { (_, n, _, _) ->
-  0.0 = 9 s_elect n ? "Renown: none yet. Every deed in the hall of deeds makes the coins come faster."
-  @ f_ormat< "Renown: {f_loor 9 s_elect n} deeds, the coins come {f_loor 0.5 + 100.0 * (7 s_elect n) - 1.0} in a hundred faster."
+h:f_ame := { s ->
+  (_, n, _, _) := s
+  0.0 = 9 s_elect n ? s h:w_ord 12
+  @ f_ormat< "{s h:w_ord 10} {f_loor 9 s_elect n} {s h:w_ord 11}, the {s h:w_ord 4} come {f_loor 0.5 + 100.0 * (7 s_elect n) - 1.0} in a hundred faster."
 }
 ## What came in while you were away, said.
-h:a_way := { (_, n, _, _) ->
-  0.0 = 3 s_elect n ? "Nothing came in while you were away: win places elsewhere to fill the coffers."
-  @ f_ormat< "{f_loor 3 s_elect n} coins came in while you were away."
+h:a_way := { s ->
+  (_, n, _, _) := s
+  0.0 = 3 s_elect n ? s h:w_ord 13
+  @ f_ormat< "{f_loor 3 s_elect n} {s h:w_ord 4} came in while you were away."
 }
-# :: Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float)) -> (((Char, Int, Int), Float, Box Char, Float, Char, a), Box Char, Box Char, Float, Char)
-## What to show: the treasury's picture, and the same in words.
+# :: Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float, Box Char)) -> (((Char, Int, Int), Float, Box Char, Float, Char, a), Box Char, Box Char, Float, Char)
+## What to show: the picture, and the same in words.
 l:v_iew := { s ->
   (stage, n, owned, _) := s
   lines := t:j_oin '{ k -> e_nclose (s l:l_ine k) c_at ". " } e_ach r_ange t_ally owned
-  vw:d_rawn (stage, h:p_icture s, (@ f_ormat< "The treasury. {f_loor f_irst n} coins, {h:s_hown s} a second. ") c_at lines c_at "Space or B: carry the coins out.")
+  vw:d_rawn (stage, h:p_icture s, (@ f_ormat< "{s h:w_ord 2}. {f_loor f_irst n} {s h:w_ord 4}, {h:s_hown s} a second. ") c_at lines c_at s h:w_ord 7)
 }
-## The world with how many of each thing you own, from the i-th on.
-h:w_rite := { (world, owned) i ->
+## The world with how many of each thing you own, from the i-th on,
+## under the names the file keeps (keep.1, keep.2 ...).
+h:w_rite := { (world, owned, keep) i ->
   i > t_ally owned ? world
-  (world md:s_et ("idle." c_at f_ormat i, f_loor i s_elect owned), owned) h:w_rite i + 1
+  (world md:s_et (keep c_at "." c_at f_ormat i, f_loor i s_elect owned), owned, keep) h:w_rite i + 1
 }
-# :: (Any a, Num b, Any c) => (a, Float, b, c) -> (Int, (Box Char, Int), (Box Char, Int))
+# :: (Any a, Num b, Any c, Any d, Any e, Any f, Any g) => (a, Float, b, (c, d, e, f, g, Box Char)) -> (Int, (Box Char, Int), (Box Char, Int))
 ## Carried out: the coins as gold, a little experience, and what you
 ## own kept for next time (the places won so far are kept by the
 ## castle's program).
 l:o_utcome := { s ->
   (_, n, owned, _) := s
   n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
-  (md:won, (md:nothing, owned) h:w_rite 1, (md:nothing md:s_et ("resource.gold", f_loor f_irst n)) md:s_et ("resource.xp", 5))
+  (md:won, (md:nothing, owned, s h:w_ord 1) h:w_rite 1, (md:nothing md:s_et ("resource.gold", f_loor f_irst n)) md:s_et ("resource.xp", 5))
 }

@@ -1,0 +1,71 @@
+## Warchest: the camp's war chest (the mode "chest"), the attacker's
+## idle game, the counterpart of the defender's treasury (Hoard.xtl).
+## Crowns come in by the second while you are there. There is a ladder
+## of things to buy (warchest.toml): foragers, then a raiding party once
+## you own five foragers, a siege workshop once you own five raiding
+## parties, a mercenary company once you own five workshops, and a war
+## council (which doubles everything) once you own three companies;
+## each next one of a thing costs more than the last. Every place you
+## have won elsewhere since your last visit has filled the chest while
+## you were away. You carry the crowns out as gold, the world's gold
+## that every other game spends (Castle Defense starts a level with
+## it), the same gold the treasury brings; what you bought stays, kept
+## in the world under the chest's own names (chest.1, chest.2 ... and
+## chest.seen, the places won at the last visit), never the
+## treasury's.
+##
+## Raid by hand (the key R, or a click on the picture). Every deed
+## earned in the hall of deeds raises a war banner, which makes all the
+## crowns come a little faster. Trophies taken in the other games (the
+## gate walked to, the dungeon cleared, the two mazes) each make one
+## thing better: what things cost, the crowns waiting from away, a
+## raid, or the rate.
+##
+## It is the treasury's game played on another file: the state, the
+## ladder, the picture and the outcome are Hoard's. What is the chest's
+## own is its name, its help, its keys, and that it marks the places
+## won so far seen when carried out (the treasury has the castle's
+## program do that).
+## Import: "wc:" u_se< "Warchest"
+
+"hd:" u_se< "Hoard"
+"md:" u_se< "Mode"
+
+# :: Char
+## The mode's name in scenarios.
+l:mode := "chest"
+# :: Char
+## How it is used, a line a thing to know.
+l:help := "The war chest: crowns come in by the second.\nR, or a click on the camp: raid by hand.\n1 2 3 4 5: buy foragers, a raiding party, a siege workshop, a mercenary company, a war council. Each opens when you own enough of the one before; each costs more than the last.\nSpace or B: carry the chest out as gold. Esc: leave it.\nEvery place you win elsewhere fills the chest while you are away."
+
+# :: (Num a, Truthy b) => (Char, (Box Char, a)) -> b
+## Which trophies a world holds (1 for each whose fact it has).
+l:h_eld := { fw -> hd:h_eld fw }
+# :: (Num a, Any b, Num c) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Float, Float, (Box Char, Float, Float, Float, Float, Box Char))
+## The war chest from its file and the world: what you own, and what
+## came in while you were away.
+l:n_ew := { fws -> hd:n_ew fws }
+# :: Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float, Box Char)) -> (Char, Float, Char) -> (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float, Box Char))
+## The state after an event: a tick brings crowns; R or a click raids;
+## a number buys that thing; space or B carries the chest out.
+l:s_tep := { s e -> s hd:s_tep e }
+# :: Any a => a -> Box Char
+## The events it takes.
+l:l_egal := { s -> "tick DT" "click X Y" "key r" "key 1" "key 2" "key 3" "key 4" "key 5" "key space" "key b" "key B" }
+# :: (Any a, Any b, Any c) => (a, Float, b, c) -> Int
+## Won when carried out; playing until then.
+l:s_tatus := { s -> hd:s_tatus s }
+# :: Num a => (((Char, Int, Int), Float, Box Char, Float, Char, a), Float, Float, (Box Char, Float, Float, Float, Float, Box Char)) -> (((Char, Int, Int), Float, Box Char, Float, Char, a), Box Char, Box Char, Float, Char)
+## What to show: the camp's picture, and the same in words.
+l:v_iew := { s -> hd:v_iew s }
+# :: (Any a, Num b, Any c, Any d, Any e, Any f, Any g) => (a, Float, b, (c, d, e, f, g, Box Char)) -> (Int, (Box Char, Int), (Box Char, Int))
+## Carried out: the crowns as gold (the world's gold, md:a_fter adds
+## it), a little experience, what you own kept for next time, and the
+## places won so far marked seen (chest.seen), so they fill the chest
+## only once; left, nothing.
+l:o_utcome := { s ->
+  (status, changes, rewards) := hd:o_utcome s
+  n_ot md:won = status ? (status, changes, rewards)
+  (_, n, _, _) := s
+  (status, changes md:s_et ((hd:k_eeps s) c_at ".seen", f_loor 12 s_elect n), rewards)
+}

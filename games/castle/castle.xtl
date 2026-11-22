@@ -21,6 +21,7 @@
 "vn:" u_se< "Venues"
 "vw:" u_se< "View"
 "w:" u_se< "World"
+"wc:" u_se< "Warchest"
 
 file := "castle.toml"
 u:l_ast := { (_, s) -> s }
@@ -163,3 +164,44 @@ vw:c_aption hd:v_iew u:h_oard (1 r_eshape e_nclose "tick 10.0", famed)
 found := ((md:nothing md:s_et ("fact.dungeon-cleared", 1)) md:s_et ("fact.bridge-held", 1)) md:s_et ("stat.won", 5)
 hd:h_eld ("treasury.toml", found)
 vw:c_aption hd:v_iew u:h_oard (1 r_eshape e_nclose "tick 0.0", found)
+
+# The war chest (the attacker's idle game, Warchest.xtl, the camp's
+# treasury): five seconds bring ten crowns; two raids by hand bring six;
+# foragers cost fifteen and bring two crowns a second more; ten seconds
+# then bring forty; the next foragers cost half as much again (22.5);
+# carried out, the crowns are gold and the foragers are kept, under the
+# chest's own names (chest.*, never the treasury's idle.*).
+u:c_hest := { (lines, world) -> u:l_ast 'wc:v_iew 'wc:l_egal 'wc:s_tatus 'wc:s_tep md:r_eplay (lines, wc:n_ew ("warchest.toml", world, 1)) }
+_ := u:s_ay wc:o_utcome u:c_hest ("tick 5.0" "key r" "key r" "key 1" "tick 10.0" "key 1" "key space", md:nothing)
+# Up the ladder: a raiding party opens with five foragers; with twenty
+# places won since the last visit, 20 * 10 * 12 = 2400 crowns wait, and
+# one is bought (12 crowns a second more); the war council is not open.
+camp := (md:nothing md:s_et ("chest.1", 5)) md:s_et ("stat.won", 20)
+vw:c_aption wc:v_iew u:c_hest ("key 2" "key 5", camp)
+# The war council opens with three mercenary companies; bought, it
+# doubles everything (1622 crowns a second become 3244).
+council := ((((camp md:s_et ("chest.2", 5)) md:s_et ("chest.3", 5)) md:s_et ("chest.4", 3)))
+vw:c_aption wc:v_iew u:c_hest (1 r_eshape e_nclose "key 5", council)
+# Raids by hand: R three times and a click bring twelve crowns; the
+# treasury's C is not the chest's key.
+vw:c_aption wc:v_iew u:c_hest ("key r" "key r" "key c" "key r" "click 400 300", md:nothing)
+# War banners and trophies: five deeds raise five banners (the crowns
+# come 15 in a hundred faster); the gate walked (its bar: things cost 85
+# in a hundred) and the dungeon cleared (its chains: three times the
+# crowns waiting), with four places won, leave 4 * 10 * 2.3 * 3 = 276
+# crowns waiting, and the first foragers cost 12.
+taken := ((famed md:s_et ("fact.walked-in", 1)) md:s_et ("fact.dungeon-cleared", 1)) md:s_et ("stat.won", 4)
+wc:h_eld ("warchest.toml", taken)
+vw:c_aption wc:v_iew u:c_hest (1 r_eshape e_nclose "tick 0.0", taken)
+# Carried out, the chest marks the places won so far seen (chest.seen),
+# so they fill it only once.
+_ := u:s_ay wc:o_utcome u:c_hest (1 r_eshape e_nclose "key space", md:nothing md:s_et ("stat.won", 3))
+# Both idle games' gold is the world's: a world with 7 gold, after the
+# treasury's 10 coins and the war chest's 10 crowns are carried out,
+# holds 27, the gold the next level of Castle Defense starts with; the
+# two keep what they own under their own names.
+purse := md:nothing md:s_et ("resource.gold", 7)
+after := purse md:a_fter hd:o_utcome u:h_oard (("tick 10.0" "key space"), purse)
+both := after md:a_fter wc:o_utcome u:c_hest (("tick 5.0" "key space"), after)
+both md:g_et "resource.gold"
+_ := t:l_ines md:l_ines both
