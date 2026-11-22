@@ -74,6 +74,21 @@ the next. This is the game the others are parts of.
   thing better: what things cost, the rate, what waits for you, or a
   strike. Places won elsewhere since your last visit leave coins
   waiting. Its picture lies over the treasury painting.
+- **The war chest.** The attacker's idle game, the camp's counterpart
+  of the treasury ([`Warchest.xtl`](Warchest.xtl), `chest`,
+  [`warchest.toml`](warchest.toml)), the last place of the attack
+  road: crowns come in by the second; 1 2 3 4 5 buy foragers, a
+  raiding party, a siege workshop, a mercenary company and a war
+  council (which doubles everything), each opening when you own enough
+  of the one before; space or B carries the chest out as gold. R, or a
+  click, raids by hand. Every deed raises a war banner (the crowns come
+  faster), and trophies taken at the gate, in the dungeon and in the
+  mazes each make one thing better. It is the treasury's game on its
+  own file: the file names what it keeps in the world (`chest.*`, never
+  the treasury's `idle.*`), its words, its painting and its hand key.
+  The gold either one carries out is the world's `resource.gold`, the
+  gold every other game spends (Castle Defense starts a level with
+  it).
 
 - **The level maps.** Each side has a road of levels
   ([`Roads.xtl`](Roads.xtl), `roads`, [`levels.toml`](levels.toml)):

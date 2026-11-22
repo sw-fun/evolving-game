@@ -1,5 +1,5 @@
 0
-18
+19
 1 defense: Defend the Bridge: summer
 2 roam: The battlefield on foot
 3 defense: Defend the Bridge: snow
@@ -18,17 +18,18 @@
 16 placeholder: Siege Automata
 17 board: The hall of deeds
 18 roam: The city
+19 chest: The war chest
 ../defense/level-1.toml
 17
-1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0
-1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 1 0
-1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 1 0
-1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 1 0
-1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 1 0
-1 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
+1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0
+1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0
+1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 1 0 0
+1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 1 0 0
+1 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0
 ........................
 ........................
 ........................
@@ -41,7 +42,7 @@
 ...........:............
 ...........:............
 .@..@......S............
-The castle and its country: 3 of 18 places known, 0 won. Gold 0, experience 0.
+The castle and its country: 3 of 19 places known, 0 won. Gold 0, experience 0.
 To do: 1 Defend the Bridge: summer, 2 The battlefield on foot, 17 The hall of deeds. Click one.
 ........................
 ........................
@@ -55,7 +56,7 @@ To do: 1 Defend the Bridge: summer, 2 The battlefield on foot, 17 The hall of de
 ...........:............
 ...........:............
 .@..@......S............
-The castle and its country: 3 of 18 places known, 0 won. Gold 0, experience 0.
+The castle and its country: 3 of 19 places known, 0 won. Gold 0, experience 0.
 To The battlefield on foot.
 outcome: won
   changes campaign.go 2
@@ -72,7 +73,7 @@ outcome: won
 ...........:............
 ...........:............
 .@..@......S..@..@......
-The castle and its country: 10 of 18 places known, 3 won. Gold 0, experience 0.
+The castle and its country: 10 of 19 places known, 3 won. Gold 0, experience 0.
 To do: 2 The battlefield on foot, 4 The winter camp, 5 The town, 7 Siege Engineer, 8 Siege Commander, 17 The hall of deeds. Click one.
 ........................
 ........................
@@ -86,7 +87,7 @@ To do: 2 The battlefield on foot, 4 The winter camp, 5 The town, 7 Siege Enginee
 ...........:............
 ...........:............
 .@..@......S..@..@......
-The castle and its country: 10 of 18 places known, 3 won. Gold 0, experience 0.
+The castle and its country: 10 of 19 places known, 3 won. Gold 0, experience 0.
 The long bridge is not open yet: it needs the bridge held (win a Defend the Bridge level).
 ........................
 ........................
@@ -99,8 +100,8 @@ The long bridge is not open yet: it needs the bridge held (win a Defend the Brid
 ..@..@..@..@...@..@.....
 ...........:............
 ...........:............
-.@..@......S..@..@......
-The castle and its country: 18 of 18 places known, 3 won. Gold 0, experience 0. (Every place shown: D hides them again.)
+.@..@......S..@..@..@...
+The castle and its country: 19 of 19 places known, 3 won. Gold 0, experience 0. (Every place shown: D hides them again.)
 Click a place to go there.
 ........................
 ........................
@@ -113,8 +114,8 @@ Click a place to go there.
 ..@..@..@..@...@..@.....
 ...........:............
 ...........:............
-.@..@......S..@..@......
-The castle and its country: 18 of 18 places known, 3 won. Gold 0, experience 0. (Every place shown: D hides them again.)
+.@..@......S..@..@..@...
+The castle and its country: 19 of 19 places known, 3 won. Gold 0, experience 0. (Every place shown: D hides them again.)
 To The long bridge.
 outcome: won
   changes campaign.go 9
@@ -195,7 +196,7 @@ The hall of deeds. Experience 105, gold 160. Quests 1 of 5; achievements 3 of 6.
  ?  ? ? ?
 B or Space: back to the map.
 outcome: left
-The castle and its country: 6 of 18 places known, 1 won. Gold 160, experience 105. New deeds: see the hall of deeds.
+The castle and its country: 6 of 19 places known, 1 won. Gold 160, experience 105. New deeds: see the hall of deeds.
 To do: 2 The battlefield on foot, 3 Defend the Bridge: snow, 4 The winter camp, 5 The town, 17 The hall of deeds. Click one.
 ........................
 ........................
@@ -209,7 +210,7 @@ To do: 2 The battlefield on foot, 3 Defend the Bridge: snow, 4 The winter camp, 
 ...........:............
 ...........:............
 .@..@......S............
-The castle and its country: 3 of 18 places known, 0 won. Gold 0, experience 0.
+The castle and its country: 3 of 19 places known, 0 won. Gold 0, experience 0.
 To do: 1 Defend the Bridge: summer, 2 The battlefield on foot, 17 The hall of deeds. Click one.
 ........................
 ........................
@@ -223,7 +224,7 @@ To do: 1 Defend the Bridge: summer, 2 The battlefield on foot, 17 The hall of de
 ...........:............
 ...........:............
 .@..@......S............
-The castle and its country: 3 of 18 places known, 0 won. Gold 0, experience 0.
+The castle and its country: 3 of 19 places known, 0 won. Gold 0, experience 0.
 To The battlefield on foot.
 2
 ........................
@@ -238,7 +239,7 @@ To The battlefield on foot.
 ...........:............
 ...........:............
 .@..@......S............
-The castle and its country: 3 of 18 places known, 0 won. Gold 0, experience 0.
+The castle and its country: 3 of 19 places known, 0 won. Gold 0, experience 0.
 To do: 1 Defend the Bridge: summer, 2 The battlefield on foot, 17 The hall of deeds. Click one.
 ........................
 ........................
@@ -252,7 +253,7 @@ To do: 1 Defend the Bridge: summer, 2 The battlefield on foot, 17 The hall of de
 ...........:............
 ...........:............
 .@..@......S............
-The castle and its country: 3 of 18 places known, 0 won. Gold 0, experience 0.
+The castle and its country: 3 of 19 places known, 0 won. Gold 0, experience 0.
 To The hall of deeds.
 17
 ........................
@@ -267,7 +268,7 @@ To The hall of deeds.
 ...........:............
 ...........:............
 .@..@......S............
-The castle and its country: 3 of 18 places known, 0 won. Gold 0, experience 0.
+The castle and its country: 3 of 19 places known, 0 won. Gold 0, experience 0.
 To do: 1 Defend the Bridge: summer, 2 The battlefield on foot, 17 The hall of deeds. Click one.
 ........................
 ........................
@@ -281,7 +282,7 @@ To do: 1 Defend the Bridge: summer, 2 The battlefield on foot, 17 The hall of de
 ...........:............
 ...........:............
 .@..@......S............
-The castle and its country: 3 of 18 places known, 0 won. Gold 0, experience 0.
+The castle and its country: 3 of 19 places known, 0 won. Gold 0, experience 0.
 To The battlefield on foot.
 2
 ........................
@@ -296,7 +297,7 @@ To The battlefield on foot.
 ...........:............
 ...........:............
 .@..@......S............
-The castle and its country: 3 of 18 places known, 0 won. Gold 0, experience 0.
+The castle and its country: 3 of 19 places known, 0 won. Gold 0, experience 0.
 To do: 1 Defend the Bridge: summer, 2 The battlefield on foot, 17 The hall of deeds. Click one.
 0
 The gate maze. Steps 0. W S: walk, A D: turn, M: map.
@@ -1644,3 +1645,61 @@ The treasury. 22 coins, 2.2 a second. 1: Mint x1: the next costs 16 coins, +1 a 
 1 0 1 0
 The treasury. 150 coins, 1.0 a second. 1: Mint x0: the next costs 9 coins, +1 a second. 2: Counting house: opens with 5 of Mint (5 more). 3: Merchant fleet: opens with 5 of Counting house (5 more). 4: Royal bank: opens with 5 of Merchant fleet (5 more). Space or B: carry the coins out.
 The treasury. 150 coins, 1.0 a second. 1: Mint x0: the next costs 9 coins, +1 a second. 2: Counting house: opens with 5 of Mint (5 more). 3: Merchant fleet: opens with 5 of Counting house (5 more). 4: Royal bank: opens with 5 of Merchant fleet (5 more). Space or B: carry the coins out.
+The war chest. 0 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 10 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 13 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 16 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 1 crowns, 4.0 a second. 1: Foragers x1: the next costs 23 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (4 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 41 crowns, 4.0 a second. 1: Foragers x1: the next costs 23 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (4 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 18 crowns, 6.0 a second. 1: Foragers x2: the next costs 34 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (3 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+outcome: won
+  changes chest.1 2
+  changes chest.2 0
+  changes chest.3 0
+  changes chest.4 0
+  changes chest.5 0
+  changes chest.seen 0
+  brings resource.gold 18
+  brings resource.xp 5
+The war chest. 2400 crowns, 12.0 a second. 1: Foragers x5: the next costs 114 crowns, +2 a second. 2: Raiding party x0: the next costs 200 crowns, +12 a second. 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 2200 crowns, 24.0 a second. 1: Foragers x5: the next costs 114 crowns, +2 a second. 2: Raiding party x1: the next costs 300 crowns, +12 a second. 3: Siege workshop: opens with 5 of Raiding party (4 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 2200 crowns, 24.0 a second. 1: Foragers x5: the next costs 114 crowns, +2 a second. 2: Raiding party x1: the next costs 300 crowns, +12 a second. 3: Siege workshop: opens with 5 of Raiding party (4 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 324400 crowns, 1622.0 a second. 1: Foragers x5: the next costs 114 crowns, +2 a second. 2: Raiding party x5: the next costs 1519 crowns, +12 a second. 3: Siege workshop x5: the next costs 18984 crowns, +70 a second. 4: Mercenary company x3: the next costs 101250 crowns, +400 a second. 5: War council x0: the next costs 300000 crowns, doubles everything. Space or B: carry the chest out.
+The war chest. 24400 crowns, 3244.0 a second. 1: Foragers x5: the next costs 114 crowns, +2 a second. 2: Raiding party x5: the next costs 1519 crowns, +12 a second. 3: Siege workshop x5: the next costs 18984 crowns, +70 a second. 4: Mercenary company x3: the next costs 101250 crowns, +400 a second. 5: War council x1: the next costs 450000 crowns, doubles everything. Space or B: carry the chest out.
+The war chest. 24400 crowns, 3244.0 a second. 1: Foragers x5: the next costs 114 crowns, +2 a second. 2: Raiding party x5: the next costs 1519 crowns, +12 a second. 3: Siege workshop x5: the next costs 18984 crowns, +70 a second. 4: Mercenary company x3: the next costs 101250 crowns, +400 a second. 5: War council x1: the next costs 450000 crowns, doubles everything. Space or B: carry the chest out.
+The war chest. 0 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 3 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 6 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 9 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 12 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 12 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+1 1 0 0
+The war chest. 276 crowns, 2.3 a second. 1: Foragers x0: the next costs 13 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 276 crowns, 2.3 a second. 1: Foragers x0: the next costs 13 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 60 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+outcome: won
+  changes chest.1 0
+  changes chest.2 0
+  changes chest.3 0
+  changes chest.4 0
+  changes chest.5 0
+  changes chest.seen 3
+  brings resource.gold 60
+  brings resource.xp 5
+The treasury. 0 coins, 1.0 a second. 1: Mint x0: the next costs 10 coins, +1 a second. 2: Counting house: opens with 5 of Mint (5 more). 3: Merchant fleet: opens with 5 of Counting house (5 more). 4: Royal bank: opens with 5 of Merchant fleet (5 more). Space or B: carry the coins out.
+The treasury. 10 coins, 1.0 a second. 1: Mint x0: the next costs 10 coins, +1 a second. 2: Counting house: opens with 5 of Mint (5 more). 3: Merchant fleet: opens with 5 of Counting house (5 more). 4: Royal bank: opens with 5 of Merchant fleet (5 more). Space or B: carry the coins out.
+The war chest. 0 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+The war chest. 10 crowns, 2.0 a second. 1: Foragers x0: the next costs 15 crowns, +2 a second. 2: Raiding party: opens with 5 of Foragers (5 more). 3: Siege workshop: opens with 5 of Raiding party (5 more). 4: Mercenary company: opens with 5 of Siege workshop (5 more). 5: War council: opens with 3 of Mercenary company (3 more). Space or B: carry the chest out.
+27
+idle.1 0
+idle.2 0
+idle.3 0
+idle.4 0
+chest.1 0
+chest.2 0
+chest.3 0
+chest.4 0
+chest.5 0
+chest.seen 0
+resource.gold 27
+resource.xp 10

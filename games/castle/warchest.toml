@@ -1,0 +1,64 @@
+# The war chest: the attacker's idle game, the camp's counterpart of
+# the treasury. Read by Warchest.xtl (through Hoard.xtl and lib/Mode);
+# every value is a string. Crowns come in by the second from the camp's
+# foragers and raiders; what you buy makes them come faster; and every
+# place won elsewhere since your last visit has filled the chest while
+# you were away.
+mode = ["chest"]
+title = ["The war chest"]
+
+# Shown over the castle's own map (a path from this file).
+zones = ["../../world/zones.toml"]
+zone = ["realm"]
+time = ["17.5"]
+
+# What the chest keeps in the world: its names start with this
+# (chest.1, chest.2 ... and chest.seen), so they never meet the
+# treasury's (idle.*).
+keep = ["chest"]
+# The painting behind the picture (docs/images, served as art/), the
+# word for what comes in, the key of the hand action, and the words the
+# picture says.
+picture = ["art/block-bridge-far.jpg"]
+unit = ["crowns"]
+hand = ["r"]
+how = ["R or a click: raid by hand.   1 2 3 4 5: buy.   Space or B: carry the chest out."]
+carry = ["Space or B: carry the chest out."]
+relic-word = ["Trophies"]
+relics-none = ["Trophies: none yet. Walk to the gate, win the dungeon and the mazes to take them."]
+renown-word = ["War banners:"]
+renown-count = ["raised"]
+renown-none = ["War banners: none yet. Every deed in the hall of deeds raises one."]
+away-none = ["Nothing came in while you were away: win places elsewhere to fill the chest."]
+
+# Crowns a second before anything is bought.
+rate = ["2.0"]
+# How much dearer each next one of a thing is (this many times the last).
+growth = ["1.5"]
+# Crowns a raid by hand (the key R, or a click on the picture).
+strike = ["3"]
+# War banners: every deed in the hall of deeds raises one, and each
+# makes the crowns come this much faster (0.03: three in a hundred).
+renown = ["0.03"]
+# Crowns waiting for each place won since the last visit, for each
+# crown a second you make.
+away = ["10.0"]
+
+# Trophies, taken in the other games: each is held once the world says
+# what it needs (a fact a game sets when won), and each multiplies one
+# thing: what things cost (cost), the crowns a second (rate), the
+# crowns waiting from places won (away), or the crowns a raid (strike).
+relics = ["The gate's bar", "The dungeon's chains", "The maze's banner", "The second maze's horn"]
+relic-needs = ["fact.walked-in", "fact.dungeon-cleared", "fact.maze-walked", "fact.passage-walked"]
+relic-kinds = ["cost", "away", "strike", "rate"]
+relic-amounts = ["0.85", "3.0", "4.0", "1.15"]
+
+# What there is to buy, a ladder: each thing by its key (1, 2, 3 ...),
+# what the first costs, the crowns a second each brings, whether each
+# doubles everything (1) instead, and how many of the thing before it
+# you must own before it can be bought (0 for the first).
+names = ["Foragers", "Raiding party", "Siege workshop", "Mercenary company", "War council"]
+costs = ["15", "200", "2500", "30000", "300000"]
+gives = ["2", "12", "70", "400", "0"]
+doubles = ["0", "0", "0", "0", "1"]
+needs = ["0", "5", "5", "5", "3"]
