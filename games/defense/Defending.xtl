@@ -91,7 +91,7 @@ h:o_ut := { (road, hp, prog) -> (prog >= 0.0) & (hp > 0.0) & prog < f_loat (t_al
 
 ### The protocol
 
-# :: (Num a, Any b, Num c) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Int, (Float, Float, Float), Float, Float, Float)
+# :: (Any a, Num b) => (Char, (Box Char, Int), a) -> (((Char, Int, Int), Float, Box Char, Float, Char, b), Int, (Float, Float, Float), Float, Float, Float)
 ## A level from a scenario's file, in a world, with a seed: its map lit
 ## as its hour is, its road, its towers', enemies' and waves' numbers,
 ## no tower built, no enemy come. The gold the world holds
@@ -100,14 +100,47 @@ h:o_ut := { (road, hp, prog) -> (prog >= 0.0) & (hp > 0.0) & prog < f_loat (t_al
 l:n_ew := { (file, world, seed) ->
   map := md:m_ap file
   stage := md:s_tage file
-  towers := file h:t_able ("tower", "towers", "tower-fields", 6)
-  enemies := file h:t_able ("enemy", "enemies", "enemy-fields", 4)
+  e := h:e_ffects (file, world)
+  read := file h:t_able ("tower", "towers", "tower-fields", 6)
+  towers := o_\ (6 c_at f_irst s_hape read) r_eshape ((3 s_elect e) * f_irst_2 read) c_at (2 s_elect_2 read) c_at ((4 s_elect e) * 3 s_elect_2 read) c_at (4 s_elect_2 read) c_at (5 s_elect_2 read) c_at 6 s_elect_2 read
+  foe := file h:t_able ("enemy", "enemies", "enemy-fields", 4)
+  enemies := o_\ (4 c_at f_irst s_hape foe) r_eshape ((5 s_elect e) * f_irst_2 foe) c_at (2 s_elect_2 foe) c_at (3 s_elect_2 foe) c_at 4 s_elect_2 foe
   cast := h:c_ast file
   waves := t_ally file md:l_ist "waves"
   hp := (f_loor f_irst_2 cast) s_elect f_irst_2 enemies
   foes := o_\ (3 c_at t_ally hp) r_eshape hp c_at ((t_ally hp) r_eshape -1.0) c_at (t_ally hp) r_eshape 0.0
-  n := ((file md:r_ule ("start", "gold")) + f_loat world md:g_et "resource.gold") c_at (file md:r_ule ("start", "lives")) c_at 1.0 0.0 0.0 0.0 c_at (file md:n_umber "gap") c_at waves r_eshape -1.0
+  start := ((f_irst e) * file md:r_ule ("start", "gold")) + f_loat world md:g_et "resource.gold"
+  n := start c_at (1.0 m_ax (2 s_elect e) + file md:r_ule ("start", "lives")) c_at 1.0 0.0 0.0 0.0 c_at (file md:n_umber "gap") c_at waves r_eshape -1.0
   (stage, map w:r_oad 1, (towers, enemies, cast), 0 7 r_eshape 0.0, foes, n)
+}
+## What the difficulty chosen and the character's calling do to a level
+## (the scenario's effects file, a path from it): the starting gold's
+## multiplier, the lives added, the multipliers of the towers' costs and
+## damage and of the enemies' hit points. A level's row and a calling's
+## are combined; no difficulty chosen is Normal, no calling no bonus; a
+## scenario with no effects file is played as written.
+h:e_ffects := { (file, world) ->
+  n_ot file md:h_as "effects" ? 1.0 0.0 1.0 1.0 1.0
+  path := (('m_ax r_/ 0 c_at w_here file = f_irst "/") t_ake file) c_at file md:f_ield "effects"
+  levels := path h:t_able ("level", "levels", "effect-fields", 5)
+  callings := path h:t_able ("calling", "callings", "effect-fields", 5)
+  chosen := world md:g_et "session.level"
+  k := h:l_evel (chosen, f_irst s_hape levels)
+  c := world md:g_et "character.calling"
+  bonus := h:b_onus (callings, c)
+  both := (k s_elect levels) * bonus
+  (f_irst both) c_at ((2 s_elect k s_elect levels) + 2 s_elect bonus) c_at 2 d_rop both
+}
+## The row of the difficulty chosen: Normal (the third) if none is.
+h:l_evel := { (chosen, n) ->
+  chosen = 0 ? 3
+  1 m_ax n m_in chosen
+}
+## A calling's row (its lives are added, not multiplied, by the
+## caller); no calling (0 or beyond the table) no bonus.
+h:b_onus := { (callings, c) ->
+  (c < 1) | c > f_irst s_hape callings ? 1.0 0.0 1.0 1.0 1.0
+  c s_elect callings
 }
 
 ### A tick

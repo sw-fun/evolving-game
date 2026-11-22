@@ -257,9 +257,20 @@ check((await caption()).startsWith("The castle and its country"), "a key goes ba
 
 // The three games taken from X_eTaL-games, each entered from the map:
 // they draw themselves, so the page shows their picture flat.
-for (const [n, says, key, shot] of [[10, "Steps 0 | Facing", "w", "maze"], [13, "HP 12", "d", "dungeon"], [14, "Find the way out (the teal door)", "w", "raycaster"]]) {
+// The dungeon opens with a card of its painting first.
+for (const [n, says, key, shot, art] of [[10, "Steps 0 | Facing", "w", "maze", ""], [13, "HP 12", "d", "dungeon", "art/block-damp-torches.jpg"], [14, "Find the way out (the teal door)", "w", "raycaster", ""]]) {
   check(await open("?hold&debug&fresh"), `the map opens for venue ${n}`);
   await page(`window.game.feed('choose 1 ${n}'), 1`);
+  if (art) {
+    check(await page(`(() => { const i = document.querySelector('#flat svg image'); return !!i && i.getAttribute('href') === '${art}'; })()`), `venue ${n} opens with a card of ${art}`);
+    check(await page(`fetch('${art}').then((r) => r.ok)`), "which the page serves");
+    if (capture) {
+      await sleep(800);
+      const img = await send("Page.captureScreenshot", { format: "png" });
+      writeFileSync(join(root, `images/look/${shot}-card.png`), Buffer.from(img.data, "base64"));
+    }
+    await space();
+  }
   check((await caption()).includes(says), `venue ${n} is a game, which says: ${says}`);
   check(await page("(() => { const r = document.querySelector('#flat svg').getBoundingClientRect(); return r.width > 300 && r.height > 200 && getComputedStyle(document.getElementById('flat')).display !== 'none'; })()"), "and its own picture is shown");
   check(await page("getComputedStyle(document.getElementById('view')).visibility === 'hidden'"), "alone, the 3D board hidden behind it");

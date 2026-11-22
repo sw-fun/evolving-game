@@ -27,6 +27,9 @@ weather = ["snow 0.8"]
 # What you start with.
 start = ["gold 100", "lives 10"]
 
+# What the difficulty chosen and the calling change (effects.toml).
+effects = ["effects.toml"]
+
 # The waves, in order: a letter an enemy, in the order they come, gap
 # seconds apart. The space bar sends the next wave. Win by seeing off
 # the last.

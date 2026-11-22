@@ -181,7 +181,7 @@ about = "Turn-based squads; fire spreads, ice blocks, lightning chains, wind ben
 [venue.dungeon]
 title = "The dungeon"
 kind = "dungeon"
-scenario = ""
+scenario = "undercroft.toml"
 row = "6"
 column = "8"
 from = "gate-maze"

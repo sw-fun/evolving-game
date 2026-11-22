@@ -1,0 +1,5 @@
+# The dungeon's way in: the painting shown on a card before the dungeon
+# (Overture.xtl), as a walk's scenario names its painting. The dungeon
+# itself is dungeon.toml's (Depths.xtl). The path is the page's (the
+# page serves docs/images under art/).
+art = ["art/block-damp-torches.jpg"]

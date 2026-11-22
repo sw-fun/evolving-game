@@ -225,10 +225,10 @@ and armatures from Bpy (7 and 8), the walking camera (9).
 
 ## The paintings
 
-Four paintings of the user's say what the game should look like. All
-four are in the repository (`docs/images`): the user made them with
+Five paintings of the user's say what the game should look like. All
+five are in the repository (`docs/images`): the user made them with
 text-to-image tools and they are the user's own to publish. The page
-shows three of them as they are. Each is also a brief for models and
+shows four of them as they are. Each is also a brief for models and
 generated views, so the game's own drawing comes to look like it.
 
 - `block-bridge-far.jpg`, the long bridge: shown on the card before the
@@ -244,6 +244,13 @@ generated views, so the game's own drawing comes to look like it.
   pillars, stained glass and shafts of light, heaps of coins that grow
   with the coffers, chests, crowns and cups, suits of armor, shields
   and tapestries on the walls.
+- `block-damp-torches.jpg`, the dungeon: shown on the card before the
+  dungeon. Wanted on the walls of some of the mazes (the gate maze,
+  the maze seen from inside, the dungeon): rough dark stone blocks
+  with moss, round arches on squat pillars, torches in iron brackets
+  with warm flickering light and smoke, cobwebs hung between the
+  pillars, wet flagstones that catch the torchlight, chains and
+  rubble on the floor, mist down the far corridor.
 - `block-castle-bazaar.jpg`, the bazaar below a castle: what the city
   should become. Not shown in the game yet. Wanted: a
   street of tents and awnings in many colors, hanging rugs, lanterns,

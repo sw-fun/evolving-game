@@ -62,6 +62,12 @@ range, damage, cooldown, splash, slow) and the enemies (hit points,
 speed, armor, bounty, letter). The map and its road are the
 battlefield's, [`world/battlefield.toml`](../../world/battlefield.toml).
 
+[`effects.toml`](effects.toml), named by every level: what the
+difficulty chosen (Novice to Impossible) and the character's calling
+do to the level: the starting gold, the lives, the towers' costs and
+damage, and the enemies' hit points. With no difficulty chosen a level
+plays at Normal; with no calling, without a bonus.
+
 ## Workarounds
 
 None.

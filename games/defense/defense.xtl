@@ -79,3 +79,22 @@ md:s_tatusName df:s_tatus lost
 _ := u:s_ay df:o_utcome lost
 # A sixth wave cannot be sent.
 df:c_ount u:e_nd 6 r_eshape e_nclose "key space"
+
+# The difficulty chosen (the world's session.level, 1 Novice to 5
+# Impossible) and the character's calling (character.calling) change
+# the level as games/defense/effects.toml says: the counts (gold and
+# lives first), the towers' costs and damage, and the enemies' hit
+# points. None chosen plays as Normal with no bonus, as above.
+u:s_ide := { (level, calling) ->
+  world := (md:nothing md:s_et ("session.level", level)) md:s_et ("character.calling", calling)
+  s := df:n_ew (scenario, world, 1)
+  (_, _, (tt, et, _), _, _, _) := s
+  _ := p_rint! df:c_ount s
+  _ := p_rint! f_irst_2 tt
+  _ := p_rint! 3 s_elect_2 tt
+  f_irst_2 et
+}
+u:s_ide (3, 0)
+u:s_ide (1, 6)
+u:s_ide (5, 1)
+u:s_ide (2, 2)

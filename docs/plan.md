@@ -1019,6 +1019,28 @@ The framework (`games/castle`, Saga 3's castle-map step):
   character, home-and-sides, level-maps, attack-defense,
   sides-everywhere, attacker-idle.
 
+- **Difficulty and callings in the games** (the user's menus,
+  2026-11-18; built 2026-11-21): a game's effects are data. Castle
+  Defense's scenarios name `games/defense/effects.toml`: a row a
+  difficulty and a row a calling, each the starting gold's
+  multiplier, lives added, and the multipliers of the towers' costs
+  and damage and of the enemies' hit points; the difficulty's row and
+  the calling's are combined (multipliers multiplied, lives added; a
+  level never starts with fewer than 1 life). The difficulty is the
+  world's `session.level` (none chosen: Normal), the calling
+  `character.calling` (none: no bonus), so the scripted goldens with
+  an empty world are unchanged. Novice's "cannot lose" is 90 lives
+  more and enemies at half strength. The other games take their
+  effects the same way as each gets both sides.
+
+- **The dungeon's painting** (the user, 2026-11-21: "use
+  block-damp-torches.jpg for a splash screen before a dungeon level.
+  We want this kind of look on some of the maze walls"): the dungeon's
+  scenario (`games/castle/undercroft.toml`) names it, so the castle
+  shows it on a card before the dungeon, as before the walks. The
+  maze walls' look is a later look step (`docs/look.md`, The
+  paintings).
+
 What the user's second message adds, each a later step on this
 framework, none blocking it:
 
