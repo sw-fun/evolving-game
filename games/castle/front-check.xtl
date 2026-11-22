@@ -1,0 +1,91 @@
+#!/usr/bin/env xetal
+## The front door's menu bar and settings, scripted: the bar drawn on
+## every screen; its items by key and by click (home, the hall of
+## deeds, settings, help, leave); the help shown over a screen and
+## closed; the settings' list (default difficulty, pronouns, title,
+## cloak, sound) changed and what it puts in the outcome.
+"fr:" u_se< "Front"
+"md:" u_se< "Mode"
+"st:" u_se< "Strings"
+"t:" u_se< "Text"
+"vw:" u_se< "View"
+
+file := "front.toml"
+u:l_ast := { (_, s) -> s }
+## The front door after a script of events, from a save.
+u:f_ront := { (lines, save) -> u:l_ast 'fr:l_egal 'fr:s_tatus 'fr:s_tep md:r_esult (lines, fr:n_ew (file, save, 1)) }
+## What the screen says after a script: its caption.
+u:s_ays := { (lines, save) -> vw:c_aption fr:v_iew u:f_ront (lines, save) }
+## Is the menu bar drawn, and the help, after a script?
+u:d_rawn := { (lines, save) ->
+  svg := vw:p_icture fr:v_iew u:f_ront (lines, save)
+  ("id=\"menu\"" st:i_nfix? svg) c_at "id=\"help\"" st:i_nfix? svg
+}
+u:s_ay := { (status, changes, rewards) ->
+  _ := p_rint! "outcome: " c_at md:s_tatusName status
+  t_ally t:l_ines '{ l -> e_nclose "  changes " c_at d_isclose l } e_ach md:l_ines changes
+}
+## A save with one profile, ann, a Soldier who has set Hard.
+ann := ((md:nothing md:s_et ("p.ann.profile", 1)) md:s_et ("p.ann.character.calling", 1)) md:s_et ("p.ann.settings.level", 4)
+none := 0 t_ake e_nclose "x"
+
+# The bar is drawn on every screen (no help yet): the profiles, the
+# name, a profile's home, its settings.
+u:d_rawn (none, ann)
+u:d_rawn (1 r_eshape e_nclose "key 2", ann)
+u:d_rawn (1 r_eshape e_nclose "key 1", ann)
+u:d_rawn ("key 1" "key 4", ann)
+
+# Its keys, small or capital: h home, S settings, d the hall (won,
+# going to it), q leave to the profiles.
+u:s_ays ("key 1" "key 4" "key h", ann)
+u:s_ays ("key 1" "key S", ann)
+md:s_tatusName fr:s_tatus u:f_ront ("key 1" "key d", ann)
+u:s_ays ("key 1" "key 4" "key q", ann)
+# With no profile chosen, home is the profiles and the hall nothing.
+u:s_ays ("key 3" "key h", ann)
+md:s_tatusName fr:s_tatus u:f_ront ("key 3" "key d", ann)
+
+# Typing a name, the letters are the name's; ? is the help, and a
+# click on the bar still works (Leave, at 1010 27).
+u:s_ays ("key 2" "key h" "key d" "key q", ann)
+u:d_rawn ("key 2" "key ?", ann)
+u:s_ays ("key 2" "key a" "click 1010 27", ann)
+
+# Clicks on the bar, its buttons 170 wide every 180 from 290: Home
+# (300 27) from the settings, Settings (735 27) from home, Hall (555
+# 20) from home; between two buttons (465 27) nothing.
+u:s_ays ("key 1" "key 4" "click 300 27", ann)
+u:s_ays ("key 1" "click 735 27", ann)
+md:s_tatusName fr:s_tatus u:f_ront ("key 1" "click 555 20", ann)
+u:s_ays ("key 1" "click 465 27", ann)
+
+# The help: shown over the screen (its words the caption), and closed
+# by any key or click, which does nothing else.
+u:s_ays ("key 1" "key ?", ann)
+u:d_rawn ("key 1" "key ?", ann)
+u:s_ays ("key 1" "key ?" "key down", ann)
+u:d_rawn ("key 1" "key ?" "click 300 300", ann)
+
+# The settings: a list, ann's own (Hard, he, no title for a Soldier,
+# crimson, the music at 6 of 10, not muted), each changed by Left and
+# Right or taken.
+t:l_ines fr:l_ines u:f_ront ("key 1" "key 4", ann)
+set := "key 1" "key 4" "key RIGHT" "key DOWN" "key LEFT" "key DOWN" "key ENTER" "key DOWN" "key RIGHT" "key RIGHT" "key DOWN" "key LEFT" "key LEFT" "key LEFT" "key DOWN" "key ENTER"
+t:l_ines fr:l_ines u:f_ront (set, ann)
+# Back home (7) and on to play: the outcome carries every setting
+# (settings.level 5, the pronoun they, title Warlock, cloak forest,
+# settings.music 3, settings.mute 1).
+_ := u:s_ay fr:o_utcome u:f_ront (set c_at "key 7" "key 1" "key 1" "key 3", ann)
+# The music's volume stops at 10 with Right and at 0 with Left; taken
+# (Enter, its number 5, or a click on its row) it goes round, 10 then 0.
+vol := "key 1" "key 4" "key 5"
+d_isclose 5 s_elect fr:l_ines u:f_ront (vol c_at "key RIGHT" "key RIGHT" "key RIGHT" "key RIGHT" "key RIGHT", ann)
+d_isclose 5 s_elect fr:l_ines u:f_ront (vol c_at "key RIGHT" "key RIGHT" "key RIGHT" "key RIGHT" "key ENTER", ann)
+d_isclose 5 s_elect fr:l_ines u:f_ront (vol c_at "key LEFT" "key LEFT" "key LEFT" "key LEFT" "key LEFT" "key LEFT" "key LEFT", ann)
+d_isclose 5 s_elect fr:l_ines u:f_ront ("key 1" "key 4" "click 300 470" "click 300 530", ann)
+# A volume of 0 kept in the save stays 0 (6 is only for one never set).
+d_isclose 5 s_elect fr:l_ines u:f_ront ("key 1" "key 4", ann md:s_et ("p.ann.settings.music", 0))
+# A save that says front.home.ann 2 opens at ann's settings.
+u:s_ays (none, ann md:s_et ("front.home.ann", 2))
+u:s_ays (none, ann md:s_et ("front.home.ann", 1))

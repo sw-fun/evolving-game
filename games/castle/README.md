@@ -90,6 +90,28 @@ the next. This is the game the others are parts of.
   `campaign.go`; B, backspace or Esc goes back.
   [`road-check.xtl`](road-check.xtl) plays both roads on scripts of
   events.
+- **The front door.** Before the castle ([`Front.xtl`](Front.xtl),
+  `front`, [`front.toml`](front.toml)): who is playing (a profile, or
+  a new one with a typed name), the character (a calling, a build,
+  pronouns, a title for a Witch/Warlock, a cloak), the profile's home
+  (play, the hall of deeds, the treasury, settings, another profile),
+  then the side and how hard. Up and Down choose a line, Left and
+  Right change it, Enter, space, a click or its number takes it,
+  Backspace goes back. Settings is a list: the default difficulty,
+  pronouns, title, cloak, the music's volume (0 to 10, 6 at first,
+  kept as `settings.music`; Left and Right stop at the ends, taking
+  the line goes round) and mute (`settings.mute`, 1 when muted).
+  [`front-check.xtl`](front-check.xtl) plays it on
+  scripts of events.
+- **The menu bar.** Along the top of every front-door screen and the
+  road of levels ([`Menu.xtl`](Menu.xtl)): Home (H), Hall of deeds
+  (D), Settings (S), Help (?) and Leave (Q), each a button to click or
+  a key, in small letters or capitals. Help shows the screen's help
+  over it until the next key or click; Leave goes back to the
+  profiles. While a name is typed the letters are the name's: click
+  the bar (or ? for help). From the road, the bar leaves saying where
+  to (`menu.go`: 2 the hall, 3 settings, 4 the profiles), and the
+  castle's program goes there.
 - **Portraits.** [`Portrait.xtl`](Portrait.xtl) draws a character
   standing, seen from the front, as SVG: `pt:s_vg` places the figure
   in a picture and `pt:c_ard` gives a whole 300 by 400 card. A calling
@@ -121,7 +143,9 @@ the file.
 The events: `choose 1 N` goes to venue N from the map (a click on its
 marker does the same); `key D` shows every place; in a place not built
 yet `key space` calls it done and `key b` goes back; `choose 0 0`
-leaves any game for the map. Each game's own events are its own.
+leaves any game for the map. On the front door and the road of
+levels, `key h`, `key d`, `key s`, `key ?` and `key q` are the menu
+bar's (or a click on it). Each game's own events are its own.
 
 ## Data
 

@@ -71,3 +71,17 @@ vw:c_aption rd:v_iew u:r_oad (1 r_eshape e_nclose "click 600 250", defender)
 vw:c_aption rd:v_iew u:r_oad (1 r_eshape e_nclose "click 270 400", defender)
 far := (((one md:s_et ("venue.bridge-2.done", 1)) md:s_et ("venue.bridge-3.done", 1)) md:s_et ("venue.crossing.done", 1)) md:s_et ("venue.city.done", 1)
 _ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "click 1040 500", far)
+
+# The menu bar along the top: H (home) leaves as B does, saying
+# nothing; D (the hall of deeds), S (settings) and Q (leave, to the
+# profiles) leave saying where (menu.go 2, 3, 4); a click on Hall (555
+# 27) is D. ? shows the help over the road, its words the caption, and
+# a key or a click closes it, doing nothing else.
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key h", defender)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key D", defender)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key s", defender)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key q", defender)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "click 555 27", defender)
+vw:c_aption rd:v_iew u:r_oad (1 r_eshape e_nclose "key ?", defender)
+vw:c_aption rd:v_iew u:r_oad ("key ?" "key right", defender)
+vw:c_aption rd:v_iew u:r_oad ("key ?" "click 380 250", defender)

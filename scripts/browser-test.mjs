@@ -409,11 +409,17 @@ await page("window.game.feed('key 5'), 1");
 check((await caption()).startsWith("Aldra the Witch (they)"), "a Witch/Warlock is called by the title chosen");
 await page("window.game.feed('key right'), window.game.feed('key down'), window.game.feed('key right'), 1");
 check((await caption()).startsWith("Aldra the Witch (he)"), "Left and Right change the look: the build, the pronouns");
-check(await page("!!document.querySelector('#flat svg g')"), "the character is drawn beside the look");
+check(await page("!!document.querySelector('#flat svg g:not(#menu)')"), "the character is drawn beside the look");
 await front("look");
 await page("window.game.feed('key 5'), 1");
 check((await caption()).startsWith("Aldra the Witch (he) Level 1."), "Done goes home");
 await front("home");
+check(await page("!!document.querySelector('#flat svg #menu')"), "the menu bar is drawn along the top");
+// ? is Shift and the slash key: the page gives the game "key ?"
+for (const type of ["keyDown", "keyUp"]) await send("Input.dispatchKeyEvent", { type, key: "?", code: "Slash", modifiers: 8, windowsVirtualKeyCode: 191, nativeVirtualKeyCode: 191, text: type === "keyDown" ? "?" : undefined });
+check(await page("/Menu bar: H home/.test(document.querySelector('#flat svg #help')?.textContent)"), "? shows the help over the screen");
+await page("window.game.feed('key down'), 1");
+check(!(await page("!!document.querySelector('#flat svg #help')")) && (await caption()).startsWith("Aldra the Witch (he) Level 1."), "and a key closes it");
 await page("window.game.feed('key 1'), 1");
 check((await caption()).startsWith("Defend or attack?"), "Play asks for the side");
 await front("side");

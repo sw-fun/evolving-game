@@ -984,6 +984,20 @@ The framework (`games/castle`, Saga 3's castle-map step):
     difficulty (novice, easy, normal, hard, impossible; novice cannot
     lose; harder brings more XP); a level map; a menu bar always there
     (home, hall of deeds, settings, help, leave).
+    As built (games/castle/Menu.xtl, pinned by front-check and
+    road-check): the bar is drawn by X_eTaL along the top of every
+    front-door screen and of the road of levels; its keys are H, D, S,
+    ? and Q (letters the page gives; while a name is typed they are
+    the name's, and the bar is clicked). Help is an overlay closed by
+    the next key or click. The road leaves through the outcome
+    (`menu.go`: 2 the hall, 3 settings, 4 the profiles), which the
+    castle's program follows; it opens the front door at a profile's
+    settings by `front.home.NAME` 2. Settings is a list: default
+    difficulty, pronouns, title, cloak, the music's volume
+    (`settings.music`, 0 to 10, 6 when never set) and mute
+    (`settings.mute`, 0 or 1), both in the front door's outcome so
+    the profile keeps them; the music player reads those two names.
+    The page passes the key ? through (web/static/app.js).
   - Callings: Soldier, Merchant, Spy, Thief, Witch/Warlock (the title
     the player's choice: Witch, Warlock or Mage), Engineer and Herald.
     Each gives a small bonus on each side, as data. Any calling plays
