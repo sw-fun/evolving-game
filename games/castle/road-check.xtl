@@ -29,8 +29,8 @@ t_ally rd:mode md:p_roblem file
 # opens it; the first is chosen.
 _ := u:l_ines rd:n_ew (file, defender, 1)
 vw:c_aption rd:v_iew rd:n_ew (file, md:nothing, 1)
-# Attacking: the camp and the battlefield on foot are open; the places
-# with no attack version yet say so.
+# Attacking: the camp and the summer siege (Castle Defense as the
+# besieger) are open; the places with no attack version yet say so.
 _ := u:l_ines rd:n_ew (file, attacker, 1)
 vw:c_aption rd:v_iew rd:n_ew (file, attacker, 1)
 
@@ -48,6 +48,11 @@ _ := u:s_ay rd:o_utcome u:r_oad ("key right" "key enter", defender)
 _ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key 2", defender)
 # Space takes the chosen one: the winter camp, for the attacker.
 _ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key space", attacker)
+# The summer siege taken by its number: venue 20, played by the mode
+# attack.
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key 2", attacker)
+vn:t_itle ("castle.toml", 20)
+vn:k_ind ("castle.toml", 20)
 # Backspace leaves, changing nothing; and B.
 _ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key backspace", defender)
 md:s_tatusName rd:s_tatus u:r_oad (1 r_eshape e_nclose "key b", defender)

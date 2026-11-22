@@ -1,0 +1,9 @@
+l:mode : Char
+l:help : Char
+l:n_ew : (Num a, Any b, Num c) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Int, (Float, Float, Float), Float, Float, Float)
+l:s_tep : (Any a, Num c, Truthy c, Any d, Any e, Any f, Any g, Num h) => (((a, b, c), Float, d, e, f, g), h, (Float, Float, Float), Float, Float, Float) -> (Char, Float, Char) -> (((a, b, c), Float, d, e, f, g), h, (Float, Float, Float), Float, Float, Float)
+l:l_egal : Any a => a -> Box Char
+l:s_tatus : (Any a, Num c, Truthy c, Any d, Any e, Any f, Any g, Num h) => (((a, b, c), Float, d, e, f, g), h, (Float, Float, Float), Float, Float, Float) -> Int
+l:c_ount : (Any a, Num c, Truthy c, Any d, Any e, Any f, Any g, Num h) => (((a, b, c), Float, d, e, f, g), h, (Float, Float, Float), Float, Float, Float) -> Int
+l:v_iew : (Any a, Num c, Truthy c, Any d, Any e, Any f, Any g, Num h) => (((a, b, c), Float, d, e, f, g), h, (Float, Float, Float), Float, Float, Float) -> (((a, b, c), Float, d, e, f, g), Box Char, Box Char, Float, Char)
+l:o_utcome : (Any a, Num c, Truthy c, Any d, Any e, Any f, Any g, Num h) => (((a, b, c), Float, d, e, f, g), h, (Float, Float, Float), Float, Float, Float) -> (Int, (Box Char, Int), (Box Char, Int))

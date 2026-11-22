@@ -26,7 +26,7 @@ village = ["seed 7", "wide 35", "deep 21"]
 time = ["10.5"]
 
 # The venues, in the order of their numbers on the map.
-venues = ["bridge-1", "on-foot", "bridge-2", "camp", "town", "bridge-3", "engineer", "commander", "crossing", "gate-maze", "rune-keep", "tactics", "dungeon", "ray-maze", "treasury", "automata", "hall", "city", "warchest"]
+venues = ["bridge-1", "on-foot", "bridge-2", "camp", "town", "bridge-3", "engineer", "commander", "crossing", "gate-maze", "rune-keep", "tactics", "dungeon", "ray-maze", "treasury", "automata", "hall", "city", "warchest", "bridge-attack-1", "bridge-attack-2"]
 venue-fields = ["title", "kind", "scenario", "row", "column", "from", "needs", "marker", "about"]
 
 # Deeds: quests (known from the start, so you know what to try) and
@@ -37,9 +37,10 @@ venue-fields = ["title", "kind", "scenario", "row", "column", "from", "needs", "
 deeds = ["season-summer", "every-season", "way-in", "cross", "inside", "first-win", "purse", "veteran", "wanderer", "cartographer", "breached"]
 deed-fields = ["title", "kind", "needs", "least", "xp", "about"]
 
-# A venue: its title; its kind (the mode that plays it: defense, roam,
-# idle for the treasury, chest for the war chest, board for the hall of
-# deeds, or placeholder for one not built yet) and
+# A venue: its title; its kind (the mode that plays it: defense, attack
+# (Castle Defense as the besieger), roam, idle for the treasury, chest
+# for the war chest, board for the hall of deeds, or placeholder for
+# one not built yet) and
 # its scenario (a path from
 # this file; none for a placeholder); its row and column on the realm's
 # map; from, the venue whose winning makes it known ("" for one known
@@ -255,6 +256,28 @@ from = "camp"
 needs = ""
 marker = "brute"
 about = "The besiegers' camp earns while you fight elsewhere: raiders, workshops and hired companies fill the war chest, an idle game."
+
+[venue.bridge-attack-1]
+title = "Storm the Bridge: summer"
+kind = "attack"
+scenario = "../defense/attack-1.toml"
+row = "12"
+column = "8"
+from = ""
+needs = ""
+marker = "shield"
+about = "Castle Defense as the besieger: send creeps from the camp over the bridge to the gate, against the defender's towers."
+
+[venue.bridge-attack-2]
+title = "Storm the Bridge: snow"
+kind = "attack"
+scenario = "../defense/attack-2.toml"
+row = "12"
+column = "11"
+from = "bridge-attack-1"
+needs = ""
+marker = "brute"
+about = "The same road in winter, against more towers, sooner."
 
 [deed.season-summer]
 title = "Hold the bridge in summer"
