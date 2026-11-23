@@ -136,8 +136,8 @@ l:l_ines := { (_, screen, _, name, picks, data, save) ->
 ## cloak, the music's volume, muted or not, and Back.
 h:s_ettings := { (picks, data) ->
   (_, _, pronouns, titles, cloaks, _, levels, _) := data
-  mute := d_isclose (1 + 11 s_elect picks) s_elect "off" "on"
-  (e_nclose "Default difficulty: " c_at d_isclose (8 s_elect picks) s_elect levels) c_at (e_nclose "Pronouns: " c_at d_isclose (3 s_elect picks) s_elect pronouns) c_at (e_nclose h:t_itleLine (picks, titles)) c_at (e_nclose "Cloak: " c_at d_isclose (5 s_elect picks) s_elect cloaks) c_at (e_nclose "Music: " c_at (f_ormat 10 s_elect picks) c_at " of 10") c_at (e_nclose "Mute: " c_at mute) c_at e_nclose "Back"
+  mute := d_isclose (1 + 11 s_elect picks) s_elect "on" "muted"
+  (e_nclose "Default difficulty: " c_at d_isclose (8 s_elect picks) s_elect levels) c_at (e_nclose "Pronouns: " c_at d_isclose (3 s_elect picks) s_elect pronouns) c_at (e_nclose h:t_itleLine (picks, titles)) c_at (e_nclose "Cloak: " c_at d_isclose (5 s_elect picks) s_elect cloaks) c_at (e_nclose "Music volume: " c_at (f_ormat 10 s_elect picks) c_at " of 10") c_at (e_nclose "Music: " c_at mute) c_at e_nclose "Back"
 }
 ## A profile's line: its name, calling and level.
 h:s_ummary := { (save, name, callings) ->
@@ -229,7 +229,7 @@ h:c_hange := { s by ->
 ## The setting on the chosen line changed by one either way: which
 ## pick each line is, and how many values it has. The music's volume
 ## goes from 0 to 10 and stops at either end (taken, it goes round:
-## by 2 is the step a take gives, 10 then 0); mute is on or off.
+## by 2 is the step a take gives, 10 then 0); the music is on or muted.
 h:s_etting := { s by ->
   (stage, screen, line, name, picks, data, save) := s
   (_, _, pronouns, titles, cloaks, _, levels, _) := data

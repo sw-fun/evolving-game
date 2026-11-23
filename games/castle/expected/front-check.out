@@ -23,16 +23,16 @@ Default difficulty: Hard
 Pronouns: he
 Title: (only for a Witch/Warlock)
 Cloak: crimson
-Music: 6 of 10
-Mute: off
+Music volume: 6 of 10
+Music: on
 Back
 7
 Default difficulty: Impossible
 Pronouns: they
 Title: (only for a Witch/Warlock)
 Cloak: forest
-Music: 3 of 10
-Mute: on
+Music volume: 3 of 10
+Music: muted
 Back
 7
 outcome: won
@@ -48,10 +48,10 @@ outcome: won
   changes settings.music 3
   changes settings.mute 1
   changes front.name.ann 1
-Music: 10 of 10
-Music: 0 of 10
-Music: 0 of 10
-Music: 7 of 10
-Music: 0 of 10
+Music volume: 10 of 10
+Music volume: 0 of 10
+Music volume: 0 of 10
+Music volume: 7 of 10
+Music volume: 0 of 10
 Settings. Up and Down choose a setting; Left and Right change it. Default difficulty: Hard
 Ann the Soldier (he). Level 1. Experience 0, gold 0. Play
