@@ -116,7 +116,7 @@ window.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || talking()) return;
   // Escape leaves any game for the map (the loop's own command)
   if (e.key === 'Escape') { e.preventDefault(); feed('choose 0 0'); return; }
-  const name = NAMES[e.key] || (/^[a-z0-9]$/i.test(e.key) ? e.key.toLowerCase() : '');
+  const name = NAMES[e.key] || (/^[a-z0-9?]$/i.test(e.key) ? e.key.toLowerCase() : '');
   if (!name && e.key !== 'Shift') return;
   e.preventDefault();
   if (name) feed(`key ${name}`, true);

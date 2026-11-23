@@ -12,15 +12,21 @@
 ## a click on its circle takes it, if it is open (a locked one is only
 ## chosen); B or backspace leaves (and Esc, the loop's own). Taken, the campaign goes to it: the
 ## outcome sets campaign.go to the venue's number in castle.toml.
+## The menu bar along the top (Menu.xtl) leaves too, saying where to
+## (menu.go in the outcome: 2 the hall of deeds, 3 settings, 4 the
+## profiles; home, as B, says nothing), or shows the help over the road.
 ##
 ## The state is (stage, numbers, road): the numbers are the level
-## chosen, the level taken (0 for none), 1 when left, and the side; the
+## chosen, the level taken (0 for none), how it was left (0 not, 1
+## home, 2 the hall, 3 settings, 4 the profiles), the side, and 1 while
+## the help is shown; the
 ## road is the venues' ids, labels and tiers, and for each 1 or 0: its
 ## attack version is coming, it is done, it is open; and its venue's
 ## number in castle.toml.
 ## Import: "rd:" u_se< "Roads"
 
 "md:" u_se< "Mode"
+"mn:" u_se< "Menu"
 "sm:" u_se< "Sim"
 "st:" u_se< "Strings"
 "t:" u_se< "Text"
@@ -32,7 +38,7 @@
 l:mode := "roads"
 # :: Char
 ## How it is used, a line a thing to know.
-l:help := "The road of levels for your side, in order: the first two are open, and each next one opens when one of the two before it is won.\nArrows: choose. Enter, space, its number or a click on it: go there. B, Backspace or Esc: back."
+l:help := "The road of levels for your side, in order: the first two are open,\nand each next one opens when one of the two before it is won.\nArrows: choose. Enter, space, its number or a click on it: go there.\nB, Backspace or Esc: back.\n" c_at mn:help
 
 h:tiers := "tutorial" "easy" "normal" "hard"
 h:f_ail := { (file, field) what -> "bad-scenario" []S_IGNAL file c_at ": " c_at field c_at ": " c_at what }
@@ -79,7 +85,7 @@ l:n_ew := { (file, world, seed) ->
   k := r_ange t_ally ids
   open := 0 + (0 < done) | (k <= 2) | (0 < 0 c_at -1 d_rop done) | 0 < 0 0 c_at -2 d_rop done
   next := w_here (0 < open) & 0 = done
-  (md:s_tage file, (f_irst next c_at 1) c_at 0 0 c_at side, (ids, labels, tiers, coming, done, open, index))
+  (md:s_tage file, (f_irst next c_at 1) c_at 0 0 c_at side c_at 0, (ids, labels, tiers, coming, done, open, index))
 }
 ## The road's open levels, 1 or 0 each.
 h:o_pen := { (_, _, (_, _, _, _, _, open, _)) -> open }
@@ -124,24 +130,46 @@ h:c_lick := { s xy ->
   0 = t_ally near ? s
   s h:t_ake f_irst near
 }
+## The state left, saying how (1 home, 2 the hall, 3 settings, 4 the
+## profiles).
+h:l_eave := { (stage, n, road) how -> (stage, (2 t_ake n) c_at how c_at 3 d_rop n, road) }
+## The state with the help shown (1) or not (0).
+h:h_elp := { (stage, n, road) on -> (stage, (4 t_ake n) c_at on, road) }
+## The menu bar's k-th item: home, the hall and settings leave saying
+## so; help is shown; leave goes to the profiles.
+h:m_enu := { s k ->
+  k = 4 ? s h:h_elp 1
+  s h:l_eave k s_elect 1 2 3 0 4
+}
+## A click: on the menu bar, its item; else on the road.
+h:c_licked := { s xy ->
+  0 < mn:c_lick xy ? s h:m_enu mn:c_lick xy
+  s h:c_lick xy
+}
 # :: (Any a, Any b, Any c, Any d, Any e, Any f, Num g, Any h) => (a, Int, (b, c, d, e, f, g, h)) -> (Char, Float, Char) -> (a, Int, (b, c, d, e, f, g, h))
-## The state after an event: the arrows choose, enter or space takes the
-## chosen level, a number or a click takes that one, B or backspace leaves.
+## The state after an event: with the help shown, a key or a click
+## closes it; the menu bar's items, by a click or a key; the arrows
+## choose, enter or space takes the chosen level, a number or a click
+## takes that one, B or backspace leaves.
 l:s_tep := { s e ->
   (stage, n, road) := s
-  e sm:i_s "click" ? s h:c_lick 2 t_ake sm:n_umbers e
+  felt := (e sm:i_s "click") | e sm:i_s "key"
+  (0 < 5 s_elect n) & felt ? s h:h_elp 0
+  e sm:i_s "click" ? s h:c_licked 2 t_ake sm:n_umbers e
   n_ot e sm:i_s "key" ? s
+  0 < mn:k_ey sm:t_ext e ? s h:m_enu mn:k_ey sm:t_ext e
   key := st:l_ower sm:t_ext e
   (key m_atch "left") | key m_atch "up" ? s h:m_ove -1
   (key m_atch "right") | key m_atch "down" ? s h:m_ove 1
   (key m_atch "enter") | key m_atch " " ? s h:t_ake f_irst n
-  (key m_atch "b") | key m_atch "backspace" ? (stage, (2 t_ake n) c_at 1 c_at 3 d_rop n, road)
+  (key m_atch "b") | key m_atch "backspace" ? s h:l_eave 1
   s h:t_ake ("1" "2" "3" "4" "5" "6" "7" "8" "9") i_ndexOf e_nclose key
 }
 # :: Any a => a -> Box Char
 ## The events it takes: a click, and a key (any: the arrows, enter,
 ## space, the numbers, B and backspace do something, the rest nothing;
-## the host names a key in small letters, a script's line in capitals).
+## the host names a key in small letters, a script's line in capitals;
+## H D S ? Q are the menu bar's).
 l:l_egal := { s -> "click X Y" "key NAME" }
 # :: (Any a, Num b, Any c) => (a, b, c) -> Int
 ## Won when a level is taken (it is then played); left when left.
@@ -170,7 +198,7 @@ h:l_abel := { s k ->
 l:l_ine := { s k -> (f_ormat k) c_at " " c_at (s h:l_abel k) c_at ": " c_at (s h:s_tanding k) c_at s h:c_oming k }
 ## The title of the side's road.
 h:t_itle := { (_, n, _) -> d_isclose (4 s_elect n) s_elect "Defend the castle" "Attack the castle" }
-h:how := "Arrows: choose. Enter, space, a number or a click: go. B or Esc: back."
+h:how := "Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help."
 ## A text drawn at a point: x, y, size, color, anchored in the middle
 ## or (anchor "") from its left.
 ## A drawing when a flag is 1, else nothing.
@@ -211,9 +239,9 @@ h:s_egment := { at k ->
   bend := x0 + 150 * (2 * 0 + x0 > 600) - 1
   " C " c_at (f_ormat bend) c_at " " c_at (f_ormat y0) c_at " " c_at (f_ormat bend) c_at " " c_at (f_ormat y) c_at " " c_at (f_ormat x) c_at " " c_at f_ormat y
 }
-## The road's picture: the side's painting darkened, the title, the
-## road winding through the circles in order, and the chosen level and
-## what to do at the foot.
+## The road's picture: the side's painting darkened, the menu bar, the
+## title, the road winding through the circles in order, the chosen
+## level and what to do at the foot, and the help over it when shown.
 h:p_icture := { s ->
   (_, n, _) := s
   painting := d_isclose (4 s_elect n) s_elect "art/block-castle-keep.jpg" "art/block-castle-bazaar.jpg"
@@ -225,21 +253,27 @@ h:p_icture := { s ->
   levels := t:j_oin '{ k -> e_nclose s h:l_evel k } e_ach r_ange l:c_ount s
   said := (60, 712, 28, "#f2c14e", 0) h:t_ext s l:l_ine f_irst n
   how := (60, 756, 22, "#d8d2c4", 0) h:t_ext h:how
-  head c_at title c_at road c_at levels c_at said c_at how c_at "</svg>"
+  help := (5 s_elect n) h:i_f mn:o_verlay l:help
+  head c_at mn:bar c_at title c_at road c_at levels c_at said c_at how c_at help c_at "</svg>"
 }
 # :: (Any a, Any b, Num c, Any d) => (a, Int, (b, Box Char, Box Char, c, Int, Int, d)) -> (a, Box Char, Box Char, Float, Char)
 ## What to show: the road's picture, and in words its title, every
-## level's line, the chosen one and what to do.
+## level's line, the chosen one and what to do (or the help, when it is
+## shown).
 l:v_iew := { s ->
   (stage, n, _) := s
+  0 < 5 s_elect n ? vw:d_rawn (stage, h:p_icture s, mn:s_aid l:help)
   lines := t:j_oin '{ k -> e_nclose (s l:l_ine k) c_at ". " } e_ach r_ange l:c_ount s
   vw:d_rawn (stage, h:p_icture s, (h:t_itle s) c_at ". " c_at lines c_at "Chosen: " c_at (s l:l_ine f_irst n) c_at ". " c_at h:how)
 }
 # :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g) => (a, Int, (b, c, d, e, f, g, Int)) -> (Int, (Box Char, Int), (Box Char, Int))
 ## A level taken: the campaign goes to its venue (campaign.go, its
-## number in castle.toml); left, nothing changes.
+## number in castle.toml); left, nothing changes, but where the menu
+## bar sent it (menu.go: 2 the hall of deeds, 3 settings, 4 the
+## profiles).
 l:o_utcome := { s ->
   (_, n, (_, _, _, _, _, _, index)) := s
+  1 < 3 s_elect n ? (md:left, md:nothing md:s_et ("menu.go", 3 s_elect n), md:nothing)
   n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
   (md:won, md:nothing md:s_et ("campaign.go", (2 s_elect n) s_elect index), md:nothing)
 }
