@@ -1,0 +1,47 @@
+calm
+explore
+sinister
+battle
+splash calm
+front calm
+roads calm
+atlas calm
+defense battle
+attack battle
+roam explore
+maze explore
+dungeon sinister
+raycaster sinister
+idle calm
+chest calm
+board calm
+placeholder calm
+somewhere calm
+calm 1: A A C C B B C B B C C B B D D A A B B B C C D
+explore 1: A A B B B C D D A B B B C D A B B C D
+sinister 1: A A C C D D A A B B B D D A A B B D D
+battle 1: A A B B B D D A B B C C D D A B B C D
+calm 2: A B B C D D A B B C B B D D A C C D D
+explore 2: A A B B C D D A C C D D A B B D D
+sinister 2: A B B C D D A A B B C C D D A A B B B C C D D
+battle 2: A B B C D A B B C D A C C D D A B B B C D D
+calm 3: A C C D D A A B B C D D A C C D
+explore 3: A B B C C B B C D D A A B B C D D
+sinister 3: A B B B C D D A A B B C C D D A A B B B C C D
+battle 3: A A B B B C C D A A B B D D A C C D D
+1
+200 200 200 200 200
+832 1306 761 998
+0.6
+0.3
+0.0
+0.0
+music('battle', 0.6, 26.666667, 'A A B B B D D A B B C C D D A B B C D')
+music('calm', 0.2, 26.666667, 'A A C C B B C B B C C B B D D A A B B B C C D')
+music('explore', 0.6, 20.0, 'A A B B B C D D A B B B C D A B B C D')
+1
+1
+1
+0
+<svg><rect/><metadata id="music">music('calm', 0.6, 26.667, 'A')</metadata></svg>
+fixtures/bad-music.toml: next-B: it names a phrase not in phrases

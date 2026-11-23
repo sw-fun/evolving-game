@@ -80,6 +80,10 @@ bless-lib:
 assets:
     scripts/assets.sh
 
+# Encode the castle's music (the user's phrase WAVs, MUSIC_SOURCE) as Ogg Opus into assets/music (needs ffmpeg)
+music:
+    scripts/music.sh
+
 # Build the page (web/dist): the game as WebAssembly, the 3D player beside it
 web *flags:
     scripts/web.sh {{flags}}

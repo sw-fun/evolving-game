@@ -24,6 +24,9 @@ cp -R "$from/vendor/three" "$root/web/ext/vendor/"
 # the user's own: the bridge, the keep, the treasury)
 rm -rf "$root/web/art"; mkdir -p "$root/web/art"
 cp "$root"/docs/images/*.jpg "$root/web/art/"
+# the music the page plays (music/SET-PHRASE.ogg: the user's own, MIT)
+rm -rf "$root/web/music"; mkdir -p "$root/web/music"
+cp "$root"/assets/music/*.ogg "$root/web/music/"
 # the pieces the board player loads by name (models/NAME.glb)
 rm -rf "$root/web/models"; mkdir -p "$root/web/models"
 cp "$root"/assets/pieces/*.glb "$root/web/models/"

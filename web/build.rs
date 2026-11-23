@@ -32,6 +32,7 @@ const DATA: &[(&str, &str)] = &[
     ("treasury.toml", "games/castle/treasury.toml"),
     ("warchest.toml", "games/castle/warchest.toml"),
     ("front.toml", "games/castle/front.toml"),
+    ("music.toml", "games/castle/music.toml"),
     ("levels.toml", "games/castle/levels.toml"),
     ("maze.toml", "games/castle/maze.toml"),
     ("dungeon.toml", "games/castle/dungeon.toml"),

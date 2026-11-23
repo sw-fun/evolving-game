@@ -18,6 +18,8 @@
 //     board (class "flat") is hidden then, and is all there is to see
 //     where there is no WebGL
 //   - what the program printed, in a pane that opens when it ends
+//   - the music the picture names (its metadata id="music"), played
+//     by music.js as the program says
 // What the castle keeps between visits (its world: gold, experience,
 // places won, deeds) is a text the program writes; the page stores it
 // in the browser, under one name, and gives it back when the program
@@ -26,6 +28,7 @@
 // those dialogs. ?hold
 // stops the clock (for tests: events are then given by window.game.feed).
 import { board } from '../ext/board.js';
+import { music } from './music.js';
 
 const TICK = 0.05;
 const q = new URLSearchParams(location.search);
@@ -42,6 +45,7 @@ const view = el('view'), flat = el('flat'), stat = el('stat');
 let wasm = null, player = null, timer = 0, cost = 0, frames = '', eyed = false;
 let program = { walk: 'play.xtl', foot: 'explore.xtl', defense: 'defense/play.xtl' }[q.get('game')] || 'castle/play.xtl';
 const held = new Set(), look = [0, 0];
+const tunes = music();
 // the browser's store for the one text the game keeps
 const KEPT = 'evolving-game/castle.save';
 const store = q.has('fresh') ? null : (() => { try { return window.localStorage; } catch { return null; } })();
@@ -62,6 +66,7 @@ const sceneOf = (svg) => (svg.match(/<metadata id="scene">([\s\S]*?)<\/metadata>
 function draw() {
   const svg = wasm.picture();
   flat.innerHTML = svg;
+  tunes.show(svg);
   const calls = sceneOf(svg);
   // a scene seen through an eye is one the pointer can look round in
   eyed = /^eye\(/m.test(calls);
@@ -236,7 +241,7 @@ const ready = () => {
   el('build').textContent = `Build: ${wasm.build()}`;
   el('about-build').textContent = wasm.build();
   el('pins').textContent = wasm.pins().split('\n').join(', ');
-  window.game = { feed, start, said: () => said.slice(-20), program: () => program, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player };
+  window.game = { feed, start, said: () => said.slice(-20), program: () => program, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player, music: () => tunes.state() };
   start();
   if (q.has('sources')) sources();
   if (q.has('help')) help();

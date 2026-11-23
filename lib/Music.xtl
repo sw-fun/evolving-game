@@ -1,0 +1,155 @@
+## Music: the music director. Which set of looping phrases plays where,
+## and in what order a set's phrases play (a plan: A A B B B C D D A B
+## ...), worked out from a music file (games/castle/music.toml) and a
+## seed; and the line that tells a page to play it, with its loudness
+## from the world's settings. The page only plays what the line says:
+## the phrases of the plan back to back, round and round; a new set at
+## the end of the phrase playing, from its plan's start.
+##
+## A system over one component, the music a view carries: a mode is
+## played with mu:p_lay in place of md:p_lay, and every picture it shows
+## carries the line (lib/View: a piece whose model begins with ~ is the
+## music, in the picture's metadata id="music"). A plan is chosen once,
+## when a place is entered, not every tick.
+##
+## The music line:
+##   music('set', volume, seconds, 'A A B B B C D D ...')
+## volume from 0 to 1 (0 is silence), seconds how long each of the
+## set's phrases is, and the plan, a phrase a word.
+## Import: "mu:" u_se< "Music"
+
+"md:" u_se< "Mode"
+"rg:" u_se< "Rng"
+"st:" u_se< "Strings"
+"vw:" u_se< "View"
+
+h:f_ail := { (file, field) what -> "bad-scenario" []S_IGNAL file c_at ": " c_at field c_at ": " c_at what }
+## A rule's number that must be a whole number at least `low`.
+h:a_tLeast := { (file, field, word, low) ->
+  n := file md:r_ule (field, word)
+  (n < f_loat low) | n != f_loat f_loor n ? (file, field) h:f_ail word c_at " is wanted, a whole number from " c_at f_ormat low
+  f_loor n
+}
+
+### The file
+
+# :: Char -> Box Char
+## The sets, by name.
+l:s_ets := { file -> file md:l_ist "sets" }
+# :: Char -> Box Char
+## A set's phrases, by name, the first where every plan starts.
+l:p_hrases := { file -> file md:l_ist "phrases" }
+# :: (Char, Char) -> Float
+## How long a set's phrases are, in seconds: (file, set).
+l:s_econds := { (file, set) ->
+  s := file md:r_ule ("seconds", set)
+  s <= 0.0 ? (file, "seconds") h:f_ail set c_at " is wanted, a number of seconds"
+  s
+}
+# :: (Char, Char) -> Char
+## The set that plays at a kind of place (a venue's kind, or a screen's:
+## splash, front, roads, atlas): (file, kind). The set whose kinds-SET
+## names it, the first if two do; else the file's otherwise.
+l:f_or := { (file, kind) ->
+  sets := l:s_ets file
+  named := '{ s -> (e_nclose kind) m_ember? file md:l_ist "kinds-" c_at d_isclose s } e_ach sets
+  0 < '+ r_/ named ? d_isclose f_irst named r_eplicate sets
+  other := file md:f_ield "otherwise"
+  n_ot (e_nclose other) m_ember? sets ? (file, "otherwise") h:f_ail other c_at " is not one of the sets"
+  other
+}
+## The rules of a file: (least, most, weights, length), a phrase a
+## number (in the file's order), and the weights: for each phrase p,
+## the weight of each phrase after it.
+h:r_ules := { file ->
+  names := l:p_hrases file
+  0 = t_ally names ? (file, "phrases") h:f_ail "a phrase at least is wanted"
+  least := '{ p -> h:a_tLeast (file, "repeats-" c_at d_isclose p, "least", 1) } e_ach names
+  most := '{ p -> h:a_tLeast (file, "repeats-" c_at d_isclose p, "most", 1) } e_ach names
+  0 < '+ r_/ most < least ? (file, "repeats") h:f_ail "a phrase's most is less than its least"
+  W := '{ p -> e_nclose (file, names) h:w_eights d_isclose p } e_ach names
+  length := file md:n_umber "length"
+  (length < 1.0) | length != f_loat f_loor length ? (file, "length") h:f_ail "a whole number from 1 is wanted"
+  (least, most, W, f_loor length)
+}
+## The weights of what may follow a phrase, one for each phrase: its
+## next-P, every rule naming a phrase.
+h:w_eights := { (file, names) p ->
+  field := "next-" c_at p
+  rules := '{ r -> e_nclose d_isclose f_irst st:w_ords d_isclose r } e_ach file md:l_ist field
+  n_ot '& r_/ 1 c_at rules m_ember? names ? (file, field) h:f_ail "it names a phrase not in phrases"
+  w := 0.0 m_ax '{ q -> file md:r_ule (field, d_isclose q) } e_ach names
+  0.0 >= '+ r_/ w ? (file, field) h:f_ail "a phrase with a weight above 0 is wanted"
+  w
+}
+
+### The plan
+
+## One run after another: the phrase p played between its least and
+## most times (the first draw of the run), then the phrase that follows
+## chosen by the weights (the second). It ends where the next would be
+## the first phrase again, once the plan is length long (or, whatever
+## the rules, at 1000 runs).
+h:r_un := { (least, most, W, length, key) (plan, p, i) ->
+  u := key rg:u_nit (2 * i - 1) c_at 2 * i
+  low := p s_elect least
+  n := low + f_loor (f_irst u) * f_loat 1 + (p s_elect most) - low
+  more := plan c_at n r_eshape p
+  sums := '+ s_\ d_isclose p s_elect W
+  q := 1 + '+ r_/ 0 + sums <= (2 s_elect u) * f_irst r_ev sums
+  ((q = 1) & length <= t_ally more) | i >= 1000 ? more
+  (least, most, W, length, key) h:r_un (more, q, i + 1)
+}
+# :: (Char, Char, Int) -> Int
+## A plan for a set, as the phrases' numbers (1 the first): (file, set,
+## seed). The same seed gives the same plan; each set draws from its
+## own stream.
+l:n_umbers := { (file, set, seed) ->
+  (least, most, W, length) := h:r_ules file
+  stream := (l:s_ets file) i_ndexOf e_nclose set
+  stream > t_ally l:s_ets file ? (file, "sets") h:f_ail set c_at " is not one of the sets"
+  (least, most, W, length, (rg:s_eed seed, stream)) h:r_un (0 r_eshape 0, 1, 1)
+}
+# :: (Char, Char, Int) -> Box Char
+## A plan for a set, as the phrases' names: (file, set, seed).
+l:p_lan := { (file, set, seed) -> (l:n_umbers (file, set, seed)) s_elect l:p_hrases file }
+
+### The line
+
+## Is a name set in a world?
+h:h_as := { (names, _) name -> (names i_ndexOf e_nclose name) <= t_ally names }
+## The world's settings.music, or the file's default when it is not set.
+h:l_evel := { (file, world) ->
+  world h:h_as "settings.music" ? world md:g_et "settings.music"
+  h:a_tLeast (file, "volume", "default", 0)
+}
+# :: (Char, (Box Char, Int)) -> Float
+## How loud, from 0 to 1: the world's settings.music over the file's
+## most (its default when not set), and 0 when settings.mute is 1.
+l:v_olume := { (file, world) ->
+  most := f_loat h:a_tLeast (file, "volume", "most", 1)
+  level := f_loat h:l_evel (file, world)
+  1 = world md:g_et "settings.mute" ? 0.0
+  0.0 m_ax 1.0 m_in (f_loat f_loor 0.5 + 100.0 * level / most) / 100.0
+}
+# :: (Char, Char, (Box Char, Int), Int) -> Char
+## The music line for a kind of place in a world: (file, kind, world,
+## seed).
+l:l_ine := { (file, kind, world, seed) ->
+  set := l:f_or (file, kind)
+  plan := " " st:j_oin l:p_lan (file, set, seed)
+  "music('" c_at set c_at "', " c_at (f_ormat l:v_olume (file, world)) c_at ", " c_at (f_ormat l:s_econds (file, set)) c_at ", '" c_at plan c_at "')"
+}
+
+### The system
+
+# :: (Any a, Any b) => ((a, Box Char, Box Char, Float, b), Char) -> (a, Box Char, Box Char, Float, b)
+## A view carrying a music line: (view, line).
+l:s_cored := { (view, line) -> vw:w_ith (view, "~" c_at line, "", 8 r_eshape 0.0) }
+# :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> Char -> a -> ((Int, Int, Int), a)
+## Play a mode as md:p_lay does, every picture carrying the music line:
+## line 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep mu:p_lay state.
+l:p_lay := { step_ status_ legal_ view_ line s ->
+  v_ := { x -> l:s_cored (view_ x, line) }
+  'v_ 'legal_ 'status_ 'step_ md:p_lay s
+}

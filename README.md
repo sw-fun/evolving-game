@@ -160,6 +160,7 @@ just extensions                      # once: the pinned X_eTaL-extensions (its 3
 just web                             # build the page into web/dist
 just serve                           # http://127.0.0.1:8480/ until Ctrl-C
 just assets                          # make the 3D pieces with Blender (optional; they are tracked)
+just music                           # encode the music from its WAVs with ffmpeg (optional; it is tracked)
 just browser-test                    # the page tested in headless Chrome
 just pages                           # the site as it is published, into pages/
 ```

@@ -249,6 +249,30 @@ defaults drawn from the repositories above.
   towers not yet standing left out), because `Defending.xtl` was
   being changed at the same time; the shared part is to move to a
   `lib/` library both use, in a step of its own.
+- D21. Music (the user, 2026-11-21): the user's own looping game
+  music (music-pipe-rs, MIT, Michael A Wright): four sets (calm,
+  explore, sinister, battle), each of four phrases A (establish), B
+  (the bed), C (develop), D (turnaround), every phrase a seamless
+  loop in D that ends on Asus, every A starting on D, so any set may
+  follow any phrase at a phrase's end. The 16 phrases are committed
+  encoded as Ogg Opus at 96 kb/s (`assets/music/`, about 5 MB, the
+  user's decision; never the WAVs), made by `just music` from the
+  WAVs with ffmpeg and checked by the gate against
+  `assets/music/SHA256SUMS` without ffmpeg. X_eTaL decides the music
+  (`lib/Music.xtl`, `games/castle/music.toml`): which set plays at
+  each kind of place, and a plan of phrases from the transition rules
+  (each phrase's least and most repeats, the weights of what follows
+  it) and a seed through `lib/Rng` (A A B B B C D D A B B C C D ...),
+  ending where it returns to A; the picture carries it in its
+  metadata id="music" with the loudness from the world's
+  `settings.music` (0 to 10, default 6) and `settings.mute`. The
+  page only plays the line: the plan's phrases back to back on the
+  audio clock, each trimmed to the line's seconds, round and round;
+  a new plan at the end of the phrase playing, from its A. Known
+  risk: Safari's Opus decoding (older versions cannot); an `.m4a`
+  (AAC) copy as a fallback is a later option. Sound on the page is
+  an ask of X_eTaL-extensions (D15; `docs/xetal-extensions-asks.md`):
+  this repository's `web/static/music.js` plays it until then.
 
 ## The seams that make the games one game
 

@@ -43,7 +43,7 @@ const served = mkdtempSync(join(tmpdir(), "evolving-game-site-"));
 if (!live) (await import("node:fs")).symlinkSync(dist, join(served, "evolving-game"));
 const server = live ? { kill() {} } : spawn(join(root, ".venv/bin/python"), ["-m", "http.server", String(webPort), "--bind", "127.0.0.1", "--directory", served], { stdio: "ignore" });
 const profile = mkdtempSync(join(tmpdir(), "evolving-game-chrome-"));
-const browser = spawn(chrome, ["--headless=new", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--hide-scrollbars",
+const browser = spawn(chrome, ["--headless=new", "--mute-audio", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--hide-scrollbars",
   `--remote-debugging-port=${cdpPort}`, `--user-data-dir=${profile}`, "--window-size=1280,800", "about:blank"], { stdio: "ignore" });
 let failed = 0;
 const done = async (code) => {
@@ -230,8 +230,18 @@ check((await caption()).startsWith("The castle and its country: 4 of 23 places k
 await sleep(300);
 check((await page("window.game.player().count().pieces")) === 4, "each a marker on the map");
 check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x.textContent).join('|')")).includes("2 The battlefield on foot"), "with its number and name written over it");
+// The music: the picture names it (lib/Music); the page serves and
+// decodes its phrases at the length the program gives (headless Chrome
+// may play no sound: that is not asked).
+const tune = () => page("(document.querySelector('#flat svg metadata#music') || {}).textContent || ''");
+check(/^music\('calm', 0\.6, 26\.666667, 'A( [ABCD])+'\)$/.test(await tune()), `the map's picture names its music: the calm set, at the default loudness (${(await tune()).slice(0, 40)}...)`);
+check(await page("window.game.music().line === (document.querySelector('#flat svg metadata#music') || {}).textContent"), "and the page has read it");
+const decoded = await page(`fetch('music/calm-A.ogg').then((r) => r.ok ? r.arrayBuffer() : Promise.reject(r.status))
+  .then((b) => new OfflineAudioContext(2, 48000, 48000).decodeAudioData(b)).then((s) => s.duration, (e) => -1)`);
+check(Math.abs(decoded - 26.666667) < 0.05, `the page serves its first phrase (music/calm-A.ogg), which decodes to the phrase's length (${decoded} s)`);
 await click(190, 195);
 check((await caption()).includes("W A S D walk"), "a click on the far end of the second place's name goes into the battlefield on foot");
+check(/^music\('explore', 0\.6, 20\.0, 'A /.test(await tune()), "where the explore set plays");
 await page("document.getElementById('leave').click(), 1");
 check((await caption()).startsWith("The castle and its country: 4 of 23"), "the Map button comes back to the map");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");
