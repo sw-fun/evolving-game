@@ -260,6 +260,14 @@ check(/volume\(0\.0\)$/.test(await tune()) && (await caption()).startsWith("The 
 for (const type of ["mousePressed", "mouseReleased"]) await send("Input.dispatchMouseEvent", { type, x: speaker[0], y: speaker[1], button: "left", clickCount: 1 });
 for (const type of ["keyDown", "keyUp"]) await key(type, "[", "BracketLeft", 219);
 check(/volume\(0\.6\)$/.test(await tune()), "clicked again it plays, and [ makes it quieter");
+// A person's click: the picture is drawn again between the press and the
+// release (every tick draws it), and the strip still takes it.
+const louder = await page("(() => { const r = document.querySelector('#flat svg .sound [data-control=up] rect').getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; })()");
+await send("Input.dispatchMouseEvent", { type: "mousePressed", x: louder[0], y: louder[1], button: "left", clickCount: 1 });
+await page("(() => { document.getElementById('flat').innerHTML = window.game.picture(); return 1; })()");
+await send("Input.dispatchMouseEvent", { type: "mouseReleased", x: louder[0], y: louder[1], button: "left", clickCount: 1 });
+check(/volume\(0\.7\)$/.test(await tune()), "its + takes a click whose press and release land on two drawings of the picture");
+for (const type of ["keyDown", "keyUp"]) await key(type, "[", "BracketLeft", 219);
 // The front door's Settings and the strip are one sound: a change in
 // Settings is heard with the very key that made it. (Leave the map for
 // the profile's home, Settings, down to the music's volume, Left; then

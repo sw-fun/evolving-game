@@ -62,10 +62,13 @@ document.body.classList.toggle('solid', solid);
 // The scene a picture carries, or nothing.
 const sceneOf = (svg) => (svg.match(/<metadata id="scene">([\s\S]*?)<\/metadata>/) || ['', ''])[1];
 
+let shown = '';
 // Show what the program last drew, and what it has printed.
 function draw() {
   const svg = wasm.picture();
-  flat.innerHTML = svg;
+  // only when it changed: a picture swapped under a pressed button eats
+  // the click (the press and the release land on different elements)
+  if (svg !== shown) { flat.innerHTML = svg; shown = svg; }
   tunes.show(svg);
   const calls = sceneOf(svg);
   // a scene seen through an eye is one the pointer can look round in
@@ -110,12 +113,24 @@ function point(x, y) { feed(`click ${x.toFixed(1)} ${y.toFixed(1)}`); }
 // A click on the flat picture: the same units, through the SVG's own map.
 // (in 3D, only a picture a game draws itself, and the sound strip every
 // picture has: the board takes the rest)
-flat.parentElement.addEventListener('click', (e) => {
-  if (solid && !document.body.classList.contains('drawn') && !e.target.closest?.('.sound')) return;
+function pictured(e) {
   const svg = flat.querySelector('svg');
   if (!svg) return;
   const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
   point(p.x, p.y);
+}
+flat.parentElement.addEventListener('click', (e) => {
+  if (e.target.closest?.('.sound')) return;
+  if (solid && !document.body.classList.contains('drawn')) return;
+  pictured(e);
+});
+// The sound strip is taken on the press: the picture is drawn again every
+// tick, and a click whose press and release land on two drawings of it is
+// never a click at all.
+flat.parentElement.addEventListener('pointerdown', (e) => {
+  if (e.button !== 0 || !e.target.closest?.('.sound')) return;
+  e.preventDefault();
+  pictured(e);
 });
 
 // The board's place can change size without the window changing (the
