@@ -7,10 +7,12 @@
 ## writes SVG or a scene: it says what is where, and this library draws.
 ##
 ## A stage is a map made ready to draw, once: (map, numbers, tiles,
-## depths, ground, smooth): the picture's numbers, each tile's SVG far
-## to near, each tile's depth, the scene's ground, and whether that is
-## one smooth surface (vw:s_mooth) or the tiles (vw:s_tage). A mode
-## keeps its stage.
+## depths, ground, smooth): the picture's numbers, the tiles' SVG far
+## to near, joined a band at a time (every tile of one depth, the
+## board's diagonal row + column, in one text: a tick then joins a band
+## a diagonal, not a text a tile), each band's depth, the scene's
+## ground, and whether that is one smooth surface (vw:s_mooth) or the
+## tiles (vw:s_tage). A mode keeps its stage.
 ## A view is (stage, models, clips, pieces, caption): a model name and a
 ## clip name a piece, and a row of numbers a piece:
 ##   x y     where it is on the board: x east and y south, in tiles from
@@ -169,7 +171,9 @@ h:t_ilesCall := { (rows, cols, kinds, heights) k ->
   start c_at (f_ormat h:f_ine r_avel o_\ (4 c_at t_ally is) r_eshape x c_at z c_at y c_at y - k s_elect h:drops) c_at "', 4), '" c_at model c_at "')\n"
 }
 ## A map's parts every stage has: its frame, its tiles' SVG far to near
-## and their depths, and the pieces of the scene's ground.
+## a band a depth (the tiles of one diagonal joined, in the order they
+## are drawn) and the bands' depths, and the pieces of the scene's
+## ground.
 h:p_arts := { map ->
   frame := h:f_rame map
   rc := w:s_ize map
@@ -180,8 +184,11 @@ h:p_arts := { map ->
   cols := 1 + ((r_ange n) - 1) m_od 2 s_elect rc
   far := g_rade rows + cols
   tiles := '{ i -> e_nclose frame h:t_ileSvg (i s_elect rows, i s_elect cols, i s_elect kinds, i s_elect heights) } e_ach far
+  depth := far s_elect rows + cols
+  bands := 1 + r_ange (-1 + '+ r_/ rc)
+  joined := '{ d -> e_nclose t:j_oin (depth = d) r_eplicate tiles } e_ach bands
   calls := '{ k -> e_nclose (rows, cols, kinds, heights) h:t_ilesCall k } e_ach r_ange t_ally w:kinds
-  (frame, tiles, f_loat far s_elect rows + cols, calls)
+  (frame, joined, f_loat bands, calls)
 }
 # :: (Any a, Num b, Num c) => (a, Int, b) -> ((a, Int, b), Float, Box Char, Float, Char, c)
 ## A map made ready to draw, once. A mode makes it in its n_ew and keeps
@@ -571,7 +578,10 @@ l:p_icture := { view ->
   back := "<rect class=\"flat\" width=\"" c_at w c_at "\" height=\"" c_at h c_at "\" fill=\"#1d1f2b\"/>"
   said := st:l_ines caption
   words := t:j_oin '{ i -> e_nclose "<text x=\"" c_at (f_ormat h:w_hole h:edge) c_at "\" y=\"" c_at (f_ormat h:w_hole ((4 s_elect frame) - h:edge) - 20.0 * f_loat (t_ally said) - i) c_at "\" font-size=\"16\" fill=\"#e8e6df\">" c_at (d_isclose f_irst (i - 1) d_rop said) c_at "</text>" } e_ach r_ange t_ally said
-  head c_at "<metadata id=\"scene\">" c_at (l:s_cene view) c_at "</metadata>" c_at (h:t_une models) c_at back c_at "<g class=\"flat\">" c_at (t:j_oin order s_elect all) c_at "</g>" c_at (h:l_abels (stage, models, pieces)) c_at words c_at (h:s_tripSvg (models, h:p_lace ("", frame))) c_at (h:p_anelSvg (models, h:p_anelAt ("", frame))) c_at "</svg>"
+  front := head c_at "<metadata id=\"scene\">"
+  middle := "</metadata>" c_at (h:t_une models) c_at back c_at "<g class=\"flat\">"
+  after := "</g>" c_at (h:l_abels (stage, models, pieces)) c_at words c_at (h:s_tripSvg (models, h:p_lace ("", frame))) c_at (h:p_anelSvg (models, h:p_anelAt ("", frame))) c_at "</svg>"
+  (front c_at l:s_cene view) c_at (middle c_at t:j_oin order s_elect all) c_at after
 }
 
 ### The scene
@@ -638,8 +648,10 @@ l:s_cene := { (stage, models, clips, pieces, _) ->
   target := (0.5 * a + b) c_at 0.0 c_at 0.5 * b - a
   size := "view(" c_at (f_ormat h:w_hole w) c_at ", " c_at (f_ormat h:w_hole h) c_at ", '#1d1f2b')\n"
   camera := "camera(" c_at (h:n_ums (target, 3)) c_at "[0], " c_at (h:n_ums (0.6124 0.5 0.6124, 3)) c_at "[0], " c_at (f_ormat h:f_ine h:tw * 2.0 ^ 0.5) c_at ")\n"
-  now := (map, smooth) h:s_tands (1 2) s_elect_2 pieces
-  soon := (map, smooth) h:s_tands (6 7) s_elect_2 pieces
+  n := t_ally pieces
+  both := (map, smooth) h:s_tands ((1 2) s_elect_2 pieces) c_at (6 7) s_elect_2 pieces
+  now := n t_ake both
+  soon := n d_rop both
   calls := '{ i -> e_nclose h:p_ieceCall (d_isclose f_irst (i - 1) d_rop models, d_isclose f_irst (i - 1) d_rop clips, i s_elect now, i s_elect soon, i s_elect pieces) } e_ach r_ange t_ally pieces
-  size c_at camera c_at ground c_at t:j_oin calls
+  ((size c_at camera) c_at ground) c_at t:j_oin calls
 }
