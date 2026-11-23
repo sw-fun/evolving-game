@@ -273,7 +273,14 @@ defaults drawn from the repositories above.
   and ] change it before the mode sees the event (a mode that names
   the key itself, the maze's M, or is being typed into, "key TEXT",
   keeps the keys; the icons always work); what changed comes back
-  with the mode's outcome and is kept in the world. The
+  with the mode's outcome and is kept in the world. A settings screen
+  and the strip are one sound, at once (the user, 2026-11-22: a
+  change in Settings must be heard at once): after a key or a
+  click the loop reads the mode's outcome, and when what it names for
+  settings.music and settings.mute has changed, that is the sound
+  (the front door's outcome names its Settings rows even before it is
+  won); a strip change is told to a mode that takes "choose 4 LEVEL"
+  and "choose 5 MUTE", so Settings' rows show it. The
   page only plays the line: the plan's phrases back to back on the
   audio clock, each trimmed to the line's seconds, round and round;
   a new plan at the end of the phrase playing, from its A. Known

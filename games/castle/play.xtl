@@ -96,7 +96,7 @@ u:n_ame := { (names, values) ->
 ## deeds, or the treasury, and back to the profile's home after. The
 ## events ended, the profile's world as it stands.
 u:d_oor := { save ->
-  (heard, ended) := (u:t_une ("front", u:p_rofile save)) 'fr:v_iew 'fr:l_egal 'fr:s_tatus 'fr:s_tep mu:p_lay fr:n_ew ("front.toml", save, 1)
+  (heard, ended) := (u:t_une ("front", u:p_rofile save)) 'fr:o_utcome 'fr:v_iew 'fr:l_egal 'fr:s_tatus 'fr:s_tep mu:p_lay fr:n_ew ("front.toml", save, 1)
   (status, picks, _) := fr:o_utcome ended
   n_ot status = md:won ? u:a_gain save u:i_nto heard
   name := u:n_ame picks
@@ -121,25 +121,25 @@ u:a_gain := { save ->
 ## The treasury: its outcome, and the places won so far marked seen
 ## (the outcome cannot know them; idle.seen is reset to them here).
 u:h_oard := { (world, k, path) ->
-  (status, changes, rewards) := 'hd:o_utcome u:h_eard (u:t_une ("idle", world)) 'hd:v_iew 'hd:l_egal 'hd:s_tatus 'hd:s_tep mu:p_lay hd:n_ew (path, world, k)
+  (status, changes, rewards) := 'hd:o_utcome u:h_eard (u:t_une ("idle", world)) 'hd:o_utcome 'hd:v_iew 'hd:l_egal 'hd:s_tatus 'hd:s_tep mu:p_lay hd:n_ew (path, world, k)
   (status, changes md:s_et ("idle.seen", (world md:g_et "stat.won")), rewards)
 }
 ## A place on foot whose scenario names a painting: its card, and then,
 ## gone on from it, the walk; left at the card, nothing happens.
 u:c_ross := { (world, k, path) ->
-  (heard, card) := (u:t_une ("roam", world)) 'ov:v_iew 'ov:l_egal 'ov:s_tatus 'ov:s_tep mu:p_lay ov:n_ew (file, world, k)
+  (heard, card) := (u:t_une ("roam", world)) 'ov:o_utcome 'ov:v_iew 'ov:l_egal 'ov:s_tatus 'ov:s_tep mu:p_lay ov:n_ew (file, world, k)
   n_ot md:won = ov:s_tatus card ? (md:left, heard, md:nothing)
   there := world md:m_erge heard
-  heard u:a_lso 'rm:o_utcome u:h_eard (u:t_une ("roam", there)) 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep mu:p_lay rm:n_ew (path, there, k)
+  heard u:a_lso 'rm:o_utcome u:h_eard (u:t_une ("roam", there)) 'rm:o_utcome 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep mu:p_lay rm:n_ew (path, there, k)
 }
 ## The dungeon, its card first when its scenario names a painting;
 ## left at the card, nothing happens.
 u:d_own := { (world, k, path) ->
-  0 = t_ally ov:a_rt path ? 'dp:o_utcome u:h_eard (u:t_une ("dungeon", world)) 'dp:v_iew 'dp:l_egal 'dp:s_tatus 'dp:s_tep mu:p_lay dp:n_ew (file, world, k)
-  (heard, card) := (u:t_une ("dungeon", world)) 'ov:v_iew 'ov:l_egal 'ov:s_tatus 'ov:s_tep mu:p_lay ov:n_ew (file, world, k)
+  0 = t_ally ov:a_rt path ? 'dp:o_utcome u:h_eard (u:t_une ("dungeon", world)) 'dp:o_utcome 'dp:v_iew 'dp:l_egal 'dp:s_tatus 'dp:s_tep mu:p_lay dp:n_ew (file, world, k)
+  (heard, card) := (u:t_une ("dungeon", world)) 'ov:o_utcome 'ov:v_iew 'ov:l_egal 'ov:s_tatus 'ov:s_tep mu:p_lay ov:n_ew (file, world, k)
   n_ot md:won = ov:s_tatus card ? (md:left, heard, md:nothing)
   there := world md:m_erge heard
-  heard u:a_lso 'dp:o_utcome u:h_eard (u:t_une ("dungeon", there)) 'dp:v_iew 'dp:l_egal 'dp:s_tatus 'dp:s_tep mu:p_lay dp:n_ew (file, there, k)
+  heard u:a_lso 'dp:o_utcome u:h_eard (u:t_une ("dungeon", there)) 'dp:o_utcome 'dp:v_iew 'dp:l_egal 'dp:s_tatus 'dp:s_tep mu:p_lay dp:n_ew (file, there, k)
 }
 ## A venue played to its end in a world: its mode chosen by its kind;
 ## every mode's outcome is the same kind of thing.
@@ -147,17 +147,17 @@ u:v_isit := { (world, k) ->
   kind := vn:k_ind (file, k)
   tune := u:t_une (kind, world)
   path := vn:s_cenario (file, k)
-  kind m_atch "defense" ? 'df:o_utcome u:h_eard tune 'df:v_iew 'df:l_egal 'df:s_tatus 'df:s_tep mu:p_lay df:n_ew (path, world, k)
-  kind m_atch "attack" ? 'ak:o_utcome u:h_eard tune 'ak:v_iew 'ak:l_egal 'ak:s_tatus 'ak:s_tep mu:p_lay ak:n_ew (path, world, k)
+  kind m_atch "defense" ? 'df:o_utcome u:h_eard tune 'df:o_utcome 'df:v_iew 'df:l_egal 'df:s_tatus 'df:s_tep mu:p_lay df:n_ew (path, world, k)
+  kind m_atch "attack" ? 'ak:o_utcome u:h_eard tune 'ak:o_utcome 'ak:v_iew 'ak:l_egal 'ak:s_tatus 'ak:s_tep mu:p_lay ak:n_ew (path, world, k)
   (kind m_atch "roam") & 0 < t_ally ov:a_rt path ? u:c_ross (world, k, path)
-  kind m_atch "roam" ? 'rm:o_utcome u:h_eard tune 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep mu:p_lay rm:n_ew (path, world, k)
-  kind m_atch "maze" ? 'wr:o_utcome u:h_eard tune 'wr:v_iew 'wr:l_egal 'wr:s_tatus 'wr:s_tep mu:p_lay wr:n_ew (file, world, k)
+  kind m_atch "roam" ? 'rm:o_utcome u:h_eard tune 'rm:o_utcome 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep mu:p_lay rm:n_ew (path, world, k)
+  kind m_atch "maze" ? 'wr:o_utcome u:h_eard tune 'wr:o_utcome 'wr:v_iew 'wr:l_egal 'wr:s_tatus 'wr:s_tep mu:p_lay wr:n_ew (file, world, k)
   kind m_atch "dungeon" ? u:d_own (world, k, path)
-  kind m_atch "raycaster" ? 'ps:o_utcome u:h_eard tune 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep mu:p_lay ps:n_ew (file, world, k)
+  kind m_atch "raycaster" ? 'ps:o_utcome u:h_eard tune 'ps:o_utcome 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep mu:p_lay ps:n_ew (file, world, k)
   kind m_atch "idle" ? u:h_oard (world, k, path)
-  kind m_atch "chest" ? 'wc:o_utcome u:h_eard tune 'wc:v_iew 'wc:l_egal 'wc:s_tatus 'wc:s_tep mu:p_lay wc:n_ew (path, world, k)
-  kind m_atch "board" ? 'lg:o_utcome u:h_eard tune 'lg:v_iew 'lg:l_egal 'lg:s_tatus 'lg:s_tep mu:p_lay lg:n_ew (file, world, k)
-  'sk:o_utcome u:h_eard tune 'sk:v_iew 'sk:l_egal 'sk:s_tatus 'sk:s_tep mu:p_lay sk:n_ew (file, world, k)
+  kind m_atch "chest" ? 'wc:o_utcome u:h_eard tune 'wc:o_utcome 'wc:v_iew 'wc:l_egal 'wc:s_tatus 'wc:s_tep mu:p_lay wc:n_ew (path, world, k)
+  kind m_atch "board" ? 'lg:o_utcome u:h_eard tune 'lg:o_utcome 'lg:v_iew 'lg:l_egal 'lg:s_tatus 'lg:s_tep mu:p_lay lg:n_ew (file, world, k)
+  'sk:o_utcome u:h_eard tune 'sk:o_utcome 'sk:v_iew 'sk:l_egal 'sk:s_tatus 'sk:s_tep mu:p_lay sk:n_ew (file, world, k)
 }
 ## The world after a venue's outcome: what it changed and brought; won,
 ## the venue marked done and counted (stat.won); and every deed it has
@@ -182,8 +182,8 @@ u:r_ound := { world ->
 ## Where the next place is chosen: the side's road of levels (Roads.xtl),
 ## or, for the profile named debug, the map of every venue (Atlas.xtl).
 u:c_hoose := { world ->
-  "debug" m_atch u:n_ame world ? 'at:o_utcome u:h_eard (u:t_une ("atlas", world)) 'at:v_iew 'at:l_egal 'at:s_tatus 'at:s_tep mu:p_lay at:n_ew (file, world, 1)
-  'rd:o_utcome u:h_eard (u:t_une ("roads", world)) 'rd:v_iew 'rd:l_egal 'rd:s_tatus 'rd:s_tep mu:p_lay rd:n_ew ("levels.toml", world, 1)
+  "debug" m_atch u:n_ame world ? 'at:o_utcome u:h_eard (u:t_une ("atlas", world)) 'at:o_utcome 'at:v_iew 'at:l_egal 'at:s_tatus 'at:s_tep mu:p_lay at:n_ew (file, world, 1)
+  'rd:o_utcome u:h_eard (u:t_une ("roads", world)) 'rd:o_utcome 'rd:v_iew 'rd:l_egal 'rd:s_tatus 'rd:s_tep mu:p_lay rd:n_ew ("levels.toml", world, 1)
 }
 ## The map was left without a place chosen: the events have ended (the
 ## next is the end again), and so does the game; or it was the command
@@ -199,5 +199,5 @@ u:s_tay := { (world, menu) ->
 wrong := at:mode md:p_roblem file
 _ := t:l_ines (0 < t_ally wrong) r_eplicate e_nclose wrong
 ## The splash first, then the map.
-(splashed, _) := (u:t_une ("splash", u:p_rofile fr:m_igrate u:k_ept @)) 'sp:v_iew 'sp:l_egal 'sp:s_tatus 'sp:s_tep mu:p_lay sp:n_ew (file, md:nothing, 1)
+(splashed, _) := (u:t_une ("splash", u:p_rofile fr:m_igrate u:k_ept @)) 'sp:o_utcome 'sp:v_iew 'sp:l_egal 'sp:s_tatus 'sp:s_tep mu:p_lay sp:n_ew (file, md:nothing, 1)
 _ := t:l_ines md:l_ines u:d_oor (fr:m_igrate u:k_ept @) u:i_nto splashed

@@ -45,7 +45,9 @@ the next. This is the game the others are parts of.
   `settings.mute`. Every picture has a sound strip at its top right:
   a click on the speaker, or M, mutes and unmutes; the minus and plus,
   or [ and ], make it quieter and louder; the level is kept in the
-  world when the game ends. The music is the user's own, encoded from WAVs
+  world when the game ends. The front door's Settings rows (Music
+  volume, Music on or muted) are the same sound, heard at once
+  ([`sound-check.xtl`](sound-check.xtl)). The music is the user's own, encoded from WAVs
   into `assets/music` by `just music`.
 
 - **Kept between visits.** In a browser the world (gold, experience,
