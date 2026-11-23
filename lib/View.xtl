@@ -307,7 +307,9 @@ l:m_any := { (stage, models, clips, pieces, caption) ->
 ## over the picture at its place ("#3 The town"), and it is no part of
 ## the scene. A model that begins with a star is a burst of particles at its
 ## place ("*fire", "*dust" ...: its heading the wind, t how many a
-## second, its last number a seed), which only the scene shows.
+## second, its last number a seed), which only the scene shows. A
+## model that begins with a tilde is the music line (lib/Music): only
+## the picture's metadata id="music" carries it.
 ## The model "eye" is not a thing to draw but where you look from: its
 ## place and heading, its pitch in degrees where a piece has its
 ## clip's time, and the tick's length last. The scene is then seen
@@ -345,7 +347,28 @@ l:t_ext := { (stage, models, _, every, caption) ->
 
 ## Which of a view's pieces are things standing on the board: not a
 ## burst (a model that begins with a star), which only a scene shows.
-h:s_olid := { models -> '{ m -> n_ot (f_irst (d_isclose m) c_at " ") m_ember? "*#<" } e_ach models }
+h:s_olid := { models -> '{ m -> n_ot (f_irst (d_isclose m) c_at " ") m_ember? "*#<~" } e_ach models }
+## The music line a view carries, or an empty text: a model that begins
+## with ~ is the line (lib/Music), written in the picture's metadata
+## id="music" for a page to play; no part of the scene or the text.
+h:m_usic := { models ->
+  is := '{ m -> "~" m_atch 1 t_ake d_isclose m } e_ach models
+  0 = '+ r_/ is ? ""
+  1 d_rop d_isclose f_irst is r_eplicate models
+}
+## The music's metadata, or nothing when a view carries no line.
+h:t_une := { models ->
+  line := h:m_usic models
+  0 = t_ally line ? ""
+  "<metadata id=\"music\">" c_at line c_at "</metadata>"
+}
+## A picture a game drew itself with the music's metadata put in, just
+## before its end.
+h:w_ithTune := { (svg, tune) ->
+  0 = t_ally tune ? svg
+  n_ot "</svg>" m_atch -6 t_ake svg ? svg c_at tune
+  (-6 d_rop svg) c_at tune c_at "</svg>"
+}
 ## A view's own drawing, or an empty text: a model that begins with <
 ## is a whole picture (an SVG), drawn by a game that draws itself (one
 ## taken from X_eTaL-games), and is shown as it is in place of the
@@ -411,7 +434,7 @@ h:d_epths := { pieces -> 2.5 + (f_loat f_loor f_irst_2 pieces) + f_loat f_loor 2
 ## group; one that cannot shows the picture as it is.
 l:p_icture := { view ->
   (stage, models, _, pieces, caption) := view
-  0 < t_ally h:d_rawing models ? h:d_rawing models
+  0 < t_ally h:d_rawing models ? h:w_ithTune (h:d_rawing models, h:t_une models)
   (_, frame, tiles, depths, _, _) := stage
   all := tiles c_at h:p_iecesSvg (stage, models, pieces)
   order := g_rade depths c_at h:d_epths ((h:s_olid models) & h:n_ear pieces) r_eplicate pieces
@@ -421,7 +444,7 @@ l:p_icture := { view ->
   back := "<rect class=\"flat\" width=\"" c_at w c_at "\" height=\"" c_at h c_at "\" fill=\"#1d1f2b\"/>"
   said := st:l_ines caption
   words := t:j_oin '{ i -> e_nclose "<text x=\"" c_at (f_ormat h:w_hole h:edge) c_at "\" y=\"" c_at (f_ormat h:w_hole ((4 s_elect frame) - h:edge) - 20.0 * f_loat (t_ally said) - i) c_at "\" font-size=\"16\" fill=\"#e8e6df\">" c_at (d_isclose f_irst (i - 1) d_rop said) c_at "</text>" } e_ach r_ange t_ally said
-  head c_at "<metadata id=\"scene\">" c_at (l:s_cene view) c_at "</metadata>" c_at back c_at "<g class=\"flat\">" c_at (t:j_oin order s_elect all) c_at "</g>" c_at (h:l_abels (stage, models, pieces)) c_at words c_at "</svg>"
+  head c_at "<metadata id=\"scene\">" c_at (l:s_cene view) c_at "</metadata>" c_at (h:t_une models) c_at back c_at "<g class=\"flat\">" c_at (t:j_oin order s_elect all) c_at "</g>" c_at (h:l_abels (stage, models, pieces)) c_at words c_at "</svg>"
 }
 
 ### The scene
@@ -457,6 +480,7 @@ h:tall := 0.5
 h:p_ieceCall := { (model, clip, y, y2, n) ->
   model m_atch "eye" ? h:e_yeCall (y, n)
   "#" m_atch 1 t_ake model ? ""
+  "~" m_atch 1 t_ake model ? ""
   "*" m_atch 1 t_ake model ? h:b_urstCall (1 d_rop model, y, n)
   from := (2 t_ake n) c_at y c_at 2 t_ake 2 d_rop n
   to := (2 t_ake 5 d_rop n) c_at y2

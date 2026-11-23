@@ -1,0 +1,49 @@
+# The castle's music: four sets of looping phrases, which set plays
+# where, and how a set's phrases follow one another. Read by
+# lib/Music.xtl through lib/Mode; every value is a string, or a list
+# of strings.
+#
+# The phrases are the user's own (music-pipe-rs, MIT): every phrase is
+# a seamless loop, all are in D, every phrase ends on Asus and every
+# set's first phrase starts on D, so a set may follow any phrase of any
+# other at a phrase's end. The page plays music/SET-PHRASE.ogg
+# (scripts/music.sh makes them from the WAVs).
+mode = ["music"]
+title = ["The castle's music"]
+
+# The sets, and how long each one's phrases are, in seconds (each
+# phrase of a set is as long as the others: 8 bars).
+sets = ["calm", "explore", "sinister", "battle"]
+seconds = ["calm 26.666667", "explore 20", "sinister 26.666667", "battle 26.666667"]
+
+# Where each set plays: the kinds of place (a venue's kind in
+# castle.toml, or the screens: splash, front, roads, atlas). A kind no
+# set names plays the set in otherwise.
+kinds-calm = ["splash", "front", "roads", "atlas", "idle", "chest", "board", "placeholder"]
+kinds-explore = ["roam", "maze"]
+kinds-sinister = ["dungeon", "raycaster"]
+kinds-battle = ["defense", "attack"]
+otherwise = ["calm"]
+
+# A set's phrases, the same four in every set: A establishes (it is
+# where a set starts), B is the bed (the quietest, made to repeat), C
+# develops, D turns round to A. For each phrase: how many times in a
+# row it plays (repeats-P: least and most), and what may follow it
+# (next-P: a phrase and its weight; a phrase not named never follows).
+# A plan starts at the first phrase and ends where the next would be
+# the first again, once it has at least length phrases; the page plays
+# it round and round.
+phrases = ["A", "B", "C", "D"]
+repeats-A = ["least 1", "most 2"]
+next-A = ["B 4", "C 1"]
+repeats-B = ["least 2", "most 3"]
+next-B = ["C 3", "D 1"]
+repeats-C = ["least 1", "most 2"]
+next-C = ["D 3", "B 1"]
+repeats-D = ["least 1", "most 2"]
+next-D = ["A 1"]
+length = ["16"]
+
+# The music's loudness: the world's settings.music, from 0 to most
+# (default when it is not set); settings.mute 1 is silence.
+volume = ["default 6", "most 10"]

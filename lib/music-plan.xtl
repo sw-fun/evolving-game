@@ -1,0 +1,78 @@
+#!/usr/bin/env xetal
+## The music director (lib/Music) on the castle's music file: which set
+## plays at each kind of place, a plan for every set and a few seeds,
+## what every plan promises (it starts at the first phrase, ends where
+## the next is the first again, is at least the file's length long, and
+## plays each phrase between its least and most times in a row), the
+## loudness from the world's settings, the music line, and a view that
+## carries it: in the picture's metadata, and nowhere in the scene or
+## the text. Then a music file with a mistake, named.
+"md:" u_se< "Mode"
+"mu:" u_se< "Music"
+"st:" u_se< "Strings"
+"t:" u_se< "Text"
+"vw:" u_se< "View"
+"w:" u_se< "World"
+
+file := "../games/castle/music.toml"
+# The sets, and the set at each kind of place (an unnamed kind plays
+# the file's otherwise).
+_ := t:l_ines mu:s_ets file
+kinds := "splash" "front" "roads" "atlas" "defense" "attack" "roam" "maze" "dungeon" "raycaster" "idle" "chest" "board" "placeholder" "somewhere"
+_ := t:l_ines '{ k -> e_nclose (d_isclose k) c_at " " c_at mu:f_or (file, d_isclose k) } e_ach kinds
+# A plan for each set from the seeds 1, 2 and 3, a line each.
+u:s_hown := { (set, seed) -> e_nclose set c_at " " c_at (f_ormat seed) c_at ": " c_at " " st:j_oin mu:p_lan (file, set, seed) }
+_ := t:l_ines '{ s -> u:s_hown (d_isclose s, 1) } e_ach mu:s_ets file
+_ := t:l_ines '{ s -> u:s_hown (d_isclose s, 2) } e_ach mu:s_ets file
+_ := t:l_ines '{ s -> u:s_hown (d_isclose s, 3) } e_ach mu:s_ets file
+# The same seed, the same plan.
+(mu:p_lan (file, "battle", 7)) m_atch mu:p_lan (file, "battle", 7)
+# What every plan promises, for every set and the seeds 1 to 50: how
+# many plans start at A, end at D, are 16 long or more, and play every
+# phrase within its repeats (A 1-2, B 2-3, C 1-2, D 1-2) and in an
+# order the rules allow (A to B or C, B to C or D, C to D or B, D to
+# A): all 200.
+least := 1 2 1 1
+most := 2 3 2 2
+allowed := 4 4 r_eshape 0 1 1 0 0 0 1 1 0 1 0 1 1 0 0 0
+## The runs of a plan of numbers: (phrases, lengths).
+u:r_uns := { p ->
+  starts := 1 c_at 0 + (1 d_rop p) != -1 d_rop p
+  at := w_here starts
+  (at s_elect p, (1 d_rop at c_at 1 + t_ally p) - at)
+}
+u:k_ept := { p ->
+  (phrases, lengths) := u:r_uns p
+  within := '& r_/ (lengths >= phrases s_elect least) & lengths <= phrases s_elect most
+  steps := (1 d_rop phrases) + 4 * (-1 d_rop phrases) - 1
+  follows := '& r_/ 1 c_at steps s_elect r_avel allowed
+  (1 = f_irst p) c_at (4 = f_irst r_ev p) c_at (16 <= t_ally p) c_at within c_at follows
+}
+plans := '{ i -> e_nclose mu:n_umbers (file, d_isclose (1 + (i - 1) d_iv 50) s_elect mu:s_ets file, 1 + (i - 1) m_od 50) } e_ach r_ange 200
+'{ j -> '+ r_/ '{ p -> 0 + j s_elect u:k_ept d_isclose p } e_ach plans } e_ach 1 2 3 4 5
+# The phrases played, of every plan together: B the most, as the bed.
+'{ k -> '+ r_/ '{ p -> '+ r_/ 0 + k = d_isclose p } e_ach plans } e_ach 1 2 3 4
+# Loudness: none set is the default (6 of 10); 3 of 10; 0; muted.
+mu:v_olume (file, md:nothing)
+mu:v_olume (file, md:nothing md:s_et ("settings.music", 3))
+mu:v_olume (file, md:nothing md:s_et ("settings.music", 0))
+mu:v_olume (file, (md:nothing md:s_et ("settings.music", 9)) md:s_et ("settings.mute", 1))
+# The line for a battle, and for the map, quiet.
+mu:l_ine (file, "defense", md:nothing, 1)
+mu:l_ine (file, "roads", md:nothing md:s_et ("settings.music", 2), 1)
+mu:l_ine (file, "roam", md:nothing, 1)
+# A view carrying the line: the picture has it as its metadata
+# id="music"; the scene and the text are the view's without it.
+map := w:r_ead "fixtures/small.toml"
+view := vw:o_ne (vw:s_tage map, "walker", "walk", 1.5 1.5 0.0 1.0 0.0 1.5 1.5 0.05, "Here")
+scored := mu:s_cored (view, "music('calm', 0.6, 26.667, 'A B C D')")
+picture := vw:p_icture scored
+"<metadata id=\"music\">music('calm', 0.6, 26.667, 'A B C D')</metadata>" st:i_nfix? picture
+(vw:s_cene view) m_atch vw:s_cene scored
+(vw:t_ext view) m_atch vw:t_ext scored
+"<metadata id=\"music\">" st:i_nfix? vw:p_icture view
+# A picture a game drew itself carries the line too.
+drawn := vw:p_icture mu:s_cored (vw:d_rawn (vw:s_tage map, "<svg><rect/></svg>", "Drawn"), "music('calm', 0.6, 26.667, 'A')")
+drawn
+# A music file with a mistake is a message naming the file and field.
+'{ @ -> " " st:j_oin mu:p_lan ("fixtures/bad-music.toml", "calm", 1) } []T_RAP '{ err -> []R_ECOVER []E_MESSAGE err }

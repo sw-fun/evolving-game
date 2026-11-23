@@ -43,3 +43,5 @@ web/ext/
 web/models/
 # the art a game shows, copied from docs/images for the page (scripts/web.sh)
 web/art/
+# the music, copied from assets/music for the page (scripts/web.sh)
+web/music/

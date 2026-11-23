@@ -33,6 +33,18 @@ the next. This is the game the others are parts of.
   the map says when there are new ones, and the hall of deeds
   ([`Ledger.xtl`](Ledger.xtl), `board`) shows them all.
 
+- **Music.** Every place plays a set of looping phrases: calm at the
+  splash, the front door, the roads, the treasury and the hall;
+  explore on foot and in the maze; sinister in the dungeon and the
+  ray maze; battle at the bridge ([`music.toml`](music.toml)). The
+  order of a set's phrases is a plan the program works out from the
+  file's rules and a seed ([`lib/Music.xtl`](../../lib/Music.xtl)):
+  A, then the bed B two or three times, C, the turnaround D, and A
+  again. The picture names it, and the page plays it, as loud as the
+  world's `settings.music` (0 to 10; 6 when not set) and silent with
+  `settings.mute`. The music is the user's own, encoded from WAVs
+  into `assets/music` by `just music`.
+
 - **Kept between visits.** In a browser the world (gold, experience,
   places won, deeds) is saved after every game and read back when the
   page is opened again; New game forgets it. At the command line

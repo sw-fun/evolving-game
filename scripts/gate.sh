@@ -31,6 +31,7 @@ job readme bash -c 'scripts/check-readme.py --self-test && scripts/check-readme.
 job markdown markdown
 job web scripts/check-web.sh
 job assets scripts/test-assets.sh
+job music scripts/check-music.sh
 while IFS= read -r slug; do
   [ -n "$slug" ] && job "game-$slug" scripts/test-games.sh "$slug"
 done < <(scripts/games.sh)
