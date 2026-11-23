@@ -53,7 +53,8 @@ Seen: key [
 settings.music 2
 settings.mute 1
  key [
-music('calm', 26.666667, 'A B B C D')
+music('calm', 'calm-A calm-B calm-D')
+seconds('calm', 26.666667)
 volume(0.2)
 1
 1

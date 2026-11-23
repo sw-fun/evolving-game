@@ -37,24 +37,28 @@ the next. This is the game the others are parts of.
   splash, the front door, the roads, the treasury and the hall;
   explore on foot and in the maze; sinister in the dungeon and the
   ray maze; battle at the bridge ([`music.toml`](music.toml)). The
-  order of a set's phrases is a plan the program works out from the
+  order of the phrases is a plan the program works out from the
   file's rules and a seed ([`lib/Music.xtl`](../../lib/Music.xtl)):
-  A, then the bed B two or three times, C, the turnaround D, and A
-  again. The picture names it, and the page plays it, as loud as the
+  rounds of A, the bed B once or twice, C, the turnaround D; no phrase
+  too often in a row; now and then a round of a companion set or of
+  the set in a slower or faster tempo; about forty minutes before it
+  plays again. The picture names it, and the page plays it, as loud as the
   world's `settings.music` (0 to 10; 6 when not set) and silent with
-  `settings.mute`. Every picture has a sound strip at its top right:
-  a click on the speaker, or \, mutes and unmutes; the minus and plus,
-  or [ and ], make it quieter and louder; the level is kept in the
-  world when the game ends. The front door's Settings rows (Music
-  volume, Music on or muted) are the same sound, heard at once
-  ([`sound-check.xtl`](sound-check.xtl)).
+  `settings.mute`. Every picture has a sound strip in a corner (the
+  top right; the bottom right of a screen with its own menu): a click
+  on the speaker, or \, mutes and unmutes; the minus and plus, or [
+  and ], make it quieter and louder; the level is kept in the world
+  when the game ends. The front door's Settings rows (Music volume,
+  Music on or muted) are the same sound, heard at once
+  ([`sound-check.xtl`](sound-check.xtl)). The music is the user's
+  own, encoded from WAVs
+  into `assets/music` by `just music`.
 
 - **Settings without leaving.** In every game the strip's gear (or
   the key ,) opens a settings panel and pauses the game as it stands:
   the music's volume and on or muted, then Resume playing (the gear,
   , or Esc too), or Exit to start menu (the profile's home on the
-  front door) ([`pause-check.xtl`](pause-check.xtl)). The music is the user's own, encoded from WAVs
-  into `assets/music` by `just music`.
+  front door) ([`pause-check.xtl`](pause-check.xtl)).
 
 - **Kept between visits.** In a browser the world (gold, experience,
   places won, deeds) is saved after every game and read back when the

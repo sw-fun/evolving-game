@@ -1,13 +1,16 @@
 // The music: the page plays what the program's picture says, and
 // decides nothing. A picture's metadata id="music" says what to play
 // (lib/Music) and how loud (lib/Mode: the sound strip's level):
-//   music('set', seconds, 'A A B B B C D ...')
+//   music('set', 'calm-A calm-B calm-80bpm-A ... explore-C ...')
+//   seconds('calm', 26.666667)
+//   seconds('calm-80bpm', 24.0)
 //   volume(0.6)
-// The plan's phrases (music/SET-PHRASE.ogg) play back to back, each
-// for exactly the seconds the line gives, scheduled on the audio clock
-// so they join without a gap, round and round. A new plan (another
-// set, or the set's next plan) starts where the phrase playing ends,
-// from its first phrase. A new volume alone is a short ramp. Browsers
+// The plan's phrases (music/VERSION-PHRASE.ogg; a version is a set or
+// one of its tempos) play back to back, each for exactly the seconds
+// its version's line gives, scheduled on the audio clock so they join
+// without a gap, round and round. A new plan (another set, or the
+// set's next plan) starts where the phrase playing ends, from its
+// first phrase. A new volume alone is a short ramp. Browsers
 // let sound start only after a key or a click: the first one starts it.
 // A phrase that cannot be fetched or decoded (a browser without Opus)
 // is silence, and nothing is said.
@@ -25,8 +28,12 @@ export function music() {
   const buffers = new Map();
 
   const parse = (text) => {
-    const m = /music\('([^']*)', ([\d.]+), '([^']*)'\)/.exec(text);
-    return m && { set: m[1], seconds: +m[2], plan: m[3].split(' '), key: `${m[1]} ${m[3]}` };
+    const m = /music\('([^']*)', '([^']*)'\)/.exec(text);
+    if (!m) return null;
+    const seconds = {};
+    for (const [, v, s] of text.matchAll(/seconds\('([^']*)', ([\d.]+)\)/g)) seconds[v] = +s;
+    const plan = m[2].split(' ');
+    return { set: m[1], plan, length: plan.map((t) => seconds[t.replace(/-[^-]*$/, '')] || 0), key: `${m[1]} ${m[2]}` };
   };
   // A phrase's sound, fetched and decoded once (null if it cannot be).
   const load = (name) => {
@@ -47,8 +54,8 @@ export function music() {
     if (now && t < next - AHEAD) return;
     const plan = now && now.key === want.key ? now : want;
     const at = plan === now ? index : 0;
-    for (const p of new Set(plan.plan)) load(`${plan.set}-${p}`);
-    const sound = load(`${plan.set}-${plan.plan[at]}`);
+    for (const p of new Set(plan.plan.slice(at, at + 4))) load(p);
+    const sound = load(plan.plan[at]);
     if (sound === false) return; // cannot be played: silence
     if (!sound) return;          // not here yet: the next tick
     if (plan !== now) { now = plan; }
@@ -56,7 +63,7 @@ export function music() {
     const source = ctx.createBufferSource();
     source.buffer = sound;
     source.connect(gain);
-    const seconds = Math.min(plan.seconds, sound.duration);
+    const seconds = Math.min(plan.length[at] || sound.duration, sound.duration);
     source.start(when, 0, seconds);
     next = when + seconds;
     index = (at + 1) % plan.plan.length;

@@ -254,21 +254,29 @@ defaults drawn from the repositories above.
   explore, sinister, battle), each of four phrases A (establish), B
   (the bed), C (develop), D (turnaround), every phrase a seamless
   loop in D that ends on Asus, every A starting on D, so any set may
-  follow any phrase at a phrase's end. The 16 phrases are committed
-  encoded as Ogg Opus at 96 kb/s (`assets/music/`, about 5 MB, the
-  user's decision; never the WAVs), made by `just music` from the
-  WAVs with ffmpeg and checked by the gate against
-  `assets/music/SHA256SUMS` without ffmpeg. X_eTaL decides the music
-  (`lib/Music.xtl`, `games/castle/music.toml`): which set plays at
-  each kind of place, and a plan of phrases from the transition rules
-  (each phrase's least and most repeats, the weights of what follows
-  it) and a seed through `lib/Rng` (A A B B B C D D A B B C C D ...),
-  ending where it returns to A; the picture carries it in its
+  follow any phrase at a phrase's end; each set also comes in two
+  other tempos (the same music rendered from MIDI slower and faster).
+  The 48 phrases are committed encoded as Ogg Opus at 64 kb/s
+  (`assets/music/`, about 10 MB, the user's decision; never the
+  WAVs), made by `just music` from the WAVs with ffmpeg and checked by
+  the gate against `assets/music/SHA256SUMS` without ffmpeg. X_eTaL
+  decides the music (`lib/Music.xtl`, `games/castle/music.toml`):
+  which set plays at each kind of place, and a plan of phrases from
+  rules and a seed through `lib/Rng`: rounds of A to D, A, C and D
+  once in a row and B at most twice, no phrase more than 3 times in
+  any 8 (the user, 2026-11-22: "not certain tracks too many times in
+  a row"); after a round of the home set, by weight, a round of a
+  companion set (calm visits explore; battle explore or sinister ...)
+  or the home set in another tempo; at least 96 phrases (about forty
+  minutes) before it repeats. The battle's brass figure (two chord
+  stabs, the user's "honk honk") is in battle-A and, softer, battle-C
+  (found in the MIDI): a battle round plays C at most once and
+  seldom, and companion rounds thin out A; the picture carries it in its
   metadata id="music" with the loudness (`volume(v)`). The loudness
   is the sound every mode's loop keeps (`lib/Mode`, the user: a
   strip of icons on every view): it starts from the world's
   `settings.music` (0 to 10, default 6) and `settings.mute`; every
-  picture shows it in a strip at its top right (speaker, quieter,
+  picture shows it in a strip in a corner (speaker, quieter,
   the level, louder), and a click on those icons or the keys \, [
   and ] change it before the mode sees the event (a mode that names
   the key itself, the maze's M, or is being typed into, "key TEXT",

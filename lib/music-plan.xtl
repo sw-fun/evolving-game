@@ -1,10 +1,9 @@
 #!/usr/bin/env xetal
 ## The music director (lib/Music) on the castle's music file: which set
-## plays at each kind of place, a plan for every set and a few seeds,
-## what every plan promises (it starts at the first phrase, ends where
-## the next is the first again, is at least the file's length long, and
-## plays each phrase between its least and most times in a row), and
-## the music's line. Then a music file with a mistake, named.
+## plays at each kind of place, a plan for every set and a few seeds
+## (rounds of A to D, some of another set, some in another tempo), what
+## every plan promises, and the music's lines. Then a music file with a
+## mistake, named.
 "md:" u_se< "Mode"
 "mu:" u_se< "Music"
 "st:" u_se< "Strings"
@@ -25,31 +24,62 @@ _ := t:l_ines '{ s -> u:s_hown (d_isclose s, 2) } e_ach mu:s_ets file
 _ := t:l_ines '{ s -> u:s_hown (d_isclose s, 3) } e_ach mu:s_ets file
 # The same seed, the same plan.
 (mu:p_lan (file, "battle", 7)) m_atch mu:p_lan (file, "battle", 7)
-# What every plan promises, for every set and the seeds 1 to 50: how
-# many plans start at A, end at D, are 16 long or more, and play every
-# phrase within its repeats (A 1-2, B 2-3, C 1-2, D 1-2) and in an
-# order the rules allow (A to B or C, B to C or D, C to D or B, D to
-# A): all 200.
-least := 1 2 1 1
-most := 2 3 2 2
-allowed := 4 4 r_eshape 0 1 1 0 0 0 1 1 0 1 0 1 1 0 0 0
-## The runs of a plan of numbers: (phrases, lengths).
-u:r_uns := { p ->
-  starts := 1 c_at 0 + (1 d_rop p) != -1 d_rop p
-  at := w_here starts
-  (at s_elect p, (1 d_rop at c_at 1 + t_ally p) - at)
+# What every plan promises, for every set and the seeds 1 to 25 (100
+# plans): how many start with the home set's A in its base tempo, end
+# with a D, are 96 long or more, play no phrase more often in a row
+# than its repeats (A, C, D once, B twice), play no phrase more than 3
+# times in any 8 in a row, keep each round (A to D) in one set and one
+# tempo, come home after a round of another set, follow only the
+# phrases the rules allow (a battle round: A to B or C, B to B, C or
+# D, C to D), and play the battle's C at most once a round: all 100.
+K := 16
+most := 1 2 1 1
+## Which phrase may follow which (a row a phrase), in a battle's set
+## and in the others'; the same phrase is a repeat.
+others := 4 4 r_eshape 0 1 1 0 0 1 1 1 0 1 0 1 1 0 0 0
+battles := 4 4 r_eshape 0 1 1 0 0 1 1 1 0 0 0 1 1 0 0 0
+u:t_okens := { p -> 1 + (p - 1) m_od K }
+u:s_etOf := { t -> 1 + (t - 1) d_iv 4 }
+u:p_hraseOf := { t -> 1 + (t - 1) m_od 4 }
+## The runs of a plan of tokens: (tokens, lengths).
+u:r_uns := { t ->
+  at := w_here 1 c_at 0 + (1 d_rop t) != -1 d_rop t
+  (at s_elect t, (1 d_rop at c_at 1 + t_ally t) - at)
 }
-u:k_ept := { p ->
-  (phrases, lengths) := u:r_uns p
-  within := '& r_/ (lengths >= phrases s_elect least) & lengths <= phrases s_elect most
-  steps := (1 d_rop phrases) + 4 * (-1 d_rop phrases) - 1
-  follows := '& r_/ 1 c_at steps s_elect r_avel allowed
-  (1 = f_irst p) c_at (4 = f_irst r_ev p) c_at (16 <= t_ally p) c_at within c_at follows
+## The most times any token plays in a window of 8 in a row.
+u:c_rowded := { t ->
+  n := t_ally t
+  W := ((r_ange n - 7) '+ t_able o_ffsets 8) s_elect t
+  'm_ax r_/ '{ k -> 'm_ax r_/ '+ r_/_2 0 + W = k } e_ach r_ange K
 }
-plans := '{ i -> e_nclose mu:n_umbers (file, d_isclose (1 + (i - 1) d_iv 50) s_elect mu:s_ets file, 1 + (i - 1) m_od 50) } e_ach r_ange 200
-'{ j -> '+ r_/ '{ p -> 0 + j s_elect u:k_ept d_isclose p } e_ach plans } e_ach 1 2 3 4 5
-# The phrases played, of every plan together: B the most, as the bed.
-'{ k -> '+ r_/ '{ p -> '+ r_/ 0 + k = d_isclose p } e_ach plans } e_ach 1 2 3 4
+u:k_ept := { (home, p) ->
+  t := u:t_okens p
+  set := u:s_etOf t
+  ph := u:p_hraseOf t
+  tempo := 1 + (p - 1) d_iv K
+  (runs, lengths) := u:r_uns t
+  repeats := '& r_/ lengths <= (u:p_hraseOf runs) s_elect most
+  starts := w_here ph = 1
+  round := '+ s_\ 0 + ph = 1
+  first := round s_elect starts
+  whole := '& r_/ (set = first s_elect set) & tempo = first s_elect tempo
+  sets := starts s_elect set
+  home2 := '& r_/ 1 c_at (-1 d_rop sets = home) | 1 d_rop sets = home
+  inRound := (1 d_rop round) = -1 d_rop round
+  pairs := (1 d_rop ph) + 4 * (-1 d_rop ph) - 1
+  battle := 4 = -1 d_rop set
+  ok := ((n_ot battle) & 0 < pairs s_elect r_avel others) | battle & 0 < pairs s_elect r_avel battles
+  follows := '& r_/ 1 c_at inRound r_eplicate ok
+  onceC := 1 >= 'm_ax r_/ 0 c_at '{ r -> '+ r_/ 0 + (round = r) & t = 15 } e_ach r_ange 'm_ax r_/ round
+  ((1 + 4 * home - 1) = f_irst p) c_at (4 = f_irst r_ev ph) c_at (96 <= t_ally p) c_at repeats c_at (3 >= u:c_rowded t) c_at whole c_at home2 c_at follows c_at onceC
+}
+plans := '{ i -> e_nclose (1 + (i - 1) d_iv 25, mu:n_umbers (file, d_isclose (1 + (i - 1) d_iv 25) s_elect mu:s_ets file, 1 + (i - 1) m_od 25)) } e_ach r_ange 100
+'{ j -> '+ r_/ '{ x -> 0 + j s_elect u:k_ept d_isclose x } e_ach plans } e_ach r_ange 9
+# Of every plan together: how often each phrase plays (A B C D), and
+# each tempo (base, then the two others).
+u:p_lanOf := { (_, p) -> p }
+'{ k -> '+ r_/ '{ x -> '+ r_/ 0 + k = u:p_hraseOf u:t_okens u:p_lanOf d_isclose x } e_ach plans } e_ach 1 2 3 4
+'{ k -> '+ r_/ '{ x -> '+ r_/ 0 + k = 1 + ((u:p_lanOf d_isclose x) - 1) d_iv K } e_ach plans } e_ach 1 2 3
 # The lines for a battle, for the map and on foot, as a page reads
 # them (lib/Mode adds the loudness, volume(...), to every picture).
 _ := t:l_ines st:l_ines mu:l_ine (file, "defense", 1)
