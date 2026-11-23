@@ -225,10 +225,10 @@ and armatures from Bpy (7 and 8), the walking camera (9).
 
 ## The paintings
 
-Five paintings of the user's say what the game should look like. All
-five are in the repository (`docs/images`): the user made them with
+Six paintings of the user's say what the game should look like. All
+six are in the repository (`docs/images`): the user made them with
 text-to-image tools and they are the user's own to publish. The page
-shows four of them as they are. Each is also a brief for models and
+shows five of them as they are. Each is also a brief for models and
 generated views, so the game's own drawing comes to look like it.
 
 - `block-bridge-far.jpg`, the long bridge: shown on the card before the
@@ -256,3 +256,13 @@ generated views, so the game's own drawing comes to look like it.
   street of tents and awnings in many colors, hanging rugs, lanterns,
   sacks and pots, crowds, animals, banners on every tower, mountains
   and forest beyond, mist and sun rays.
+- `block-view-from-tower.jpg`, the view from the tower: shown on the
+  card before the road through the fields. It is also the map of the
+  approach (`docs/plan.md`, The approach, from the tower). Wanted in
+  3D: seen from a castle tower's battlements at sunset, a forest edge
+  of dark pines; a road winding through green and gold fields; an
+  outlying hill fort with four towers and banners on a rise; a walled
+  town of half-timbered houses with a busy main street; the town's
+  round gate tower with a conical roof; the river winding through the
+  valley to a bridge and a second town with a church beyond; snowy
+  mountains under a burning sky.

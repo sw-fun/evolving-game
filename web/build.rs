@@ -68,6 +68,19 @@ const DATA: &[(&str, &str)] = &[
     ),
     ("../../world/zones.toml", "world/zones.toml"),
     ("../../world/battlefield.toml", "world/battlefield.toml"),
+    // the approach the painting from the tower shows: the road through
+    // the fields (a walk) and the hill fort (a Castle Defense level)
+    ("fields.toml", "games/walk/fields.toml"),
+    ("../walk/fields.toml", "games/walk/fields.toml"),
+    ("../walk/../../world/fields.toml", "world/fields.toml"),
+    ("../../world/fields.toml", "world/fields.toml"),
+    ("hill-fort.toml", "games/defense/hill-fort.toml"),
+    ("../defense/hill-fort.toml", "games/defense/hill-fort.toml"),
+    (
+        "../defense/../../world/hill-fort.toml",
+        "world/hill-fort.toml",
+    ),
+    ("../../world/hill-fort.toml", "world/hill-fort.toml"),
 ];
 
 fn main() {

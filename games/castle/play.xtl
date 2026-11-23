@@ -102,10 +102,13 @@ u:d_oor := { save ->
   name := u:n_ame picks
   world := u:k_eep (save fr:o_ut name) md:m_erge picks md:m_erge heard
   go := world md:g_et "front.go"
-  go = 2 ? u:h_ome u:k_eep (world, 17) u:a_fter u:v_isit (world, 17)
-  go = 3 ? u:h_ome u:k_eep (world, 15) u:a_fter u:v_isit (world, 15)
+  go = 2 ? u:t_hen (world, 17)
+  go = 3 ? u:t_hen (world, 15)
   u:r_ound world
 }
+## A venue gone to from home (the hall of deeds, 17, or the treasury,
+## 15), then home again.
+u:t_hen := { (world, k) -> u:h_ome u:k_eep (world, k) u:a_fter u:v_isit (world, k) }
 ## The front door again, at the profile's home (straight away: the
 ## front door itself ends the game when the events have ended).
 u:h_ome := { world -> u:d_oor (fr:m_igrate u:k_ept @) md:s_et ("front.home." c_at u:n_ame world, 1) }
@@ -171,7 +174,7 @@ u:a_fter := { (world, k) outcome ->
 u:r_ound := { world ->
   chose := u:c_hoose world
   (status, going, _) := chose
-  n_ot status = md:won ? u:s_tay u:k_eep world md:m_erge going
+  n_ot status = md:won ? u:s_tay (u:k_eep world md:m_erge going, going md:g_et "menu.go")
   k := going md:g_et "campaign.go"
   there := world md:m_erge going
   u:r_ound u:k_eep (there, k) u:a_fter u:v_isit (there, k)
@@ -184,8 +187,15 @@ u:c_hoose := { world ->
 }
 ## The map was left without a place chosen: the events have ended (the
 ## next is the end again), and so does the game; or it was the command
-## to leave (Esc), which goes back to the profile's home.
-u:s_tay := { world -> u:h_ome world }
+## to leave (Esc), which goes back to the profile's home; or the menu
+## bar sent it (menu.go): 2 the hall of deeds, 3 the profile's
+## settings, 4 the profiles.
+u:s_tay := { (world, menu) ->
+  menu = 2 ? u:t_hen (world, 17)
+  menu = 3 ? u:d_oor (fr:m_igrate u:k_ept @) md:s_et ("front.home." c_at u:n_ame world, 2)
+  menu = 4 ? u:d_oor fr:m_igrate u:k_ept @
+  u:h_ome world
+}
 wrong := at:mode md:p_roblem file
 _ := t:l_ines (0 < t_ally wrong) r_eplicate e_nclose wrong
 ## The splash first, then the map.

@@ -384,3 +384,14 @@ zone.battlefield.gate-breached 1
 36.0 63.0 45.0
 4.0 6.0 1.0
 8.0 32.0 19.200000000000003
+0
+100 10 0 0 0 0 0
+44 10 3 4 3 19 0
+138 10 5 6 0 42 0
+outcome: won
+fact.bridge-held 1
+resource.gold 138
+resource.xp 70
+100 0 5 0 32 0 10
+outcome: lost
+zone.battlefield.gate-breached 1

@@ -1057,6 +1057,20 @@ The framework (`games/castle`, Saga 3's castle-map step):
     difficulty (novice, easy, normal, hard, impossible; novice cannot
     lose; harder brings more XP); a level map; a menu bar always there
     (home, hall of deeds, settings, help, leave).
+    As built (games/castle/Menu.xtl, pinned by front-check and
+    road-check): the bar is drawn by X_eTaL along the top of every
+    front-door screen and of the road of levels; its keys are H, D, S,
+    ? and Q (letters the page gives; while a name is typed they are
+    the name's, and the bar is clicked). Help is an overlay closed by
+    the next key or click. The road leaves through the outcome
+    (`menu.go`: 2 the hall, 3 settings, 4 the profiles), which the
+    castle's program follows; it opens the front door at a profile's
+    settings by `front.home.NAME` 2. Settings is a list: default
+    difficulty, pronouns, title, cloak, the music's volume
+    (`settings.music`, 0 to 10, 6 when never set) and mute
+    (`settings.mute`, 0 or 1), both in the front door's outcome so
+    the profile keeps them; the music player reads those two names.
+    The page passes the key ? through (web/static/app.js).
   - Callings: Soldier, Merchant, Spy, Thief, Witch/Warlock (the title
     the player's choice: Witch, Warlock or Mage), Engineer and Herald.
     Each gives a small bonus on each side, as data. Any calling plays
@@ -1113,6 +1127,60 @@ The framework (`games/castle`, Saga 3's castle-map step):
   shows it on a card before the dungeon, as before the walks. The
   maze walls' look is a later look step (`docs/look.md`, The
   paintings).
+
+- **The approach, from the tower** (the user, 2026-11-22, with the
+  painting `docs/images/block-view-from-tower.jpg`: "try to construct
+  areas of the game based on what is seen in this image. The images
+  show possible areas along the way for an attacker to approach and
+  key things to defend"). The painting looks out from the castle's
+  battlements at sunset over the country an attacker crosses. Its
+  areas, in the order an attacker meets them, each with what the
+  attacker does there, what the defender holds, and the venue it is:
+  1. The forest edge. The attacker comes out of the trees, unseen
+     until the open fields; the defender watches from the tower. The
+     start of the road through the fields (new, built: its south
+     edge).
+  2. The winding road through the fields. The attacker marches the
+     road; the field walls (hedges) funnel it through their gaps; the
+     defender can ambush at the gaps. New, built as a walk: "The road
+     through the fields" (`games/walk/fields.toml`, the zone `fields`,
+     `world/fields.toml`), on the attack road early (after On foot);
+     its card is the painting. A Castle Defense level on the same road
+     can follow.
+  3. The hill fort. An outlying fort with four towers on a rise
+     commanding the road: the attacker must take it or be shot at
+     passing; the defender holds its gate. New, built as a Castle
+     Defense level: "The hill fort" (`games/defense/hill-fort.toml`,
+     the zone `hill-fort`, `world/hill-fort.toml`; the road winds to
+     and fro up the hill, facing out), on the defend road after the
+     three bridges.
+  4. The town gate tower. The round gate tower with a conical roof:
+     the attacker breaks in at the gate; the defender holds the
+     gateway. The gate maze (the portcullis shuts behind you).
+  5. The town's streets. A walled town of half-timbered houses, its
+     main street busy: the attacker fights house by house; the
+     defender barricades the streets. The city (its maze of houses)
+     and the town (a placeholder).
+  6. The river bridge to the far town. The river winds through the
+     valley to a bridge, a second town and its church beyond: the
+     attacker must cross; the defender holds the bridge. The bridge
+     levels (Defend the Bridge) and the long bridge.
+  7. The castle's wall-walk and keep, where the painting is seen
+     from: the defender's last stand; the attacker storms the
+     battlements to the keep. The keep (the city ends at its door); the
+     wall-walk is new (the zone `outer-walls`, no map yet).
+  The two new areas are data on the existing modes (no mode code):
+  two maps, two scenarios, two venues appended to `castle.toml` and
+  an entry on each road. They are proven by goldens: `castle.xtl`
+  walks the road through the fields to the town gate by held keys (W
+  along each stretch, an arrow 0.9 seconds a quarter turn at each
+  bend); `defense.xtl` wins the hill fort with a written order of
+  building and loses it with nothing built. Rough edges left: winning
+  the hill fort sets `fact.bridge-held` and losing it
+  `zone.battlefield.gate-breached` (Defending's outcome names the
+  battlefield's); the forest, hedges, fort and town are drawn as the
+  map's tiles and a village from a seed, not yet as the painting shows
+  them.
 
 What the user's second message adds, each a later step on this
 framework, none blocking it:

@@ -98,3 +98,30 @@ u:s_ide (3, 0)
 u:s_ide (1, 6)
 u:s_ide (5, 1)
 u:s_ide (2, 2)
+
+# The hill fort (hill-fort.toml): the outlying fort on its rise, its
+# road winding to and fro up the hill (the turned map: you come in at
+# row 1, the gate is row 17). The scenario is right for this mode; a
+# written order of building wins it, towers between the turns where
+# they reach two stretches of the road at once (the counts after the
+# third wave and at the end); every wave sent at once with nothing
+# built loses it.
+fort := df:n_ew ("hill-fort.toml", md:nothing, 1)
+t_ally df:mode md:p_roblem "hill-fort.toml"
+df:c_ount fort
+u:h_eld := { lines ->
+  (_, s) := 'df:l_egal 'df:s_tatus 'df:s_tep md:r_esult (lines, fort)
+  s
+}
+h1 := "key 1" "choose 7 10" "choose 8 12" "key space" c_at u:t_icks 500
+h2 := h1 c_at "choose 10 11" "key space" c_at u:t_icks 600
+h3 := h2 c_at "key 3" "choose 11 10" "key 1" "choose 5 12" "key space" c_at u:t_icks 600
+h4 := h3 c_at "key 2" "choose 8 10" "key 1" "choose 13 10" "key space" c_at u:t_icks 800
+h5 := h4 c_at "key 2" "choose 11 12" "key 1" "choose 4 10" "choose 14 9" "key 3" "choose 10 9" "key space" c_at u:t_icks 1000
+df:c_ount u:h_eld h3
+held := u:h_eld h5
+df:c_ount held
+_ := u:s_ay df:o_utcome held
+taken := u:h_eld (5 r_eshape e_nclose "key space") c_at u:t_icks 1200
+df:c_ount taken
+_ := u:s_ay df:o_utcome taken

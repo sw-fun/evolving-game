@@ -2,27 +2,29 @@
 1 Summer bridge: open, tutorial
 2 Snow bridge: open, easy
 3 Storm bridge: locked, win 1 or 2 first
-4 Long bridge: locked, win 2 or 3 first
-5 The city: locked, win 3 or 4 first
-6 Gate maze: locked, win 4 or 5 first
-7 The dungeon: locked, win 5 or 6 first
-8 Second maze: locked, win 6 or 7 first
-9 Treasury: locked, win 7 or 8 first
-Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Long bridge: locked, win 2 or 3 first. 5 The city: locked, win 3 or 4 first. 6 Gate maze: locked, win 4 or 5 first. 7 The dungeon: locked, win 5 or 6 first. 8 Second maze: locked, win 6 or 7 first. 9 Treasury: locked, win 7 or 8 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back.
+4 Hill fort: locked, win 2 or 3 first
+5 Long bridge: locked, win 3 or 4 first
+6 The city: locked, win 4 or 5 first
+7 Gate maze: locked, win 5 or 6 first
+8 The dungeon: locked, win 6 or 7 first
+9 Second maze: locked, win 7 or 8 first
+10 Treasury: locked, win 8 or 9 first
+Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Long bridge: locked, win 3 or 4 first. 6 The city: locked, win 4 or 5 first. 7 Gate maze: locked, win 5 or 6 first. 8 The dungeon: locked, win 6 or 7 first. 9 Second maze: locked, win 7 or 8 first. 10 Treasury: locked, win 8 or 9 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
 1 Winter camp: open, tutorial
 2 Summer siege: open, easy
 3 Snow siege: locked, win 1 or 2 first
 4 On foot: locked, win 2 or 3 first
-5 Long bridge: locked, win 3 or 4 first, attack version coming
-6 The city: locked, win 4 or 5 first, attack version coming
-7 Gate maze: locked, win 5 or 6 first, attack version coming
-8 The dungeon: locked, win 6 or 7 first, attack version coming
-9 Second maze: locked, win 7 or 8 first, attack version coming
-10 War chest: locked, win 8 or 9 first
-Attack the castle. 1 Winter camp: open, tutorial. 2 Summer siege: open, easy. 3 Snow siege: locked, win 1 or 2 first. 4 On foot: locked, win 2 or 3 first. 5 Long bridge: locked, win 3 or 4 first, attack version coming. 6 The city: locked, win 4 or 5 first, attack version coming. 7 Gate maze: locked, win 5 or 6 first, attack version coming. 8 The dungeon: locked, win 6 or 7 first, attack version coming. 9 Second maze: locked, win 7 or 8 first, attack version coming. 10 War chest: locked, win 8 or 9 first. Chosen: 1 Winter camp: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back.
-Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Long bridge: locked, win 2 or 3 first. 5 The city: locked, win 3 or 4 first. 6 Gate maze: locked, win 4 or 5 first. 7 The dungeon: locked, win 5 or 6 first. 8 Second maze: locked, win 6 or 7 first. 9 Treasury: locked, win 7 or 8 first. Chosen: 3 Storm bridge: locked, win 1 or 2 first. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back.
+5 The fields: locked, win 3 or 4 first
+6 Long bridge: locked, win 4 or 5 first, attack version coming
+7 The city: locked, win 5 or 6 first, attack version coming
+8 Gate maze: locked, win 6 or 7 first, attack version coming
+9 The dungeon: locked, win 7 or 8 first, attack version coming
+10 Second maze: locked, win 8 or 9 first, attack version coming
+11 War chest: locked, win 9 or 10 first
+Attack the castle. 1 Winter camp: open, tutorial. 2 Summer siege: open, easy. 3 Snow siege: locked, win 1 or 2 first. 4 On foot: locked, win 2 or 3 first. 5 The fields: locked, win 3 or 4 first. 6 Long bridge: locked, win 4 or 5 first, attack version coming. 7 The city: locked, win 5 or 6 first, attack version coming. 8 Gate maze: locked, win 6 or 7 first, attack version coming. 9 The dungeon: locked, win 7 or 8 first, attack version coming. 10 Second maze: locked, win 8 or 9 first, attack version coming. 11 War chest: locked, win 9 or 10 first. Chosen: 1 Winter camp: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
+Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Long bridge: locked, win 3 or 4 first. 6 The city: locked, win 4 or 5 first. 7 Gate maze: locked, win 5 or 6 first. 8 The dungeon: locked, win 6 or 7 first. 9 Second maze: locked, win 7 or 8 first. 10 Treasury: locked, win 8 or 9 first. Chosen: 3 Storm bridge: locked, win 1 or 2 first. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
 playing
-Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Long bridge: locked, win 2 or 3 first. 5 The city: locked, win 3 or 4 first. 6 Gate maze: locked, win 4 or 5 first. 7 The dungeon: locked, win 5 or 6 first. 8 Second maze: locked, win 6 or 7 first. 9 Treasury: locked, win 7 or 8 first. Chosen: 2 Snow bridge: open, easy. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back.
+Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Long bridge: locked, win 3 or 4 first. 6 The city: locked, win 4 or 5 first. 7 Gate maze: locked, win 5 or 6 first. 8 The dungeon: locked, win 6 or 7 first. 9 Second maze: locked, win 7 or 8 first. 10 Treasury: locked, win 8 or 9 first. Chosen: 2 Snow bridge: open, easy. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
 outcome: won
   changes campaign.go 3
 outcome: won
@@ -38,12 +40,13 @@ left
 1 Summer bridge: done
 2 Snow bridge: open, easy
 3 Storm bridge: open, normal
-4 Long bridge: locked, win 2 or 3 first
-5 The city: locked, win 3 or 4 first
-6 Gate maze: locked, win 4 or 5 first
-7 The dungeon: locked, win 5 or 6 first
-8 Second maze: locked, win 6 or 7 first
-9 Treasury: locked, win 7 or 8 first
+4 Hill fort: locked, win 2 or 3 first
+5 Long bridge: locked, win 3 or 4 first
+6 The city: locked, win 4 or 5 first
+7 Gate maze: locked, win 5 or 6 first
+8 The dungeon: locked, win 6 or 7 first
+9 Second maze: locked, win 7 or 8 first
+10 Treasury: locked, win 8 or 9 first
 outcome: won
   changes campaign.go 6
 Defend the Bridge: the storm
@@ -56,9 +59,22 @@ Defend the Bridge: the storm
  820 500
  600 500
  380 500
+ 160 500
 outcome: won
   changes campaign.go 3
-Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Long bridge: locked, win 2 or 3 first. 5 The city: locked, win 3 or 4 first. 6 Gate maze: locked, win 4 or 5 first. 7 The dungeon: locked, win 5 or 6 first. 8 Second maze: locked, win 6 or 7 first. 9 Treasury: locked, win 7 or 8 first. Chosen: 3 Storm bridge: locked, win 1 or 2 first. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back.
-Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Long bridge: locked, win 2 or 3 first. 5 The city: locked, win 3 or 4 first. 6 Gate maze: locked, win 4 or 5 first. 7 The dungeon: locked, win 5 or 6 first. 8 Second maze: locked, win 6 or 7 first. 9 Treasury: locked, win 7 or 8 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back.
+Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Long bridge: locked, win 3 or 4 first. 6 The city: locked, win 4 or 5 first. 7 Gate maze: locked, win 5 or 6 first. 8 The dungeon: locked, win 6 or 7 first. 9 Second maze: locked, win 7 or 8 first. 10 Treasury: locked, win 8 or 9 first. Chosen: 3 Storm bridge: locked, win 1 or 2 first. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
+Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Long bridge: locked, win 3 or 4 first. 6 The city: locked, win 4 or 5 first. 7 Gate maze: locked, win 5 or 6 first. 8 The dungeon: locked, win 6 or 7 first. 9 Second maze: locked, win 7 or 8 first. 10 Treasury: locked, win 8 or 9 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
 outcome: won
   changes campaign.go 10
+outcome: left
+outcome: left
+  changes menu.go 2
+outcome: left
+  changes menu.go 3
+outcome: left
+  changes menu.go 4
+outcome: left
+  changes menu.go 2
+Help. The road of levels for your side, in order: the first two are open, and each next one opens when one of the two before it is won. Arrows: choose. Enter, space, its number or a click on it: go there. B, Backspace or Esc: back. Menu bar: H home, D hall of deeds, S settings, ? help, Q leave (or click it). Any key or a click closes this.
+Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Long bridge: locked, win 3 or 4 first. 6 The city: locked, win 4 or 5 first. 7 Gate maze: locked, win 5 or 6 first. 8 The dungeon: locked, win 6 or 7 first. 9 Second maze: locked, win 7 or 8 first. 10 Treasury: locked, win 8 or 9 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
+Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Long bridge: locked, win 3 or 4 first. 6 The city: locked, win 4 or 5 first. 7 Gate maze: locked, win 5 or 6 first. 8 The dungeon: locked, win 6 or 7 first. 9 Second maze: locked, win 7 or 8 first. 10 Treasury: locked, win 8 or 9 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.

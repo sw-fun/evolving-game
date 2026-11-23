@@ -68,11 +68,26 @@ vn:t_itle ("castle.toml", 6)
 # Clicks, in picture units: the circles stand 220 apart in a row of
 # five, the second row back from the right. Within 45 of the second's
 # center (380 250) takes it; on the third (locked) only chooses it; on
-# open ground does nothing. The sixth (the gate maze, under the fifth)
-# opens once the city is won; a click on it then takes it (venue 10).
+# open ground does nothing. The seventh (the gate maze, the second of
+# the row below) opens once the city is won; a click on it then takes
+# it (venue 10).
 rd:c_enters rd:n_ew (file, defender, 1)
 _ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "click 400 280", defender)
 vw:c_aption rd:v_iew u:r_oad (1 r_eshape e_nclose "click 600 250", defender)
 vw:c_aption rd:v_iew u:r_oad (1 r_eshape e_nclose "click 270 400", defender)
 far := (((one md:s_et ("venue.bridge-2.done", 1)) md:s_et ("venue.bridge-3.done", 1)) md:s_et ("venue.crossing.done", 1)) md:s_et ("venue.city.done", 1)
-_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "click 1040 500", far)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "click 820 500", far)
+
+# The menu bar along the top: H (home) leaves as B does, saying
+# nothing; D (the hall of deeds), S (settings) and Q (leave, to the
+# profiles) leave saying where (menu.go 2, 3, 4); a click on Hall (555
+# 27) is D. ? shows the help over the road, its words the caption, and
+# a key or a click closes it, doing nothing else.
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key h", defender)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key D", defender)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key s", defender)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key q", defender)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "click 555 27", defender)
+vw:c_aption rd:v_iew u:r_oad (1 r_eshape e_nclose "key ?", defender)
+vw:c_aption rd:v_iew u:r_oad ("key ?" "key right", defender)
+vw:c_aption rd:v_iew u:r_oad ("key ?" "click 380 250", defender)

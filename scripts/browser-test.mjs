@@ -226,9 +226,9 @@ if (capture) {
 // done, which is then counted; ?debug shows every place.
 check(await open("?hold&fresh"), "the page starts with the castle");
 check((await page("document.title")) === "Evolving Game: The castle: ready", "its title is the castle's");
-check((await caption()).startsWith("The castle and its country: 3 of 19 places known, 0 won. Gold 0, experience 0."), "the map shows three places to begin with, and your gold and experience");
+check((await caption()).startsWith("The castle and its country: 4 of 23 places known, 0 won. Gold 0, experience 0."), "the map shows four places to begin with, and your gold and experience");
 await sleep(300);
-check((await page("window.game.player().count().pieces")) === 3, "each a marker on the map");
+check((await page("window.game.player().count().pieces")) === 4, "each a marker on the map");
 check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x.textContent).join('|')")).includes("2 The battlefield on foot"), "with its number and name written over it");
 // The music: the picture names it (lib/Music); the page serves and
 // decodes its phrases at the length the program gives (headless Chrome
@@ -254,9 +254,9 @@ await click(190, 195);
 check((await caption()).includes("W A S D walk"), "a click on the far end of the second place's name goes into the battlefield on foot");
 check(/^music\('explore', 20\.0, 'A /.test(await tune()), "where the explore set plays");
 await page("document.getElementById('leave').click(), 1");
-check((await caption()).startsWith("The castle and its country: 3 of 19"), "the Map button comes back to the map");
+check((await caption()).startsWith("The castle and its country: 4 of 23"), "the Map button comes back to the map");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");
-check((await caption()).startsWith("The castle and its country: 19 of 19 places known"), "and every place is shown");
+check((await caption()).startsWith("The castle and its country: 23 of 23 places known"), "and every place is shown");
 await page("window.game.feed('choose 1 7'), 1");
 check((await caption()).startsWith("Siege Engineer (not built yet)."), "a place not built yet says what it will be");
 check((await page("document.querySelectorAll('#flat svg text:not([text-anchor])').length")) === 3, "in three lines under the map");
@@ -441,11 +441,17 @@ await page("window.game.feed('key 5'), 1");
 check((await caption()).startsWith("Aldra the Witch (they)"), "a Witch/Warlock is called by the title chosen");
 await page("window.game.feed('key right'), window.game.feed('key down'), window.game.feed('key right'), 1");
 check((await caption()).startsWith("Aldra the Witch (he)"), "Left and Right change the look: the build, the pronouns");
-check(await page("!!document.querySelector('#flat svg g')"), "the character is drawn beside the look");
+check(await page("!!document.querySelector('#flat svg g:not(#menu)')"), "the character is drawn beside the look");
 await front("look");
 await page("window.game.feed('key 5'), 1");
 check((await caption()).startsWith("Aldra the Witch (he) Level 1."), "Done goes home");
 await front("home");
+check(await page("!!document.querySelector('#flat svg #menu')"), "the menu bar is drawn along the top");
+// ? is Shift and the slash key: the page gives the game "key ?"
+for (const type of ["keyDown", "keyUp"]) await send("Input.dispatchKeyEvent", { type, key: "?", code: "Slash", modifiers: 8, windowsVirtualKeyCode: 191, nativeVirtualKeyCode: 191, text: type === "keyDown" ? "?" : undefined });
+check(await page("/Menu bar: H home/.test(document.querySelector('#flat svg #help')?.textContent)"), "? shows the help over the screen");
+await page("window.game.feed('key down'), 1");
+check(!(await page("!!document.querySelector('#flat svg #help')")) && (await caption()).startsWith("Aldra the Witch (he) Level 1."), "and a key closes it");
 await page("window.game.feed('key 1'), 1");
 check((await caption()).startsWith("Defend or attack?"), "Play asks for the side");
 await front("side");

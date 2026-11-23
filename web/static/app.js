@@ -32,6 +32,14 @@ import { music } from './music.js';
 
 const TICK = 0.05;
 const q = new URLSearchParams(location.search);
+// The testing switches (?debug, ?fresh, ?hold) act on this load only:
+// they are taken off the address, so a reload starts the game as usual.
+{
+  const kept = new URLSearchParams(q);
+  ['debug', 'fresh', 'hold'].forEach((k) => kept.delete(k));
+  const s = kept.toString();
+  if (s !== q.toString()) history.replaceState(null, '', location.pathname + (s ? `?${s}` : '') + location.hash);
+}
 const el = (id) => document.getElementById(id);
 const view = el('view'), flat = el('flat'), stat = el('stat');
 let wasm = null, player = null, timer = 0, cost = 0, frames = '', eyed = false;
@@ -122,7 +130,7 @@ window.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || talking()) return;
   // Escape leaves any game for the map (the loop's own command)
   if (e.key === 'Escape') { e.preventDefault(); feed('choose 0 0'); return; }
-  const name = NAMES[e.key] || (/^[a-z0-9]$/i.test(e.key) ? e.key.toLowerCase() : '');
+  const name = NAMES[e.key] || (/^[a-z0-9?]$/i.test(e.key) ? e.key.toLowerCase() : '');
   if (!name && e.key !== 'Shift') return;
   e.preventDefault();
   if (name) feed(`key ${name}`, true);
