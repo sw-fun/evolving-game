@@ -29,6 +29,14 @@ import { board } from '../ext/board.js';
 
 const TICK = 0.05;
 const q = new URLSearchParams(location.search);
+// The testing switches (?debug, ?fresh, ?hold) act on this load only:
+// they are taken off the address, so a reload starts the game as usual.
+{
+  const kept = new URLSearchParams(q);
+  ['debug', 'fresh', 'hold'].forEach((k) => kept.delete(k));
+  const s = kept.toString();
+  if (s !== q.toString()) history.replaceState(null, '', location.pathname + (s ? `?${s}` : '') + location.hash);
+}
 const el = (id) => document.getElementById(id);
 const view = el('view'), flat = el('flat'), stat = el('stat');
 let wasm = null, player = null, timer = 0, cost = 0, frames = '', eyed = false;
