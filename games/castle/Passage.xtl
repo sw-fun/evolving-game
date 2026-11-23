@@ -4,14 +4,16 @@
 ## of the castle. Its map and colors are raycaster.toml here.
 ##
 ## The state is (stage, the raycaster's own state, the keys held: a 1
-## for each of up, down, left, right, W, S, A, D that is down). A key
-## held moves you every tick, so turning and walking are smooth; a key
-## event alone (a script's) is one step.
+## for each of up, down, left, right, W, S, A, D that is down, and 1
+## when the mini map is hidden). A key held moves you every tick, so
+## turning and walking are smooth; a key event alone (a script's) is
+## one step. M shows and hides the mini map.
 ## Import: "ps:" u_se< "Passage"
 
 "md:" u_se< "Mode"
 "rc:" u_se< "Rays"
 "sm:" u_se< "Sim"
+"st:" u_se< "Strings"
 "vw:" u_se< "View"
 
 # :: Char
@@ -19,11 +21,11 @@
 l:mode := "raycaster"
 # :: Char
 ## How it is used, a line a thing to know.
-l:help := "The second maze: find the door.\nW S or Up Down: walk. Left Right: turn. A D: step sideways. Hold a key to keep going.\nEsc or the Map button leaves it."
+l:help := "The second maze: find the door.\nW S or Up Down: walk. Left Right: turn. A D: step sideways. Hold a key to keep going. M: the mini map.\nEsc or the Map button leaves it."
 
-# :: (Any a, Any b, Num c, Num d, Num e) => (Char, a, b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), (Float, Float, Float, Float, d), e)
+# :: (Any a, Any b, Num c, Num d, Num e, Num f) => (Char, a, b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), (Float, Float, Float, Float, d), e, f)
 ## A new game: you at the start, no key held.
-l:n_ew := { (file, world, seed) -> (md:s_tage file, rc:n_ew seed, 8 r_eshape 0) }
+l:n_ew := { (file, world, seed) -> (md:s_tage file, rc:n_ew seed, 8 r_eshape 0, 0) }
 ## The keys that can be held, by the page's code for each, and the
 ## names the raycaster knows them by.
 h:codes := 38 40 37 39 87 83 65 68
@@ -37,29 +39,48 @@ h:a_ct := { (r, held) k ->
   0 = k s_elect held ? (r, held) h:a_ct k + 1
   ((r rc:k_ey d_isclose k s_elect h:names), held) h:a_ct k + 1
 }
-# :: (Any a, Num b, Num c, Num d, Truthy d) => (a, (Float, Float, Float, b, c), d) -> (Char, b, Char) -> (a, (Float, Float, Float, b, c), d)
+# :: (Any a, Num b, Num c, Num d, Truthy d, Num e) => (a, (Float, Float, Float, b, c), d, e) -> (Char, b, Char) -> (a, (Float, Float, Float, b, c), d, e)
 ## The state after an event: a tick moves the clock and you, by every
 ## key held; a key going down or coming up (choose 2 CODE, choose 3
-## CODE) is held or let go; a key event is one step.
-l:s_tep := { (stage, r, held) e ->
-  e sm:i_s "tick" ? (stage, ((r, held) h:a_ct 1) rc:t_ick f_irst sm:n_umbers e, held)
-  (e sm:i_s "key") & 0 = '+ r_/ held ? (stage, r rc:k_ey sm:o_ld e, held)
-  n_ot e sm:i_s "choose" ? (stage, r, held)
+## CODE) is held or let go; a key event is one step; M shows or hides
+## the mini map.
+l:s_tep := { (stage, r, held, hidden) e ->
+  e sm:i_s "tick" ? (stage, ((r, held) h:a_ct 1) rc:t_ick f_irst sm:n_umbers e, held, hidden)
+  "key m" m_atch sm:l_ine e ? (stage, r, held, 1 - hidden)
+  (e sm:i_s "key") & 0 = '+ r_/ held ? (stage, r rc:k_ey sm:o_ld e, held, hidden)
+  n_ot e sm:i_s "choose" ? (stage, r, held, hidden)
   n := f_loor sm:n_umbers e
-  2 = f_irst n ? (stage, r, held h:h_old (2 s_elect n, 1))
-  3 = f_irst n ? (stage, r, held h:h_old (2 s_elect n, 0))
-  (stage, r, held)
+  2 = f_irst n ? (stage, r, held h:h_old (2 s_elect n, 1), hidden)
+  3 = f_irst n ? (stage, r, held h:h_old (2 s_elect n, 0), hidden)
+  (stage, r, held, hidden)
 }
 # :: Any a => a -> Box Char
 ## The events it takes.
-l:l_egal := { s -> "tick DT" "choose 2 CODE" "choose 3 CODE" "key w" "key s" "key a" "key d" "key up" "key down" "key left" "key right" }
-# :: (Any a, Any b, Any c, Any d, Any e, Num f, Any g) => (a, (b, c, d, e, f), g) -> Int
+l:l_egal := { s -> "tick DT" "choose 2 CODE" "choose 3 CODE" "key w" "key s" "key a" "key d" "key up" "key down" "key left" "key right" "key m" }
+# :: (Any a, Any b, Any c, Any d, Any e, Num f, Any g, Any h) => (a, (b, c, d, e, f), g, h) -> Int
 ## Won out of the door; playing until then.
-l:s_tatus := { (_, r, _) -> 0 < rc:s_tatus r ? md:won; md:playing }
-# :: (Any a, Num b, Num c, Num d, Any e) => (a, (Float, Float, b, c, d), e) -> (a, Box Char, Box Char, Float, Char)
-## What to show: what the rays see.
-l:v_iew := { (stage, r, _) -> vw:d_rawn (stage, rc:d_raw r, "The second maze. W S: walk, Left Right: turn, A D: sidestep. Find the door.") }
-# :: (Any a, Any b, Any c, Any d, Any e, Num f, Any g) => (a, (b, c, d, e, f), g) -> (Int, (Box Char, Int), (Box Char, Int))
+l:s_tatus := { (_, r, _, _) -> 0 < rc:s_tatus r ? md:won; md:playing }
+# :: (Any a, Num b, Num c, Num d, Any e, Num f) => (a, (Float, Float, b, c, d), e, f) -> (a, Box Char, Box Char, Float, Char)
+## What to show: what the rays see, with the mini map or without it.
+l:v_iew := { (stage, r, _, hidden) ->
+  drawn := rc:d_raw r
+  vw:d_rawn (stage, (hidden = 1) h:w_ithoutMap drawn, "The second maze. W S: walk, Left Right: turn, A D: sidestep, M: the map. Find the door.")
+}
+## The raycaster's picture without its mini map: from the first of the
+## map's tiles (rects 8 by 8) to the end of you on it (class "you"). The
+## raycaster draws its mini map always; a way to leave it out is a
+## better seam: a drawing without it is an ask of X_eTaL-games.
+h:w_ithoutMap := { hide svg ->
+  n_ot hide ? svg
+  tile := "width=\"8\" height=\"8\"" st:f_ind svg
+  you := "<g class=\"you\">" st:f_ind svg
+  (0 = t_ally tile) | 0 = t_ally you ? svg
+  start := 'm_ax r_/ "<rect" st:f_ind (f_irst tile) t_ake svg
+  rest := (f_irst you) - 1
+  end := rest + 3 + f_irst "</g>" st:f_ind rest d_rop svg
+  ((start - 1) t_ake svg) c_at end d_rop svg
+}
+# :: (Any a, Any b, Any c, Any d, Any e, Num f, Any g, Any h) => (a, (b, c, d, e, f), g, h) -> (Int, (Box Char, Int), (Box Char, Int))
 ## Out of it: it is known walked, and it brings experience.
 l:o_utcome := { s ->
   n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)

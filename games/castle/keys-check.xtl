@@ -1,0 +1,28 @@
+#!/usr/bin/env xetal
+## The sound's keys are [ ] and \ (lib/Mode's loop); M is always a
+## game's: in the second maze (Passage.xtl) M shows and hides the mini
+## map, and the music is not muted by it.
+"md:" u_se< "Mode"
+"ps:" u_se< "Passage"
+"st:" u_se< "Strings"
+"t:" u_se< "Text"
+"vw:" u_se< "View"
+
+file := "castle.toml"
+u:p_lay := { lines -> 'ps:o_utcome 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep md:r_eplayHeard ("", md:nothing, lines, ps:n_ew (file, md:nothing, 1)) }
+## Is the mini map drawn (its tiles and you on it) after a script?
+u:m_ap := { lines ->
+  (_, s) := u:p_lay lines
+  svg := vw:p_icture ps:v_iew s
+  ("width=\"8\" height=\"8\"" st:i_nfix? svg) c_at "class=\"you\"" st:i_nfix? svg
+}
+# The mini map at the start; M hides it; M again shows it.
+u:m_ap 0 t_ake e_nclose ""
+u:m_ap 1 r_eshape e_nclose "key m"
+u:m_ap "key m" "key m"
+# M is the maze's, so the music is as it was (nothing comes back); \
+# mutes it.
+(heard, _) := u:p_lay 1 r_eshape e_nclose "key m"
+t_ally md:l_ines heard
+(muted, _) := u:p_lay 1 r_eshape e_nclose "key \\"
+_ := t:l_ines md:l_ines muted

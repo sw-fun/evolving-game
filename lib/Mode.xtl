@@ -309,9 +309,9 @@ l:a_llows := { legal e -> 0 < '+ r_/ 0 c_at '{ line -> e h:t_akes d_isclose line
 ## music's loudness from 0 to md:loudest and 1 when it is muted. Every
 ## picture shows it in a strip at its top right (lib/View: a speaker,
 ## quieter, the level, louder), and carries the music to play with it.
-## A click on the strip's icons, or the keys M (mute), [ and ] (quieter,
+## A click on the strip's icons, or the keys \ (mute), [ and ] (quieter,
 ## louder), change it, and the mode never sees them: unless it names
-## the key itself ("key m": the maze's map) or is being typed into
+## the key itself or is being typed into
 ## ("key TEXT": a name), when the keys are its and the icons still work.
 ## A mode with its own settings is the same sound: played with
 ## md:p_layHeard, after a key or a click the loop reads its
@@ -319,6 +319,14 @@ l:a_llows := { legal e -> 0 < '+ r_/ 0 c_at '{ line -> e h:t_akes d_isclose line
 ## settings.mute has changed, that is the sound at once; and a mode
 ## that takes "choose 4 LEVEL" and "choose 5 MUTE" is told what the
 ## strip made of it.
+##
+## The strip's gear (or the key ,) opens the settings panel over the
+## picture (lib/View): while it is open the mode is given nothing, ticks
+## included, so the game is paused as it stands (docs/plan.md D22). Its
+## rows: the music's volume, on or muted, "Resume playing" (the same
+## state; the gear, the key , or Esc too) and "Exit to start menu" (the
+## game left as "choose 0 0" leaves it, and menu.go 1 in what
+## md:p_layHeard gives back).
 
 # :: Int
 ## The loudest level.
@@ -350,14 +358,15 @@ l:s_ettings := { (level, mute) -> (l:nothing l:s_et ("settings.music", level)) l
 ## 0.6
 l:v_olume := { (level, mute) -> mute = 1 ? 0.0; (f_loat level) / f_loat l:loudest }
 ## The keys the loop takes, in the order of the strip's controls: 1
-## mute, 2 quieter, 3 louder.
-h:keys := "key m" "key [" "key ]"
-## A sound changed by a control (0 none).
+## mute, 2 quieter, 3 louder, 4 the settings panel.
+h:keys := "key \\" "key [" "key ]" "key ,"
+## A sound changed by a control (0 none; 4, the panel, is not one).
 h:t_urn := { (level, mute) k ->
   k = 0 ? (level, mute)
   k = 1 ? (level, 1 - mute)
   k = 2 ? (0 m_ax level - 1, mute)
-  (l:loudest m_in level + 1, mute)
+  k = 3 ? (l:loudest m_in level + 1, mute)
+  (level, mute)
 }
 ## Does a mode keep a key line for itself: it names it, or it is being
 ## typed into.
@@ -407,29 +416,116 @@ h:a_pply := { legal_ step_ (clock, s) e ->
 ## several goes back to where they are chosen.
 h:l_eave := { e -> (e sm:i_s "choose") & 0.0 0.0 m_atch 2 t_ake (sm:n_umbers e) c_at 1.0 1.0 }
 h:n_ext := { (host, lines) -> host ? sm:n_ext @; sm:p_arse d_isclose f_irst lines }
-## The loop: (host, lines, last, clock, state, sound, tune, wish) to
-## (clock, state, sound). A control of the strip changes the sound,
-## and the mode is told the new one ("choose 4 LEVEL", "choose 5
-## MUTE"), if it takes those. After a key or a click (not the strip's), a mode
-## whose outcome names settings.music (a settings screen) is heard at
-## once: when what it names has changed (wish: what it named last),
-## that is the sound.
-h:l_oop := { step_ status_ legal_ view_ outcome_ (host, lines, last, clock, s, sound, tune, wish) ->
-  v_ := { x -> l:d_ressed (view_ x, sound, tune) }
+## The loop: (host, lines, last, clock, state, sound, tune, wish, panel)
+## to (clock, state, sound, exit). A control of the strip changes the
+## sound, and the mode is told the new one ("choose 4 LEVEL", "choose
+## 5 MUTE"), if it names those. After a key or a click (not the strip's), a
+## mode whose outcome names settings.music (a settings screen) is heard
+## at once: when what it names has changed (wish: what it named last),
+## that is the sound. The gear (or the key ,) opens the settings panel
+## (panel: its chosen row): while it is open the mode is given nothing,
+## ticks included, so the game is paused as it stands; its rows change
+## the sound, resume (the same state), or exit to the start menu (the
+## game left as "choose 0 0" leaves it; exit is then 1).
+h:l_oop := { step_ status_ legal_ view_ outcome_ (host, lines, last, clock, s, sound, tune, wish, panel) ->
+  v_ := { x -> h:p_aneled (l:d_ressed (view_ x, sound, tune), panel) }
   shown := 'v_ h:s_how (host, last, s)
-  l:playing != status_ s ? (clock, s, sound)
-  (n_ot host) & 0 = t_ally lines ? (clock, s, sound)
+  l:playing != status_ s ? (clock, s, sound, 0)
+  (n_ot host) & 0 = t_ally lines ? (clock, s, sound, 0)
   e := h:n_ext (host, lines)
-  (e sm:i_s "end") | h:l_eave e ? (clock, s, sound)
+  e sm:i_s "end" ? (clock, s, sound, 0)
+  0 < panel ? 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:p_aused (host, lines, shown, clock, s, sound, tune, wish, panel, e, s 'v_ h:p_anelAt e)
+  h:l_eave e ? (clock, s, sound, 0)
   k := s 'v_ 'legal_ h:c_ontrol e
+  k = 4 ? 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, clock, s, sound, tune, wish, 1)
   turned := sound h:t_urn k
   told := s 'step_ 'legal_ h:t_old (sound, k)
-  0 < k ? 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, clock sm:a_dvance e, told, turned, tune, turned)
+  0 < k ? 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, clock sm:a_dvance e, told, turned, tune, turned, 0)
   (c2, s2) := (clock, s) 'step_ 'legal_ h:a_pply e
-  n_ot (e sm:i_s "key") | e sm:i_s "click" ? 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2, sound, tune, wish)
+  n_ot (e sm:i_s "key") | e sm:i_s "click" ? 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2, sound, tune, wish, 0)
   (heard, wished) := (sound, wish) h:a_dopt 'outcome_ h:w_ish s2
-  'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2, heard, tune, wished)
+  'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2, heard, tune, wished, 0)
 }
+## The loop with the panel open, at an event: the event changes the
+## panel and the sound (the mode told), closes the panel, or exits;
+## the mode's state and clock stay as they are.
+h:p_aused := { step_ status_ legal_ view_ outcome_ (host, lines, shown, clock, s, sound, tune, wish, panel, e, at) ->
+  (sound2, panel2) := (sound, panel) h:o_nPanel (e, at)
+  panel2 < 0 ? (clock, s, sound2, 1)
+  told := s 'step_ 'legal_ h:t_ellIf (sound, sound2)
+  'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, clock, told, sound2, tune, sound2, panel2)
+}
+## A mode told a sound, if it is not the one it had.
+h:t_ellIf := { legal_ step_ s (before, after) ->
+  before m_atch after ? s
+  s 'step_ 'legal_ h:t_ell after
+}
+## Where a click on the panel is: (row, strip control), 0 for none; for
+## any other event 0 0.
+h:p_anelAt := { view_ s e ->
+  n_ot e sm:i_s "click" ? 0 0
+  v := view_ s
+  xy := 2 t_ake sm:n_umbers e
+  (v vw:p_anel xy) c_at v vw:s_trip xy
+}
+## The panel's rows: 1 the music's volume, 2 on or muted, 3 resume
+## playing, 4 exit to the start menu.
+h:rows := 4
+## The sound and the panel after an event with the panel open: (sound,
+## panel) h:o_nPanel (event, where a click is). The panel 0 is closed
+## (resume), -1 exit. Up and Down choose a row, Left and Right change
+## the sound's rows, Enter or space (or a row's number, or a click on
+## it) takes it; the gear, the key , or the loop's leave (Esc) resume;
+## the strip's keys and icons work as ever; anything else (a tick) is
+## nothing.
+h:o_nPanel := { (sound, panel) (e, at) ->
+  (level, mute) := sound
+  0 < 2 s_elect at ? h:s_tripped (sound, panel, 2 s_elect at)
+  0 < f_irst at ? (sound, panel) h:t_akeRow f_irst at
+  h:l_eave e ? (sound, 0)
+  n_ot e sm:i_s "key" ? (sound, panel)
+  key := sm:t_ext e
+  k := h:keys i_ndexOf e_nclose sm:l_ine e
+  k <= t_ally h:keys ? h:s_tripped (sound, panel, k)
+  key m_atch "UP" ? (sound, 1 + (panel - 2) m_od h:rows)
+  key m_atch "DOWN" ? (sound, 1 + panel m_od h:rows)
+  (key m_atch "LEFT") & panel = 1 ? (sound h:t_urn 2, panel)
+  (key m_atch "RIGHT") & panel = 1 ? (sound h:t_urn 3, panel)
+  ((key m_atch "LEFT") | key m_atch "RIGHT") & panel = 2 ? (sound h:t_urn 1, panel)
+  (key m_atch "ENTER") | key m_atch " " ? (sound, panel) h:t_akeRow panel
+  digit := "1234" i_ndexOf f_irst key c_at " "
+  (1 = t_ally key) & digit <= h:rows ? (sound, panel) h:t_akeRow digit
+  (sound, panel)
+}
+## A strip control with the panel open: the gear resumes; the others
+## change the sound.
+h:s_tripped := { (sound, panel, k) ->
+  k = 4 ? (sound, 0)
+  (sound h:t_urn k, panel)
+}
+## A row taken: the volume one louder (round to 0 after the loudest),
+## the music on or muted, resume, exit.
+h:t_akeRow := { (sound, panel) r ->
+  (level, mute) := sound
+  r = 1 ? ((0 + (level + 1) m_od l:loudest + 1, mute), 1)
+  r = 2 ? (sound h:t_urn 1, 2)
+  r = 3 ? (sound, 0)
+  (sound, -1)
+}
+## A view with the panel over it when it is open: a model "%ROW".
+h:p_aneled := { (v, panel) ->
+  0 = panel ? v
+  vw:w_ith (v, "%" c_at f_ormat panel, "", 8 r_eshape 0.0)
+}
+## What a loop heard: the world's changes that keep its sound (nothing
+## when it is as it started), and menu.go 1 when the panel exited to
+## the start menu; and the last state.
+h:h_eard := { start (clock, s, sound, exit) ->
+  kept := h:k_ept (start, sound)
+  0 = exit ? (kept, s)
+  (kept l:s_et ("menu.go", 1), s)
+}
+h:k_ept := { (start, sound) -> sound m_atch start ? l:nothing; l:s_ettings sound }
 ## The sound a mode's outcome names: (named, (level, mute)).
 h:w_ish := { outcome_ s ->
   (_, changes, _) := outcome_ s
@@ -449,9 +545,9 @@ h:t_ell := { legal_ step_ s (level, mute) ->
   one := s 'step_ 'legal_ h:g_ive sm:p_arse "choose 4 " c_at f_ormat level
   one 'step_ 'legal_ h:g_ive sm:p_arse "choose 5 " c_at f_ormat mute
 }
-## A mode told the sound a control made of it (none for 0).
+## A mode told the sound a control made of it (none for 0 or 4).
 h:t_old := { legal_ step_ s (sound, k) ->
-  k = 0 ? s
+  (k = 0) | k = 4 ? s
   s 'step_ 'legal_ h:t_ell sound h:t_urn k
 }
 ## Given only to a mode that names the command itself ("choose 4 N"):
@@ -463,12 +559,6 @@ h:n_ames := { legal e ->
 }
 ## A mode with no outcome to hear: names nothing.
 h:n_one := { s -> (l:playing, l:nothing, l:nothing) }
-## What a loop heard: the world's changes that keep its sound, or
-## nothing when it is as it started; and the last state.
-h:h_eard := { start (clock, s, sound) ->
-  sound m_atch start ? (l:nothing, s)
-  (l:s_ettings sound, s)
-}
 # :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> a -> ((Int, Int, Int), a)
 ## Play a mode on the host's events, from a state its n_ew gave:
 ## 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep md:p_lay state. The view's
@@ -477,14 +567,14 @@ h:h_eard := { start (clock, s, sound) ->
 ## strip (from md:usual, kept nowhere). The clock and the last state;
 ## its o_utcome says how it ended.
 l:p_lay := { step_ status_ legal_ view_ s ->
-  (clock, last, _) := 'h:n_one 'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s, (l:usual, 0), "", (l:usual, 0))
+  (clock, last, _, _) := 'h:n_one 'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s, (l:usual, 0), "", (l:usual, 0), 0)
   (clock, last)
 }
 # :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Box Char, a) -> ((Int, Int, Int), a)
 ## The same on a script, a list of event lines (a log, a save): ...
 ## md:r_eplay (lines, state).
 l:r_eplay := { step_ status_ legal_ view_ (lines, s) ->
-  (clock, last, _) := 'h:n_one 'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s, (l:usual, 0), "", (l:usual, 0))
+  (clock, last, _, _) := 'h:n_one 'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s, (l:usual, 0), "", (l:usual, 0), 0)
   (clock, last)
 }
 # :: (Any a, Any b, Num c, Truthy c, Num d, Any e, Any f) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (a -> (e, (Box Char, Int), f)) -> (Char, (Box Char, Int), a) -> ((Box Char, Int), a)
@@ -492,16 +582,17 @@ l:r_eplay := { step_ status_ legal_ view_ (lines, s) ->
 ## lib/Music's mu:l_ine, or ""), hearing its outcome's settings at once:
 ## 'm:o_utcome 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep md:p_layHeard
 ## (tune, world, state). What the sound became, as the world's changes
-## that keep it (nothing when it is as it started), and the last state.
+## that keep it (nothing when it is as it started; with menu.go 1 when
+## the settings panel exited to the start menu), and the last state.
 l:p_layHeard := { step_ status_ legal_ view_ outcome_ (tune, world, s) ->
   start := l:s_ound world
-  start h:h_eard 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s, start, tune, start)
+  start h:h_eard 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s, start, tune, start, 0)
 }
 # :: (Any a, Any b, Num c, Truthy c, Num d, Any e, Any f) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (a -> (e, (Box Char, Int), f)) -> (Char, (Box Char, Int), Box Char, a) -> ((Box Char, Int), a)
 ## The same on a script: md:r_eplayHeard (tune, world, lines, state).
 l:r_eplayHeard := { step_ status_ legal_ view_ outcome_ (tune, world, lines, s) ->
   start := l:s_ound world
-  start h:h_eard 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s, start, tune, start)
+  start h:h_eard 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s, start, tune, start, 0)
 }
 # :: Any a => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (Box Char, a) -> ((Int, Int, Int), a)
 ## The same on a script, shown nowhere: for a result alone. No view is

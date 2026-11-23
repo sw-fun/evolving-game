@@ -37,11 +37,11 @@ u:l_oud to c_at "key LEFT" "key LEFT" "key LEFT"
 # Muted (Down to its row, Right): silence at once; on again, 0.3.
 u:l_oud to c_at "key LEFT" "key LEFT" "key LEFT" "key DOWN" "key RIGHT"
 u:l_oud to c_at "key LEFT" "key LEFT" "key LEFT" "key DOWN" "key RIGHT" "key RIGHT"
-# The strip's keys in Settings: ] is louder and M mutes, and Settings'
+# The strip's keys in Settings: ] is louder and \ mutes, and Settings'
 # rows say so.
 u:r_ows "key 1" "key 4"
 u:r_ows "key 1" "key 4" "key ]" "key ]"
-u:r_ows "key 1" "key 4" "key ]" "key m"
+u:r_ows "key 1" "key 4" "key ]" "key \\"
 # What comes back: Settings' change and the strip's together, kept.
 (heard, _) := u:h_ear to c_at "key LEFT" "key LEFT" "key ]"
 _ := t:l_ines md:l_ines heard

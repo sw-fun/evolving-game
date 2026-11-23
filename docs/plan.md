@@ -269,7 +269,7 @@ defaults drawn from the repositories above.
   strip of icons on every view): it starts from the world's
   `settings.music` (0 to 10, default 6) and `settings.mute`; every
   picture shows it in a strip at its top right (speaker, quieter,
-  the level, louder), and a click on those icons or the keys M, [
+  the level, louder), and a click on those icons or the keys \, [
   and ] change it before the mode sees the event (a mode that names
   the key itself, the maze's M, or is being typed into, "key TEXT",
   keeps the keys; the icons always work); what changed comes back
@@ -289,6 +289,23 @@ defaults drawn from the repositories above.
   an ask of X_eTaL-extensions (D15; `docs/xetal-extensions-asks.md`):
   this repository's `web/static/music.js` plays it until then.
 
+- D22. Settings during play pause the game and resume it (the user,
+  2026-11-22: "opening settings during gameplay should allow resuming
+  when settings are exited (options: return to playing; exit to start
+  menu)"; "going into settings disrupts the play and exiting settings
+  causes the level to restart"). Every game has a settings panel,
+  `lib/Mode`'s loop's own, like the sound strip: the strip's gear (or
+  the key ,) opens it over the mode's picture; while it is open the
+  mode is given no event at all, ticks included, so the game stands
+  still; its rows are the music's volume and on or muted (the loop's
+  sound, heard at once and kept as the strip's is), then "Resume
+  playing" (the same state, nothing restarted; also the gear, the key
+  , or Esc) and "Exit to start menu" (the game left as "choose 0 0"
+  leaves it, and the castle goes on to the profile's home on the front
+  door, not the road; the loop says so with menu.go 1). The sound's
+  keys are [ (quieter), ] (louder) and the backslash (mute), and , the
+  panel; M is always a game's map (the user, 2026-11-22: M toggles the
+  maze's mini map, not the music).
 ## The seams that make the games one game
 
 Designed in Saga 1 and proven in Sagas 2 to 4; every later saga must

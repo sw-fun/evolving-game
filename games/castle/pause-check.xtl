@@ -1,0 +1,32 @@
+#!/usr/bin/env xetal
+## The settings panel every game has (lib/Mode's loop), on the first
+## bridge mid-wave: the gear (or the key ,) pauses the game as it
+## stands, ticks while it is open change nothing, and it resumes from
+## the very same state; its rows change the music at once; and its
+## last row exits to the start menu (menu.go 1 in what comes back).
+## The pictures' text is printed as it changes.
+"df:" u_se< "Defending"
+"md:" u_se< "Mode"
+"t:" u_se< "Text"
+
+path := "../defense/level-1.toml"
+u:p_lay := { lines -> 'df:o_utcome 'df:v_iew 'df:l_egal 'df:s_tatus 'df:s_tep md:r_eplayHeard ("", md:nothing, lines, df:n_ew (path, md:nothing, 1)) }
+u:l_ast := { (_, s) -> s }
+u:h_eard := { (heard, _) -> heard }
+## A tower, the wave sent, and four ticks.
+start := "key 1" "choose 6 16" "key space" "tick 0.05" "tick 0.05" "tick 0.05" "tick 0.05"
+four := "tick 0.05" "tick 0.05" "tick 0.05" "tick 0.05"
+ten := "tick 0.05" "tick 0.05" "tick 0.05" "tick 0.05" "tick 0.05" "tick 0.05" "tick 0.05" "tick 0.05" "tick 0.05" "tick 0.05"
+# Played straight on: four ticks more.
+straight := u:l_ast u:p_lay start c_at four
+# Paused (,), ten ticks that change nothing, resumed (, again), four
+# ticks: the same state as straight on.
+paused := u:l_ast u:p_lay start c_at (e_nclose "key ,") c_at ten c_at (e_nclose "key ,") c_at four
+straight m_atch paused
+# Paused at the same place the state is the one before the pause.
+(u:l_ast u:p_lay start) m_atch u:l_ast u:p_lay start c_at (e_nclose "key ,") c_at ten
+# The panel's rows: Down to "Music: on", Right mutes; Enter on "Resume
+# playing" goes on; what comes back keeps the music muted.
+_ := t:l_ines md:l_ines u:h_eard u:p_lay start c_at "key ," "key DOWN" "key RIGHT" "key DOWN" "key ENTER"
+# Its last row exits to the start menu: menu.go 1, the game left.
+_ := t:l_ines md:l_ines u:h_eard u:p_lay start c_at "key ," "key 4"

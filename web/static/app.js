@@ -125,7 +125,7 @@ flat.parentElement.addEventListener('click', (e) => {
 new ResizeObserver(() => window.dispatchEvent(new Event('resize'))).observe(el('stage'));
 
 // Keys the game may be given; none is a browser's or a system's.
-const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter', Backspace: 'backspace', '[': '[', ']': ']' };
+const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter', Backspace: 'backspace', '[': '[', ']': ']', ',': ',', '\\': '\\' };
 window.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || talking()) return;
   // Escape leaves any game for the map (the loop's own command)

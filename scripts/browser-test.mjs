@@ -539,6 +539,20 @@ check(/Gold (6[5-9]|[7-9]\d),/.test(await caption()), `the tower's shots pay (${
 await sleep(400);
 const army = await page("window.game.player().count().pieces");
 check(army >= 2, `the tower and the enemies on the road are drawn (${army} pieces)`);
+// The settings panel every game has (lib/Mode): a real click on the
+// strip's gear opens it over the game; ticks while it is open change
+// nothing (the game is paused); the gear again resumes it.
+const gearAt = () => page("(() => { const r = document.querySelector('#flat svg .sound [data-control=settings] rect').getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; })()");
+const press = async ([x, y]) => { for (const type of ["mousePressed", "mouseReleased"]) await send("Input.dispatchMouseEvent", { type, x, y, button: "left", clickCount: 1 }); };
+await press(await gearAt());
+check(await page("!!document.querySelector('#flat svg .panel')"), "the strip's gear opens the settings panel over the game");
+const scene = () => page("document.querySelector('#flat svg metadata#scene').textContent");
+const heldCaption = await caption(), heldScene = await scene();
+await ticks(60);
+check((await caption()) === heldCaption && (await scene()) === heldScene, "ticks while it is open change nothing: the game is paused");
+await press(await gearAt());
+await ticks(20);
+check(!(await page("!!document.querySelector('#flat svg .panel')")) && (await scene()) !== heldScene, "the gear again resumes it from where it was");
 if (capture) {
   await sleep(600);
   const shot = await send("Page.captureScreenshot", { format: "png" });

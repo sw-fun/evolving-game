@@ -289,7 +289,7 @@ h:t_ake := { s ->
 }
 # :: (Any a, Num b, Any c, Any d, Any e, Any f, Any g) => (a, b, c, d, e, f, g) -> Box Char
 ## The events it takes: any key, and on the name screen any key typed
-## ("key TEXT"), so the loop leaves it the keys of the sound strip (M
+## ("key TEXT"), so the loop leaves it the keys of the sound strip (\
 ## [ ]) there; clicks; and the sound the loop's strip has made
 ## ("choose 4 LEVEL", "choose 5 MUTE"), which Settings then shows.
 l:l_egal := { (_, screen, _, _, _, _, _) -> screen = 2 ? "key TEXT" "click X Y" "choose 4 N" "choose 5 N"; "key KEY" "click X Y" "choose 4 N" "choose 5 N" }

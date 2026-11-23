@@ -335,7 +335,7 @@ l:c_aption := { (_, _, _, _, caption) -> caption }
 ## The view as text: the map's letters, a row a line, each piece as @ on
 ## the tile it stands on, and the caption under it.
 l:t_ext := { (stage, models, _, every, caption) ->
-  0 < t_ally h:d_rawing models ? caption
+  0 < t_ally h:d_rawing models ? caption c_at h:p_anelText models
   pieces := ((h:s_olid models) & h:n_ear every) r_eplicate every
   (map, _, _, _, _, _) := stage
   drawing := w:d_raw map
@@ -344,12 +344,12 @@ l:t_ext := { (stage, models, _, every, caption) ->
   flat := r_avel drawing
   on := (r_ange t_ally flat) m_ember? at
   rows := (s_hape drawing) r_eshape (((n_ot on) * r_ange t_ally flat) + on * 1 + t_ally flat) s_elect flat c_at "@"
-  ("\n" st:j_oin '{ i -> e_nclose i s_elect rows } e_ach r_ange f_irst s_hape drawing) c_at "\n" c_at caption
+  ("\n" st:j_oin '{ i -> e_nclose i s_elect rows } e_ach r_ange f_irst s_hape drawing) c_at "\n" c_at caption c_at h:p_anelText models
 }
 
 ## Which of a view's pieces are things standing on the board: not a
 ## burst (a model that begins with a star), which only a scene shows.
-h:s_olid := { models -> '{ m -> n_ot (f_irst (d_isclose m) c_at " ") m_ember? "*#<~^" } e_ach models }
+h:s_olid := { models -> '{ m -> n_ot (f_irst (d_isclose m) c_at " ") m_ember? "*#<~^%" } e_ach models }
 ## The text after a mark, of the first model that begins with it, or an
 ## empty text.
 h:m_arked := { mark models ->
@@ -366,22 +366,30 @@ h:t_une := { models ->
   0 = t_ally line ? ""
   "<metadata id=\"music\">" c_at line c_at "</metadata>"
 }
-## How wide a picture a game drew itself is: its viewBox's width (800
-## if it has none).
-h:w_ide := { svg ->
+## How wide and high a picture a game drew itself is: its viewBox's
+## (800 by 600 if it has none).
+h:s_ize := { svg ->
   at := "viewBox=\"" st:f_ind svg
-  0 = t_ally at ? 800.0
+  0 = t_ally at ? 800.0 600.0
   rest := (8 + f_irst at) d_rop svg
   box := f_loat n_umbers ((f_irst w_here rest = f_irst "\"") - 1) t_ake rest
-  3 > t_ally box ? 800.0
-  3 s_elect box
+  4 > t_ally box ? 800.0 600.0
+  2 t_ake 2 d_rop box
 }
-## The sound strip's place and size in a picture w wide: its top left
-## corner and how many picture units are one of its own (it is 132 by
-## 28 of them, at the top right).
-h:s_tripAt := { w ->
-  s := 1.0 m_ax w / 800.0
-  (w - s * 140.0, s * 8.0, s)
+## How wide and high a view's picture is: (the game's own drawing or
+## "", the stage's frame).
+h:w_h := { (drawn, frame) -> 0 < t_ally drawn ? h:s_ize drawn; 3 4 s_elect frame }
+## The sound strip's place and size in a view's picture: its top left
+## corner and how many picture units are one of its own (it is 168 by
+## 28 of them). At the top right of a stage's picture; at the bottom
+## right of a picture a game drew itself, whose top is often its own
+## menu: (the game's drawing or "", the stage's frame).
+h:p_lace := { (drawn, frame) ->
+  wh := h:w_h (drawn, frame)
+  s := 1.0 m_ax (f_irst wh) / 800.0
+  x := (f_irst wh) - s * 176.0
+  0 = t_ally drawn ? (x, s * 8.0, s)
+  (x, (2 s_elect wh) - s * 40.0, s)
 }
 ## What comes out of the strip's speaker: sound waves, or a red cross
 ## when muted.
@@ -389,50 +397,104 @@ h:w_aves := { mute ->
   mute = 1 ? "<path d=\"M19 9l7 10M26 9l-7 10\" stroke=\"#e0503c\" stroke-width=\"2.5\"/>"
   "<path d=\"M19 9q4 5 0 10M22 6q7 8 0 16\" fill=\"none\" stroke=\"#e8e6df\" stroke-width=\"2\"/>"
 }
+## A level and mute from the model "^LEVEL MUTE".
+h:s_ound := { models ->
+  both := f_loor n_umbers "^" h:m_arked models
+  (f_irst both, 2 s_elect both)
+}
 ## The strip's SVG: a speaker (crossed when muted), quieter, the level,
-## louder. A level and mute from the model "^LEVEL MUTE"; nothing for a
-## view without one.
-h:s_tripSvg := { (models, w) ->
-  said := "^" h:m_arked models
-  0 = t_ally said ? ""
-  both := f_loor n_umbers said
-  level := f_irst both
-  mute := 2 s_elect both
-  (x, y, s) := h:s_tripAt w
+## louder, and the gear that opens the settings panel; nothing for a
+## view without a strip.
+h:s_tripSvg := { (models, place) ->
+  0 = t_ally "^" h:m_arked models ? ""
+  (level, mute) := h:s_ound models
+  (x, y, s) := place
   b_ox := { (at, what) -> "<g data-control=\"" c_at what c_at "\"><rect x=\"" c_at at c_at "\" width=\"28\" height=\"28\" rx=\"5\" fill=\"#2b2e3d\" stroke=\"#a8a08a\"/>" }
   s_ign := { (at, what) -> "<text x=\"" c_at at c_at "\" y=\"21\" text-anchor=\"middle\" font-size=\"20\" fill=\"#e8e6df\">" c_at what c_at "</text></g>" }
   speaker := (b_ox ("0", "mute")) c_at "<path d=\"M5 11h4l6-5v16l-6-5h-4z\" fill=\"#e8e6df\"/>" c_at (h:w_aves mute) c_at "</g>"
   number := "<text x=\"80\" y=\"20\" text-anchor=\"middle\" font-size=\"16\" fill=\"#e8e6df\">" c_at (f_ormat level) c_at "</text>"
-  "<g class=\"sound\" transform=\"translate(" c_at (f_ormat h:f_ine x) c_at " " c_at (f_ormat h:f_ine y) c_at ") scale(" c_at (f_ormat h:f_ine s) c_at ")\"><rect x=\"-4\" y=\"-4\" width=\"140\" height=\"36\" rx=\"8\" fill=\"#14151c\" fill-opacity=\"0.6\"/>" c_at speaker c_at (b_ox ("34", "down")) c_at (s_ign ("48", "-")) c_at number c_at (b_ox ("98", "up")) c_at (s_ign ("112", "+")) c_at "</g>"
+  gear := (b_ox ("132", "settings")) c_at "<circle cx=\"146\" cy=\"14\" r=\"7\" fill=\"none\" stroke=\"#e8e6df\" stroke-width=\"4\" stroke-dasharray=\"3 2.5\"/><circle cx=\"146\" cy=\"14\" r=\"3\" fill=\"#e8e6df\"/></g>"
+  "<g class=\"sound\" transform=\"translate(" c_at (f_ormat h:f_ine x) c_at " " c_at (f_ormat h:f_ine y) c_at ") scale(" c_at (f_ormat h:f_ine s) c_at ")\"><rect x=\"-4\" y=\"-4\" width=\"176\" height=\"36\" rx=\"8\" fill=\"#14151c\" fill-opacity=\"0.6\"/>" c_at speaker c_at (b_ox ("34", "down")) c_at (s_ign ("48", "-")) c_at number c_at (b_ox ("98", "up")) c_at (s_ign ("112", "+")) c_at gear c_at "</g>"
 }
-## A picture a game drew itself with the music's metadata and the
-## sound's strip put in, just before its end.
+## The settings panel's rows (lib/Mode's loop): the music's volume, on
+## or muted, resume playing, exit to the start menu.
+h:p_anelRows := { models ->
+  (level, mute) := h:s_ound models
+  (e_nclose "Music volume: " c_at (f_ormat level) c_at " of 10") c_at (e_nclose "Music: " c_at d_isclose (1 + mute) s_elect "on" "muted") c_at "Resume playing" "Exit to start menu"
+}
+## The panel's chosen row, or 0 when it is closed: a model "%ROW".
+h:p_anelRow := { models ->
+  said := "%" h:m_arked models
+  0 = t_ally said ? 0
+  f_irst f_loor n_umbers said
+}
+## The panel's place and size in a view's picture: its top left corner
+## and how many picture units are one of its own (it is 420 by 270 of
+## them, in the middle).
+h:p_anelAt := { (drawn, frame) ->
+  wh := h:w_h (drawn, frame)
+  s := 1.0 m_ax (f_irst wh) / 800.0
+  (0.5 * (f_irst wh) - s * 420.0, 0.5 * (2 s_elect wh) - s * 270.0, s)
+}
+## The panel's text: a line for its title, a line a row, the chosen one
+## marked; nothing when it is closed.
+h:p_anelText := { models ->
+  row := h:p_anelRow models
+  0 = row ? ""
+  rows := h:p_anelRows models
+  "\nPaused: settings (Up Down, Left Right, Enter)" c_at t:j_oin '{ i -> e_nclose "\n" c_at (d_isclose (1 + i = row) s_elect "  " "> ") c_at d_isclose i s_elect rows } e_ach r_ange 4
+}
+## The panel's SVG over the picture: a dark box, its title, a row a
+## line (the chosen one lit); nothing when it is closed.
+h:p_anelSvg := { (models, place) ->
+  row := h:p_anelRow models
+  0 = row ? ""
+  rows := h:p_anelRows models
+  (x, y, s) := place
+  r_ow := { i -> "<g data-row=\"" c_at (f_ormat i) c_at "\"><rect x=\"20\" y=\"" c_at (f_ormat 34 + 46 * i) c_at "\" width=\"380\" height=\"38\" rx=\"6\" fill=\"" c_at (d_isclose (1 + i = row) s_elect "#2b2e3d" "#6b5a2e") c_at "\" stroke=\"#a8a08a\"/><text x=\"36\" y=\"" c_at (f_ormat 59 + 46 * i) c_at "\" text-anchor=\"start\" font-size=\"18\" fill=\"#e8e6df\">" c_at (d_isclose i s_elect rows) c_at "</text></g>" }
+  "<g class=\"sound panel\" transform=\"translate(" c_at (f_ormat h:f_ine x) c_at " " c_at (f_ormat h:f_ine y) c_at ") scale(" c_at (f_ormat h:f_ine s) c_at ")\"><rect width=\"420\" height=\"270\" rx=\"10\" fill=\"#14151c\" fill-opacity=\"0.92\" stroke=\"#a8a08a\"/><text x=\"210\" y=\"30\" text-anchor=\"middle\" font-size=\"20\" fill=\"#e8e6df\">Paused: settings</text>" c_at (t:j_oin '{ i -> e_nclose r_ow i } e_ach r_ange 4) c_at "</g>"
+}
+## A picture a game drew itself with the music's metadata, the sound's
+## strip and the panel put in, just before its end.
 h:w_ithSound := { (svg, models) ->
-  more := (h:t_une models) c_at h:s_tripSvg (models, h:w_ide svg)
+  frame := 0.0 0.0 0.0 0.0
+  more := (h:t_une models) c_at (h:s_tripSvg (models, h:p_lace (svg, frame))) c_at h:p_anelSvg (models, h:p_anelAt (svg, frame))
   0 = t_ally more ? svg
   n_ot "</svg>" m_atch -6 t_ake svg ? svg c_at more
   (-6 d_rop svg) c_at more c_at "</svg>"
 }
-## How wide a view's picture is: the drawing a game made itself, or the
-## stage's frame.
-h:w_idth := { (drawn, frame) -> 0 < t_ally drawn ? h:w_ide drawn; 3 s_elect frame }
 # :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i) => ((a, Float, b, c, d, e), Box Char, f, g, h) -> Float -> i
 ## Which of the sound strip's controls a picture point is on: view
-## vw:s_trip (px, py), 1 the speaker (mute), 2 quieter, 3 louder, or 0
-## for none (and for a view with no strip).
+## vw:s_trip (px, py), 1 the speaker (mute), 2 quieter, 3 louder, 4 the
+## gear (the settings panel), or 0 for none (and for a view with no
+## strip).
 l:s_trip := { (stage, models, _, _, _) p ->
   0 = t_ally "^" h:m_arked models ? 0
-  drawn := h:d_rawing models
   (_, frame, _, _, _, _) := stage
-  w := h:w_idth (drawn, frame)
-  (x, y, s) := h:s_tripAt w
+  (x, y, s) := h:p_lace (h:d_rawing models, frame)
   u := ((f_irst p) - x) / s
   v := ((2 s_elect p) - y) / s
   (v < 0.0) | v > 28.0 ? 0
   (u >= 0.0) & u <= 28.0 ? 1
   (u >= 34.0) & u <= 62.0 ? 2
   (u >= 98.0) & u <= 126.0 ? 3
+  (u >= 132.0) & u <= 160.0 ? 4
   0
+}
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => ((a, Float, b, c, d, e), Box Char, f, g, h) -> Float -> Int
+## Which of the settings panel's rows a picture point is on: view
+## vw:p_anel (px, py), 1 to 4, or 0 for none (and when it is closed).
+l:p_anel := { (stage, models, _, _, _) p ->
+  0 = h:p_anelRow models ? 0
+  (_, frame, _, _, _, _) := stage
+  (x, y, s) := h:p_anelAt (h:d_rawing models, frame)
+  u := ((f_irst p) - x) / s
+  v := ((2 s_elect p) - y) / s
+  (u < 20.0) | u > 400.0 ? 0
+  r := f_loor (v - 34.0) / 46.0
+  (r < 1) | r > 4 ? 0
+  (v - 34.0 + 46.0 * f_loat r) > 38.0 ? 0
+  r
 }
 ## A view's own drawing, or an empty text: a model that begins with <
 ## is a whole picture (an SVG), drawn by a game that draws itself (one
@@ -509,7 +571,7 @@ l:p_icture := { view ->
   back := "<rect class=\"flat\" width=\"" c_at w c_at "\" height=\"" c_at h c_at "\" fill=\"#1d1f2b\"/>"
   said := st:l_ines caption
   words := t:j_oin '{ i -> e_nclose "<text x=\"" c_at (f_ormat h:w_hole h:edge) c_at "\" y=\"" c_at (f_ormat h:w_hole ((4 s_elect frame) - h:edge) - 20.0 * f_loat (t_ally said) - i) c_at "\" font-size=\"16\" fill=\"#e8e6df\">" c_at (d_isclose f_irst (i - 1) d_rop said) c_at "</text>" } e_ach r_ange t_ally said
-  head c_at "<metadata id=\"scene\">" c_at (l:s_cene view) c_at "</metadata>" c_at (h:t_une models) c_at back c_at "<g class=\"flat\">" c_at (t:j_oin order s_elect all) c_at "</g>" c_at (h:l_abels (stage, models, pieces)) c_at words c_at (h:s_tripSvg (models, 3 s_elect frame)) c_at "</svg>"
+  head c_at "<metadata id=\"scene\">" c_at (l:s_cene view) c_at "</metadata>" c_at (h:t_une models) c_at back c_at "<g class=\"flat\">" c_at (t:j_oin order s_elect all) c_at "</g>" c_at (h:l_abels (stage, models, pieces)) c_at words c_at (h:s_tripSvg (models, h:p_lace ("", frame))) c_at (h:p_anelSvg (models, h:p_anelAt ("", frame))) c_at "</svg>"
 }
 
 ### The scene
@@ -545,7 +607,7 @@ h:tall := 0.5
 h:p_ieceCall := { (model, clip, y, y2, n) ->
   model m_atch "eye" ? h:e_yeCall (y, n)
   "#" m_atch 1 t_ake model ? ""
-  (f_irst model) m_ember? "~^" ? ""
+  (f_irst model) m_ember? "~^%" ? ""
   "*" m_atch 1 t_ake model ? h:b_urstCall (1 d_rop model, y, n)
   from := (2 t_ake n) c_at y c_at 2 t_ake 2 d_rop n
   to := (2 t_ake 5 d_rop n) c_at y2

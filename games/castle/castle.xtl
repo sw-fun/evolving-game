@@ -108,7 +108,7 @@ _ := u:s_ay ps:o_utcome u:l_ast 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep md:r_
 # where you are and which way you face, after two ticks held and one
 # more let go.
 u:h_eld := u:l_ast 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep md:r_eplay ("choose 2 39" "tick 0.05" "tick 0.05" "choose 3 39" "tick 0.05", ps:n_ew (file, md:nothing, 1))
-(_, rays, held) := u:h_eld
+(_, rays, held, _) := u:h_eld
 3 t_ake rc:y_ou rays
 held
 

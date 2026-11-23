@@ -310,9 +310,9 @@ outcome: left
 The dungeon. Health 12, gold 0, turns 0. Find the way out (>). Arrow keys or WASD to move; walk into a monster to fight.
 The dungeon. Health 12, gold 0, turns 1. A wall. 
 outcome: playing
-The second maze. W S: walk, Left Right: turn, A D: sidestep. Find the door.
+The second maze. W S: walk, Left Right: turn, A D: sidestep, M: the map. Find the door.
 outcome: left
-The second maze. W S: walk, Left Right: turn, A D: sidestep. Find the door.
+The second maze. W S: walk, Left Right: turn, A D: sidestep, M: the map. Find the door.
 1.5 1.5 0.2618
 0 0 0 0 0 0 0 0
 ...................................
