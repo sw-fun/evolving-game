@@ -1,0 +1,75 @@
+(6, 0)
+(3, 1)
+(10, 0)
+0.6
+0.0
+0.0
+S:~.
+.:=G
+..~^
+Seen:
+S:~.
+.:=G
+..~^
+Seen: key space
+settings.music 3
+settings.mute 1
+ key space
+S:~.
+.:=G
+..~^
+Seen:
+S:~.
+.:=G
+..~^
+Seen: key space
+0
+S:~.
+.:=G
+..~^
+Seen:
+S:~.
+.:=G
+..~^
+Seen: key m
+S:~.
+.:=G
+..~^
+Seen: key m key [
+S:~.
+.:=G
+..~^
+Seen: key m key [ key a
+0
+ key m key [ key a
+S:~.
+.:=G
+..~^
+Seen:
+S:~.
+.:=G
+..~^
+Seen: key m
+settings.music 1
+settings.mute 0
+ key m
+music('calm', 26.666667, 'A B B C D')
+volume(0.2)
+1
+1
+1
+1
+1
+1
+1 2 0 3 0 0
+0
+S:~.
+.:=G
+..~^
+Seen:
+settings.music 3
+settings.mute 1
+
+</svg> <metadata id="music">volume(0.
+1
+3

@@ -100,9 +100,10 @@ function keep() {
 function point(x, y) { feed(`click ${x.toFixed(1)} ${y.toFixed(1)}`); }
 
 // A click on the flat picture: the same units, through the SVG's own map.
-// (in 3D, only a picture a game draws itself: the board takes the rest)
+// (in 3D, only a picture a game draws itself, and the sound strip every
+// picture has: the board takes the rest)
 flat.parentElement.addEventListener('click', (e) => {
-  if (solid && !document.body.classList.contains('drawn')) return;
+  if (solid && !document.body.classList.contains('drawn') && !e.target.closest?.('.sound')) return;
   const svg = flat.querySelector('svg');
   if (!svg) return;
   const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
@@ -116,7 +117,7 @@ flat.parentElement.addEventListener('click', (e) => {
 new ResizeObserver(() => window.dispatchEvent(new Event('resize'))).observe(el('stage'));
 
 // Keys the game may be given; none is a browser's or a system's.
-const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter', Backspace: 'backspace' };
+const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter', Backspace: 'backspace', '[': '[', ']': ']' };
 window.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || talking()) return;
   // Escape leaves any game for the map (the loop's own command)
@@ -135,7 +136,7 @@ window.addEventListener('keyup', (e) => release(e.keyCode));
 window.addEventListener('blur', () => [...held].forEach(release));
 // Looking round: in a scene seen through an eye, a click takes the
 // pointer (Esc gives it back) and its movement is told to the game.
-el('stage').addEventListener('click', () => { if (eyed && solid && !document.pointerLockElement) el('stage').requestPointerLock?.(); });
+el('stage').addEventListener('click', (e) => { if (eyed && solid && !document.pointerLockElement && !e.target.closest?.('.sound')) el('stage').requestPointerLock?.(); });
 document.addEventListener('mousemove', (e) => {
   if (document.pointerLockElement !== el('stage')) return;
   look[0] += e.movementX;

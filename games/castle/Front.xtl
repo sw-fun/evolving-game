@@ -211,9 +211,11 @@ h:t_ake := { s ->
   0 < t_ally name ? (stage, 5, 1, name, picks, data, save)
   (stage, 1, 1, "", picks, data, save)
 }
-# :: Any a => a -> Box Char
-## The events it takes.
-l:l_egal := { s -> "key KEY" "click X Y" }
+# :: (Any a, Num b, Any c, Any d, Any e, Any f, Any g) => (a, b, c, d, e, f, g) -> Box Char
+## The events it takes: any key, and on the name screen any key typed
+## ("key TEXT"), so the loop leaves it the keys of the sound strip (M
+## [ ]) there; and clicks.
+l:l_egal := { (_, screen, _, _, _, _, _) -> screen = 2 ? "key TEXT" "click X Y"; "key KEY" "click X Y" }
 # :: (Any a, Any b, Any c, Any d, Num e, Any f, Any g) => (a, b, c, d, e, f, g) -> Int
 ## Done (won) when something to go to is chosen: play, the hall, the
 ## treasury; playing until then.

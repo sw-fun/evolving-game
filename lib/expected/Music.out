@@ -4,7 +4,5 @@ l:s_econds : (Char, Char) -> Float
 l:f_or : (Char, Char) -> Char
 l:n_umbers : (Char, Char, Int) -> Int
 l:p_lan : (Char, Char, Int) -> Box Char
-l:v_olume : (Char, (Box Char, Int)) -> Float
-l:l_ine : (Char, Char, (Box Char, Int), Int) -> Char
-l:s_cored : (Any a, Any b) => ((a, Box Char, Box Char, Float, b), Char) -> (a, Box Char, Box Char, Float, b)
-l:p_lay : (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> Char -> a -> ((Int, Int, Int), a)
+l:l_ine : (Char, Char, Int) -> Char
+l:p_lay : (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Char, (Box Char, Int)) -> a -> ((Box Char, Int), a)

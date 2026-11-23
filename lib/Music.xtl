@@ -1,27 +1,25 @@
 ## Music: the music director. Which set of looping phrases plays where,
 ## and in what order a set's phrases play (a plan: A A B B B C D D A B
 ## ...), worked out from a music file (games/castle/music.toml) and a
-## seed; and the line that tells a page to play it, with its loudness
-## from the world's settings. The page only plays what the line says:
-## the phrases of the plan back to back, round and round; a new set at
-## the end of the phrase playing, from its plan's start.
+## seed; and the line that tells a page to play it. The page only plays
+## what the line says: the phrases of the plan back to back, round and
+## round; a new plan at the end of the phrase playing, from its start.
 ##
 ## A system over one component, the music a view carries: a mode is
 ## played with mu:p_lay in place of md:p_lay, and every picture it shows
-## carries the line (lib/View: a piece whose model begins with ~ is the
-## music, in the picture's metadata id="music"). A plan is chosen once,
-## when a place is entered, not every tick.
-##
-## The music line:
-##   music('set', volume, seconds, 'A A B B B C D D ...')
-## volume from 0 to 1 (0 is silence), seconds how long each of the
-## set's phrases is, and the plan, a phrase a word.
+## carries the line, with the loudness of the loop's sound (lib/Mode:
+## the world's settings, changed by the strip every picture shows), in
+## the picture's metadata id="music":
+##   music('set', seconds, 'A A B B B C D D ...')
+##   volume(0.6)
+## seconds how long each of the set's phrases is, the plan a phrase a
+## word, and the volume from 0 to 1 (0 is silence). A plan is chosen
+## once, when a place is entered, not every tick.
 ## Import: "mu:" u_se< "Music"
 
 "md:" u_se< "Mode"
 "rg:" u_se< "Rng"
 "st:" u_se< "Strings"
-"vw:" u_se< "View"
 
 h:f_ail := { (file, field) what -> "bad-scenario" []S_IGNAL file c_at ": " c_at field c_at ": " c_at what }
 ## A rule's number that must be a whole number at least `low`.
@@ -116,40 +114,23 @@ l:p_lan := { (file, set, seed) -> (l:n_umbers (file, set, seed)) s_elect l:p_hra
 
 ### The line
 
-## Is a name set in a world?
-h:h_as := { (names, _) name -> (names i_ndexOf e_nclose name) <= t_ally names }
-## The world's settings.music, or the file's default when it is not set.
-h:l_evel := { (file, world) ->
-  world h:h_as "settings.music" ? world md:g_et "settings.music"
-  h:a_tLeast (file, "volume", "default", 0)
-}
-# :: (Char, (Box Char, Int)) -> Float
-## How loud, from 0 to 1: the world's settings.music over the file's
-## most (its default when not set), and 0 when settings.mute is 1.
-l:v_olume := { (file, world) ->
-  most := f_loat h:a_tLeast (file, "volume", "most", 1)
-  level := f_loat h:l_evel (file, world)
-  1 = world md:g_et "settings.mute" ? 0.0
-  0.0 m_ax 1.0 m_in (f_loat f_loor 0.5 + 100.0 * level / most) / 100.0
-}
-# :: (Char, Char, (Box Char, Int), Int) -> Char
-## The music line for a kind of place in a world: (file, kind, world,
-## seed).
-l:l_ine := { (file, kind, world, seed) ->
+# :: (Char, Char, Int) -> Char
+## The music for a kind of place, as the line a page plays: (file,
+## kind, seed).
+l:l_ine := { (file, kind, seed) ->
   set := l:f_or (file, kind)
   plan := " " st:j_oin l:p_lan (file, set, seed)
-  "music('" c_at set c_at "', " c_at (f_ormat l:v_olume (file, world)) c_at ", " c_at (f_ormat l:s_econds (file, set)) c_at ", '" c_at plan c_at "')"
+  "music('" c_at set c_at "', " c_at (f_ormat l:s_econds (file, set)) c_at ", '" c_at plan c_at "')\n"
 }
 
 ### The system
 
-# :: (Any a, Any b) => ((a, Box Char, Box Char, Float, b), Char) -> (a, Box Char, Box Char, Float, b)
-## A view carrying a music line: (view, line).
-l:s_cored := { (view, line) -> vw:w_ith (view, "~" c_at line, "", 8 r_eshape 0.0) }
-# :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> Char -> a -> ((Int, Int, Int), a)
-## Play a mode as md:p_lay does, every picture carrying the music line:
-## line 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep mu:p_lay state.
-l:p_lay := { step_ status_ legal_ view_ line s ->
-  v_ := { x -> l:s_cored (view_ x, line) }
-  'v_ 'legal_ 'status_ 'step_ md:p_lay s
+# :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Char, (Box Char, Int)) -> a -> ((Box Char, Int), a)
+## Play a mode as md:p_layHeard does, every picture carrying the music
+## and the sound's strip: (line, world) 'm:v_iew 'm:l_egal 'm:s_tatus
+## 'm:s_tep mu:p_lay state, the line mu:l_ine's and the world the one
+## whose settings say how loud. What the strip changed (the world's
+## changes that keep it, or nothing) and the last state.
+l:p_lay := { step_ status_ legal_ view_ (line, world) s ->
+  'view_ 'legal_ 'status_ 'step_ md:p_layHeard (line, world, s)
 }

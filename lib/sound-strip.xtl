@@ -1,0 +1,87 @@
+#!/usr/bin/env xetal
+## The sound every mode's loop keeps (lib/Mode): a world's settings to
+## a level and mute, the loudness a page plays at, the strip every
+## picture shows at its top right (lib/View) with the music it
+## carries, and the strip's controls: its icons clicked and the keys M,
+## [ and ], which the loop takes before the mode sees them, unless the
+## mode names the key itself or is being typed into. What changed comes
+## back as the world's changes that keep it.
+"md:" u_se< "Mode"
+"sm:" u_se< "Sim"
+"st:" u_se< "Strings"
+"t:" u_se< "Text"
+"vw:" u_se< "View"
+"w:" u_se< "World"
+
+# A world's sound: none set is md:usual, not muted; the settings as
+# they are; a level out of range kept in it. The loudness of each.
+md:s_ound md:nothing
+md:s_ound (md:nothing md:s_et ("settings.music", 3)) md:s_et ("settings.mute", 1)
+md:s_ound md:nothing md:s_et ("settings.music", 14)
+md:v_olume (6, 0)
+md:v_olume (3, 1)
+md:v_olume (0, 0)
+# A small mode: it says the events it was given.
+# Its state is (stage, events seen); it takes the space bar and clicks,
+# or every key (being typed into), or space and M.
+map := w:r_ead "fixtures/small.toml"
+u:s_tep := { (stage, seen) e -> (stage, seen c_at " " c_at sm:l_ine e) }
+u:s_tatus := { s -> md:playing }
+u:s_pace := { s -> "key space" "click X Y" }
+u:t_yped := { s -> 1 r_eshape e_nclose "key TEXT" }
+u:o_wnM := { s -> "key space" "key m" }
+u:v_iew := { (stage, seen) -> vw:e_mpty (stage, "Seen:" c_at seen) }
+u:s_een := { (_, seen) -> seen }
+start := (vw:s_tage map, "")
+tune := "music('calm', 26.666667, 'A B B C D')\n"
+quiet := md:nothing md:s_et ("settings.music", 2)
+# The keys: M mutes, [ is quieter, ] louder; space reaches the mode.
+# What changed comes back as the world's settings, and the mode saw
+# only the space bar.
+(heard, last) := 'u:v_iew 'u:s_pace 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, "key m" "key ]" "key ]" "key space" "key [", start)
+_ := t:l_ines md:l_ines heard
+u:s_een last
+# Unchanged, nothing comes back.
+(none, _) := 'u:v_iew 'u:s_pace 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, "key space" "key m" "key m", start)
+t_ally md:l_ines none
+# Being typed into, the keys are the mode's; a mode that names M has
+# it, and [ is still the loop's.
+(typed, seen) := 'u:v_iew 'u:t_yped 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, "key m" "key [" "key a", start)
+t_ally md:l_ines typed
+u:s_een seen
+(owned, saw) := 'u:v_iew 'u:o_wnM 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, "key m" "key [", start)
+_ := t:l_ines md:l_ines owned
+u:s_een saw
+# The picture: the music and its loudness in its metadata id="music",
+# and the strip at the top right: the speaker, quieter, the level 2,
+# louder. The scene and the text are the mode's own.
+view := md:d_ressed (u:v_iew start, (2, 0), tune)
+picture := vw:p_icture view
+u:a_fter := { (mark, text) -> d_isclose 2 s_elect mark st:s_plit text }
+u:b_efore := { (mark, text) -> d_isclose f_irst mark st:s_plit text }
+_ := t:l_ines st:l_ines u:b_efore ("</metadata>", u:a_fter ("<metadata id=\"music\">", picture))
+"<g class=\"sound\"" st:i_nfix? picture
+">2</text>" st:i_nfix? picture
+(vw:s_cene u:v_iew start) m_atch vw:s_cene view
+(vw:t_ext u:v_iew start) m_atch vw:t_ext view
+# Muted, the speaker is crossed and the volume 0.
+"volume(0.0)" st:i_nfix? vw:p_icture md:d_ressed (u:v_iew start, (2, 1), tune)
+"#e0503c" st:i_nfix? vw:p_icture md:d_ressed (u:v_iew start, (2, 1), tune)
+# The strip's place: the picture's top right; a point on each control
+# (1 the speaker, 2 quieter, 3 louder) and points beside them.
+(_, frame, _, _, _, _) := vw:s_tage map
+w := 3 s_elect frame
+'{ x -> view vw:s_trip (w - x) c_at 20.0 } e_ach 125.0 90.0 65.0 30.0 5.0 200.0
+view vw:s_trip (w - 125.0) c_at 60.0
+# Clicked, the icons change it, and the click is not the mode's.
+clicks := (e_nclose "click " c_at (f_ormat w - 30.0) c_at " 20") c_at e_nclose "click " c_at (f_ormat w - 125.0) c_at " 20"
+(clicked, mine) := 'u:v_iew 'u:s_pace 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, clicks, start)
+_ := t:l_ines md:l_ines clicked
+u:s_een mine
+# A picture a game drew itself has them put in before its end, the
+# strip at its own width's top right.
+drawn := md:d_ressed (vw:d_rawn (vw:s_tage map, "<svg viewBox=\"0 0 1200 800\"><rect/></svg>", "Drawn"), (6, 0), "")
+d := vw:p_icture drawn
+(-6 t_ake d) c_at " " c_at 30 t_ake u:a_fter ("<rect/>", d)
+"translate(990.0 12.0) scale(1.5)" st:i_nfix? d
+drawn vw:s_trip (1200.0 - 45.0) c_at 30.0

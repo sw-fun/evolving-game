@@ -32,16 +32,7 @@ battle 3: A A B B B C C D A A B B D D A C C D D
 1
 200 200 200 200 200
 832 1306 761 998
-0.6
-0.3
-0.0
-0.0
-music('battle', 0.6, 26.666667, 'A A B B B D D A B B C C D D A B B C D')
-music('calm', 0.2, 26.666667, 'A A C C B B C B B C C B B D D A A B B B C C D')
-music('explore', 0.6, 20.0, 'A A B B B C D D A B B B C D A B B C D')
-1
-1
-1
-0
-<svg><rect/><metadata id="music">music('calm', 0.6, 26.667, 'A')</metadata></svg>
+music('battle', 26.666667, 'A A B B B D D A B B C C D D A B B C D')
+music('calm', 26.666667, 'A A C C B B C B B C C B B D D A A B B B C C D')
+music('explore', 20.0, 'A A B B B C D D A B B B C D A B B C D')
 fixtures/bad-music.toml: next-B: it names a phrase not in phrases

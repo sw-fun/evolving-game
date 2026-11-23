@@ -24,6 +24,14 @@ l:s_tage : Num a => Char -> ((Char, Int, Int), Float, Box Char, Float, Char, a)
 l:b_locked : Truthy a => Char -> a
 l:p_roblem : Char -> Char -> Char
 l:a_llows : Truthy b => Box Char -> (Char, a, Char) -> b
+l:loudest : Int
+l:usual : Int
+l:s_ound : (Num a, Truthy a) => (Box Char, Int) -> (Int, a)
+l:s_ettings : (Int, Int) -> (Box Char, Int)
+l:v_olume : (Num a, Num b) => (a, b) -> Float
+l:d_ressed : (Any a, Any b, Num c, Num d) => ((a, Box Char, Box Char, Float, b), (c, d), Char) -> (a, Box Char, Box Char, Float, b)
 l:p_lay : (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> a -> ((Int, Int, Int), a)
 l:r_eplay : (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Box Char, a) -> ((Int, Int, Int), a)
+l:p_layHeard : (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Char, (Box Char, Int), a) -> ((Box Char, Int), a)
+l:r_eplayHeard : (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Char, (Box Char, Int), Box Char, a) -> ((Box Char, Int), a)
 l:r_esult : Any a => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (Box Char, a) -> ((Int, Int, Int), a)

@@ -3,10 +3,8 @@
 ## plays at each kind of place, a plan for every set and a few seeds,
 ## what every plan promises (it starts at the first phrase, ends where
 ## the next is the first again, is at least the file's length long, and
-## plays each phrase between its least and most times in a row), the
-## loudness from the world's settings, the music line, and a view that
-## carries it: in the picture's metadata, and nowhere in the scene or
-## the text. Then a music file with a mistake, named.
+## plays each phrase between its least and most times in a row), and
+## the music's line. Then a music file with a mistake, named.
 "md:" u_se< "Mode"
 "mu:" u_se< "Music"
 "st:" u_se< "Strings"
@@ -52,27 +50,10 @@ plans := '{ i -> e_nclose mu:n_umbers (file, d_isclose (1 + (i - 1) d_iv 50) s_e
 '{ j -> '+ r_/ '{ p -> 0 + j s_elect u:k_ept d_isclose p } e_ach plans } e_ach 1 2 3 4 5
 # The phrases played, of every plan together: B the most, as the bed.
 '{ k -> '+ r_/ '{ p -> '+ r_/ 0 + k = d_isclose p } e_ach plans } e_ach 1 2 3 4
-# Loudness: none set is the default (6 of 10); 3 of 10; 0; muted.
-mu:v_olume (file, md:nothing)
-mu:v_olume (file, md:nothing md:s_et ("settings.music", 3))
-mu:v_olume (file, md:nothing md:s_et ("settings.music", 0))
-mu:v_olume (file, (md:nothing md:s_et ("settings.music", 9)) md:s_et ("settings.mute", 1))
-# The line for a battle, and for the map, quiet.
-mu:l_ine (file, "defense", md:nothing, 1)
-mu:l_ine (file, "roads", md:nothing md:s_et ("settings.music", 2), 1)
-mu:l_ine (file, "roam", md:nothing, 1)
-# A view carrying the line: the picture has it as its metadata
-# id="music"; the scene and the text are the view's without it.
-map := w:r_ead "fixtures/small.toml"
-view := vw:o_ne (vw:s_tage map, "walker", "walk", 1.5 1.5 0.0 1.0 0.0 1.5 1.5 0.05, "Here")
-scored := mu:s_cored (view, "music('calm', 0.6, 26.667, 'A B C D')")
-picture := vw:p_icture scored
-"<metadata id=\"music\">music('calm', 0.6, 26.667, 'A B C D')</metadata>" st:i_nfix? picture
-(vw:s_cene view) m_atch vw:s_cene scored
-(vw:t_ext view) m_atch vw:t_ext scored
-"<metadata id=\"music\">" st:i_nfix? vw:p_icture view
-# A picture a game drew itself carries the line too.
-drawn := vw:p_icture mu:s_cored (vw:d_rawn (vw:s_tage map, "<svg><rect/></svg>", "Drawn"), "music('calm', 0.6, 26.667, 'A')")
-drawn
+# The lines for a battle, for the map and on foot, as a page reads
+# them (lib/Mode adds the loudness, volume(...), to every picture).
+_ := t:l_ines st:l_ines mu:l_ine (file, "defense", 1)
+_ := t:l_ines st:l_ines mu:l_ine (file, "roads", 1)
+_ := t:l_ines st:l_ines mu:l_ine (file, "roam", 1)
 # A music file with a mistake is a message naming the file and field.
 '{ @ -> " " st:j_oin mu:p_lan ("fixtures/bad-music.toml", "calm", 1) } []T_RAP '{ err -> []R_ECOVER []E_MESSAGE err }

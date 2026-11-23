@@ -303,6 +303,78 @@ h:t_akes := { e line ->
 ## 0
 l:a_llows := { legal e -> 0 < '+ r_/ 0 c_at '{ line -> e h:t_akes d_isclose line } e_ach legal }
 
+### Sound
+
+## Every loop keeps a sound beside the mode's state: (level, mute), the
+## music's loudness from 0 to md:loudest and 1 when it is muted. Every
+## picture shows it in a strip at its top right (lib/View: a speaker,
+## quieter, the level, louder), and carries the music to play with it.
+## A click on the strip's icons, or the keys M (mute), [ and ] (quieter,
+## louder), change it, and the mode never sees them: unless it names
+## the key itself ("key m": the maze's map) or is being typed into
+## ("key TEXT": a name), when the keys are its and the icons still work.
+
+# :: Int
+## The loudest level.
+l:loudest := 10
+# :: Int
+## The level when a world has none set.
+l:usual := 6
+## A world's settings.music, md:usual when it is not set.
+h:l_evel := { world ->
+  (names, _) := world
+  (names i_ndexOf e_nclose "settings.music") > t_ally names ? l:usual
+  0 m_ax l:loudest m_in world l:g_et "settings.music"
+}
+# :: (Num a, Truthy a) => (Box Char, Int) -> (Int, a)
+## The sound a world's settings say: settings.music (md:usual when it
+## is not set) and settings.mute.
+## >> "md:" u_se< "Mode"
+## >> md:s_ound md:nothing md:s_et ("settings.mute", 1)
+## (6, 1)
+l:s_ound := { world -> (h:l_evel world, 0 + 1 = world l:g_et "settings.mute") }
+# :: (Int, Int) -> (Box Char, Int)
+## The world's changes that keep a sound: settings.music and
+## settings.mute.
+l:s_ettings := { (level, mute) -> (l:nothing l:s_et ("settings.music", level)) l:s_et ("settings.mute", mute) }
+# :: (Num a, Num b) => (a, b) -> Float
+## How loud the music plays, from 0 to 1.
+## >> "md:" u_se< "Mode"
+## >> md:v_olume (6, 0)
+## 0.6
+l:v_olume := { (level, mute) -> mute = 1 ? 0.0; (f_loat level) / f_loat l:loudest }
+## The keys the loop takes, in the order of the strip's controls: 1
+## mute, 2 quieter, 3 louder.
+h:keys := "key m" "key [" "key ]"
+## A sound changed by a control.
+h:t_urn := { (level, mute) k ->
+  k = 1 ? (level, 1 - mute)
+  k = 2 ? (0 m_ax level - 1, mute)
+  (l:loudest m_in level + 1, mute)
+}
+## Does a mode keep a key line for itself: it names it, or it is being
+## typed into.
+h:o_wns := { legal line -> 0 < '+ r_/ 0 c_at '{ l -> (line m_atch d_isclose l) | "key TEXT" m_atch d_isclose l } e_ach legal }
+## Which of the sound's controls an event is (0 none), for a mode in a
+## state: a click on the strip of the view it shows, or a key it does
+## not keep.
+h:c_ontrol := { legal_ view_ s e ->
+  e sm:i_s "click" ? (view_ s) vw:s_trip 2 t_ake sm:n_umbers e
+  n_ot e sm:i_s "key" ? 0
+  k := h:keys i_ndexOf e_nclose sm:l_ine e
+  k > t_ally h:keys ? 0
+  (legal_ s) h:o_wns sm:l_ine e ? 0
+  k
+}
+# :: (Any a, Any b, Num c, Num d) => ((a, Box Char, Box Char, Float, b), (c, d), Char) -> (a, Box Char, Box Char, Float, b)
+## A view with the sound's strip and the music: the tune (the music's
+## lines, lib/Music, or nothing) and the loudness, as a page reads them.
+l:d_ressed := { (v, sound, tune) ->
+  (level, mute) := sound
+  heard := vw:w_ith (v, "~" c_at tune c_at "volume(" c_at (f_ormat l:v_olume sound) c_at ")", "", 8 r_eshape 0.0)
+  vw:w_ith (heard, "^" c_at (f_ormat level) c_at " " c_at f_ormat mute, "", 8 r_eshape 0.0)
+}
+
 ### The loop
 
 ## Show a state: its picture to the host (when asked), and its text
@@ -328,29 +400,59 @@ h:a_pply := { legal_ step_ (clock, s) e ->
 ## several goes back to where they are chosen.
 h:l_eave := { e -> (e sm:i_s "choose") & 0.0 0.0 m_atch 2 t_ake (sm:n_umbers e) c_at 1.0 1.0 }
 h:n_ext := { (host, lines) -> host ? sm:n_ext @; sm:p_arse d_isclose f_irst lines }
-h:l_oop := { step_ status_ legal_ view_ (host, lines, last, clock, s) ->
-  shown := 'view_ h:s_how (host, last, s)
-  l:playing != status_ s ? (clock, s)
-  (n_ot host) & 0 = t_ally lines ? (clock, s)
+## The loop: (host, lines, last, clock, state, sound, tune) to (clock,
+## state, sound).
+h:l_oop := { step_ status_ legal_ view_ (host, lines, last, clock, s, sound, tune) ->
+  v_ := { x -> l:d_ressed (view_ x, sound, tune) }
+  shown := 'v_ h:s_how (host, last, s)
+  l:playing != status_ s ? (clock, s, sound)
+  (n_ot host) & 0 = t_ally lines ? (clock, s, sound)
   e := h:n_ext (host, lines)
-  (e sm:i_s "end") | h:l_eave e ? (clock, s)
+  (e sm:i_s "end") | h:l_eave e ? (clock, s, sound)
+  k := s 'v_ 'legal_ h:c_ontrol e
+  0 < k ? 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, clock sm:a_dvance e, s, sound h:t_urn k, tune)
   (c2, s2) := (clock, s) 'step_ 'legal_ h:a_pply e
-  'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2)
+  'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2, sound, tune)
+}
+## What a loop heard: the world's changes that keep its sound, or
+## nothing when it is as it started; and the last state.
+h:h_eard := { start (clock, s, sound) ->
+  sound m_atch start ? (l:nothing, s)
+  (l:s_ettings sound, s)
 }
 # :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> a -> ((Int, Int, Int), a)
 ## Play a mode on the host's events, from a state its n_ew gave:
 ## 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep md:p_lay state. The view's
 ## text is printed at the start and whenever it changes, and its
-## picture is shown at the start and after every event. The clock and the last
-## state; its o_utcome says how it ended.
+## picture is shown at the start and after every event, with the sound's
+## strip (from md:usual, kept nowhere). The clock and the last state;
+## its o_utcome says how it ended.
 l:p_lay := { step_ status_ legal_ view_ s ->
-  'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s)
+  (clock, last, _) := 'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s, (l:usual, 0), "")
+  (clock, last)
 }
 # :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Box Char, a) -> ((Int, Int, Int), a)
 ## The same on a script, a list of event lines (a log, a save): ...
 ## md:r_eplay (lines, state).
 l:r_eplay := { step_ status_ legal_ view_ (lines, s) ->
-  'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s)
+  (clock, last, _) := 'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s, (l:usual, 0), "")
+  (clock, last)
+}
+# :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Char, (Box Char, Int), a) -> ((Box Char, Int), a)
+## Play a mode with a world's sound and a tune (the music's lines,
+## lib/Music's mu:l_ine, or ""): 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep
+## md:p_layHeard (tune, world, state). What the strip changed, as the
+## world's changes that keep it (nothing when it did not), and the last
+## state.
+l:p_layHeard := { step_ status_ legal_ view_ (tune, world, s) ->
+  start := l:s_ound world
+  start h:h_eard 'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s, start, tune)
+}
+# :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Char, (Box Char, Int), Box Char, a) -> ((Box Char, Int), a)
+## The same on a script: md:r_eplayHeard (tune, world, lines, state).
+l:r_eplayHeard := { step_ status_ legal_ view_ (tune, world, lines, s) ->
+  start := l:s_ound world
+  start h:h_eard 'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s, start, tune)
 }
 # :: Any a => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (Box Char, a) -> ((Int, Int, Int), a)
 ## The same on a script, shown nowhere: for a result alone. No view is

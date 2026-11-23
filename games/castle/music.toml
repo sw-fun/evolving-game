@@ -43,7 +43,3 @@ next-C = ["D 3", "B 1"]
 repeats-D = ["least 1", "most 2"]
 next-D = ["A 1"]
 length = ["16"]
-
-# The music's loudness: the world's settings.music, from 0 to most
-# (default when it is not set); settings.mute 1 is silence.
-volume = ["default 6", "most 10"]

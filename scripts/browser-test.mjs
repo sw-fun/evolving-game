@@ -234,14 +234,25 @@ check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x
 // decodes its phrases at the length the program gives (headless Chrome
 // may play no sound: that is not asked).
 const tune = () => page("(document.querySelector('#flat svg metadata#music') || {}).textContent || ''");
-check(/^music\('calm', 0\.6, 26\.666667, 'A( [ABCD])+'\)$/.test(await tune()), `the map's picture names its music: the calm set, at the default loudness (${(await tune()).slice(0, 40)}...)`);
+check(/^music\('calm', 26\.666667, 'A( [ABCD])+'\)\nvolume\(0\.6\)$/.test(await tune()), `the map's picture names its music: the calm set, at the default loudness (${(await tune()).slice(0, 40)}...)`);
 check(await page("window.game.music().line === (document.querySelector('#flat svg metadata#music') || {}).textContent"), "and the page has read it");
 const decoded = await page(`fetch('music/calm-A.ogg').then((r) => r.ok ? r.arrayBuffer() : Promise.reject(r.status))
   .then((b) => new OfflineAudioContext(2, 48000, 48000).decodeAudioData(b)).then((s) => s.duration, (e) => -1)`);
 check(Math.abs(decoded - 26.666667) < 0.05, `the page serves its first phrase (music/calm-A.ogg), which decodes to the phrase's length (${decoded} s)`);
+// The sound strip every picture has (lib/Mode, lib/View): the keys ]
+// and [ and a click on its speaker change the loudness the picture says.
+check(await page("!!document.querySelector('#flat svg .sound [data-control=mute]')"), "the map's picture has the sound strip");
+for (const type of ["keyDown", "keyUp"]) await key(type, "]", "BracketRight", 221);
+check(/volume\(0\.7\)$/.test(await tune()) && (await page("document.querySelector('#flat svg .sound').textContent")).includes("7"), "the key ] makes the music louder: 7 of 10, on the strip and in the music");
+const speaker = await page("(() => { const r = document.querySelector('#flat svg .sound [data-control=mute] rect').getBoundingClientRect(); return [r.x + r.width / 2, r.y + r.height / 2]; })()");
+for (const type of ["mousePressed", "mouseReleased"]) await send("Input.dispatchMouseEvent", { type, x: speaker[0], y: speaker[1], button: "left", clickCount: 1 });
+check(/volume\(0\.0\)$/.test(await tune()) && (await caption()).startsWith("The castle and its country"), "a click on its speaker mutes it, and the map is not clicked");
+for (const type of ["mousePressed", "mouseReleased"]) await send("Input.dispatchMouseEvent", { type, x: speaker[0], y: speaker[1], button: "left", clickCount: 1 });
+for (const type of ["keyDown", "keyUp"]) await key(type, "[", "BracketLeft", 219);
+check(/volume\(0\.6\)$/.test(await tune()), "clicked again it plays, and [ makes it quieter");
 await click(190, 195);
 check((await caption()).includes("W A S D walk"), "a click on the far end of the second place's name goes into the battlefield on foot");
-check(/^music\('explore', 0\.6, 20\.0, 'A /.test(await tune()), "where the explore set plays");
+check(/^music\('explore', 20\.0, 'A /.test(await tune()), "where the explore set plays");
 await page("document.getElementById('leave').click(), 1");
 check((await caption()).startsWith("The castle and its country: 3 of 19"), "the Map button comes back to the map");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");

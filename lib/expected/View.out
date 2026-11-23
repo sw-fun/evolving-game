@@ -15,5 +15,6 @@ l:w_ith : (Any a, Any b, Any c, Any e) => ((a, Box b, Box c, d, e), b, c, d) -> 
 l:d_rawn : (Any a, Any b, Any c) => (a, b, c) -> (a, Box b, Box Char, Float, c)
 l:c_aption : (Any a, Any b, Any c, Any d, Any e) => (a, b, c, d, e) -> e
 l:t_ext : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (((a, Int, b), c, d, e, f, g), Box Char, h, Float, Char) -> Char
+l:s_trip : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i) => ((a, Float, b, c, d, e), Box Char, f, g, h) -> Float -> i
 l:p_icture : (Any a, Num b, Truthy b, Num c) => (((a, Int, b), Float, Box Char, Float, Char, c), Box Char, Box Char, Float, Char) -> Char
 l:s_cene : (Any a, Num b, Truthy b, Num c) => (((a, Int, b), Float, Box Char, Float, Char, c), Box Char, Box Char, Float, Char) -> Char

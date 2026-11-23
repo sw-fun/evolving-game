@@ -42,7 +42,10 @@ the next. This is the game the others are parts of.
   A, then the bed B two or three times, C, the turnaround D, and A
   again. The picture names it, and the page plays it, as loud as the
   world's `settings.music` (0 to 10; 6 when not set) and silent with
-  `settings.mute`. The music is the user's own, encoded from WAVs
+  `settings.mute`. Every picture has a sound strip at its top right:
+  a click on the speaker, or M, mutes and unmutes; the minus and plus,
+  or [ and ], make it quieter and louder; the level is kept in the
+  world when the game ends. The music is the user's own, encoded from WAVs
   into `assets/music` by `just music`.
 
 - **Kept between visits.** In a browser the world (gold, experience,

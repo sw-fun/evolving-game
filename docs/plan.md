@@ -264,8 +264,16 @@ defaults drawn from the repositories above.
   (each phrase's least and most repeats, the weights of what follows
   it) and a seed through `lib/Rng` (A A B B B C D D A B B C C D ...),
   ending where it returns to A; the picture carries it in its
-  metadata id="music" with the loudness from the world's
-  `settings.music` (0 to 10, default 6) and `settings.mute`. The
+  metadata id="music" with the loudness (`volume(v)`). The loudness
+  is the sound every mode's loop keeps (`lib/Mode`, the user: a
+  strip of icons on every view): it starts from the world's
+  `settings.music` (0 to 10, default 6) and `settings.mute`; every
+  picture shows it in a strip at its top right (speaker, quieter,
+  the level, louder), and a click on those icons or the keys M, [
+  and ] change it before the mode sees the event (a mode that names
+  the key itself, the maze's M, or is being typed into, "key TEXT",
+  keeps the keys; the icons always work); what changed comes back
+  with the mode's outcome and is kept in the world. The
   page only plays the line: the plan's phrases back to back on the
   audio clock, each trimmed to the line's seconds, round and round;
   a new plan at the end of the phrase playing, from its A. Known

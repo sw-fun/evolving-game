@@ -1,7 +1,8 @@
 // The music: the page plays what the program's picture says, and
-// decides nothing. A picture's metadata id="music" is a line of
-// lib/Music:
-//   music('set', volume, seconds, 'A A B B B C D ...')
+// decides nothing. A picture's metadata id="music" says what to play
+// (lib/Music) and how loud (lib/Mode: the sound strip's level):
+//   music('set', seconds, 'A A B B B C D ...')
+//   volume(0.6)
 // The plan's phrases (music/SET-PHRASE.ogg) play back to back, each
 // for exactly the seconds the line gives, scheduled on the audio clock
 // so they join without a gap, round and round. A new plan (another
@@ -15,16 +16,17 @@ const AHEAD = 2; // seconds before a phrase ends that the next is scheduled
 
 export function music() {
   let ctx = null, gain = null;
-  let line = '';      // the last line seen
+  let line = '';      // the last metadata seen
   let want = null;    // the plan it says
+  let volume = 0;     // and how loud
   let now = null;     // the plan playing
   let index = 0;      // its next phrase
   let next = 0;       // when that phrase starts, on the audio clock
   const buffers = new Map();
 
   const parse = (text) => {
-    const m = /music\('([^']*)', ([\d.]+), ([\d.]+), '([^']*)'\)/.exec(text);
-    return m && { set: m[1], volume: +m[2], seconds: +m[3], plan: m[4].split(' '), key: `${m[1]} ${m[4]}` };
+    const m = /music\('([^']*)', ([\d.]+), '([^']*)'\)/.exec(text);
+    return m && { set: m[1], seconds: +m[2], plan: m[3].split(' '), key: `${m[1]} ${m[3]}` };
   };
   // A phrase's sound, fetched and decoded once (null if it cannot be).
   const load = (name) => {
@@ -40,7 +42,7 @@ export function music() {
   // Schedule the next phrase when the one playing is about to end.
   const tick = () => {
     if (!ctx || !want) return;
-    if (!now && want.volume === 0) return; // silent: nothing to fetch yet
+    if (!now && volume === 0) return; // silent: nothing to fetch yet
     const t = ctx.currentTime;
     if (now && t < next - AHEAD) return;
     const plan = now && now.key === want.key ? now : want;
@@ -68,7 +70,7 @@ export function music() {
       if (!Context) return;
       ctx = new Context();
       gain = ctx.createGain();
-      gain.gain.value = want ? want.volume : 0;
+      gain.gain.value = volume;
       gain.connect(ctx.destination);
     }
     if (ctx.state === 'suspended') ctx.resume();
@@ -83,9 +85,10 @@ export function music() {
       if (text === line) return;
       line = text;
       want = parse(text);
-      if (gain) gain.gain.setTargetAtTime(want ? want.volume : 0, ctx.currentTime, 0.1);
+      volume = +((/volume\(([\d.]+)\)/.exec(text) || ['', '0'])[1]);
+      if (gain) gain.gain.setTargetAtTime(volume, ctx.currentTime, 0.1);
     },
     // For tests: the line, and what is playing.
-    state: () => ({ line, playing: now ? now.set : '', index, running: !!ctx && ctx.state === 'running' }),
+    state: () => ({ line, volume, playing: now ? now.set : '', index, running: !!ctx && ctx.state === 'running' }),
   };
 }
