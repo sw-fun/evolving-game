@@ -116,6 +116,16 @@ const click = async (x, y) => {
   const [cx, cy] = await where(x, y);
   for (const type of ["mousePressed", "mouseReleased"]) await send("Input.dispatchMouseEvent", { type, x: cx, y: cy, button: "left", clickCount: 1 });
 };
+// W held (the walk's held-key command) until the caption says the
+// walker has got where a check wants, or four times the usual wait:
+// the page's ticks run on the wall clock, so a fixed wait is flaky.
+const hold = async (ms, done) => {
+  await page("window.game.feed('choose 2 87'), 1");
+  const end = Date.now() + ms * 4;
+  await sleep(ms);
+  while (!done(await caption()) && Date.now() < end) await sleep(100);
+  await page("window.game.feed('choose 3 87'), 1");
+};
 const space = async () => {
   for (const type of ["keyDown", "keyUp"]) await send("Input.dispatchKeyEvent", { type, key: " ", code: "Space", windowsVirtualKeyCode: 32, text: type === "keyDown" ? " " : undefined });
 };
@@ -330,9 +340,7 @@ if (capture) {
 await space();
 check(/^Row 2, column 10, facing \w+\./.test(await caption()) && (await caption()).includes("Find the way through the streets to the keep's door."), "space goes on into the city, deep in its maze, and it says what to find");
 check((await page("window.game.player().count().pieces")) >= 0 && /tiles\('house'/.test(await page("document.querySelector('#flat svg metadata').textContent")), "its scene has the village's houses");
-await page("window.game.feed('choose 2 87'), 1");
-await sleep(900);
-await page("window.game.feed('choose 3 87'), 1");
+await hold(900, (c) => /^Row \d+, column \d+/.test(c) && !c.startsWith("Row 2, column 10,"));
 check(/^Row \d+, column \d+/.test(await caption()) && !(await caption()).startsWith("Row 2, column 10,"), "W held walks you on along the street you face");
 if (capture) {
   await sleep(600);
@@ -369,9 +377,7 @@ if (capture) {
 }
 await space();
 check((await caption()).startsWith("Row 30, column 11, facing north."), "space goes on to the walk across");
-await page("window.game.feed('choose 2 87'), 1");
-await sleep(2500);
-await page("window.game.feed('choose 3 87'), 1");
+await hold(2500, (c) => /^Row (1\d|2\d), column 11/.test(c));
 check(/^Row (1\d|2\d), column 11/.test(await caption()), "W held walks you onto the bridge");
 if (capture) {
   await sleep(600);
