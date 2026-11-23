@@ -160,11 +160,24 @@ h:l_ook := { (picks, data) ->
 
 ### Events
 
+## The sound the loop's strip made: choose 4 the music's volume,
+## choose 5 muted or not.
+h:h_eard := { (stage, screen, line, name, picks, data, save) n ->
+  which := f_irst n
+  v := 2 s_elect n
+  which = 4.0 ? (stage, screen, line, name, picks h:s_et (10, 0 m_ax 10 m_in f_loor v), data, save)
+  which = 5.0 ? (stage, screen, line, name, picks h:s_et (11, 0 m_ax 1 m_in f_loor v), data, save)
+  (stage, screen, line, name, picks, data, save)
+}
+## The music's settings of some picks, as the world names them.
+h:s_ound := { picks -> (md:nothing md:s_et ("settings.music", 10 s_elect picks)) md:s_et ("settings.mute", 11 s_elect picks) }
+
 # :: (Any a, Any b) => (a, Int, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, b, Box Char, Box Char), (Box Char, Int)) -> (Char, Float, Char) -> (a, Int, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, b, Box Char, Box Char), (Box Char, Int))
 ## The state after an event.
 l:s_tep := { s e ->
   (stage, screen, line, name, picks, data, save) := s
   n := t_ally l:l_ines s
+  e sm:i_s "choose" ? s h:h_eard sm:n_umbers e
   felt := (e sm:i_s "click") | e sm:i_s "key"
   (0 < 12 s_elect picks) & felt ? (stage, screen, line, name, picks h:s_et (12, 0), data, save)
   e sm:i_s "click" ? s h:c_lick sm:n_umbers e
@@ -277,8 +290,9 @@ h:t_ake := { s ->
 # :: (Any a, Num b, Any c, Any d, Any e, Any f, Any g) => (a, b, c, d, e, f, g) -> Box Char
 ## The events it takes: any key, and on the name screen any key typed
 ## ("key TEXT"), so the loop leaves it the keys of the sound strip (M
-## [ ]) there; and clicks.
-l:l_egal := { (_, screen, _, _, _, _, _) -> screen = 2 ? "key TEXT" "click X Y"; "key KEY" "click X Y" }
+## [ ]) there; clicks; and the sound the loop's strip has made
+## ("choose 4 LEVEL", "choose 5 MUTE"), which Settings then shows.
+l:l_egal := { (_, screen, _, _, _, _, _) -> screen = 2 ? "key TEXT" "click X Y" "choose 4 N" "choose 5 N"; "key KEY" "click X Y" "choose 4 N" "choose 5 N" }
 # :: (Any a, Any b, Any c, Any d, Num e, Any f, Any g) => (a, b, c, d, e, f, g) -> Int
 ## Done (won) when something to go to is chosen: play, the hall, the
 ## treasury; playing until then.
@@ -352,10 +366,11 @@ l:v_iew := { s ->
 ## difficulty and the music (settings.music, its volume 0 to 10;
 ## settings.mute, 1 when muted), the side
 ## and difficulty for this game, and where to go (front.go: 1 play, 2
-## the hall of deeds, 3 the treasury).
+## the hall of deeds, 3 the treasury). Not chosen yet (or left), the
+## music's settings alone: the loop hears them at once (lib/Mode).
 l:o_utcome := { s ->
   (_, _, _, name, picks, _, _) := s
-  n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
+  n_ot md:won = l:s_tatus s ? (md:left, h:s_ound picks, md:nothing)
   keys := "character.calling" "character.build" "character.pronoun" "character.title" "character.cloak" "session.side" "session.level" "settings.level" "front.go" "settings.music" "settings.mute"
   set := '{ k -> e_nclose d_isclose k s_elect keys } e_ach r_ange 11
   (md:won, ((set, 11 t_ake picks) md:m_erge md:nothing) md:s_et ("front.name." c_at name, 1), md:nothing)

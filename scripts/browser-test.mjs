@@ -260,6 +260,15 @@ check(/volume\(0\.0\)$/.test(await tune()) && (await caption()).startsWith("The 
 for (const type of ["mousePressed", "mouseReleased"]) await send("Input.dispatchMouseEvent", { type, x: speaker[0], y: speaker[1], button: "left", clickCount: 1 });
 for (const type of ["keyDown", "keyUp"]) await key(type, "[", "BracketLeft", 219);
 check(/volume\(0\.6\)$/.test(await tune()), "clicked again it plays, and [ makes it quieter");
+// The front door's Settings and the strip are one sound: a change in
+// Settings is heard with the very key that made it. (Leave the map for
+// the profile's home, Settings, down to the music's volume, Left; then
+// back and on to the map: Back, play, defend, Normal.)
+for (const k of ['choose 0 0', 'key 4', 'key down', 'key down', 'key down', 'key down']) await page(`window.game.feed('${k}'), 1`);
+const loudBefore = await page("window.game.music().volume");
+await page("window.game.feed('key left'), 1");
+check(loudBefore === 0.6 && (await page("window.game.music().volume")) === 0.5 && (await caption()).includes("Music volume: 5 of 10"), `in Settings, Left on the music's volume is heard at once (${loudBefore} to ${await page("window.game.music().volume")})`);
+for (const k of ['key 7', 'key 1', 'key 1', 'key 3']) await page(`window.game.feed('${k}'), 1`);
 await click(190, 195);
 check((await caption()).includes("W A S D walk"), "a click on the far end of the second place's name goes into the battlefield on foot");
 check(/^music\('explore', 20\.0, 'A /.test(await tune()), "where the explore set plays");

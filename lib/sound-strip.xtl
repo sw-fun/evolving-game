@@ -32,24 +32,25 @@ u:t_yped := { s -> 1 r_eshape e_nclose "key TEXT" }
 u:o_wnM := { s -> "key space" "key m" }
 u:v_iew := { (stage, seen) -> vw:e_mpty (stage, "Seen:" c_at seen) }
 u:s_een := { (_, seen) -> seen }
+u:o_utcome := { s -> (md:playing, md:nothing, md:nothing) }
 start := (vw:s_tage map, "")
 tune := "music('calm', 26.666667, 'A B B C D')\n"
 quiet := md:nothing md:s_et ("settings.music", 2)
 # The keys: M mutes, [ is quieter, ] louder; space reaches the mode.
 # What changed comes back as the world's settings, and the mode saw
 # only the space bar.
-(heard, last) := 'u:v_iew 'u:s_pace 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, "key m" "key ]" "key ]" "key space" "key [", start)
+(heard, last) := 'u:o_utcome 'u:v_iew 'u:s_pace 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, "key m" "key ]" "key ]" "key space" "key [", start)
 _ := t:l_ines md:l_ines heard
 u:s_een last
 # Unchanged, nothing comes back.
-(none, _) := 'u:v_iew 'u:s_pace 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, "key space" "key m" "key m", start)
+(none, _) := 'u:o_utcome 'u:v_iew 'u:s_pace 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, "key space" "key m" "key m", start)
 t_ally md:l_ines none
 # Being typed into, the keys are the mode's; a mode that names M has
 # it, and [ is still the loop's.
-(typed, seen) := 'u:v_iew 'u:t_yped 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, "key m" "key [" "key a", start)
+(typed, seen) := 'u:o_utcome 'u:v_iew 'u:t_yped 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, "key m" "key [" "key a", start)
 t_ally md:l_ines typed
 u:s_een seen
-(owned, saw) := 'u:v_iew 'u:o_wnM 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, "key m" "key [", start)
+(owned, saw) := 'u:o_utcome 'u:v_iew 'u:o_wnM 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, "key m" "key [", start)
 _ := t:l_ines md:l_ines owned
 u:s_een saw
 # The picture: the music and its loudness in its metadata id="music",
@@ -75,7 +76,7 @@ w := 3 s_elect frame
 view vw:s_trip (w - 125.0) c_at 60.0
 # Clicked, the icons change it, and the click is not the mode's.
 clicks := (e_nclose "click " c_at (f_ormat w - 30.0) c_at " 20") c_at e_nclose "click " c_at (f_ormat w - 125.0) c_at " 20"
-(clicked, mine) := 'u:v_iew 'u:s_pace 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, clicks, start)
+(clicked, mine) := 'u:o_utcome 'u:v_iew 'u:s_pace 'u:s_tatus 'u:s_tep md:r_eplayHeard (tune, quiet, clicks, start)
 _ := t:l_ines md:l_ines clicked
 u:s_een mine
 # A picture a game drew itself has them put in before its end, the

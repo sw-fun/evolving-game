@@ -313,6 +313,12 @@ l:a_llows := { legal e -> 0 < '+ r_/ 0 c_at '{ line -> e h:t_akes d_isclose line
 ## louder), change it, and the mode never sees them: unless it names
 ## the key itself ("key m": the maze's map) or is being typed into
 ## ("key TEXT": a name), when the keys are its and the icons still work.
+## A mode with its own settings is the same sound: played with
+## md:p_layHeard, after a key or a click the loop reads its
+## o_utcome, and when what that names for settings.music and
+## settings.mute has changed, that is the sound at once; and a mode
+## that takes "choose 4 LEVEL" and "choose 5 MUTE" is told what the
+## strip made of it.
 
 # :: Int
 ## The loudest level.
@@ -346,8 +352,9 @@ l:v_olume := { (level, mute) -> mute = 1 ? 0.0; (f_loat level) / f_loat l:loudes
 ## The keys the loop takes, in the order of the strip's controls: 1
 ## mute, 2 quieter, 3 louder.
 h:keys := "key m" "key [" "key ]"
-## A sound changed by a control.
+## A sound changed by a control (0 none).
 h:t_urn := { (level, mute) k ->
+  k = 0 ? (level, mute)
   k = 1 ? (level, 1 - mute)
   k = 2 ? (0 m_ax level - 1, mute)
   (l:loudest m_in level + 1, mute)
@@ -400,9 +407,14 @@ h:a_pply := { legal_ step_ (clock, s) e ->
 ## several goes back to where they are chosen.
 h:l_eave := { e -> (e sm:i_s "choose") & 0.0 0.0 m_atch 2 t_ake (sm:n_umbers e) c_at 1.0 1.0 }
 h:n_ext := { (host, lines) -> host ? sm:n_ext @; sm:p_arse d_isclose f_irst lines }
-## The loop: (host, lines, last, clock, state, sound, tune) to (clock,
-## state, sound).
-h:l_oop := { step_ status_ legal_ view_ (host, lines, last, clock, s, sound, tune) ->
+## The loop: (host, lines, last, clock, state, sound, tune, wish) to
+## (clock, state, sound). A control of the strip changes the sound,
+## and the mode is told the new one ("choose 4 LEVEL", "choose 5
+## MUTE"), if it takes those. After a key or a click (not the strip's), a mode
+## whose outcome names settings.music (a settings screen) is heard at
+## once: when what it names has changed (wish: what it named last),
+## that is the sound.
+h:l_oop := { step_ status_ legal_ view_ outcome_ (host, lines, last, clock, s, sound, tune, wish) ->
   v_ := { x -> l:d_ressed (view_ x, sound, tune) }
   shown := 'v_ h:s_how (host, last, s)
   l:playing != status_ s ? (clock, s, sound)
@@ -410,10 +422,47 @@ h:l_oop := { step_ status_ legal_ view_ (host, lines, last, clock, s, sound, tun
   e := h:n_ext (host, lines)
   (e sm:i_s "end") | h:l_eave e ? (clock, s, sound)
   k := s 'v_ 'legal_ h:c_ontrol e
-  0 < k ? 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, clock sm:a_dvance e, s, sound h:t_urn k, tune)
+  turned := sound h:t_urn k
+  told := s 'step_ 'legal_ h:t_old (sound, k)
+  0 < k ? 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, clock sm:a_dvance e, told, turned, tune, turned)
   (c2, s2) := (clock, s) 'step_ 'legal_ h:a_pply e
-  'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2, sound, tune)
+  n_ot (e sm:i_s "key") | e sm:i_s "click" ? 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2, sound, tune, wish)
+  (heard, wished) := (sound, wish) h:a_dopt 'outcome_ h:w_ish s2
+  'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (host, 1 d_rop lines, shown, c2, s2, heard, tune, wished)
 }
+## The sound a mode's outcome names: (named, (level, mute)).
+h:w_ish := { outcome_ s ->
+  (_, changes, _) := outcome_ s
+  (names, _) := changes
+  ((e_nclose "settings.music") m_ember? names, (changes l:g_et "settings.music", changes l:g_et "settings.mute"))
+}
+## The sound and the wish after a mode named one: unchanged unless it
+## names one other than it named last.
+h:a_dopt := { (sound, wish) (named, w) ->
+  n_ot named ? (sound, wish)
+  w m_atch wish ? (sound, wish)
+  (w, w)
+}
+## A mode told a sound: the events "choose 4 LEVEL" and "choose 5 MUTE",
+## each given if it takes it.
+h:t_ell := { legal_ step_ s (level, mute) ->
+  one := s 'step_ 'legal_ h:g_ive sm:p_arse "choose 4 " c_at f_ormat level
+  one 'step_ 'legal_ h:g_ive sm:p_arse "choose 5 " c_at f_ormat mute
+}
+## A mode told the sound a control made of it (none for 0).
+h:t_old := { legal_ step_ s (sound, k) ->
+  k = 0 ? s
+  s 'step_ 'legal_ h:t_ell sound h:t_urn k
+}
+## Given only to a mode that names the command itself ("choose 4 N"):
+## "choose 1 N" is another command, which may not take it.
+h:g_ive := { legal_ step_ s e -> (legal_ s) h:n_ames e ? s step_ e; s }
+h:n_ames := { legal e ->
+  which := "choose " c_at f_ormat f_loor f_irst sm:n_umbers e
+  0 < '+ r_/ 0 c_at '{ l -> which m_atch (t_ally which) t_ake d_isclose l } e_ach legal
+}
+## A mode with no outcome to hear: names nothing.
+h:n_one := { s -> (l:playing, l:nothing, l:nothing) }
 ## What a loop heard: the world's changes that keep its sound, or
 ## nothing when it is as it started; and the last state.
 h:h_eard := { start (clock, s, sound) ->
@@ -428,31 +477,31 @@ h:h_eard := { start (clock, s, sound) ->
 ## strip (from md:usual, kept nowhere). The clock and the last state;
 ## its o_utcome says how it ended.
 l:p_lay := { step_ status_ legal_ view_ s ->
-  (clock, last, _) := 'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s, (l:usual, 0), "")
+  (clock, last, _) := 'h:n_one 'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s, (l:usual, 0), "", (l:usual, 0))
   (clock, last)
 }
 # :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Box Char, a) -> ((Int, Int, Int), a)
 ## The same on a script, a list of event lines (a log, a save): ...
 ## md:r_eplay (lines, state).
 l:r_eplay := { step_ status_ legal_ view_ (lines, s) ->
-  (clock, last, _) := 'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s, (l:usual, 0), "")
+  (clock, last, _) := 'h:n_one 'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s, (l:usual, 0), "", (l:usual, 0))
   (clock, last)
 }
-# :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Char, (Box Char, Int), a) -> ((Box Char, Int), a)
+# :: (Any a, Any b, Num c, Truthy c, Num d, Any e, Any f) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (a -> (e, (Box Char, Int), f)) -> (Char, (Box Char, Int), a) -> ((Box Char, Int), a)
 ## Play a mode with a world's sound and a tune (the music's lines,
-## lib/Music's mu:l_ine, or ""): 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep
-## md:p_layHeard (tune, world, state). What the strip changed, as the
-## world's changes that keep it (nothing when it did not), and the last
-## state.
-l:p_layHeard := { step_ status_ legal_ view_ (tune, world, s) ->
+## lib/Music's mu:l_ine, or ""), hearing its outcome's settings at once:
+## 'm:o_utcome 'm:v_iew 'm:l_egal 'm:s_tatus 'm:s_tep md:p_layHeard
+## (tune, world, state). What the sound became, as the world's changes
+## that keep it (nothing when it is as it started), and the last state.
+l:p_layHeard := { step_ status_ legal_ view_ outcome_ (tune, world, s) ->
   start := l:s_ound world
-  start h:h_eard 'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s, start, tune)
+  start h:h_eard 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (1, 0 t_ake e_nclose "", "", sm:start, s, start, tune, start)
 }
-# :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Char, (Box Char, Int), Box Char, a) -> ((Box Char, Int), a)
+# :: (Any a, Any b, Num c, Truthy c, Num d, Any e, Any f) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (a -> (e, (Box Char, Int), f)) -> (Char, (Box Char, Int), Box Char, a) -> ((Box Char, Int), a)
 ## The same on a script: md:r_eplayHeard (tune, world, lines, state).
-l:r_eplayHeard := { step_ status_ legal_ view_ (tune, world, lines, s) ->
+l:r_eplayHeard := { step_ status_ legal_ view_ outcome_ (tune, world, lines, s) ->
   start := l:s_ound world
-  start h:h_eard 'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s, start, tune)
+  start h:h_eard 'outcome_ 'view_ 'legal_ 'status_ 'step_ h:l_oop (0, lines, "", sm:start, s, start, tune, start)
 }
 # :: Any a => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (Box Char, a) -> ((Int, Int, Int), a)
 ## The same on a script, shown nowhere: for a result alone. No view is

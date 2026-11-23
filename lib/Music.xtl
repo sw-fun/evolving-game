@@ -125,12 +125,12 @@ l:l_ine := { (file, kind, seed) ->
 
 ### The system
 
-# :: (Any a, Any b, Num c, Truthy c, Num d) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (Char, (Box Char, Int)) -> a -> ((Box Char, Int), a)
+# :: (Any a, Any b, Num c, Truthy c, Num d, Any e, Any f) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (a -> (e, (Box Char, Int), f)) -> (Char, (Box Char, Int)) -> a -> ((Box Char, Int), a)
 ## Play a mode as md:p_layHeard does, every picture carrying the music
-## and the sound's strip: (line, world) 'm:v_iew 'm:l_egal 'm:s_tatus
-## 'm:s_tep mu:p_lay state, the line mu:l_ine's and the world the one
+## and the sound's strip: (line, world) 'm:o_utcome 'm:v_iew 'm:l_egal
+## 'm:s_tatus 'm:s_tep mu:p_lay state, the line mu:l_ine's and the world the one
 ## whose settings say how loud. What the strip changed (the world's
 ## changes that keep it, or nothing) and the last state.
-l:p_lay := { step_ status_ legal_ view_ (line, world) s ->
-  'view_ 'legal_ 'status_ 'step_ md:p_layHeard (line, world, s)
+l:p_lay := { step_ status_ legal_ view_ outcome_ (line, world) s ->
+  'outcome_ 'view_ 'legal_ 'status_ 'step_ md:p_layHeard (line, world, s)
 }
