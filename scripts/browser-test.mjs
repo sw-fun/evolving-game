@@ -244,11 +244,14 @@ check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x
 // decodes its phrases at the length the program gives (headless Chrome
 // may play no sound: that is not asked).
 const tune = () => page("(document.querySelector('#flat svg metadata#music') || {}).textContent || ''");
-check(/^music\('calm', 26\.666667, 'A( [ABCD])+'\)\nvolume\(0\.6\)$/.test(await tune()), `the map's picture names its music: the calm set, at the default loudness (${(await tune()).slice(0, 40)}...)`);
+check(/^music\('calm', 'calm-A( [a-z0-9]+-[A-Za-z0-9-]+)+'\)\n(seconds\('[a-z0-9-]+', [\d.]+\)\n)+volume\(0\.6\)$/.test(await tune()) && (await tune()).includes("seconds('calm', 26.666667)"), `the map's picture names its music: a plan from the calm set's A, each version's seconds, the default loudness (${(await tune()).slice(0, 40)}...)`);
 check(await page("window.game.music().line === (document.querySelector('#flat svg metadata#music') || {}).textContent"), "and the page has read it");
 const decoded = await page(`fetch('music/calm-A.ogg').then((r) => r.ok ? r.arrayBuffer() : Promise.reject(r.status))
   .then((b) => new OfflineAudioContext(2, 48000, 48000).decodeAudioData(b)).then((s) => s.duration, (e) => -1)`);
 check(Math.abs(decoded - 26.666667) < 0.05, `the page serves its first phrase (music/calm-A.ogg), which decodes to the phrase's length (${decoded} s)`);
+const faster = await page(`fetch('music/battle-132bpm-A.ogg').then((r) => r.ok ? r.arrayBuffer() : Promise.reject(r.status))
+  .then((b) => new OfflineAudioContext(2, 48000, 48000).decodeAudioData(b)).then((s) => s.duration, (e) => -1)`);
+check(Math.abs(faster - 29.090907) < 0.05, `and a phrase in another tempo (music/battle-132bpm-A.ogg) decodes to its length (${faster} s)`);
 // The sound strip every picture has (lib/Mode, lib/View): the keys ]
 // and [ and a click on its speaker change the loudness the picture says.
 check(await page("!!document.querySelector('#flat svg .sound [data-control=mute]')"), "the map's picture has the sound strip");
@@ -279,7 +282,7 @@ check(loudBefore === 0.6 && (await page("window.game.music().volume")) === 0.5 &
 for (const k of ['key 7', 'key 1', 'key 1', 'key 3']) await page(`window.game.feed('${k}'), 1`);
 await click(190, 195);
 check((await caption()).includes("W A S D walk"), "a click on the far end of the second place's name goes into the battlefield on foot");
-check(/^music\('explore', 20\.0, 'A /.test(await tune()), "where the explore set plays");
+check(/^music\('explore', 'explore-A /.test(await tune()), "where the explore set plays");
 await page("document.getElementById('leave').click(), 1");
 check((await caption()).startsWith("The castle and its country: 4 of 23"), "the Map button comes back to the map");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");

@@ -34,7 +34,7 @@ u:v_iew := { (stage, seen) -> vw:e_mpty (stage, "Seen:" c_at seen) }
 u:s_een := { (_, seen) -> seen }
 u:o_utcome := { s -> (md:playing, md:nothing, md:nothing) }
 start := (vw:s_tage map, "")
-tune := "music('calm', 26.666667, 'A B B C D')\n"
+tune := "music('calm', 'calm-A calm-B calm-D')\nseconds('calm', 26.666667)\n"
 quiet := md:nothing md:s_et ("settings.music", 2)
 # The keys: \ mutes, [ is quieter, ] louder; space reaches the mode.
 # What changed comes back as the world's settings, and the mode saw

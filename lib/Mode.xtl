@@ -307,7 +307,7 @@ l:a_llows := { legal e -> 0 < '+ r_/ 0 c_at '{ line -> e h:t_akes d_isclose line
 
 ## Every loop keeps a sound beside the mode's state: (level, mute), the
 ## music's loudness from 0 to md:loudest and 1 when it is muted. Every
-## picture shows it in a strip at its top right (lib/View: a speaker,
+## picture shows it in a strip in a corner (lib/View: a speaker,
 ## quieter, the level, louder), and carries the music to play with it.
 ## A click on the strip's icons, or the keys \ (mute), [ and ] (quieter,
 ## louder), change it, and the mode never sees them: unless it names

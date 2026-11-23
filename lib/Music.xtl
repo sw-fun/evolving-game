@@ -1,25 +1,33 @@
 ## Music: the music director. Which set of looping phrases plays where,
-## and in what order a set's phrases play (a plan: A A B B B C D D A B
-## ...), worked out from a music file (games/castle/music.toml) and a
-## seed; and the line that tells a page to play it. The page only plays
-## what the line says: the phrases of the plan back to back, round and
-## round; a new plan at the end of the phrase playing, from its start.
+## and in what order phrases play (a plan), worked out from a music
+## file (games/castle/music.toml) and a seed; and the lines that tell a
+## page to play it. A plan is rounds of A to D (A B B C D, A C D ...):
+## each phrase within its repeats, none more than a few times in any
+## window of phrases, now and then a round of a companion set or in
+## another tempo of the set, and home again; about forty minutes long.
+## The page only plays what the lines say: the phrases of the plan back
+## to back, round and round; a new plan at the end of the phrase
+## playing, from its start.
 ##
 ## A system over one component, the music a view carries: a mode is
 ## played with mu:p_lay in place of md:p_lay, and every picture it shows
-## carries the line, with the loudness of the loop's sound (lib/Mode:
+## carries the lines, with the loudness of the loop's sound (lib/Mode:
 ## the world's settings, changed by the strip every picture shows), in
 ## the picture's metadata id="music":
-##   music('set', seconds, 'A A B B B C D D ...')
+##   music('set', 'calm-A calm-B calm-B calm-D calm-80bpm-A ...')
+##   seconds('calm', 26.666667)
+##   seconds('calm-80bpm', 24.0)
 ##   volume(0.6)
-## seconds how long each of the set's phrases is, the plan a phrase a
-## word, and the volume from 0 to 1 (0 is silence). A plan is chosen
-## once, when a place is entered, not every tick.
+## the plan's phrases, VERSION-PHRASE each (a version is a set or one
+## of its tempos), how long each version's phrases are, and the volume
+## from 0 to 1 (0 is silence). A plan is chosen once, when a place is
+## entered, not every tick.
 ## Import: "mu:" u_se< "Music"
 
 "md:" u_se< "Mode"
 "rg:" u_se< "Rng"
 "st:" u_se< "Strings"
+"t:" u_se< "Text"
 
 h:f_ail := { (file, field) what -> "bad-scenario" []S_IGNAL file c_at ": " c_at field c_at ": " c_at what }
 ## A rule's number that must be a whole number at least `low`.
@@ -38,7 +46,8 @@ l:s_ets := { file -> file md:l_ist "sets" }
 ## A set's phrases, by name, the first where every plan starts.
 l:p_hrases := { file -> file md:l_ist "phrases" }
 # :: (Char, Char) -> Float
-## How long a set's phrases are, in seconds: (file, set).
+## How long a version's phrases are, in seconds: (file, version), a
+## version a set (its base tempo) or one of its tempos (SET-NAME).
 l:s_econds := { (file, set) ->
   s := file md:r_ule ("seconds", set)
   s <= 0.0 ? (file, "seconds") h:f_ail set c_at " is wanted, a number of seconds"
@@ -56,71 +65,202 @@ l:f_or := { (file, kind) ->
   n_ot (e_nclose other) m_ember? sets ? (file, "otherwise") h:f_ail other c_at " is not one of the sets"
   other
 }
-## The rules of a file: (least, most, weights, length), a phrase a
-## number (in the file's order), and the weights: for each phrase p,
-## the weight of each phrase after it.
-h:r_ules := { file ->
-  names := l:p_hrases file
-  0 = t_ally names ? (file, "phrases") h:f_ail "a phrase at least is wanted"
-  least := '{ p -> h:a_tLeast (file, "repeats-" c_at d_isclose p, "least", 1) } e_ach names
-  most := '{ p -> h:a_tLeast (file, "repeats-" c_at d_isclose p, "most", 1) } e_ach names
-  0 < '+ r_/ most < least ? (file, "repeats") h:f_ail "a phrase's most is less than its least"
-  W := '{ p -> e_nclose (file, names) h:w_eights d_isclose p } e_ach names
-  length := file md:n_umber "length"
-  (length < 1.0) | length != f_loat f_loor length ? (file, "length") h:f_ail "a whole number from 1 is wanted"
-  (least, most, W, f_loor length)
+### The rules
+
+## A phrase is played as a token: set and phrase, numbered set by set
+## (with four phrases, calm's A to D are 1 to 4, explore's 5 to 8 ...).
+## The token's set and phrase, by number: (phrases, token).
+h:s_etOf := { (np, t) -> 1 + (t - 1) d_iv np }
+h:p_hraseOf := { (np, t) -> 1 + (t - 1) m_od np }
+## The field of a rule for a set's phrase: its own (FIELD-SET-P) when
+## the file has one, else every set's (FIELD-P).
+h:f_ieldFor := { (file, field, set, p) ->
+  own := field c_at "-" c_at set c_at "-" c_at p
+  file md:h_as own ? own
+  field c_at "-" c_at p
 }
-## The weights of what may follow a phrase, one for each phrase: its
-## next-P, every rule naming a phrase.
-h:w_eights := { (file, names) p ->
-  field := "next-" c_at p
+## The field of a token's rule: (file, sets, phrases, field, token).
+h:t_oken := { (file, sets, names, field, t) ->
+  np := t_ally names
+  h:f_ieldFor (file, field, d_isclose (h:s_etOf (np, t)) s_elect sets, d_isclose (h:p_hraseOf (np, t)) s_elect names)
+}
+## The weights of what may follow a token in its set, one for each
+## phrase: the field's rules, every one naming a phrase.
+h:w_eights := { (file, names) field ->
   rules := '{ r -> e_nclose d_isclose f_irst st:w_ords d_isclose r } e_ach file md:l_ist field
   n_ot '& r_/ 1 c_at rules m_ember? names ? (file, field) h:f_ail "it names a phrase not in phrases"
   w := 0.0 m_ax '{ q -> file md:r_ule (field, d_isclose q) } e_ach names
   0.0 >= '+ r_/ w ? (file, field) h:f_ail "a phrase with a weight above 0 is wanted"
   w
 }
+## The weights of the set of the round after one of a home set's own,
+## one for each set: rounds-SET (the home set alone when it has none).
+h:r_ounds := { (file, sets) set ->
+  field := "rounds-" c_at set
+  n_ot file md:h_as field ? f_loat (r_ange t_ally sets) = sets i_ndexOf e_nclose set
+  rules := '{ r -> e_nclose d_isclose f_irst st:w_ords d_isclose r } e_ach file md:l_ist field
+  n_ot '& r_/ 1 c_at rules m_ember? sets ? (file, field) h:f_ail "it names a set not in sets"
+  w := 0.0 m_ax '{ q -> file md:r_ule (field, d_isclose q) } e_ach sets
+  0.0 >= '+ r_/ w ? (file, field) h:f_ail "a set with a weight above 0 is wanted"
+  w
+}
+## A set's tempos, the versions of its phrases a round may be played
+## in: tempos-SET's rules, a name and a weight ("base 4", "80bpm 1"),
+## the files' names SET-NAME-P (SET-P for base). (names, weights); the
+## set alone when it has none.
+h:t_empos := { (file, set) ->
+  field := "tempos-" c_at set
+  n_ot file md:h_as field ? (1 r_eshape e_nclose set, 1 r_eshape 1.0)
+  words := '{ r -> e_nclose d_isclose f_irst st:w_ords d_isclose r } e_ach file md:l_ist field
+  w := 0.0 m_ax '{ q -> file md:r_ule (field, d_isclose q) } e_ach words
+  0.0 >= '+ r_/ w ? (file, field) h:f_ail "a tempo with a weight above 0 is wanted"
+  names := '{ q -> e_nclose h:v_ersion (set, d_isclose q) } e_ach words
+  (names, w)
+}
+h:v_ersion := { (set, name) -> "base" m_atch name ? set; set c_at "-" c_at name }
+# :: (Char, Char) -> Box Char
+## A set's versions by name: the set's own (its base tempo) and one for
+## each of its other tempos (SET-NAME), in the order tempos-SET says.
+l:v_ersions := { (file, set) ->
+  (names, _) := h:t_empos (file, set)
+  names
+}
+## A whole number of a field of one text of two numbers: "8 3".
+h:p_air := { (file, field) ->
+  n := f_loat n_umbers file md:f_ield field
+  (2 != t_ally n) | 0 < '+ r_/ (n < 1.0) | n != f_loat f_loor n ? (file, field) h:f_ail "two whole numbers from 1 are wanted"
+  f_loor n
+}
+## The rules of a file, a token a number: (phrases, least, most,
+## weights, rounds, tempos, length, window, cap). Each token's least
+## and most repeats and the weights of what follows it; each set's
+## weights of the set of the round after one of its own, and of the
+## tempo a round of it is played in; how long a plan is at least; and
+## that no token plays more than cap times in any window of phrases in
+## a row.
+h:r_ules := { file ->
+  names := l:p_hrases file
+  sets := l:s_ets file
+  0 = t_ally names ? (file, "phrases") h:f_ail "a phrase at least is wanted"
+  np := t_ally names
+  all := r_ange np * t_ally sets
+  least := '{ t -> h:a_tLeast (file, h:t_oken (file, sets, names, "repeats", t), "least", 1) } e_ach all
+  most := '{ t -> h:a_tLeast (file, h:t_oken (file, sets, names, "repeats", t), "most", 1) } e_ach all
+  0 < '+ r_/ most < least ? (file, "repeats") h:f_ail "a phrase's most is less than its least"
+  W := '{ t -> e_nclose (file, names) h:w_eights h:t_oken (file, sets, names, "next", t) } e_ach all
+  R := '{ s -> e_nclose (file, sets) h:r_ounds d_isclose s } e_ach sets
+  V := '{ s -> e_nclose h:w_eightsOf h:t_empos (file, d_isclose s) } e_ach sets
+  length := file md:n_umber "length"
+  (length < 1.0) | length != f_loat f_loor length ? (file, "length") h:f_ail "a whole number from 1 is wanted"
+  window := h:p_air (file, "window")
+  (np, least, most, W, R, V, f_loor length, f_irst window, 2 s_elect window)
+}
+h:w_eightsOf := { (_, w) -> w }
 
 ### The plan
 
-## One run after another: the phrase p played between its least and
-## most times (the first draw of the run), then the phrase that follows
-## chosen by the weights (the second). It ends where the next would be
-## the first phrase again, once the plan is length long (or, whatever
-## the rules, at 1000 runs).
-h:r_un := { (least, most, W, length, key) (plan, p, i) ->
-  u := key rg:u_nit (2 * i - 1) c_at 2 * i
-  low := p s_elect least
-  n := low + f_loor (f_irst u) * f_loat 1 + (p s_elect most) - low
-  more := plan c_at n r_eshape p
-  sums := '+ s_\ d_isclose p s_elect W
-  q := 1 + '+ r_/ 0 + sums <= (2 s_elect u) * f_irst r_ev sums
-  ((q = 1) & length <= t_ally more) | i >= 1000 ? more
-  (least, most, W, length, key) h:r_un (more, q, i + 1)
+## A choice by weights, for a fraction u from 0 to 1: 1 to the number
+## of weights.
+h:p_ick := { (w, u) ->
+  sums := '+ s_\ w
+  1 + '+ r_/ 0 + sums <= u * f_irst r_ev sums
+}
+## The last k of a plan (all of it when it is shorter).
+h:l_ast := { (plan, k) -> (n_eg k m_in t_ally plan) t_ake plan }
+## Weights with those of the full left out, unless that leaves none.
+h:l_eft := { (w, full) ->
+  kept := w * f_loat n_ot full
+  0.0 < '+ r_/ kept ? kept
+  w
+}
+## The set of the next round: home again after another's; after the
+## home set's own, chosen by its rounds' weights.
+h:n_extSet := { (R, home, s, u) ->
+  s != home ? home
+  h:p_ick (d_isclose home s_elect R, u)
+}
+## A plan's played phrases are its tokens in a tempo: token + K *
+## (tempo - 1), K every set's phrases. The tokens of some played.
+h:t_okensOf := { (K, played) -> 1 + (played - 1) m_od K }
+## One run after another: the token played between its least and most
+## times, and never so many that it plays more than cap times in a
+## window (the first draw of the run); then the phrase that follows,
+## by its weights, leaving out those the window is full of (the
+## second). The first phrase starts a round: the plan ends there once
+## it is length long, or a round starts of the set the third draw
+## chooses, in the tempo the fourth does (or, whatever the rules, at
+## 1000 runs).
+h:r_un := { (np, least, most, W, R, V, length, window, cap, key, home) (plan, s, v, p, i) ->
+  u := key rg:u_nit ((4 * i) - 3) c_at ((4 * i) - 2) c_at ((4 * i) - 1) c_at 4 * i
+  K := t_ally least
+  t := p + np * s - 1
+  room := cap - '+ r_/ 0 + t = h:t_okensOf (K, h:l_ast (plan, window - 1))
+  low := t s_elect least
+  n := 1 m_ax room m_in low + f_loor (f_irst u) * f_loat 1 + (t s_elect most) - low
+  more := plan c_at n r_eshape t + K * v - 1
+  seen := h:t_okensOf (K, h:l_ast (more, window - 1))
+  full := '{ q -> cap <= '+ r_/ 0 + q = seen } e_ach (r_ange np) + np * s - 1
+  q := h:p_ick (h:l_eft (d_isclose t s_elect W, full), 2 s_elect u)
+  i >= 1000 ? more
+  (q = 1) & length <= t_ally more ? more
+  rules := (np, least, most, W, R, V, length, window, cap, key, home)
+  next := h:n_extSet (R, home, s, 3 s_elect u)
+  q = 1 ? rules h:r_un (more, next, h:p_ick (d_isclose next s_elect V, 4 s_elect u), 1, i + 1)
+  rules h:r_un (more, s, v, q, i + 1)
 }
 # :: (Char, Char, Int) -> Int
-## A plan for a set, as the phrases' numbers (1 the first): (file, set,
-## seed). The same seed gives the same plan; each set draws from its
-## own stream.
+## A plan for a set, as played phrases: a token (1 the first set's
+## first phrase ... K the last set's last) and its tempo, token + K *
+## (tempo - 1): (file, set, seed). It starts at the set's first phrase
+## in its base tempo; the same seed gives the same plan; each set draws
+## from its own stream.
 l:n_umbers := { (file, set, seed) ->
-  (least, most, W, length) := h:r_ules file
-  stream := (l:s_ets file) i_ndexOf e_nclose set
-  stream > t_ally l:s_ets file ? (file, "sets") h:f_ail set c_at " is not one of the sets"
-  (least, most, W, length, (rg:s_eed seed, stream)) h:r_un (0 r_eshape 0, 1, 1)
+  (np, least, most, W, R, V, length, window, cap) := h:r_ules file
+  home := (l:s_ets file) i_ndexOf e_nclose set
+  home > t_ally l:s_ets file ? (file, "sets") h:f_ail set c_at " is not one of the sets"
+  (np, least, most, W, R, V, length, window, cap, (rg:s_eed seed, home), home) h:r_un (0 r_eshape 0, home, 1, 1, 1)
+}
+# :: Char -> Box Char
+## Every played phrase's name, VERSION-PHRASE, in the order of their
+## numbers (empty for a tempo a set does not have): what the page plays
+## (music/VERSION-PHRASE.ogg; a version is a set, SET, or one of its
+## tempos, SET-NAME).
+l:t_okens := { file ->
+  names := l:p_hrases file
+  sets := l:s_ets file
+  np := t_ally names
+  K := np * t_ally sets
+  versions := '{ x -> e_nclose l:v_ersions (file, d_isclose x) } e_ach sets
+  most := 'm_ax r_/ '{ x -> t_ally d_isclose x } e_ach versions
+  '{ c -> e_nclose h:n_amed (versions, names, np, K, c) } e_ach r_ange K * most
+}
+## A played phrase's name, or empty.
+h:n_amed := { (versions, names, np, K, c) ->
+  t := 1 + (c - 1) m_od K
+  v := 1 + (c - 1) d_iv K
+  mine := d_isclose (h:s_etOf (np, t)) s_elect versions
+  v > t_ally mine ? ""
+  (d_isclose v s_elect mine) c_at "-" c_at d_isclose (h:p_hraseOf (np, t)) s_elect names
 }
 # :: (Char, Char, Int) -> Box Char
-## A plan for a set, as the phrases' names: (file, set, seed).
-l:p_lan := { (file, set, seed) -> (l:n_umbers (file, set, seed)) s_elect l:p_hrases file }
+## A plan for a set, as its played phrases' names: (file, set, seed).
+l:p_lan := { (file, set, seed) -> (l:n_umbers (file, set, seed)) s_elect l:t_okens file }
 
 ### The line
 
 # :: (Char, Char, Int) -> Char
-## The music for a kind of place, as the line a page plays: (file,
-## kind, seed).
+## The music for a kind of place, as the lines a page plays: (file,
+## kind, seed). The plan, and how long each version's phrases are.
 l:l_ine := { (file, kind, seed) ->
   set := l:f_or (file, kind)
   plan := " " st:j_oin l:p_lan (file, set, seed)
-  "music('" c_at set c_at "', " c_at (f_ormat l:s_econds (file, set)) c_at ", '" c_at plan c_at "')\n"
+  long := '{ x -> e_nclose h:l_ong (file, d_isclose x) } e_ach l:s_ets file
+  "music('" c_at set c_at "', '" c_at plan c_at "')\n" c_at t:j_oin long
+}
+## How long a set's versions' phrases are, a line each:
+## seconds('VERSION', S).
+h:l_ong := { (file, set) ->
+  t:j_oin '{ x -> e_nclose "seconds('" c_at (d_isclose x) c_at "', " c_at (f_ormat l:s_econds (file, d_isclose x)) c_at ")\n" } e_ach l:v_ersions (file, set)
 }
 
 ### The system

@@ -1,20 +1,20 @@
 # The castle's music: four sets of looping phrases, which set plays
-# where, and how a set's phrases follow one another. Read by
-# lib/Music.xtl through lib/Mode; every value is a string, or a list
-# of strings.
+# where, and how the phrases follow one another. Read by lib/Music.xtl
+# through lib/Mode; every value is a string, or a list of strings.
 #
 # The phrases are the user's own (music-pipe-rs, MIT): every phrase is
 # a seamless loop, all are in D, every phrase ends on Asus and every
-# set's first phrase starts on D, so a set may follow any phrase of any
-# other at a phrase's end. The page plays music/SET-PHRASE.ogg
-# (scripts/music.sh makes them from the WAVs).
+# set's first phrase starts on D, so any set's A may follow any
+# phrase's end. The page plays music/VERSION-PHRASE.ogg (scripts/
+# music.sh makes them from the WAVs).
 mode = ["music"]
 title = ["The castle's music"]
 
-# The sets, and how long each one's phrases are, in seconds (each
-# phrase of a set is as long as the others: 8 bars).
+# The sets, and how long the phrases of each version are, in seconds:
+# a set itself (its base tempo) and its tempos, the same music played
+# slower or faster (SET-NAME; tempos-SET below).
 sets = ["calm", "explore", "sinister", "battle"]
-seconds = ["calm 26.666667", "explore 20", "sinister 26.666667", "battle 26.666667"]
+seconds = ["calm 26.666667", "calm-64bpm 30", "calm-80bpm 24", "explore 20", "explore-88bpm 21.818186", "explore-104bpm 18.461542", "sinister 26.666667", "sinister-64bpm 30", "sinister-80bpm 24", "battle 26.666667", "battle-132bpm 29.090907", "battle-156bpm 24.615374"]
 
 # Where each set plays: the kinds of place (a venue's kind in
 # castle.toml, or the screens: splash, front, roads, atlas). A kind no
@@ -25,21 +25,49 @@ kinds-sinister = ["dungeon", "raycaster"]
 kinds-battle = ["defense", "attack"]
 otherwise = ["calm"]
 
-# A set's phrases, the same four in every set: A establishes (it is
-# where a set starts), B is the bed (the quietest, made to repeat), C
-# develops, D turns round to A. For each phrase: how many times in a
-# row it plays (repeats-P: least and most), and what may follow it
-# (next-P: a phrase and its weight; a phrase not named never follows).
-# A plan starts at the first phrase and ends where the next would be
-# the first again, once it has at least length phrases; the page plays
-# it round and round.
+# A set's phrases, the same four in every set: A establishes (where a
+# round starts), B is the bed (the quietest), C develops, D turns round
+# to A. For each phrase: how many times in a row it plays (repeats-P:
+# least and most), and what may follow it (next-P: a phrase and its
+# weight; a phrase not named never follows). A set may have its own
+# (repeats-SET-P, next-SET-P). No phrase plays more than the window's
+# second number of times in any run of its first number of phrases.
 phrases = ["A", "B", "C", "D"]
-repeats-A = ["least 1", "most 2"]
+repeats-A = ["least 1", "most 1"]
 next-A = ["B 4", "C 1"]
-repeats-B = ["least 2", "most 3"]
+repeats-B = ["least 1", "most 2"]
 next-B = ["C 3", "D 1"]
-repeats-C = ["least 1", "most 2"]
+repeats-C = ["least 1", "most 1"]
 next-C = ["D 3", "B 1"]
-repeats-D = ["least 1", "most 2"]
+repeats-D = ["least 1", "most 1"]
 next-D = ["A 1"]
-length = ["16"]
+window = ["8 3"]
+
+# The battle's brass figure (two chord stabs, the same rhythm at
+# changing pitches) is in its A and, softer, its C: a battle round
+# plays C at most once (C goes only to D) and seldom (A goes to B
+# mostly).
+next-battle-A = ["B 4", "C 1"]
+next-battle-B = ["C 1", "D 3"]
+next-battle-C = ["D 1"]
+
+# Rounds: a plan is rounds of A to D. After a round of the home set
+# (the set of the place), the next round's set by weight (rounds-SET);
+# after a round of another, the home set again.
+rounds-calm = ["calm 3", "explore 1"]
+rounds-explore = ["explore 3", "calm 1", "sinister 1"]
+rounds-sinister = ["sinister 3", "battle 1"]
+rounds-battle = ["battle 2", "explore 1", "sinister 1"]
+
+# Tempos: each round after the first is played in one of its set's
+# versions, by weight (base: the set's own). A harder fight may later
+# choose another list here (tempos-battle-hard, say); nothing reads one
+# yet.
+tempos-calm = ["base 4", "64bpm 1", "80bpm 1"]
+tempos-explore = ["base 4", "88bpm 1", "104bpm 1"]
+tempos-sinister = ["base 4", "64bpm 1", "80bpm 1"]
+tempos-battle = ["base 4", "132bpm 1", "156bpm 1"]
+
+# A plan is at least this many phrases (about 40 minutes), and ends
+# where a round would start; the page then plays it again.
+length = ["96"]
