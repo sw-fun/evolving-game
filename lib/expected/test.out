@@ -122,7 +122,9 @@ realm
 city
 camp
 crossing
-9
+fields
+hill-fort
+11
 The inner keep
 ../world/battlefield.toml
 0

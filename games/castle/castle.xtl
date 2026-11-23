@@ -139,6 +139,23 @@ _ := u:s_ay ov:o_utcome u:c_ard 1 r_eshape e_nclose "key b"
 u:a_cross := { lines -> u:l_ast 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_eplay (lines, rm:n_ew ("../walk/crossing.toml", md:nothing, 1)) }
 _ := u:s_ay rm:o_utcome u:a_cross (e_nclose "choose 2 87") c_at 30 r_eshape e_nclose "tick 0.5"
 
+# The road through the fields (venue 20, the approach the painting from
+# the tower shows) opens with a card of that painting.
+vw:c_aption ov:v_iew ov:n_ew (file, md:nothing md:s_et ("campaign.go", 20), 1)
+# Then it can be won by following the road: out of the forest, W held
+# along each stretch (ticks of a fifth of a second, so no field wall is
+# stepped over) and an arrow held 0.9 seconds (a quarter turn) at each
+# bend; the field walls stop you at the end of a stretch, and the gaps
+# in them are where the road goes through, up to the town gate.
+u:f_ields := { lines -> u:l_ast 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_esult (lines, rm:n_ew ("../walk/fields.toml", md:nothing, 1)) }
+u:s_tretch := { n -> (e_nclose "choose 2 87") c_at (n r_eshape e_nclose "tick 0.2") c_at e_nclose "choose 3 87" }
+right := "choose 2 39" "tick 0.9" "choose 3 39"
+left := "choose 2 37" "tick 0.9" "choose 3 37"
+road := (u:s_tretch 16) c_at right c_at (u:s_tretch 28) c_at left c_at (u:s_tretch 12) c_at left c_at (u:s_tretch 20) c_at right c_at (u:s_tretch 12) c_at right c_at (u:s_tretch 10) c_at left c_at u:s_tretch 12
+rm:p_lace u:f_ields u:s_tretch 16
+vw:c_aption rm:v_iew u:f_ields road
+_ := u:s_ay rm:o_utcome u:f_ields road
+
 # The treasury (the idle game): ten seconds bring ten coins; a mint
 # costs ten, after which coins come twice as fast; carried out, the
 # coins are gold and the mint is kept. Five places won since the last

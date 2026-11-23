@@ -1,0 +1,35 @@
+# The road through the fields, on foot: out of the forest at sunset and
+# along the winding road between the fields and their walls to the
+# town's gate, as the painting from the tower shows the approach. Read
+# by Roaming.xtl through lib/Mode; every value is a list of strings.
+mode = ["roam"]
+# What to find, said under the picture.
+goal = ["Follow the road through the fields to the town gate."]
+# The painting shown on the card before it (in the castle; the page
+# serves docs/images under art/): the view from the tower.
+art = ["art/block-view-from-tower.jpg"]
+title = ["The road through the fields"]
+
+# Where: the castle's zones (a path from this file) and the zone.
+zones = ["../../world/zones.toml"]
+zone = ["fields"]
+
+# What stands behind the town's wall: a town made from a seed, so many
+# tiles wide and deep (lib/Village): not the castle's village (seed 7).
+village = ["seed 11", "wide 25", "deep 15"]
+
+# The hour of the day, 0 to 24 (lib/Sky): sunset, as in the painting.
+time = ["18.25"]
+
+# The weather: snow, and how thick it falls from 0 to 1.
+weather = ["snow 0.0"]
+
+# How fast you walk, in tiles a second (Shift doubles it), and how fast
+# the arrow keys turn you, in degrees a second.
+speed = ["2.5"]
+turn = ["100"]
+
+# Won when you stand in the gate.
+win = ["gate"]
+loss = ["never"]
+reward = ["gold 1"]

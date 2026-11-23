@@ -62,6 +62,12 @@ range, damage, cooldown, splash, slow) and the enemies (hit points,
 speed, armor, bounty, letter). The map and its road are the
 battlefield's, [`world/battlefield.toml`](../../world/battlefield.toml).
 
+[`hill-fort.toml`](hill-fort.toml), a level on another map: the
+outlying fort on its rise, the road winding to and fro up the hill to
+its gate ([`world/hill-fort.toml`](../../world/hill-fort.toml)), with
+heavier waves. `defense.xtl` wins it with a written order of building
+and loses it with nothing built.
+
 [`effects.toml`](effects.toml), named by every level: what the
 difficulty chosen (Novice to Impossible) and the character's calling
 do to the level: the starting gold, the lives, the towers' costs and

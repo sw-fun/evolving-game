@@ -26,7 +26,7 @@ village = ["seed 7", "wide 35", "deep 21"]
 time = ["10.5"]
 
 # The venues, in the order of their numbers on the map.
-venues = ["bridge-1", "on-foot", "bridge-2", "camp", "town", "bridge-3", "engineer", "commander", "crossing", "gate-maze", "rune-keep", "tactics", "dungeon", "ray-maze", "treasury", "automata", "hall", "city", "warchest"]
+venues = ["bridge-1", "on-foot", "bridge-2", "camp", "town", "bridge-3", "engineer", "commander", "crossing", "gate-maze", "rune-keep", "tactics", "dungeon", "ray-maze", "treasury", "automata", "hall", "city", "warchest", "fields", "hill-fort"]
 venue-fields = ["title", "kind", "scenario", "row", "column", "from", "needs", "marker", "about"]
 
 # Deeds: quests (known from the start, so you know what to try) and
@@ -255,6 +255,28 @@ from = "camp"
 needs = ""
 marker = "brute"
 about = "The besiegers' camp earns while you fight elsewhere: raiders, workshops and hired companies fill the war chest, an idle game."
+
+[venue.fields]
+title = "The road through the fields"
+kind = "roam"
+scenario = "../walk/fields.toml"
+row = "12"
+column = "8"
+from = "camp"
+needs = ""
+marker = "walker"
+about = "Out of the forest at sunset and along the winding road between the fields and their walls, to the town's gate."
+
+[venue.hill-fort]
+title = "The hill fort"
+kind = "defense"
+scenario = "../defense/hill-fort.toml"
+row = "9"
+column = "22"
+from = "bridge-3"
+needs = ""
+marker = "archer"
+about = "The outlying fort on its rise: hold its gate against the waves coming up the road that winds up the hill."
 
 [deed.season-summer]
 title = "Hold the bridge in summer"
