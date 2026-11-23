@@ -226,7 +226,7 @@ if (capture) {
 // done, which is then counted; ?debug shows every place.
 check(await open("?hold&fresh"), "the page starts with the castle");
 check((await page("document.title")) === "Evolving Game: The castle: ready", "its title is the castle's");
-check((await caption()).startsWith("The castle and its country: 3 of 18 places known, 0 won. Gold 0, experience 0."), "the map shows three places to begin with, and your gold and experience");
+check((await caption()).startsWith("The castle and its country: 3 of 19 places known, 0 won. Gold 0, experience 0."), "the map shows three places to begin with, and your gold and experience");
 await sleep(300);
 check((await page("window.game.player().count().pieces")) === 3, "each a marker on the map");
 check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x.textContent).join('|')")).includes("2 The battlefield on foot"), "with its number and name written over it");
@@ -243,9 +243,9 @@ await click(190, 195);
 check((await caption()).includes("W A S D walk"), "a click on the far end of the second place's name goes into the battlefield on foot");
 check(/^music\('explore', 0\.6, 20\.0, 'A /.test(await tune()), "where the explore set plays");
 await page("document.getElementById('leave').click(), 1");
-check((await caption()).startsWith("The castle and its country: 3 of 18"), "the Map button comes back to the map");
+check((await caption()).startsWith("The castle and its country: 3 of 19"), "the Map button comes back to the map");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");
-check((await caption()).startsWith("The castle and its country: 18 of 18 places known"), "and every place is shown");
+check((await caption()).startsWith("The castle and its country: 19 of 19 places known"), "and every place is shown");
 await page("window.game.feed('choose 1 7'), 1");
 check((await caption()).startsWith("Siege Engineer (not built yet)."), "a place not built yet says what it will be");
 check((await page("document.querySelectorAll('#flat svg text:not([text-anchor])').length")) === 3, "in three lines under the map");

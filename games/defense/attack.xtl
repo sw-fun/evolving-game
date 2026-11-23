@@ -1,0 +1,65 @@
+#!/usr/bin/env xetal
+## Castle Defense as the attacker, proved: every level of Storm the
+## Bridge won and lost by a script of events. The events come on
+## standard input (the test's are expected/attack.in): a line "level
+## FILE" starts that level in a new world, and the events after it, up
+## to the next such line or the end, are played on it by lib/Mode's
+## loop. For each: the level, how it stood at the end in numbers and
+## in words, how it ended and the world after. First, what the mode
+## takes and how it is played, the first level as it starts, and the
+## purse in a world with more gold and with less. The rules are
+## Attacking.xtl's.
+"ak:" u_se< "Attacking"
+"md:" u_se< "Mode"
+"sm:" u_se< "Sim"
+"t:" u_se< "Text"
+"vw:" u_se< "View"
+
+## Is a line the start of a level: "level FILE"?
+u:l_evel := { e -> (e sm:i_s "bad") & "level " m_atch 6 t_ake (sm:t_ext e) c_at "      " }
+## The events up to the next level's line or the end, as lines, and the
+## next level's file ("" at the end).
+u:g_ather := { lines ->
+  e := sm:n_ext @
+  e sm:i_s "end" ? (lines, "")
+  u:l_evel e ? (lines, 6 d_rop sm:t_ext e)
+  u:g_ather lines c_at e_nclose sm:l_ine e
+}
+## An outcome and the world after it, a line each.
+u:s_ay := { outcome ->
+  (status, _, _) := outcome
+  _ := p_rint! "outcome: " c_at md:s_tatusName status
+  t_ally t:l_ines md:l_ines md:nothing md:a_fter outcome
+}
+## Each level of the input played on its script, in turn.
+u:p_rove := { file ->
+  0 = t_ally file ? 0
+  (lines, next) := u:g_ather 0 t_ake e_nclose ""
+  _ := p_rint! "level " c_at file c_at ": " c_at (f_ormat t_ally lines) c_at " events"
+  (_, s) := 'ak:l_egal 'ak:s_tatus 'ak:s_tep md:r_esult (lines, ak:n_ew (file, md:nothing, 1))
+  _ := p_rint! f_ormat ak:c_ount s
+  _ := p_rint! vw:c_aption ak:v_iew s
+  _ := u:s_ay ak:o_utcome s
+  u:p_rove next
+}
+
+# The scenarios are right for this mode; what it takes; how it is played.
+t_ally ak:mode md:p_roblem "attack-1.toml"
+t_ally ak:mode md:p_roblem "attack-2.toml"
+start := ak:n_ew ("attack-1.toml", md:nothing, 1)
+_ := t:l_ines ak:l_egal start
+ak:help
+# The first level as it starts, seen from the camp (the map as drawn:
+# the castle at the top): the two towers the defender has from the
+# first second.
+vw:t_ext ak:v_iew start
+# The game in numbers: gold, creeps sent, on the road, fallen,
+# through, towers standing. The purse is the world's gold, never less
+# than the level's 150.
+ak:c_ount start
+ak:c_ount ak:n_ew ("attack-1.toml", md:nothing md:s_et ("resource.gold", 400), 1)
+ak:c_ount ak:n_ew ("attack-1.toml", md:nothing md:s_et ("resource.gold", 20), 1)
+
+# The levels, each won and lost by the scripts on standard input.
+(_, first) := u:g_ather 0 t_ake e_nclose ""
+u:p_rove first

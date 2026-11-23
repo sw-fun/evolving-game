@@ -15,6 +15,7 @@
 ## browser the world is kept between visits. The
 ## venues are castle.toml's; each game is its own mode, played by
 ## lib/Mode's loop.
+"ak:" u_se< "Attacking"
 "at:" u_se< "Atlas"
 "dd:" u_se< "Deeds"
 "df:" u_se< "Defending"
@@ -123,6 +124,7 @@ u:v_isit := { (world, k) ->
   tune := u:t_une (kind, world)
   path := vn:s_cenario (file, k)
   kind m_atch "defense" ? df:o_utcome u:l_ast tune 'df:v_iew 'df:l_egal 'df:s_tatus 'df:s_tep mu:p_lay df:n_ew (path, world, k)
+  kind m_atch "attack" ? ak:o_utcome u:l_ast tune 'ak:v_iew 'ak:l_egal 'ak:s_tatus 'ak:s_tep mu:p_lay ak:n_ew (path, world, k)
   (kind m_atch "roam") & 0 < t_ally ov:a_rt path ? u:c_ross (world, k, path)
   kind m_atch "roam" ? rm:o_utcome u:l_ast tune 'rm:v_iew 'rm:l_egal 'rm:s_tatus 'rm:s_tep mu:p_lay rm:n_ew (path, world, k)
   kind m_atch "maze" ? wr:o_utcome u:l_ast tune 'wr:v_iew 'wr:l_egal 'wr:s_tatus 'wr:s_tep mu:p_lay wr:n_ew (file, world, k)
