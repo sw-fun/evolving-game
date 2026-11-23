@@ -63,6 +63,17 @@ the next. This is the game the others are parts of.
   city with the keep.
 - **The long bridge.** The walk across the bridge to the castle's gate
   (the scenario `../walk/crossing.toml`).
+- **The road through the fields.** The attacker's approach, as the
+  painting from the tower shows it: out of the forest and along the
+  winding road between the fields and their walls to the town's gate
+  (the scenario `../walk/fields.toml`, its map
+  [`world/fields.toml`](../../world/fields.toml)). The field walls stop
+  you; the road goes through their gaps. It opens with the painting
+  from the tower.
+- **The hill fort.** A level of Castle Defense on the outlying fort's
+  hill: the road winds to and fro up the hill to the fort's gate (the
+  scenario `../defense/hill-fort.toml`, its map
+  [`world/hill-fort.toml`](../../world/hill-fort.toml)).
 
 - **The treasury.** An idle game ([`Hoard.xtl`](Hoard.xtl), `idle`,
   [`treasury.toml`](treasury.toml)): coins come in by the second;

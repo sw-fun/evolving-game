@@ -36,6 +36,12 @@ events are a key going down and coming up (`choose 2 87`, `choose 3
 what is the game's to say, not a page's. `roam.xtl` is it scripted and
 `explore.xtl` played.
 
+The same mode walks other places, each a scenario naming its zone:
+[`fields.toml`](fields.toml) is the road through the fields, out of
+the forest along a winding road whose field walls stop you, to a
+town's gate ([`world/fields.toml`](../../world/fields.toml)); the
+castle's `castle.xtl` walks it to the gate.
+
 ## Play it
 
 ```bash
