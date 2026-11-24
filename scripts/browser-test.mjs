@@ -246,7 +246,7 @@ check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x
 // decodes its phrases at the length the program gives (headless Chrome
 // may play no sound: that is not asked).
 const tune = () => page("(document.querySelector('#flat svg metadata#music') || {}).textContent || ''");
-check(/^music\('calm', 'calm-A( [a-z0-9]+-[A-Za-z0-9-]+)+'\)\n(seconds\('[a-z0-9-]+', [\d.]+\)\n)+status\('atlas', '', 'debug'\)\nvolume\(0\.6\)$/.test(await tune()) && (await tune()).includes("seconds('calm', 26.666667)"), `the map's picture names its music: a plan from the calm set's A, each version's seconds, the default loudness (${(await tune()).slice(0, 40)}...)`);
+check(/^music\('calm', 'calm-A( [a-z0-9]+-[A-Za-z0-9-]+)+'\)\n(seconds\('[a-z0-9-]+', [\d.]+, \d+\)\n)+status\('atlas', '', 'debug'\)\nvolume\(0\.6\)$/.test(await tune()) && (await tune()).includes("seconds('calm', 26.666667, 8)"), `the map's picture names its music: a plan from the calm set's A, each version's seconds, the default loudness (${(await tune()).slice(0, 40)}...)`);
 check(await page("window.game.music().line === (document.querySelector('#flat svg metadata#music') || {}).textContent"), "and the page has read it");
 const decoded = await page(`fetch('music/calm-A.ogg').then((r) => r.ok ? r.arrayBuffer() : Promise.reject(r.status))
   .then((b) => new OfflineAudioContext(2, 48000, 48000).decodeAudioData(b)).then((s) => s.duration, (e) => -1)`);
@@ -295,6 +295,25 @@ for (const type of ["keyDown", "keyUp"]) await key(type, "`", "Backquote", 192);
 check(await page("document.getElementById('debug').hidden") && (await caption()).includes("W A S D walk"), "and hides it, the game not given the key");
 await page("document.getElementById('leave').click(), 1");
 check((await caption()).startsWith("The castle and its country: 4 of 23"), "the Map button comes back to the map");
+// Leaving a battle changes the music fast: once the battle's set is
+// playing, the map's lines name a bridge (left: release), and the page
+// fades the battle out at its next bar line and plays the bridge
+// there, the map's calm A at the bridge's handoff.
+await page("window.game.feed('choose 1 1'), 1");
+check(await until("window.game.music().playing === 'battle'", 40000), "the first bridge's battle music plays");
+// left with at least 8 s of the battle's phrase still to play, so the
+// bridge coming well before that end is the fast change, not the old
+// wait for the phrase to end (a loaded machine fetches and decodes the
+// bridge slowly: a fixed bar's wait was flaky)
+await until("(() => { const p = window.game.music().phrase; return !!p && p.seconds - p.into > 8; })()", 40000);
+const remaining = await page("(() => { const p = window.game.music().phrase; return p.seconds - p.into; })()");
+await page("window.game.feed('choose 0 0'), 1");
+check((await tune()).includes("bridge('release', 14.25, 2.25, 11.25)"), "left, the map's music lines name the bridge release");
+const leftAt = await page("window.game.music().clock");
+check(await until("window.game.music().bridge === 'release'", 5000), "the page plays the bridge at once");
+const bridgeAt = await page("window.game.music().bridgeAt");
+check(bridgeAt - leftAt < remaining - 4, `at the battle's next bar line, not its phrase's end (${(bridgeAt - leftAt).toFixed(2)} s after leaving, ${remaining.toFixed(1)} s before the phrase's end)`);
+check(await until("window.game.music().playing === 'calm'", 5000), "and the map's calm plan follows it");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");
 check((await caption()).startsWith("The castle and its country: 23 of 23 places known"), "and every place is shown");
 await page("window.game.feed('choose 1 7'), 1");
@@ -446,10 +465,14 @@ check(await open("?debug&fresh"), "the map opens, its clock running");
 await page("window.game.feed('choose 1 14'), 1");
 const turnBefore = await page("document.querySelector('#flat svg').innerHTML.length + ':' + document.querySelector('#flat svg').innerHTML.slice(2000, 2600)");
 await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: "ArrowRight", code: "ArrowRight", windowsVirtualKeyCode: 39, nativeVirtualKeyCode: 39 });
+// held until the view changes, or four times the usual 700 ms: the
+// page's ticks run on the wall clock, so a fixed wait was flaky
+const turnSeen = "document.querySelector('#flat svg').innerHTML.length + ':' + document.querySelector('#flat svg').innerHTML.slice(2000, 2600)";
 await sleep(700);
+for (const end = Date.now() + 2800; (await page(turnSeen)) === turnBefore && Date.now() < end;) await sleep(100);
 await send("Input.dispatchKeyEvent", { type: "keyUp", key: "ArrowRight", code: "ArrowRight", windowsVirtualKeyCode: 39, nativeVirtualKeyCode: 39 });
 await sleep(200);
-const turnAfter = await page("document.querySelector('#flat svg').innerHTML.length + ':' + document.querySelector('#flat svg').innerHTML.slice(2000, 2600)");
+const turnAfter = await page(turnSeen);
 check(turnBefore !== turnAfter, "the right arrow held turns you in the second maze (what the rays see changes)");
 await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27 });
 await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27 });

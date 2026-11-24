@@ -13,8 +13,11 @@ title = ["The castle's music"]
 # The sets, and how long the phrases of each version are, in seconds:
 # a set itself (its base tempo) and its tempos, the same music played
 # slower or faster (SET-NAME; tempos-SET below).
-sets = ["calm", "explore", "sinister", "battle"]
-seconds = ["calm 26.666667", "calm-64bpm 30", "calm-80bpm 24", "explore 20", "explore-88bpm 21.818186", "explore-104bpm 18.461542", "sinister 26.666667", "sinister-64bpm 30", "sinister-80bpm 24", "battle 26.666667", "battle-132bpm 29.090907", "battle-156bpm 24.615374"]
+sets = ["calm", "explore", "sinister", "battle", "victory", "defeat"]
+seconds = ["calm 26.666667", "calm-64bpm 30", "calm-80bpm 24", "explore 20", "explore-88bpm 21.818186", "explore-104bpm 18.461542", "sinister 26.666667", "sinister-64bpm 30", "sinister-80bpm 24", "battle 26.666667", "battle-132bpm 29.090907", "battle-156bpm 24.615374", "victory 20", "defeat 26.666667"]
+# How many bars a set's phrases have (its tempos the same): a fast
+# change waits for the next bar line, not the phrase's end.
+bars = ["calm 8", "explore 8", "sinister 8", "battle 16", "victory 8", "defeat 8"]
 
 # Where each set plays: the kinds of place (a venue's kind in
 # castle.toml, or the screens: splash, front, roads, atlas). A kind no
@@ -24,6 +27,26 @@ kinds-explore = ["roam", "maze"]
 kinds-sinister = ["dungeon", "raycaster"]
 kinds-battle = ["defense", "attack"]
 otherwise = ["calm"]
+# Victory and defeat play at no place of their own: one round of them
+# first, after a battle won or lost (after-won-SET, after-lost-SET),
+# then the place's own set.
+after-won-battle = ["victory"]
+after-lost-battle = ["defeat"]
+
+# Bridges: short pieces that change the music fast. When the set
+# changes (a place left or entered), the page fades the phrase playing
+# out at its next bar line while the bridge's lead-in swells, and at
+# the bridge's handoff starts the new plan's A, the bridge's tail
+# ringing under it. A bridge: its seconds, its lead-in, its handoff
+# (bridge-NAME); links: "FROM TO BRIDGE", the bridge from a set to the
+# first set of the new plan (no link: the change waits for the phrase's
+# end, as before). Each bridge quotes a public-domain tune
+# (docs/music-credits.md).
+bridges = ["to-victory", "release", "fall"]
+bridge-to-victory = ["seconds 11.75", "lead 1.25", "handoff 8.75"]
+bridge-release = ["seconds 14.25", "lead 2.25", "handoff 11.25"]
+bridge-fall = ["seconds 14.667", "lead 1.667", "handoff 11.667"]
+links = ["battle victory to-victory", "battle defeat fall", "battle calm release", "battle explore release", "battle sinister fall", "sinister calm release", "sinister explore release", "explore sinister fall"]
 
 # A set's phrases, the same four in every set: A establishes (where a
 # round starts), B is the bed (the quietest), C develops, D turns round

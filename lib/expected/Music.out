@@ -2,9 +2,11 @@ l:s_ets : Char -> Box Char
 l:p_hrases : Char -> Box Char
 l:s_econds : (Char, Char) -> Float
 l:f_or : (Char, Char) -> Char
+l:f_irst : (Char, (Char, Int), Char) -> Char
+l:b_ridge : (Char, Char, Char) -> Char
 l:v_ersions : (Char, Char) -> Box Char
 l:n_umbers : (Char, Char, Int) -> Int
 l:t_okens : Char -> Box Char
 l:p_lan : (Char, Char, Int) -> Box Char
-l:l_ine : (Char, Char, Int) -> Char
+l:l_ine : (Char, Char, Int, (Char, Int)) -> Char
 l:p_lay : (Any a, Any b, Num c, Truthy c, Num d, Any e, Any f) => (a -> (Char, Float, Char) -> a) -> (a -> Int) -> (a -> Box Char) -> (a -> (((b, Int, c), Float, Box Char, Float, Char, d), Box Char, Box Char, Float, Char)) -> (a -> (e, (Box Char, Int), f)) -> (Char, (Box Char, Int)) -> a -> ((Box Char, Int), a)

@@ -10,3 +10,5 @@ sinister-80bpm
 battle
 battle-132bpm
 battle-156bpm
+victory
+defeat

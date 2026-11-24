@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Check the tracked music without ffmpeg: every phrase of every version
-# (scripts/music-versions.txt, A B C D) is assets/music/VERSION-PHRASE.ogg, each file's
+# (scripts/music-versions.txt, A B C D) is assets/music/VERSION-PHRASE.ogg
+# and every bridge (scripts/music-bridges.txt) bridge-NAME.ogg, each file's
 # SHA-256 and size are those in assets/music/SHA256SUMS (scripts/
 # music.sh writes both), no file is there that the sums do not list,
 # and no WAV is.
@@ -16,6 +17,9 @@ while read -r set; do
     grep -q "  $set-$phrase.ogg\$" "$sums" || { echo "check-music: $set-$phrase.ogg is not in SHA256SUMS"; fail=1; }
   done
 done < "$root/scripts/music-versions.txt"
+while read -r bridge; do
+  grep -q "  bridge-$bridge.ogg\$" "$sums" || { echo "check-music: bridge-$bridge.ogg is not in SHA256SUMS"; fail=1; }
+done < "$root/scripts/music-bridges.txt"
 while read -r hash size name; do
   f="$dir/$name"
   if [ ! -f "$f" ]; then echo "check-music: $name is missing (just music)"; fail=1; continue; fi

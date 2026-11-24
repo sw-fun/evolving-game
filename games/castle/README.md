@@ -42,7 +42,12 @@ the next. This is the game the others are parts of.
   rounds of A, the bed B once or twice, C, the turnaround D; no phrase
   too often in a row; now and then a round of a companion set or of
   the set in a slower or faster tempo; about forty minutes before it
-  plays again. The picture names it, and the page plays it, as loud as the
+  plays again. Leaving a place for one of another set, the music
+  changes fast: a short bridge piece at the next bar line (release
+  after a battle left, to-victory after one won and then a round of
+  victory, fall after one lost and then defeat), and the new set's
+  first phrase at its end ([`../../docs/music-credits.md`](../../docs/music-credits.md)
+  names the tunes they quote). The picture names it, and the page plays it, as loud as the
   world's `settings.music` (0 to 10; 6 when not set) and silent with
   `settings.mute`. Every picture has a sound strip in a corner (the
   top right; the bottom right of a screen with its own menu): a click

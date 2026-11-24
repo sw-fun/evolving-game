@@ -161,7 +161,7 @@ function debugText() {
     `profile  ${who || '-'}`,
     `music    ${(/music\('([^']*)'/.exec(meta) || ['', '-'])[1]}${m.running ? '' : ' (waits for a key or click)'}`,
     `phrase   ${p ? `${p.name}  ${p.step} of ${p.steps}  ${p.into.toFixed(1)} of ${p.seconds.toFixed(1)} s` : '-'}`,
-    `bridge   ${bridge ? bridge[1] : '-'}`,
+    `bridge   ${bridge ? bridge[1] : '-'}${m.bridge && m.bridgeAt > (m.clock - 20) ? `  (played ${(m.clock - m.bridgeAt).toFixed(1)} s ago)` : ''}`,
     `volume   ${m.volume}`,
   ].join('\n');
 }

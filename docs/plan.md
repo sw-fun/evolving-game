@@ -291,7 +291,24 @@ defaults drawn from the repositories above.
   and "choose 5 MUTE", so Settings' rows show it. The
   page only plays the line: the plan's phrases back to back on the
   audio clock, each trimmed to the line's seconds, round and round;
-  a new plan at the end of the phrase playing, from its A. Known
+  a new plan at the end of the phrase playing, from its A; but a fast
+  change through a bridge when the set changes (the user,
+  2026-11-24: leaving a battle, the battle music went on for many
+  seconds; "its loop should cross fade to the short transition piece
+  and then cross fade to the next start of loop"). Bridges are
+  music-pipe-rs's short pieces (release, to-victory, fall ...; each
+  quotes a public-domain tune, `docs/music-credits.md`):
+  `music.toml` says each one's seconds, lead-in and handoff and which
+  links which sets; X_eTaL names the bridge in the lines
+  (`bridge('release', 14.25, 2.25, 11.25)`) when the place's set
+  differs from the set of the place left (`play.xtl` keeps
+  music.came and music.ended from a venue's end until the next place
+  is chosen); after a battle won the plan's first round is the
+  victory set, after one lost defeat (after-won-SET, after-lost-SET).
+  The page fades the phrase playing out (0.75 s) at its next bar line
+  (`seconds('battle', 26.666667, 16)`: 16 bars), starts the bridge
+  there, its lead-in swelling over the fade, and the new plan's A at
+  the handoff (0.3 s fade-in), the bridge's tail ringing under it. Known
   risk: Safari's Opus decoding (older versions cannot); an `.m4a`
   (AAC) copy as a fallback is a later option. Sound on the page is
   an ask of X_eTaL-extensions (D15; `docs/xetal-extensions-asks.md`):

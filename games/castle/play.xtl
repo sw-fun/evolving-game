@@ -42,8 +42,20 @@ file := "castle.toml"
 ## place's set (a new plan of a set after every place won) and the
 ## world whose settings say how loud; every picture has the sound's
 ## strip (lib/Mode), and what it changed comes back with the outcome,
-## kept in the world as settings.music and settings.mute.
+## kept in the world as settings.music and settings.mute. Coming from
+## a place of another set (music.came, the venue left, and
+## music.ended, how it ended: set when a venue ends, cleared when the
+## next place is chosen), the music changes fast through a bridge.
 music := "music.toml"
+## The kind of the venue the music comes from: the one left
+## (music.came), or the map's.
+u:c_ame := { world ->
+  k := world md:g_et "music.came"
+  k < 1 ? "roads"
+  vn:k_ind (file, k)
+}
+## A world whose music no longer comes from a venue left.
+u:c_alm := { world -> (world md:s_et ("music.came", 0)) md:s_et ("music.ended", 0) }
 ## An outcome with what the sound's strip changed: the outcome's own
 ## changes, then the strip's.
 u:a_lso := { heard (status, changes, rewards) -> (status, changes md:m_erge heard, rewards) }
@@ -104,7 +116,7 @@ u:p_lace := { (kind, world) ->
 ## panel shows of it: status('KIND', 'PLACE', 'PROFILE').
 u:t_une := { (kind, world) ->
   said := "status('" c_at kind c_at "', '" c_at (u:p_lace (kind, world)) c_at "', '" c_at (u:n_ame world) c_at "')\n"
-  ((mu:l_ine (music, kind, world md:g_et "stat.won")) c_at said, world)
+  ((mu:l_ine (music, kind, world md:g_et "stat.won", (u:c_ame world, world md:g_et "music.ended"))) c_at said, world)
 }
 ## The front door (who plays, their character, what to play), over the
 ## whole save; then what was chosen: the castle's map, the hall of
@@ -115,7 +127,7 @@ u:d_oor := { save ->
   (status, picks, _) := fr:o_utcome ended
   n_ot status = md:won ? u:a_gain save u:i_nto heard
   name := u:n_ame picks
-  world := u:k_eep (save fr:o_ut name) md:m_erge picks md:m_erge heard
+  world := u:c_alm u:k_eep (save fr:o_ut name) md:m_erge picks md:m_erge heard
   go := world md:g_et "front.go"
   go = 2 ? u:t_hen (world, 17)
   go = 3 ? u:t_hen (world, 15)
@@ -191,15 +203,15 @@ u:r_ound := { world ->
   (status, going, _) := chose
   n_ot status = md:won ? u:s_tay (u:k_eep (world md:m_erge going) md:s_et ("menu.go", 0), going md:g_et "menu.go")
   k := going md:g_et "campaign.go"
-  there := world md:m_erge going
+  there := u:c_alm world md:m_erge going
   (there, k) u:o_n u:v_isit (there, k)
 }
 ## After a venue: its outcome taken into the world and kept; then the
 ## map again, or the profile's home when the settings panel (lib/Mode)
 ## exited to the start menu (menu.go 1, not kept).
 u:o_n := { (world, k) outcome ->
-  (_, changes, _) := outcome
-  after := u:k_eep ((world, k) u:a_fter outcome) md:s_et ("menu.go", 0)
+  (status, changes, _) := outcome
+  after := u:k_eep ((((world, k) u:a_fter outcome) md:s_et ("menu.go", 0)) md:s_et ("music.came", k)) md:s_et ("music.ended", status)
   1 = changes md:g_et "menu.go" ? u:h_ome after
   u:r_ound after
 }

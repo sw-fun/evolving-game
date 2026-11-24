@@ -32,7 +32,7 @@ _ := t:l_ines '{ s -> u:s_hown (d_isclose s, 3) } e_ach mu:s_ets file
 # tempo, come home after a round of another set, follow only the
 # phrases the rules allow (a battle round: A to B or C, B to B, C or
 # D, C to D), and play the battle's C at most once a round: all 100.
-K := 16
+K := 24
 most := 1 2 1 1
 ## Which phrase may follow which (a row a phrase), in a battle's set
 ## and in the others'; the same phrase is a repeat.
@@ -82,8 +82,32 @@ u:p_lanOf := { (_, p) -> p }
 '{ k -> '+ r_/ '{ x -> '+ r_/ 0 + k = 1 + ((u:p_lanOf d_isclose x) - 1) d_iv K } e_ach plans } e_ach 1 2 3
 # The lines for a battle, for the map and on foot, as a page reads
 # them (lib/Mode adds the loudness, volume(...), to every picture).
-_ := t:l_ines st:l_ines mu:l_ine (file, "defense", 1)
-_ := t:l_ines st:l_ines mu:l_ine (file, "roads", 1)
-_ := t:l_ines st:l_ines mu:l_ine (file, "roam", 1)
+_ := t:l_ines st:l_ines mu:l_ine (file, "defense", 1, ("roads", 0))
+_ := t:l_ines st:l_ines mu:l_ine (file, "roads", 1, ("roads", 0))
+_ := t:l_ines st:l_ines mu:l_ine (file, "roam", 1, ("roads", 0))
+# Fast changes: coming to a place from one of another set, a bridge
+# (a short piece) plays first, then the new plan from its A; leaving a
+# battle, the first round is victory when it was won and defeat when
+# it was lost. A line a change: to, from, how it ended (1 won, 2 lost,
+# 3 left, 0 none), the first round's set, the bridge.
+u:c_hange := { (to, from, ended) ->
+  set := mu:f_or (file, to)
+  first := mu:f_irst (file, (from, ended), set)
+  e_nclose to c_at " from " c_at from c_at " " c_at (f_ormat ended) c_at ": " c_at first c_at " then " c_at set c_at ", bridge " c_at mu:b_ridge (file, mu:f_or (file, from), first)
+}
+_ := t:l_ines u:c_hange ("roads", "defense", 1)
+_ := t:l_ines u:c_hange ("roads", "defense", 2)
+_ := t:l_ines u:c_hange ("roads", "defense", 3)
+_ := t:l_ines u:c_hange ("roads", "attack", 1)
+_ := t:l_ines u:c_hange ("front", "defense", 3)
+_ := t:l_ines u:c_hange ("defense", "roads", 0)
+_ := t:l_ines u:c_hange ("roam", "roads", 0)
+_ := t:l_ines u:c_hange ("dungeon", "roads", 0)
+_ := t:l_ines u:c_hange ("roads", "dungeon", 3)
+_ := t:l_ines u:c_hange ("roads", "roam", 1)
+_ := t:l_ines u:c_hange ("front", "roads", 0)
+# The map's lines after a battle won: victory's round first, then calm,
+# and the bridge to-victory with its length, lead-in and handoff.
+_ := t:l_ines 2 t_ake st:l_ines mu:l_ine (file, "roads", 1, ("defense", 1))
 # A music file with a mistake is a message naming the file and field.
 '{ @ -> " " st:j_oin mu:p_lan ("fixtures/bad-music.toml", "calm", 1) } []T_RAP '{ err -> []R_ECOVER []E_MESSAGE err }
