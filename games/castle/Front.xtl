@@ -216,9 +216,14 @@ h:s_et := { picks (i, v) -> (picks * 0 + (r_ange t_ally picks) != i) + v * 0 + (
 ## when none is chosen), 2 the hall of deeds (for a profile), 3
 ## settings, 4 the help shown, 5 leave to the profiles. A name being
 ## typed is no profile yet.
+## Is a profile chosen: a name, and not on the screen that types one.
+h:w_ho := { s ->
+  (_, screen, _, name, _, _, _) := s
+  (n_ot screen = 2) & 0 < t_ally name
+}
 h:m_enu := { s k ->
   (stage, screen, line, name, picks, data, save) := s
-  who := (n_ot screen = 2) & 0 < t_ally name
+  who := h:w_ho s
   kept := (who * t_ally name) t_ake name
   (k = 1) & who ? (stage, 5, 1, name, picks, data, save)
   (k = 2) & who ? (stage, screen, line, name, picks h:s_et (9, 2), data, save)
@@ -349,9 +354,10 @@ h:p_icture := { s ->
   foot := "<text x=\"100\" y=\"765\" font-size=\"22\" fill=\"#a8a08a\">" c_at how c_at "</text>"
   over := mn:o_verlay l:help
   help := ((0 < 12 s_elect picks) * t_ally over) t_ake over
-  back c_at mn:bar c_at words c_at rows c_at (h:f_igure s) c_at foot c_at help c_at "</svg>"
+  bar := mn:b_ar (1 - h:w_ho s) * 0 1 0 0 0
+  back c_at bar c_at words c_at rows c_at (h:f_igure s) c_at foot c_at help c_at "</svg>"
 }
-# :: (Any a, Num b) => (a, b, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char), (Box Char, Int)) -> (a, Box Char, Box Char, Float, Char)
+# :: Any a => (a, Int, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char), (Box Char, Int)) -> (a, Box Char, Box Char, Float, Char)
 ## What to show: the screen, and its heading and chosen line in words
 ## (or the help, when it is shown).
 l:v_iew := { s ->

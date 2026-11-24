@@ -10,5 +10,5 @@ l:l_ines : (Any a, Num b, Any c, Any d) => (a, b, c, Char, Int, (Box Char, Box C
 l:s_tep : (Any a, Any b) => (a, Int, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, b, Box Char, Box Char), (Box Char, Int)) -> (Char, Float, Char) -> (a, Int, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, b, Box Char, Box Char), (Box Char, Int))
 l:l_egal : (Any a, Num b, Any c, Any d, Any e, Any f, Any g) => (a, b, c, d, e, f, g) -> Box Char
 l:s_tatus : (Any a, Any b, Any c, Any d, Num e, Any f, Any g) => (a, b, c, d, e, f, g) -> Int
-l:v_iew : (Any a, Num b) => (a, b, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char), (Box Char, Int)) -> (a, Box Char, Box Char, Float, Char)
+l:v_iew : Any a => (a, Int, Int, Char, Int, (Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char, Box Char), (Box Char, Int)) -> (a, Box Char, Box Char, Float, Char)
 l:o_utcome : (Any a, Any b, Any c, Any d, Any e) => (a, b, c, Char, Int, d, e) -> (Int, (Box Char, Int), (Box Char, Int))

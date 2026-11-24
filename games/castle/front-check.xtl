@@ -89,3 +89,11 @@ d_isclose 5 s_elect fr:l_ines u:f_ront ("key 1" "key 4", ann md:s_et ("p.ann.set
 # A save that says front.home.ann 2 opens at ann's settings.
 u:s_ays (none, ann md:s_et ("front.home.ann", 2))
 u:s_ays (none, ann md:s_et ("front.home.ann", 1))
+
+# The bar's Hall is grayed out where no profile is chosen (the profiles,
+# a new name being typed): there is no one's hall to show. At a
+# profile's home it is not.
+u:o_ff := { (lines, save) -> "data-off=\"Hall\"" st:i_nfix? vw:p_icture fr:v_iew u:f_ront (lines, save) }
+u:o_ff (none, ann)
+u:o_ff (1 r_eshape e_nclose "key 2", ann)
+u:o_ff (1 r_eshape e_nclose "key 1", ann)

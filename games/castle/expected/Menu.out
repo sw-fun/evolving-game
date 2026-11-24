@@ -3,6 +3,7 @@ l:keys : Box Char
 l:help : Char
 l:k_ey : Char -> Int
 l:c_lick : Num a => a -> Int
+l:b_ar : Num a => a -> Char
 l:bar : Char
 l:o_verlay : Char -> Char
 l:s_aid : Char -> Char

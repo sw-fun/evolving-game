@@ -161,7 +161,8 @@ the next. This is the game the others are parts of.
   (D), Settings (S), Help (?) and Leave (Q), each a button to click or
   a key, in small letters or capitals. Help shows the screen's help
   over it until the next key or click; Leave goes back to the
-  profiles. While a name is typed the letters are the name's: click
+  profiles. Hall is grayed out where no profile is chosen (the
+  profiles, a new name being typed). While a name is typed the letters are the name's: click
   the bar (or ? for help). From the road, the bar leaves saying where
   to (`menu.go`: 2 the hall, 3 settings, 4 the profiles), and the
   castle's program goes there.

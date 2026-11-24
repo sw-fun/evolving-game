@@ -45,16 +45,29 @@ l:c_lick := { xy ->
   on := (y >= h:top) & (y <= h:top + h:high) & (across >= 0) & (k <= t_ally l:items) & (across - h:step * k - 1) < h:wide
   0 + on * k
 }
-## The k-th button: a framed box and its name with its key.
-h:b_utton := { k ->
-  x := h:left + h:step * k - 1
-  name := (d_isclose k s_elect l:items) c_at " (" c_at (d_isclose k s_elect l:keys) c_at ")"
-  "<rect x=\"" c_at (f_ormat x) c_at "\" y=\"" c_at (f_ormat h:top) c_at "\" width=\"" c_at (f_ormat h:wide) c_at "\" height=\"" c_at (f_ormat h:high) c_at "\" rx=\"8\" fill=\"#2a2418\" stroke=\"#c9a66b\" stroke-width=\"2\"/><text x=\"" c_at (f_ormat x + h:wide d_iv 2) c_at "\" y=\"" c_at (f_ormat h:top + 26) c_at "\" font-size=\"21\" fill=\"#f2ead8\" text-anchor=\"middle\">" c_at name c_at "</text>"
+## A button's mark when it is off (grayed out): dim, and data-off with
+## its name; nothing when it is on.
+h:o_ff := { (off, item) ->
+  0 = off ? ""
+  " data-off=\"" c_at item c_at "\" opacity=\"0.4\""
 }
-# :: Char
+## The k-th button: a framed box and its name with its key; grayed out
+## (dim, and marked data-off with its name) when off is 1.
+h:b_utton := { off k ->
+  x := h:left + h:step * k - 1
+  item := d_isclose k s_elect l:items
+  name := item c_at " (" c_at (d_isclose k s_elect l:keys) c_at ")"
+  mark := h:o_ff (k s_elect off, item)
+  "<g" c_at mark c_at "><rect x=\"" c_at (f_ormat x) c_at "\" y=\"" c_at (f_ormat h:top) c_at "\" width=\"" c_at (f_ormat h:wide) c_at "\" height=\"" c_at (f_ormat h:high) c_at "\" rx=\"8\" fill=\"#2a2418\" stroke=\"#c9a66b\" stroke-width=\"2\"/><text x=\"" c_at (f_ormat x + h:wide d_iv 2) c_at "\" y=\"" c_at (f_ormat h:top + 26) c_at "\" font-size=\"21\" fill=\"#f2ead8\" text-anchor=\"middle\">" c_at name c_at "</text></g>"
+}
+# :: Num a => a -> Char
 ## The bar, drawn: a dark strip across the top of a 1200 wide picture
-## and its five buttons.
-l:bar := "<g id=\"menu\"><rect width=\"1200\" height=\"54\" fill=\"#0e0f15\" opacity=\"0.88\"/>" c_at (t:j_oin '{ k -> e_nclose h:b_utton k } e_ach r_ange t_ally l:items) c_at "</g>"
+## and its five buttons, those whose place in off is 1 grayed out (an
+## item the screen cannot do: the hall with no profile chosen).
+l:b_ar := { off -> "<g id=\"menu\"><rect width=\"1200\" height=\"54\" fill=\"#0e0f15\" opacity=\"0.88\"/>" c_at (t:j_oin '{ k -> e_nclose off h:b_utton k } e_ach r_ange t_ally l:items) c_at "</g>" }
+# :: Char
+## The bar with every item on.
+l:bar := l:b_ar (t_ally l:items) r_eshape 0
 ## The k-th line of the help, in the panel.
 h:r_ow := { lines k -> "<text x=\"140\" y=\"" c_at (f_ormat 230 + 44 * k - 1) c_at "\" font-size=\"23\" fill=\"#e9e2d0\">" c_at (d_isclose k s_elect lines) c_at "</text>" }
 # :: Char -> Char
