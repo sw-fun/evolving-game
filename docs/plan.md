@@ -296,7 +296,8 @@ defaults drawn from the repositories above.
   2026-11-24: leaving a battle, the battle music went on for many
   seconds; "its loop should cross fade to the short transition piece
   and then cross fade to the next start of loop"). Bridges are
-  music-pipe-rs's short pieces (release, to-victory, fall ...; each
+  music-pipe-rs's short pieces (release, to-victory, fall,
+  call-to-arms into a battle, riddle into a walk or a maze; each
   quotes a public-domain tune, `docs/music-credits.md`):
   `music.toml` says each one's seconds, lead-in and handoff and which
   links which sets; X_eTaL names the bridge in the lines

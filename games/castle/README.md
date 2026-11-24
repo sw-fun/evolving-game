@@ -45,7 +45,8 @@ the next. This is the game the others are parts of.
   plays again. Leaving a place for one of another set, the music
   changes fast: a short bridge piece at the next bar line (release
   after a battle left, to-victory after one won and then a round of
-  victory, fall after one lost and then defeat), and the new set's
+  victory, fall after one lost and then defeat; call-to-arms into a
+  battle, riddle into a walk or a maze), and the new set's
   first phrase at its end ([`../../docs/music-credits.md`](../../docs/music-credits.md)
   names the tunes they quote). The picture names it, and the page plays it, as loud as the
   world's `settings.music` (0 to 10; 6 when not set) and silent with
