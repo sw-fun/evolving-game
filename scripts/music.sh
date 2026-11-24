@@ -6,7 +6,9 @@
 # assets/music/SHA256SUMS (every file's hash and size), which the gate
 # checks (scripts/check-music.sh, never needing ffmpeg). The WAVs are
 # never tracked. The versions are scripts/music-versions.txt, as
-# games/castle/music.toml names them. Needs ffmpeg with libopus.
+# games/castle/music.toml names them, and the bridges (short pieces
+# for fast changes, bridge-NAME.ogg) scripts/music-bridges.txt. Needs
+# ffmpeg with libopus.
 #   scripts/music.sh
 set -euo pipefail
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -22,5 +24,10 @@ while read -r version; do
     ffmpeg -nostdin -loglevel error -y -i "$wav" -map_metadata -1 -fflags +bitexact -flags:a +bitexact -c:a libopus -b:a 64k "$out/$version-$phrase.ogg"
   done
 done < "$root/scripts/music-versions.txt"
+while read -r bridge; do
+  wav="$from/bridge-$bridge.wav"
+  [ -f "$wav" ] || { echo "music: $wav is missing (MUSIC_SOURCE)" >&2; exit 1; }
+  ffmpeg -nostdin -loglevel error -y -i "$wav" -map_metadata -1 -fflags +bitexact -flags:a +bitexact -c:a libopus -b:a 64k "$out/bridge-$bridge.ogg"
+done < "$root/scripts/music-bridges.txt"
 (cd "$out" && for f in *.ogg; do printf '%s  %s  %s\n' "$(shasum -a 256 "$f" | cut -d' ' -f1)" "$(wc -c < "$f" | tr -d ' ')" "$f"; done) > "$out/SHA256SUMS"
-echo "music: $(ls "$out"/*.ogg | wc -l | tr -d ' ') phrases, $(du -sh "$out" | cut -f1) ($out)"
+echo "music: $(ls "$out"/*.ogg | wc -l | tr -d ' ') phrases and bridges, $(du -sh "$out" | cut -f1) ($out)"

@@ -59,12 +59,53 @@ l:s_econds := { (file, set) ->
 ## names it, the first if two do; else the file's otherwise.
 l:f_or := { (file, kind) ->
   sets := l:s_ets file
-  named := '{ s -> (e_nclose kind) m_ember? file md:l_ist "kinds-" c_at d_isclose s } e_ach sets
+  named := '{ s -> (e_nclose kind) m_ember? h:k_inds (file, d_isclose s) } e_ach sets
   0 < '+ r_/ named ? d_isclose f_irst named r_eplicate sets
   other := file md:f_ield "otherwise"
   n_ot (e_nclose other) m_ember? sets ? (file, "otherwise") h:f_ail other c_at " is not one of the sets"
   other
 }
+## The kinds of place a set plays at: kinds-SET (none for a set that
+## plays only after another, as victory does).
+h:k_inds := { (file, set) ->
+  field := "kinds-" c_at set
+  file md:h_as field ? file md:l_ist field
+  0 t_ake e_nclose ""
+}
+# :: (Char, (Char, Int), Char) -> Char
+## The set of a plan's first round: (file, (the kind of place left, how
+## it ended: 1 won, 2 lost), the set of the place now). After a place of
+## another set won or lost, the set the file names for that
+## (after-won-SET, after-lost-SET), if any; else the place's own set.
+l:f_irst := { (file, (from, ended), set) ->
+  0 = t_ally from ? set
+  was := l:f_or (file, from)
+  was m_atch set ? set
+  (ended < 1) | ended > 2 ? set
+  field := (d_isclose ended s_elect "after-won-" "after-lost-") c_at was
+  n_ot file md:h_as field ? set
+  file md:f_ield field
+}
+# :: (Char, Char, Char) -> Char
+## The bridge from one set to another: (file, from, to), the name the
+## file's links give it ("FROM TO BRIDGE"), or "" for none (and for the
+## same set).
+l:b_ridge := { (file, from, to) ->
+  from m_atch to ? ""
+  links := '{ r -> e_nclose st:w_ords d_isclose r } e_ach file md:l_ist "links"
+  fits := '{ l -> (from m_atch d_isclose f_irst d_isclose l) & to m_atch d_isclose 2 s_elect d_isclose l } e_ach links
+  0 = '+ r_/ 0 c_at fits ? ""
+  d_isclose 3 s_elect d_isclose f_irst fits r_eplicate links
+}
+## A bridge's line for the page: bridge('NAME', seconds, lead-in,
+## handoff); nothing for none.
+h:b_ridgeLine := { (file, name) ->
+  0 = t_ally name ? ""
+  field := "bridge-" c_at name
+  n := '{ w -> e_nclose f_ormat file md:r_ule (field, d_isclose w) } e_ach "seconds" "lead" "handoff"
+  "bridge('" c_at name c_at "', " c_at (", " st:j_oin n) c_at ")\n"
+}
+
 ### The rules
 
 ## A phrase is played as a token: set and phrase, numbered set by set
@@ -214,11 +255,17 @@ h:r_un := { (np, least, most, W, R, V, length, window, cap, key, home) (plan, s,
 ## (tempo - 1): (file, set, seed). It starts at the set's first phrase
 ## in its base tempo; the same seed gives the same plan; each set draws
 ## from its own stream.
-l:n_umbers := { (file, set, seed) ->
+l:n_umbers := { (file, set, seed) -> h:n_umbersFrom (file, set, seed, set) }
+## The same, its first round of the set first (that round in its base
+## tempo; then the set's own rounds).
+h:n_umbersFrom := { (file, set, seed, first) ->
   (np, least, most, W, R, V, length, window, cap) := h:r_ules file
-  home := (l:s_ets file) i_ndexOf e_nclose set
-  home > t_ally l:s_ets file ? (file, "sets") h:f_ail set c_at " is not one of the sets"
-  (np, least, most, W, R, V, length, window, cap, (rg:s_eed seed, home), home) h:r_un (0 r_eshape 0, home, 1, 1, 1)
+  sets := l:s_ets file
+  home := sets i_ndexOf e_nclose set
+  home > t_ally sets ? (file, "sets") h:f_ail set c_at " is not one of the sets"
+  start := sets i_ndexOf e_nclose first
+  start > t_ally sets ? (file, "sets") h:f_ail first c_at " is not one of the sets"
+  (np, least, most, W, R, V, length, window, cap, (rg:s_eed seed, home), home) h:r_un (0 r_eshape 0, start, 1, 1, 1)
 }
 # :: Char -> Box Char
 ## Every played phrase's name, VERSION-PHRASE, in the order of their
@@ -248,19 +295,29 @@ l:p_lan := { (file, set, seed) -> (l:n_umbers (file, set, seed)) s_elect l:t_oke
 
 ### The line
 
-# :: (Char, Char, Int) -> Char
+# :: (Char, Char, Int, (Char, Int)) -> Char
 ## The music for a kind of place, as the lines a page plays: (file,
-## kind, seed). The plan, and how long each version's phrases are.
-l:l_ine := { (file, kind, seed) ->
+## kind, seed, came), came the place left before it (its kind, or "")
+## and how it ended (lib/Mode's statuses; 0 for none). The plan (its
+## first round after a battle won or lost the file's victory or
+## defeat), the bridge to it from the set left, if the file links one,
+## and how long each version's phrases are and how many bars they have.
+l:l_ine := { (file, kind, seed, came) ->
+  (from, _) := came
   set := l:f_or (file, kind)
-  plan := " " st:j_oin l:p_lan (file, set, seed)
+  first := l:f_irst (file, came, set)
+  was := h:w_as (file, from)
+  plan := " " st:j_oin (h:n_umbersFrom (file, set, seed, first)) s_elect l:t_okens file
   long := '{ x -> e_nclose h:l_ong (file, d_isclose x) } e_ach l:s_ets file
-  "music('" c_at set c_at "', '" c_at plan c_at "')\n" c_at t:j_oin long
+  "music('" c_at set c_at "', '" c_at plan c_at "')\n" c_at (h:b_ridgeLine (file, l:b_ridge (file, was, first))) c_at t:j_oin long
 }
-## How long a set's versions' phrases are, a line each:
-## seconds('VERSION', S).
+## The set of the kind of place left, or "" for none.
+h:w_as := { (file, from) -> 0 = t_ally from ? ""; l:f_or (file, from) }
+## How long a set's versions' phrases are and how many bars, a line
+## each: seconds('VERSION', S, BARS).
 h:l_ong := { (file, set) ->
-  t:j_oin '{ x -> e_nclose "seconds('" c_at (d_isclose x) c_at "', " c_at (f_ormat l:s_econds (file, d_isclose x)) c_at ")\n" } e_ach l:v_ersions (file, set)
+  bars := f_ormat f_loor file md:r_ule ("bars", set)
+  t:j_oin '{ x -> e_nclose "seconds('" c_at (d_isclose x) c_at "', " c_at (f_ormat l:s_econds (file, d_isclose x)) c_at ", " c_at bars c_at ")\n" } e_ach l:v_ersions (file, set)
 }
 
 ### The system

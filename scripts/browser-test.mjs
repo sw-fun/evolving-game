@@ -244,7 +244,7 @@ check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x
 // decodes its phrases at the length the program gives (headless Chrome
 // may play no sound: that is not asked).
 const tune = () => page("(document.querySelector('#flat svg metadata#music') || {}).textContent || ''");
-check(/^music\('calm', 'calm-A( [a-z0-9]+-[A-Za-z0-9-]+)+'\)\n(seconds\('[a-z0-9-]+', [\d.]+\)\n)+volume\(0\.6\)$/.test(await tune()) && (await tune()).includes("seconds('calm', 26.666667)"), `the map's picture names its music: a plan from the calm set's A, each version's seconds, the default loudness (${(await tune()).slice(0, 40)}...)`);
+check(/^music\('calm', 'calm-A( [a-z0-9]+-[A-Za-z0-9-]+)+'\)\n(seconds\('[a-z0-9-]+', [\d.]+, \d+\)\n)+volume\(0\.6\)$/.test(await tune()) && (await tune()).includes("seconds('calm', 26.666667, 8)"), `the map's picture names its music: a plan from the calm set's A, each version's seconds, the default loudness (${(await tune()).slice(0, 40)}...)`);
 check(await page("window.game.music().line === (document.querySelector('#flat svg metadata#music') || {}).textContent"), "and the page has read it");
 const decoded = await page(`fetch('music/calm-A.ogg').then((r) => r.ok ? r.arrayBuffer() : Promise.reject(r.status))
   .then((b) => new OfflineAudioContext(2, 48000, 48000).decodeAudioData(b)).then((s) => s.duration, (e) => -1)`);
@@ -285,6 +285,19 @@ check((await caption()).includes("W A S D walk"), "a click on the far end of the
 check(/^music\('explore', 'explore-A /.test(await tune()), "where the explore set plays");
 await page("document.getElementById('leave').click(), 1");
 check((await caption()).startsWith("The castle and its country: 4 of 23"), "the Map button comes back to the map");
+// Leaving a battle changes the music fast: once the battle's set is
+// playing, the map's lines name a bridge (left: release), and the page
+// fades the battle out at its next bar line and plays the bridge
+// there, the map's calm A at the bridge's handoff.
+await page("window.game.feed('choose 1 1'), 1");
+check(await until("window.game.music().playing === 'battle'", 40000), "the first bridge's battle music plays");
+await page("window.game.feed('choose 0 0'), 1");
+check((await tune()).includes("bridge('release', 14.25, 2.25, 11.25)"), "left, the map's music lines name the bridge release");
+const leftAt = await page("window.game.music().clock");
+check(await until("window.game.music().bridge === 'release'", 5000), "the page plays the bridge at once");
+const bridgeAt = await page("window.game.music().bridgeAt");
+check(bridgeAt - leftAt < 2.5, `at the battle's next bar line, not its phrase's end (${(bridgeAt - leftAt).toFixed(2)} s after leaving)`);
+check(await until("window.game.music().playing === 'calm'", 5000), "and the map's calm plan follows it");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");
 check((await caption()).startsWith("The castle and its country: 23 of 23 places known"), "and every place is shown");
 await page("window.game.feed('choose 1 7'), 1");
