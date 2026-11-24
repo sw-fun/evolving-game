@@ -2,9 +2,11 @@
 tick S
 choose A N
 move X Y
+key m
 You are on the battlefield, on foot. Find your way over the bridge to the castle gate.
 W A S D: walk forward, left, back, right. Shift: run.
 The arrow keys, or Q and E, turn you. Click the picture to look round with the mouse (Esc lets it go).
+M: a map of where you may walk, with you on it.
 Walls, water and cliffs stop you.
 ....................
 ....................
@@ -290,3 +292,10 @@ fact.walked-in 1
 resource.gold 1
 resource.xp 15
 Row 4, column 11, facing north. You are there.
+1
+0 0
+1 1
+0 0
+152
+1
+<g class="you"><circle cx="47.999" cy="10.286" r="3.429" fill="#e63946"/><line x1="47.999" y1="10.286" x2="37.028" y2="10.286" stroke="#e63946" stroke-width="2.057"/></g>

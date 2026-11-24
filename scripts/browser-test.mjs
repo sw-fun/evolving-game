@@ -358,6 +358,20 @@ if (capture) {
   const img = await send("Page.captureScreenshot", { format: "png" });
   writeFileSync(join(root, "images/look/city.png"), Buffer.from(img.data, "base64"));
 }
+// M, a real key, shows the mini map of the streets over the 3D view,
+// with you on it; M again hides it.
+const mini = () => page("(() => { const g = document.querySelector('#flat svg g.minimap'); return !!g && g.querySelectorAll('rect.street').length > 20 && !!g.querySelector('g.you') && g.getBoundingClientRect().width > 100 && getComputedStyle(g).display !== 'none'; })()");
+await key("keyDown", "m", "KeyM", 77);
+await key("keyUp", "m", "KeyM", 77);
+check(await until("(() => !!document.querySelector('#flat svg g.minimap'))()", 4000) && await mini(), "M shows the city's mini map: its streets and you on them");
+if (capture) {
+  await sleep(600);
+  const img = await send("Page.captureScreenshot", { format: "png" });
+  writeFileSync(join(root, "images/look/city-map.png"), Buffer.from(img.data, "base64"));
+}
+await key("keyDown", "m", "KeyM", 77);
+await key("keyUp", "m", "KeyM", 77);
+check(await until("!document.querySelector('#flat svg g.minimap')", 4000), "and M again hides it");
 await page("document.getElementById('leave').click(), 1");
 
 // The winter camp: tents and fires in the snow, walked on foot.

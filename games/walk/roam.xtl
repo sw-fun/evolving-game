@@ -53,3 +53,25 @@ md:s_tatusName rm:s_tatus home
 (status, changes, rewards) := rm:o_utcome home
 _ := t:l_ines md:l_ines md:nothing md:a_fter (status, changes, rewards)
 vw:c_aption rm:v_iew home
+
+# The city on foot: its streets are a maze, so M shows a mini map of
+# them over the picture (lib/View), with where you are and which way
+# you face, and M again hides it. M is the mode's own key.
+city := rm:n_ew ("city.toml", md:nothing, 1)
+(e_nclose "key m") m_ember? rm:l_egal city
+u:s_een := { lines ->
+  (_, s) := 'rm:l_egal 'rm:s_tatus 'rm:s_tep md:r_esult (lines, city)
+  vw:p_icture rm:v_iew s
+}
+u:m_ini := { lines -> svg := u:s_een lines; ("class=\"minimap\"" st:i_nfix? svg) c_at "class=\"you\"" st:i_nfix? svg }
+u:m_ini 0 t_ake e_nclose ""
+u:m_ini 1 r_eshape e_nclose "key m"
+u:m_ini "key m" "key m"
+# Shown, and a second's walk on: how many runs of street it draws (a
+# rect a run of open tiles in a row), the keep's door, and you: a dot
+# and a line the way you face.
+mini := u:s_een (e_nclose "key m") c_at (e_nclose "choose 2 87") c_at u:t_icks 20
+"class=\"street\"" st:o_ccurrences mini
+"class=\"door\"" st:i_nfix? mini
+you := (-1 + f_irst "<g class=\"you\"" st:f_ind mini) d_rop mini
+(3 + f_irst "</g>" st:f_ind you) t_ake you

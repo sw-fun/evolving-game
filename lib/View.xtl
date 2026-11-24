@@ -7,10 +7,12 @@
 ## writes SVG or a scene: it says what is where, and this library draws.
 ##
 ## A stage is a map made ready to draw, once: (map, numbers, tiles,
-## depths, ground, smooth): the picture's numbers, each tile's SVG far
-## to near, each tile's depth, the scene's ground, and whether that is
-## one smooth surface (vw:s_mooth) or the tiles (vw:s_tage). A mode
-## keeps its stage.
+## depths, ground, smooth): the picture's numbers, the tiles' SVG far
+## to near, joined a band at a time (every tile of one depth, the
+## board's diagonal row + column, in one text: a tick then joins a band
+## a diagonal, not a text a tile), each band's depth, the scene's
+## ground, and whether that is one smooth surface (vw:s_mooth) or the
+## tiles (vw:s_tage). A mode keeps its stage.
 ## A view is (stage, models, clips, pieces, caption): a model name and a
 ## clip name a piece, and a row of numbers a piece:
 ##   x y     where it is on the board: x east and y south, in tiles from
@@ -169,7 +171,9 @@ h:t_ilesCall := { (rows, cols, kinds, heights) k ->
   start c_at (f_ormat h:f_ine r_avel o_\ (4 c_at t_ally is) r_eshape x c_at z c_at y c_at y - k s_elect h:drops) c_at "', 4), '" c_at model c_at "')\n"
 }
 ## A map's parts every stage has: its frame, its tiles' SVG far to near
-## and their depths, and the pieces of the scene's ground.
+## a band a depth (the tiles of one diagonal joined, in the order they
+## are drawn) and the bands' depths, and the pieces of the scene's
+## ground.
 h:p_arts := { map ->
   frame := h:f_rame map
   rc := w:s_ize map
@@ -180,8 +184,11 @@ h:p_arts := { map ->
   cols := 1 + ((r_ange n) - 1) m_od 2 s_elect rc
   far := g_rade rows + cols
   tiles := '{ i -> e_nclose frame h:t_ileSvg (i s_elect rows, i s_elect cols, i s_elect kinds, i s_elect heights) } e_ach far
+  depth := far s_elect rows + cols
+  bands := 1 + r_ange (-1 + '+ r_/ rc)
+  joined := '{ d -> e_nclose t:j_oin (depth = d) r_eplicate tiles } e_ach bands
   calls := '{ k -> e_nclose (rows, cols, kinds, heights) h:t_ilesCall k } e_ach r_ange t_ally w:kinds
-  (frame, tiles, f_loat far s_elect rows + cols, calls)
+  (frame, joined, f_loat bands, calls)
 }
 # :: (Any a, Num b, Num c) => (a, Int, b) -> ((a, Int, b), Float, Box Char, Float, Char, c)
 ## A map made ready to draw, once. A mode makes it in its n_ew and keeps
@@ -312,6 +319,10 @@ l:m_any := { (stage, models, clips, pieces, caption) ->
 ## begins with ^ the sound strip's level and mute ("^6 0"; lib/Mode
 ## adds both to every view): only the picture shows them, the music in
 ## its metadata id="music" and the strip at its top right.
+## A model that begins with @ is a mini map (vw:m_ini makes it): the
+## map's tiles you may walk on, the gate, and the piece's place and
+## heading on them, drawn small at the picture's top left, over a 3D
+## view too; no part of the scene or the text.
 ## The model "eye" is not a thing to draw but where you look from: its
 ## place and heading, its pitch in degrees where a piece has its
 ## clip's time, and the tick's length last. The scene is then seen
@@ -349,7 +360,7 @@ l:t_ext := { (stage, models, _, every, caption) ->
 
 ## Which of a view's pieces are things standing on the board: not a
 ## burst (a model that begins with a star), which only a scene shows.
-h:s_olid := { models -> '{ m -> n_ot (f_irst (d_isclose m) c_at " ") m_ember? "*#<~^%" } e_ach models }
+h:s_olid := { models -> '{ m -> n_ot (f_irst (d_isclose m) c_at " ") m_ember? "*#<~^%@" } e_ach models }
 ## The text after a mark, of the first model that begins with it, or an
 ## empty text.
 h:m_arked := { mark models ->
@@ -525,6 +536,52 @@ h:l_abels := { (stage, models, pieces) ->
 ## the flat picture or the text.
 h:n_ear := { pieces -> ((f_irst_2 pieces) > -100.0) & (2 s_elect_2 pieces) > -100.0 }
 
+### The mini map
+
+# :: (Any a, Num b, Any c, Any d, Any e, Any f, Any g, Any h, Truthy i) => (((a, b, c), d, e, f, g, h), i) -> Char
+## A mini map's model, for a view's piece (its numbers say where the
+## piece is and which way it faces): (stage, closed), closed a matrix
+## of the map's shape, 1 where you may not walk (a mode's own walls,
+## buildings, water). Drawn once, so a mode makes it in its n_ew and
+## keeps it: "@", how big a tile is drawn, then the map's SVG, a dark
+## ground, a light rect a run of open tiles along a row, and the gate.
+l:m_ini := { (stage, closed) ->
+  (map, _, _, _, _, _) := stage
+  rc := w:s_ize map
+  cols := 2 s_elect rc
+  s := 8.0 m_in (240.0 / f_loat cols) m_in 160.0 / f_loat f_irst rc
+  gate := 7 = r_avel w:t_iles map
+  open := n_ot r_avel closed
+  col := ((r_ange t_ally open) - 1) m_od cols
+  starts := w_here open & (col = 0) | n_ot 0 c_at -1 d_rop open
+  ends := w_here open & (col = cols - 1) | n_ot (1 d_rop open) c_at 0
+  r_un := { (x, y, w, what, fill) -> e_nclose "<rect class=\"" c_at what c_at "\" fill=\"" c_at fill c_at "\" x=\"" c_at (f_ormat h:f_ine x) c_at "\" y=\"" c_at (f_ormat h:f_ine y) c_at "\" width=\"" c_at (f_ormat h:f_ine w) c_at "\" height=\"" c_at (f_ormat h:f_ine s) c_at "\"/>" }
+  x := s * f_loat (starts - 1) m_od cols
+  y := s * f_loat (starts - 1) d_iv cols
+  w := s * f_loat 1 + ends - starts
+  streets := t:j_oin '{ j -> r_un (j s_elect x, j s_elect y, j s_elect w, "street", "#c8c2b0") } e_ach r_ange t_ally starts
+  g := (w_here gate) - 1
+  doors := t:j_oin '{ j -> r_un (s * f_loat j m_od cols, s * f_loat j d_iv cols, s, "door", "#2a9d8f") } e_ach g
+  ground := "<rect x=\"-4\" y=\"-4\" width=\"" c_at (f_ormat h:f_ine 8.0 + s * f_loat cols) c_at "\" height=\"" c_at (f_ormat h:f_ine 8.0 + s * f_loat f_irst rc) c_at "\" rx=\"4\" fill=\"#14151c\" fill-opacity=\"0.75\"/>"
+  "@" c_at (f_ormat h:f_ine s) c_at " " c_at ground c_at streets c_at doors
+}
+## The mini map's SVG at the picture's top left, or nothing for a view
+## without one: the map its model drew, and the piece on it, a dot and
+## a line the way it faces.
+h:m_iniSvg := { (models, pieces) ->
+  is := '{ m -> "@" m_atch 1 t_ake d_isclose m } e_ach models
+  0 = '+ r_/ is ? ""
+  said := 1 d_rop d_isclose f_irst is r_eplicate models
+  gap := f_irst w_here said = f_irst " "
+  s := f_irst n_umbers (gap - 1) t_ake said
+  p := f_irst is r_eplicate pieces
+  px := f_ormat h:f_ine s * f_irst p
+  py := f_ormat h:f_ine s * 2 s_elect p
+  far := s * 1.6
+  you := "<g class=\"you\"><circle cx=\"" c_at px c_at "\" cy=\"" c_at py c_at "\" r=\"" c_at (f_ormat h:f_ine 0.5 * s) c_at "\" fill=\"#e63946\"/><line x1=\"" c_at px c_at "\" y1=\"" c_at py c_at "\" x2=\"" c_at (f_ormat h:f_ine (s * f_irst p) + far * 3 s_elect p) c_at "\" y2=\"" c_at (f_ormat h:f_ine (s * 2 s_elect p) + far * 4 s_elect p) c_at "\" stroke=\"#e63946\" stroke-width=\"" c_at (f_ormat h:f_ine 0.3 * s) c_at "\"/></g>"
+  "<g class=\"minimap\" transform=\"translate(" c_at (f_ormat h:edge) c_at " " c_at (f_ormat h:edge) c_at ")\">" c_at (gap d_rop said) c_at you c_at "</g>"
+}
+
 ### The picture
 
 h:colors := "#c0392b" "#7f8c8d"
@@ -571,7 +628,10 @@ l:p_icture := { view ->
   back := "<rect class=\"flat\" width=\"" c_at w c_at "\" height=\"" c_at h c_at "\" fill=\"#1d1f2b\"/>"
   said := st:l_ines caption
   words := t:j_oin '{ i -> e_nclose "<text x=\"" c_at (f_ormat h:w_hole h:edge) c_at "\" y=\"" c_at (f_ormat h:w_hole ((4 s_elect frame) - h:edge) - 20.0 * f_loat (t_ally said) - i) c_at "\" font-size=\"16\" fill=\"#e8e6df\">" c_at (d_isclose f_irst (i - 1) d_rop said) c_at "</text>" } e_ach r_ange t_ally said
-  head c_at "<metadata id=\"scene\">" c_at (l:s_cene view) c_at "</metadata>" c_at (h:t_une models) c_at back c_at "<g class=\"flat\">" c_at (t:j_oin order s_elect all) c_at "</g>" c_at (h:l_abels (stage, models, pieces)) c_at words c_at (h:s_tripSvg (models, h:p_lace ("", frame))) c_at (h:p_anelSvg (models, h:p_anelAt ("", frame))) c_at "</svg>"
+  front := head c_at "<metadata id=\"scene\">"
+  middle := "</metadata>" c_at (h:t_une models) c_at back c_at "<g class=\"flat\">"
+  after := "</g>" c_at (h:l_abels (stage, models, pieces)) c_at words c_at (h:m_iniSvg (models, pieces)) c_at (h:s_tripSvg (models, h:p_lace ("", frame))) c_at (h:p_anelSvg (models, h:p_anelAt ("", frame))) c_at "</svg>"
+  (front c_at l:s_cene view) c_at (middle c_at t:j_oin order s_elect all) c_at after
 }
 
 ### The scene
@@ -607,7 +667,7 @@ h:tall := 0.5
 h:p_ieceCall := { (model, clip, y, y2, n) ->
   model m_atch "eye" ? h:e_yeCall (y, n)
   "#" m_atch 1 t_ake model ? ""
-  (f_irst model) m_ember? "~^%" ? ""
+  (f_irst model) m_ember? "~^%@" ? ""
   "*" m_atch 1 t_ake model ? h:b_urstCall (1 d_rop model, y, n)
   from := (2 t_ake n) c_at y c_at 2 t_ake 2 d_rop n
   to := (2 t_ake 5 d_rop n) c_at y2
@@ -638,8 +698,10 @@ l:s_cene := { (stage, models, clips, pieces, _) ->
   target := (0.5 * a + b) c_at 0.0 c_at 0.5 * b - a
   size := "view(" c_at (f_ormat h:w_hole w) c_at ", " c_at (f_ormat h:w_hole h) c_at ", '#1d1f2b')\n"
   camera := "camera(" c_at (h:n_ums (target, 3)) c_at "[0], " c_at (h:n_ums (0.6124 0.5 0.6124, 3)) c_at "[0], " c_at (f_ormat h:f_ine h:tw * 2.0 ^ 0.5) c_at ")\n"
-  now := (map, smooth) h:s_tands (1 2) s_elect_2 pieces
-  soon := (map, smooth) h:s_tands (6 7) s_elect_2 pieces
+  n := t_ally pieces
+  both := (map, smooth) h:s_tands ((1 2) s_elect_2 pieces) c_at (6 7) s_elect_2 pieces
+  now := n t_ake both
+  soon := n d_rop both
   calls := '{ i -> e_nclose h:p_ieceCall (d_isclose f_irst (i - 1) d_rop models, d_isclose f_irst (i - 1) d_rop clips, i s_elect now, i s_elect soon, i s_elect pieces) } e_ach r_ange t_ally pieces
-  size c_at camera c_at ground c_at t:j_oin calls
+  ((size c_at camera) c_at ground) c_at t:j_oin calls
 }

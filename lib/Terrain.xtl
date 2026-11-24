@@ -79,9 +79,10 @@ h:g_ather := { m ->
 ## The height of every corner of the grid, a matrix one larger each way
 ## than the map: the mean of the ground of the tiles round the corner
 ## that are land; where none is, the mean of them all.
-l:c_orners := { map ->
+l:c_orners := { map -> map h:c_ornersOn l:g_round map }
+## The same from the map's ground, worked out already (l:g_round).
+h:c_ornersOn := { map g ->
   kinds := w:t_iles map
-  g := l:g_round map
   land := f_loat n_ot kinds m_ember? h:wet c_at h:built
   some := h:g_ather land
   all := h:g_ather 1.0 + 0.0 * g
@@ -109,7 +110,8 @@ l:m_esh := { map ->
   ti := (r_ange r * c) - 1
   mx := 0.5 + f_loat ti m_od c
   mz := 0.5 + f_loat ti d_iv c
-  ys := (r_avel l:c_orners map) c_at r_avel l:g_round map
+  g := l:g_round map
+  ys := (r_avel map h:c_ornersOn g) c_at r_avel g
   corners := o_\ (3 c_at n + r * c) r_eshape (cx c_at mx) c_at (cz c_at mz) c_at ys
   tl := (ti m_od c) + (c + 1) * ti d_iv c
   tr := tl + 1
@@ -139,13 +141,14 @@ l:h_eight := { map xy ->
   row := f_loor y
   u := x - f_loat col
   v := y - f_loat row
-  cs := r_avel l:c_orners map
+  g := l:g_round map
+  cs := r_avel map h:c_ornersOn g
   k := 1 + 2 s_elect rc
   tl := (1 + col + k * row) s_elect cs
   tr := (2 + col + k * row) s_elect cs
   bl := (1 + col + k * row + 1) s_elect cs
   br := (2 + col + k * row + 1) s_elect cs
-  mid := (1 + col + (2 s_elect rc) * row) s_elect r_avel l:g_round map
+  mid := (1 + col + (2 s_elect rc) * row) s_elect r_avel g
   top := (tl + u * tr - tl) + v * (2.0 * mid) - tl + tr
   bottom := (bl + u * br - bl) + (1.0 - v) * (2.0 * mid) - bl + br
   left := (tl + v * bl - tl) + u * (2.0 * mid) - tl + bl
