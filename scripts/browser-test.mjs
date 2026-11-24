@@ -216,6 +216,8 @@ for (const [w, h] of [[1280, 800], [800, 600], [420, 760]]) {
   const fits = await page("document.documentElement.scrollWidth <= innerWidth && document.documentElement.scrollHeight <= innerHeight && document.getElementById('stage').clientHeight > 100");
   check(fits, `the page fits a window of ${w} by ${h}`);
 }
+// back to the usual window, captured or not
+await send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 800, deviceScaleFactor: 1, mobile: false });
 
 // The walker on the bridge, for the README.
 if (capture) {
