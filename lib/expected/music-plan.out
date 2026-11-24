@@ -42,6 +42,7 @@ defeat 3: defeat-A defeat-B defeat-B defeat-C defeat-D defeat-A defeat-C defeat-
 2397 3019 1938 2397
 6575 1618 1558
 music('battle', 'battle-A battle-B battle-B battle-D explore-88bpm-A explore-88bpm-B explore-88bpm-C explore-88bpm-D battle-A battle-B battle-C battle-D battle-A battle-B battle-B battle-D battle-A battle-B battle-C battle-D explore-A explore-B explore-B explore-C explore-B explore-D battle-A battle-C battle-D battle-132bpm-A battle-132bpm-B battle-132bpm-B battle-132bpm-D sinister-A sinister-C sinister-B sinister-C sinister-D battle-A battle-C battle-D battle-156bpm-A battle-156bpm-B battle-156bpm-B battle-156bpm-D explore-A explore-B explore-C explore-B explore-C explore-D battle-A battle-B battle-B battle-D explore-88bpm-A explore-88bpm-B explore-88bpm-C explore-88bpm-D battle-A battle-B battle-B battle-D explore-A explore-C explore-D battle-156bpm-A battle-156bpm-B battle-156bpm-C battle-156bpm-D battle-A battle-B battle-B battle-D battle-A battle-B battle-D battle-A battle-C battle-D sinister-A sinister-B sinister-B sinister-C sinister-D battle-132bpm-A battle-132bpm-C battle-132bpm-D sinister-A sinister-B sinister-B sinister-C sinister-D battle-A battle-B battle-B battle-D')
+bridge('call-to-arms', 11.057, 1.667, 8.333)
 seconds('calm', 26.666667, 8)
 seconds('calm-64bpm', 30.0, 8)
 seconds('calm-80bpm', 24.0, 8)
@@ -72,6 +73,7 @@ seconds('battle-156bpm', 24.615374, 16)
 seconds('victory', 20.0, 8)
 seconds('defeat', 26.666667, 8)
 music('explore', 'explore-A explore-B explore-D explore-A explore-B explore-B explore-C explore-D explore-A explore-C explore-B explore-C explore-B explore-D sinister-A sinister-B sinister-B sinister-D explore-A explore-C explore-B explore-C explore-D explore-A explore-C explore-B explore-D calm-A calm-C calm-D explore-A explore-C explore-D calm-A calm-B calm-B calm-C calm-D explore-A explore-B explore-C explore-D calm-A calm-B calm-B calm-C calm-D explore-104bpm-A explore-104bpm-B explore-104bpm-B explore-104bpm-D calm-A calm-B calm-C calm-D explore-A explore-B explore-C explore-D explore-88bpm-A explore-88bpm-C explore-88bpm-D explore-A explore-B explore-B explore-C explore-D calm-80bpm-A calm-80bpm-C calm-80bpm-D explore-A explore-B explore-B explore-D explore-A explore-B explore-C explore-D explore-A explore-B explore-C explore-D explore-A explore-B explore-B explore-C explore-D explore-88bpm-A explore-88bpm-B explore-88bpm-D explore-88bpm-A explore-88bpm-B explore-88bpm-D sinister-A sinister-B sinister-B sinister-D')
+bridge('riddle', 11.75, 1.25, 8.75)
 seconds('calm', 26.666667, 8)
 seconds('calm-64bpm', 30.0, 8)
 seconds('calm-80bpm', 24.0, 8)
@@ -91,8 +93,8 @@ roads from defense 2: defeat then calm, bridge fall
 roads from defense 3: calm then calm, bridge release
 roads from attack 1: victory then calm, bridge to-victory
 front from defense 3: calm then calm, bridge release
-defense from roads 0: battle then battle, bridge 
-roam from roads 0: explore then explore, bridge 
+defense from roads 0: battle then battle, bridge call-to-arms
+roam from roads 0: explore then explore, bridge riddle
 dungeon from roads 0: sinister then sinister, bridge 
 roads from dungeon 3: calm then calm, bridge release
 roads from roam 1: calm then calm, bridge 

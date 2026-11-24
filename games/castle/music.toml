@@ -42,11 +42,13 @@ after-lost-battle = ["defeat"]
 # first set of the new plan (no link: the change waits for the phrase's
 # end, as before). Each bridge quotes a public-domain tune
 # (docs/music-credits.md).
-bridges = ["to-victory", "release", "fall"]
+bridges = ["to-victory", "release", "fall", "call-to-arms", "riddle"]
 bridge-to-victory = ["seconds 11.75", "lead 1.25", "handoff 8.75"]
 bridge-release = ["seconds 14.25", "lead 2.25", "handoff 11.25"]
 bridge-fall = ["seconds 14.667", "lead 1.667", "handoff 11.667"]
-links = ["battle victory to-victory", "battle defeat fall", "battle calm release", "battle explore release", "battle sinister fall", "sinister calm release", "sinister explore release", "explore sinister fall"]
+bridge-call-to-arms = ["seconds 11.057", "lead 1.667", "handoff 8.333"]
+bridge-riddle = ["seconds 11.75", "lead 1.25", "handoff 8.75"]
+links = ["battle victory to-victory", "battle defeat fall", "battle calm release", "battle explore release", "battle sinister fall", "sinister calm release", "sinister explore release", "explore sinister fall", "calm battle call-to-arms", "explore battle call-to-arms", "victory battle call-to-arms", "calm explore riddle", "victory explore riddle"]
 
 # A set's phrases, the same four in every set: A establishes (where a
 # round starts), B is the bed (the quietest), C develops, D turns round
