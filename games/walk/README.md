@@ -40,7 +40,15 @@ The same mode walks other places, each a scenario naming its zone:
 [`fields.toml`](fields.toml) is the road through the fields, out of
 the forest along a winding road whose field walls stop you, to a
 town's gate ([`world/fields.toml`](../../world/fields.toml)); the
-castle's `castle.xtl` walks it to the gate.
+castle's `castle.xtl` walks it to the gate. [`city.toml`](city.toml)
+is the city inside the gate, a maze of streets between the village's
+houses, walked from deep in it to the keep's door.
+
+M shows a mini map and M again hides it: at the picture's top left,
+the tiles you may walk on (the streets, in the city), the gate or
+door you are looking for, and you on them, a dot with a line the way
+you face. It is drawn by `lib/View` (`vw:m_ini`), over the 3D view
+too; `roam.xtl` shows it in the city.
 
 ## Play it
 

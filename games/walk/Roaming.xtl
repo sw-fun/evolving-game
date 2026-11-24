@@ -10,14 +10,17 @@
 ## is how far the pointer went, in pixels. Which key does what is
 ## decided here, not by a page.
 ##
-## The state is (goal, stage, numbers, blocked): what to find, as the
-## scenario says it (goal = ["..."]; else the gate); blocked the tiles a
-## village's buildings stand on (lib/Village), which stop you as walls
-## do; numbers: where you are (x east and y
+## The state is (goal, stage, numbers, (blocked, mini)): what to
+## find, as the scenario says it (goal = ["..."]; else the gate);
+## blocked the tiles a village's buildings stand on (lib/Village), which
+## stop you as walls do; mini the mini map of where you may walk
+## (lib/View's vw:m_ini), drawn once; numbers: where you are (x east and y
 ## south, in tiles), your heading in radians (0 north, turning east)
 ## and pitch in degrees, the seven things held (forward, back, left,
 ## right, turn left, turn right, run), the time passed in milliseconds,
-## and your speed and turning speed. Each tick moves you by what is
+## your speed and turning speed, and 1 when the mini map is shown (M
+## shows and hides it: a map of where you may walk, with you on it,
+## over the picture). Each tick moves you by what is
 ## held; a move that would take you into a tile that stops you is not
 ## made, along x and along y separately, so you slide along a wall.
 ## Import: "rm:" u_se< "Roaming"
@@ -33,7 +36,7 @@
 l:mode := "roam"
 # :: Char
 ## How it is played, a line a thing to know.
-l:help := "You are on the battlefield, on foot. Find your way over the bridge to the castle gate.\nW A S D: walk forward, left, back, right. Shift: run.\nThe arrow keys, or Q and E, turn you. Click the picture to look round with the mouse (Esc lets it go).\nWalls, water and cliffs stop you."
+l:help := "You are on the battlefield, on foot. Find your way over the bridge to the castle gate.\nW A S D: walk forward, left, back, right. Shift: run.\nThe arrow keys, or Q and E, turn you. Click the picture to look round with the mouse (Esc lets it go).\nM: a map of where you may walk, with you on it.\nWalls, water and cliffs stop you."
 
 ## The keys' numbers and what each holds: 1 forward, 2 back, 3 left, 4
 ## right, 5 turn left, 6 turn right, 7 run.
@@ -83,7 +86,7 @@ h:s_tart := { (file, map, blocked) z ->
   way := f_irst g_rade steps + 999 * n_ot inside
   (f_loat r) c_at (f_loat c) c_at 0.5 * (p_i @) * f_loat way - 1
 }
-# :: (Any a, Any b, Num c, Truthy d) => (Char, a, b) -> (Char, ((Char, Int, Int), Float, Box Char, Float, Char, c), Float, d)
+# :: (Any a, Any b, Num c, Truthy d) => (Char, a, b) -> (Char, ((Char, Int, Int), Float, Box Char, Float, Char, c), Float, (d, Char))
 ## You at a scenario's entrance (or deep in its maze), facing north, in a world, with a seed.
 ## A scenario that is wrong is the error bad-scenario.
 l:n_ew := { (file, world, seed) ->
@@ -91,8 +94,9 @@ l:n_ew := { (file, world, seed) ->
   stage := md:s_tage file
   blocked := md:b_locked file
   start := (file, map, blocked) h:s_tart 0
-  n := ((2 s_elect start) - 0.5) c_at ((f_irst start) - 0.5) c_at (3 s_elect start) c_at 0.0 c_at (7 r_eshape 0.0) c_at 0.0 c_at (file md:n_umber "speed") c_at file md:n_umber "turn"
-  (h:g_oal file, stage, n, blocked)
+  n := ((2 s_elect start) - 0.5) c_at ((f_irst start) - 0.5) c_at (3 s_elect start) c_at 0.0 c_at (7 r_eshape 0.0) c_at 0.0 c_at (file md:n_umber "speed") c_at (file md:n_umber "turn") c_at 0.0
+  mini := vw:m_ini (stage, blocked | (w:t_iles map) m_ember? h:stops)
+  (h:g_oal file, stage, n, (blocked, mini))
 }
 ## The numbers after a key goes down (1) or comes up (0).
 h:k_ey := { n (code, down) ->
@@ -120,24 +124,27 @@ h:w_alk := { (stage, n, blocked) s ->
   y2 := y + dy * f_loat (stage, blocked) h:o_pen x2 c_at y + dy
   x2 c_at y2 c_at h c_at (4 s_elect n) c_at held c_at ((12 s_elect n) + 1000.0 * s) c_at 12 d_rop n
 }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Truthy i, Any j) => (a, ((b, Int, c), d, e, f, g, h), Float, i) -> (Char, Float, j) -> (a, ((b, Int, c), d, e, f, g, h), Float, i)
-## The state after an event: a key down or up, the pointer moved, or
-## time passed.
-l:s_tep := { (zone, stage, n, blocked) e ->
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Truthy i, Any j) => (a, ((b, Int, c), d, e, f, g, h), Float, (i, j)) -> (Char, Float, Char) -> (a, ((b, Int, c), d, e, f, g, h), Float, (i, j))
+## The state after an event: a key down or up, the pointer moved, time
+## passed, or M (the mini map shown or hidden).
+l:s_tep := { (zone, stage, n, kept) e ->
+  (blocked, _) := kept
   at := sm:n_umbers e
-  e sm:i_s "tick" ? (zone, stage, (stage, n, blocked) h:w_alk 0.001 * f_loat sm:m_illis e, blocked)
-  e sm:i_s "move" ? (zone, stage, n h:l_ook at, blocked)
-  (f_irst at) = 2.0 ? (zone, stage, n h:k_ey (f_loor 2 s_elect at, 1.0), blocked)
-  (f_irst at) = 3.0 ? (zone, stage, n h:k_ey (f_loor 2 s_elect at, 0.0), blocked)
-  (zone, stage, n, blocked)
+  "key m" m_atch sm:l_ine e ? (zone, stage, (14 t_ake n) c_at 1.0 - 15 s_elect n, kept)
+  e sm:i_s "tick" ? (zone, stage, (stage, n, blocked) h:w_alk 0.001 * f_loat sm:m_illis e, kept)
+  e sm:i_s "move" ? (zone, stage, n h:l_ook at, kept)
+  (f_irst at) = 2.0 ? (zone, stage, n h:k_ey (f_loor 2 s_elect at, 1.0), kept)
+  (f_irst at) = 3.0 ? (zone, stage, n h:k_ey (f_loor 2 s_elect at, 0.0), kept)
+  (zone, stage, n, kept)
 }
 # :: Any a => a -> Box Char
-## The events it takes: time, keys down and up, the pointer.
-l:l_egal := { s -> "tick S" "choose A N" "move X Y" }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (Char, ((a, Int, b), c, d, e, f, g), Float, h) -> Int
+## The events it takes: time, keys down and up, the pointer, and M for
+## the mini map.
+l:l_egal := { s -> "tick S" "choose A N" "move X Y" "key m" }
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (Char, ((a, Int, b), c, d, e, f, g), Float, (h, Char)) -> Int
 ## Where you stand: a row and a column.
 l:p_lace := { s -> h:p_lace h:a_t s }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (Char, ((a, Int, b), c, d, e, f, g), Float, h) -> Int
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (Char, ((a, Int, b), c, d, e, f, g), Float, (h, Char)) -> Int
 ## Won when you stand in the gate; playing until then.
 l:s_tatus := { s ->
   (_, stage, _, _) := s
@@ -150,15 +157,19 @@ h:f_acing := { h ->
   k := (f_loor 0.5 + h * 4.0 / p_i @) m_od 8
   d_isclose (1 + k) s_elect "north" "north-east" "east" "south-east" "south" "south-west" "west" "north-west"
 }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (Char, ((a, Int, b), c, d, e, f, g), Float, h) -> (((a, Int, b), c, d, e, f, g), Box Char, Box Char, Float, Char)
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (Char, ((a, Int, b), c, d, e, f, g), Float, (h, Char)) -> (((a, Int, b), c, d, e, f, g), Box Char, Box Char, Float, Char)
 ## What to show (lib/View): the map seen through your eyes, and a line
-## saying where you are, which way you face and what to do.
+## saying where you are, which way you face and what to do; with M,
+## the mini map too.
 l:v_iew := { s ->
-  (_, stage, n, _) := s
+  (_, stage, n, (_, mini)) := s
   rk := l:p_lace s
   h := 3 s_elect n
   where := @ f_ormat< "Row {f_irst rk}, column {2 s_elect rk}, facing {h:f_acing h}."
-  vw:w_ith (vw:e_mpty (stage, where c_at h:s_ays s), "eye", "", (2 t_ake n) c_at (s_in h) c_at (0.0 - c_os h) c_at (4 s_elect n) c_at 0.0 0.0 0.05)
+  eye := (2 t_ake n) c_at (s_in h) c_at (0.0 - c_os h) c_at (4 s_elect n) c_at 0.0 0.0 0.05
+  seen := vw:w_ith (vw:e_mpty (stage, where c_at h:s_ays s), "eye", "", eye)
+  0.0 = 15 s_elect n ? seen
+  vw:w_ith (seen, mini, "", eye)
 }
 h:s_ays := { s ->
   (zone, _, _, _) := s
@@ -167,7 +178,7 @@ h:s_ays := { s ->
 }
 ## What to find, as the scenario says it (goal = ["..."]), or the gate.
 h:g_oal := { file -> n_ot file md:h_as "goal" ? "Find the gate."; file md:f_ield "goal" }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (Char, ((a, Int, b), c, d, e, f, g), Float, h) -> (Int, (Box Char, Int), (Box Char, Int))
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (Char, ((a, Int, b), c, d, e, f, g), Float, (h, Char)) -> (Int, (Box Char, Int), (Box Char, Int))
 ## How it ended: left, unless you reached the gate, which the world
 ## remembers.
 l:o_utcome := { s ->

@@ -17,5 +17,6 @@ l:c_aption : (Any a, Any b, Any c, Any d, Any e) => (a, b, c, d, e) -> e
 l:t_ext : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (((a, Int, b), c, d, e, f, g), Box Char, h, Float, Char) -> Char
 l:s_trip : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Num i) => ((a, Float, b, c, d, e), Box Char, f, g, h) -> Float -> i
 l:p_anel : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => ((a, Float, b, c, d, e), Box Char, f, g, h) -> Float -> Int
+l:m_ini : (Any a, Num b, Any c, Any d, Any e, Any f, Any g, Any h, Truthy i) => (((a, b, c), d, e, f, g, h), i) -> Char
 l:p_icture : (Any a, Num b, Truthy b, Num c) => (((a, Int, b), Float, Box Char, Float, Char, c), Box Char, Box Char, Float, Char) -> Char
 l:s_cene : (Any a, Num b, Truthy b, Num c) => (((a, Int, b), Float, Box Char, Float, Char, c), Box Char, Box Char, Float, Char) -> Char
