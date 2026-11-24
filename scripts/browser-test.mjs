@@ -246,7 +246,7 @@ check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x
 // decodes its phrases at the length the program gives (headless Chrome
 // may play no sound: that is not asked).
 const tune = () => page("(document.querySelector('#flat svg metadata#music') || {}).textContent || ''");
-check(/^music\('calm', 'calm-A( [a-z0-9]+-[A-Za-z0-9-]+)+'\)\n(seconds\('[a-z0-9-]+', [\d.]+\)\n)+volume\(0\.6\)$/.test(await tune()) && (await tune()).includes("seconds('calm', 26.666667)"), `the map's picture names its music: a plan from the calm set's A, each version's seconds, the default loudness (${(await tune()).slice(0, 40)}...)`);
+check(/^music\('calm', 'calm-A( [a-z0-9]+-[A-Za-z0-9-]+)+'\)\n(seconds\('[a-z0-9-]+', [\d.]+\)\n)+status\('atlas', '', 'debug'\)\nvolume\(0\.6\)$/.test(await tune()) && (await tune()).includes("seconds('calm', 26.666667)"), `the map's picture names its music: a plan from the calm set's A, each version's seconds, the default loudness (${(await tune()).slice(0, 40)}...)`);
 check(await page("window.game.music().line === (document.querySelector('#flat svg metadata#music') || {}).textContent"), "and the page has read it");
 const decoded = await page(`fetch('music/calm-A.ogg').then((r) => r.ok ? r.arrayBuffer() : Promise.reject(r.status))
   .then((b) => new OfflineAudioContext(2, 48000, 48000).decodeAudioData(b)).then((s) => s.duration, (e) => -1)`);
@@ -285,6 +285,14 @@ for (const k of ['key 7', 'key 1', 'key 1', 'key 3']) await page(`window.game.fe
 await click(190, 195);
 check((await caption()).includes("W A S D walk"), "a click on the far end of the second place's name goes into the battlefield on foot");
 check(/^music\('explore', 'explore-A /.test(await tune()), "where the explore set plays");
+// The debug panel: the key ` shows what is playing, from the program's
+// own status line (mode, place, profile) and the music player; again
+// hides it.
+for (const type of ["keyDown", "keyUp"]) await key(type, "`", "Backquote", 192);
+const shownDebug = await page("window.game.debug()");
+check(/mode +roam/.test(shownDebug) && /place +on-foot/.test(shownDebug) && /profile +debug/.test(shownDebug) && /music +explore/.test(shownDebug) && !(await page("document.getElementById('debug').hidden")), "the key ` shows the debug panel: the mode, the place, the profile and the music");
+for (const type of ["keyDown", "keyUp"]) await key(type, "`", "Backquote", 192);
+check(await page("document.getElementById('debug').hidden") && (await caption()).includes("W A S D walk"), "and hides it, the game not given the key");
 await page("document.getElementById('leave').click(), 1");
 check((await caption()).startsWith("The castle and its country: 4 of 23"), "the Map button comes back to the map");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");

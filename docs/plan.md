@@ -316,6 +316,18 @@ defaults drawn from the repositories above.
   maze's mini map, not the music).
 ## The seams that make the games one game
 
+- D23. A debug panel on the page (the user, 2026-11-24: "a toggleable
+  debug mode that shows current status like which game, which mode,
+  which music piece name and segment"). The page's own diagnostic, like
+  the header's milliseconds a tick and frames a second, never part of a
+  game's picture: the Debug button or the key ` shows it, off unless
+  asked for, kept in the browser. What it says of the game comes from
+  X_eTaL, a line status('MODE', 'PLACE', 'PROFILE') in each picture's
+  music metadata (the castle's play.xtl puts it beside the music it
+  names); what it says of the music is the page's player: the phrase
+  sounding, its step in the plan, how far into it, and any bridge. It
+  decides nothing and shows no rule.
+
 Designed in Saga 1 and proven in Sagas 2 to 4; every later saga must
 keep them.
 

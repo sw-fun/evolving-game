@@ -139,10 +139,49 @@ flat.parentElement.addEventListener('pointerdown', (e) => {
 // would be read against the size the board had before.
 new ResizeObserver(() => window.dispatchEvent(new Event('resize'))).observe(el('stage'));
 
+// The debug panel: what the program says it is playing (the status line
+// in its picture's music metadata: the mode, the place, the profile) and
+// what the music player is sounding. Off unless asked for; remembered.
+const DEBUG = 'evolving-game/debug-panel';
+let debugOn = false;
+const debugBox = document.createElement('pre');
+debugBox.id = 'debug';
+debugBox.hidden = true;
+el('stage').appendChild(debugBox);
+function debugText() {
+  const meta = (flat.querySelector('svg metadata#music') || {}).textContent || '';
+  const [, kind = '', place = '', who = ''] = /status\('([^']*)', '([^']*)', '([^']*)'\)/.exec(meta) || [];
+  const m = tunes.state();
+  const p = m.phrase;
+  const bridge = /bridge\('([^']*)'/.exec(meta);
+  return [
+    `program  ${program}`,
+    `mode     ${kind || '-'}`,
+    `place    ${place || '-'}`,
+    `profile  ${who || '-'}`,
+    `music    ${(/music\('([^']*)'/.exec(meta) || ['', '-'])[1]}${m.running ? '' : ' (waits for a key or click)'}`,
+    `phrase   ${p ? `${p.name}  ${p.step} of ${p.steps}  ${p.into.toFixed(1)} of ${p.seconds.toFixed(1)} s` : '-'}`,
+    `bridge   ${bridge ? bridge[1] : '-'}`,
+    `volume   ${m.volume}`,
+  ].join('\n');
+}
+function debugPanel(on) {
+  debugOn = on;
+  debugBox.hidden = !on;
+  el('open-debug').classList.toggle('on', on);
+  try { localStorage.setItem(DEBUG, on ? '1' : ''); } catch { /* no store: not kept */ }
+  if (on) debugBox.textContent = debugText();
+}
+setInterval(() => { if (debugOn) debugBox.textContent = debugText(); }, 250);
+el('open-debug').addEventListener('click', (e) => { e.currentTarget.blur(); debugPanel(!debugOn); });
+try { if (localStorage.getItem(DEBUG)) debugPanel(true); } catch { /* no store */ }
+
 // Keys the game may be given; none is a browser's or a system's.
 const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter', Backspace: 'backspace', '[': '[', ']': ']', ',': ',', '\\': '\\' };
 window.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || talking()) return;
+  // ` shows or hides the debug panel (the page's own: never the game's)
+  if (e.key === '`') { e.preventDefault(); debugPanel(!debugOn); return; }
   // Escape leaves any game for the map (the loop's own command)
   if (e.key === 'Escape') { e.preventDefault(); feed('choose 0 0'); return; }
   const name = NAMES[e.key] || (/^[a-z0-9?]$/i.test(e.key) ? e.key.toLowerCase() : '');
@@ -257,7 +296,7 @@ const ready = () => {
   el('build').textContent = `Build: ${wasm.build()}`;
   el('about-build').textContent = wasm.build();
   el('pins').textContent = wasm.pins().split('\n').join(', ');
-  window.game = { feed, start, said: () => said.slice(-20), program: () => program, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player, music: () => tunes.state() };
+  window.game = { feed, start, said: () => said.slice(-20), program: () => program, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player, music: () => tunes.state(), debug: () => (debugOn ? debugBox.textContent : '') };
   start();
   if (q.has('sources')) sources();
   if (q.has('help')) help();

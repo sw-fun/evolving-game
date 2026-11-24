@@ -172,7 +172,10 @@ battlefield on foot: W A S D walk, Shift runs, the arrow keys and the
 mouse turn you; find the gate. **Castle Defense** (`?game=defense`)
 is the first real game: 1, 2 and 3 choose a tower, a click on grass
 builds it, the space bar sends the next wave of enemies up the road. Add `?flat` to the address for the flat
-picture without 3D.
+picture without 3D. The **Debug** button (or the key `` ` ``)
+shows a panel of what is playing: the program, the mode, the place
+and the profile, as the game says them, and the music set, the phrase
+sounding (its step in the plan and its seconds) and any bridge.
 
 ## Documentation
 

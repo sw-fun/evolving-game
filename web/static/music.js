@@ -26,6 +26,7 @@ export function music() {
   let index = 0;      // its next phrase
   let next = 0;       // when that phrase starts, on the audio clock
   const buffers = new Map();
+  let heard = [];     // the phrases scheduled last: { name, step, start, seconds }
 
   const parse = (text) => {
     const m = /music\('([^']*)', '([^']*)'\)/.exec(text);
@@ -66,6 +67,7 @@ export function music() {
     const seconds = Math.min(plan.length[at] || sound.duration, sound.duration);
     source.start(when, 0, seconds);
     next = when + seconds;
+    heard = [...heard.slice(-2), { name: plan.plan[at], step: at + 1, steps: plan.plan.length, start: when, seconds }];
     index = (at + 1) % plan.plan.length;
   };
   setInterval(tick, 250);
@@ -96,6 +98,11 @@ export function music() {
       if (gain) gain.gain.setTargetAtTime(volume, ctx.currentTime, 0.1);
     },
     // For tests: the line, and what is playing.
-    state: () => ({ line, volume, playing: now ? now.set : '', index, running: !!ctx && ctx.state === 'running' }),
+    state: () => {
+      const t = ctx ? ctx.currentTime : 0;
+      const on = heard.filter((h) => h.start <= t).pop();
+      const phrase = on ? { name: on.name, step: on.step, steps: on.steps, into: t - on.start, seconds: on.seconds } : null;
+      return { line, volume, playing: now ? now.set : '', index, running: !!ctx && ctx.state === 'running', phrase };
+    },
   };
 }
