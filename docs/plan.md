@@ -1299,6 +1299,18 @@ run in the page (WebGPU or WASM), with nothing sent to a server. Which
 models "Jeva or Laya-like" means is to be confirmed with the user (Open
 questions); the seams below hold for any of them.
 
+- Talks are dialogue trees (the user, 2026-11-24: "the interactions
+  with NPCs should be inspired by the classic game Monkey Island. The
+  NPC says something, the player has a choice of answers, the NPC
+  responds based on the choice"). The mechanic, not that game's
+  characters, jokes or lines: a node is what the character says and the
+  answers the player may choose (by key or click); each answer leads to
+  the character's reply and the next node, and may change the world (a
+  toll paid, a clue learned, the way opened or barred). Trees are TOML,
+  checked by X_eTaL, one mode (a talk) the castle's venues and walks can
+  open; every tree is proven to have a way through by a golden. With the
+  model, the character's words are said its own way, in character, but
+  the answers and where they lead stay the tree's.
 - The model writes words, never rules. What a character can do (let you
   pass, ask a toll, fight, give a clue) is a mode's rules in X_eTaL, and
   data (the character's name, nature, what it wants, what it knows, its
