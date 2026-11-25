@@ -45,3 +45,6 @@ web/models/
 web/art/
 # the music, copied from assets/music for the page (scripts/web.sh)
 web/music/
+
+# frames a program draws when run without --draw (into its own folder)
+games/*/play-[0-9]*.svg
