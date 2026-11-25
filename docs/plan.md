@@ -1289,6 +1289,39 @@ questions). What the seams already give it:
 Where it goes in the order is open; it is small, and it would give
 the campaign shell (Saga 5) something to do between levels.
 
+## Characters who talk: a model in the browser (the user, 2026-11-24)
+
+The user: "Jeva or Laya-like in-browser model to implement NCPs during
+the game, like a bridge troll." Non-player characters met along the way
+(a troll who keeps a bridge, a gate guard, a merchant in the city), who
+talk with the player in their own words, from a small language model
+run in the page (WebGPU or WASM), with nothing sent to a server. Which
+models "Jeva or Laya-like" means is to be confirmed with the user (Open
+questions); the seams below hold for any of them.
+
+- The model writes words, never rules. What a character can do (let you
+  pass, ask a toll, fight, give a clue) is a mode's rules in X_eTaL, and
+  data (the character's name, nature, what it wants, what it knows, its
+  choices) is TOML, as every other content (rules 1 and 8). The model is
+  asked for a reply and for which of the character's listed choices it
+  means; X_eTaL checks the choice against the list and decides.
+- Deterministic (D6): what the model said enters as an event (a line
+  such as "said TEXT" and "chose N"), like a tick or a key, so a game is
+  replayed, tested and golden from its events alone; goldens give the
+  replies in the event script and never run a model.
+- Without the model (not downloaded yet, no WebGPU, the terminal, a
+  golden) every character has written lines and a menu of answers, so
+  every encounter can be played and won without it (rule 9).
+- The host side (loading the model, asking it, giving back its reply as
+  events) is the page's, as little as can be, asked of X_eTaL-extensions
+  as an extension of its own (an ask in docs/xetal-extensions-asks.md).
+- The model's weights are third-party and large (hundreds of MB): never
+  committed (rule 12); fetched by the page from their publisher's host
+  with their license and checksum named, and kept in the browser's
+  cache, only when the player turns talking characters on (Settings).
+- First: the bridge troll, at a bridge venue, who asks a riddle or a
+  toll before you cross; written lines first, the model second.
+
 ## Later
 
 - Two players comparing defense programs against identical waves.
@@ -1346,6 +1379,11 @@ Still open:
 4. The showcase's worlds (see A showcase): the proposed order (The
    look, Castle Defense's first level, then the winter approach and
    the medieval town); which world is first.
+
+9. Talking characters (see Characters who talk): which in-browser model
+   "Jeva or Laya-like" means, how large a download is acceptable, and
+   whether the first troll waits for the model or comes first with
+   written lines.
 
 Settled since: the repository exists and is public, and GitHub Pages
 is enabled on it, deploying from GitHub Actions (the user,
