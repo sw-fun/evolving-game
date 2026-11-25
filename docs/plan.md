@@ -1299,7 +1299,7 @@ run in the page (WebGPU or WASM), with nothing sent to a server. Which
 models "Jeva or Laya-like" means is to be confirmed with the user (Open
 questions); the seams below hold for any of them.
 
-- Talks are dialogue trees (the user, 2026-11-24: "the interactions
+- Talks are dialog trees (the user, 2026-11-24: "the interactions
   with NPCs should be inspired by the classic game Monkey Island. The
   NPC says something, the player has a choice of answers, the NPC
   responds based on the choice"). The mechanic, not that game's
