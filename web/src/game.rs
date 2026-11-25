@@ -13,6 +13,10 @@ use crate::store::{Out, Session};
 /// only bounds a runaway loop between two waits.
 const SLICE: usize = 50_000_000;
 
+/// How many times "end" is given to a program that still waits after
+/// it: each game the program is in when its events end reads one.
+const ENDS: usize = 8;
+
 /// The running program and what it has shown.
 pub struct Game {
     run: Option<Interactive>,
@@ -53,11 +57,17 @@ impl Game {
     }
 
     /// An event's line for the waiting program, and its run to the
-    /// next wait. Nothing once the program has ended.
+    /// next wait. Nothing once the program has ended. "end" is the end
+    /// of the events for good, as at the command line (where every read
+    /// after the input's end is "end"): it is given again while the
+    /// program still waits, a few times at most.
     pub fn feed(&mut self, line: &str) {
-        if let Some(run) = self.run.as_mut() {
-            run.feed(line.to_string());
-            self.go();
+        let times = if line == "end" { ENDS } else { 1 };
+        for _ in 0..times {
+            if let Some(run) = self.run.as_mut() {
+                run.feed(line.to_string());
+                self.go();
+            }
         }
     }
 

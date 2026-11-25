@@ -122,8 +122,11 @@ u:t_une := { (kind, world) ->
 ## whole save; then what was chosen: the castle's map, the hall of
 ## deeds, or the treasury, and back to the profile's home after. The
 ## events ended, the profile's world as it stands.
-u:d_oor := { save ->
-  (heard, ended) := (u:t_une ("front", u:p_rofile save)) 'fr:o_utcome 'fr:v_iew 'fr:l_egal 'fr:s_tatus 'fr:s_tep mu:p_lay fr:n_ew ("front.toml", save, 1)
+u:d_oor := { save -> u:e_nter (save, fr:n_ew ("front.toml", save, 1)) }
+## The front door played from a state of it (new, or new with an event
+## already taken).
+u:e_nter := { (save, start) ->
+  (heard, ended) := (u:t_une ("front", u:p_rofile save)) 'fr:o_utcome 'fr:v_iew 'fr:l_egal 'fr:s_tatus 'fr:s_tep mu:p_lay start
   (status, picks, _) := fr:o_utcome ended
   n_ot status = md:won ? u:a_gain save u:i_nto heard
   name := u:n_ame picks
@@ -142,8 +145,16 @@ u:h_ome := { world -> u:d_oor (fr:m_igrate u:k_ept @) md:s_et ("front.home." c_a
 ## The front door left (Esc): again from the start, unless the events
 ## have ended.
 u:a_gain := { save ->
-  (sm:n_ext @) sm:i_s "end" ? save
-  u:d_oor save
+  e := sm:n_ext @
+  e sm:i_s "end" ? save
+  u:e_nter (save, (fr:n_ew ("front.toml", save, 1)) u:t_aken e)
+}
+## A new front door with the event read to see whether the events had
+## ended: taken as the door would take it, so it is not lost (a key
+## pressed just after leaving).
+u:t_aken := { s e ->
+  n_ot (fr:l_egal s) md:a_llows e ? s
+  s fr:s_tep e
 }
 ## The treasury: its outcome, and the places won so far marked seen
 ## (the outcome cannot know them; idle.seen is reset to them here).
