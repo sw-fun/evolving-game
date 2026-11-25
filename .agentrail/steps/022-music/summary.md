@@ -1,0 +1,1 @@
+The music director (lib/Music, music.toml), the page's player, Opus phrases; variety (tempos, companion rounds, repeat limits, 40-minute plans); bridges release, to-victory, fall, call-to-arms, riddle; quoted sets re-encoded.

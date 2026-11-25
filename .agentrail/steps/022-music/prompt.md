@@ -1,0 +1,1 @@
+defend-the-bridge step (the user 2026-11-21/22): music from music-pipe-rs's looping phrases: a director in X_eTaL choosing phrases (A B C D rounds, repeat rules, tempos, companion sets), the page playing what it says; Ogg Opus committed; bridges at battle's end.

@@ -1,0 +1,1 @@
+defend-the-bridge step (the user 2026-11-24): a toggleable debug panel: the program, mode, place, profile, the music set, the phrase sounding and any bridge.

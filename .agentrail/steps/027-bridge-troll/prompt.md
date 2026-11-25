@@ -1,0 +1,1 @@
+defend-the-bridge step (the user 2026-11-24/25): the first talking character: a bridge troll as a dialog tree (the character speaks, the player chooses an answer, the character replies), a talk mode and TOML tree, written lines (no model yet), a venue on the roads; goldens walking every ending.

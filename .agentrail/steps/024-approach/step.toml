@@ -1,0 +1,14 @@
+number = 24
+slug = "approach"
+status = "completed"
+description = "defend-the-bridge step (the user 2026-11-21: block-view-from-tower.jpg): area..."
+role = "production"
+context_files = []
+created_at = "2026-11-24T17:21:12"
+completed_at = "2026-11-24T17:21:12"
+commits = [
+    "e14e95eca4c5cc889812c5fdbdf6961e5d53cbc9",
+    "474c2f2e6056d9bde5016b58a7ef52b856aa537d",
+    "3e8b016c22b098307918f6654ca132f95e8b4abd",
+    "dfa1aac8e12147df68463a2d0a9fe13aefcb82a5",
+]

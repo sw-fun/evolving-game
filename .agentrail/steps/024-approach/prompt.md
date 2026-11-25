@@ -1,0 +1,1 @@
+defend-the-bridge step (the user 2026-11-21: block-view-from-tower.jpg): areas from the painting: the road through the fields and the hill fort; mini maps on M in every walk; the walks' pictures faster.

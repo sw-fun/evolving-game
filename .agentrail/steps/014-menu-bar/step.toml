@@ -1,8 +1,13 @@
 number = 14
 slug = "menu-bar"
-status = "pending"
+status = "completed"
 description = "defend-the-bridge step (the user 2026-11-18 menus; 2026-11-21 'go'): a menu b..."
 role = "production"
 context_files = []
 created_at = "2026-11-21T08:04:38"
-commits = []
+completed_at = "2026-11-24T17:19:24"
+commits = [
+    "ee1c6a1ff4fb7813449545757cdc5c69955cbd37",
+    "373f9562cd14f82c89d0bfb89e04b6163c9d3e9e",
+    "1ed6bc39f51157377bcea0bc840b4464b7ad3397",
+]

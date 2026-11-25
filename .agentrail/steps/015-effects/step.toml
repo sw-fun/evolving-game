@@ -1,8 +1,9 @@
 number = 15
 slug = "effects"
-status = "pending"
+status = "completed"
 description = "defend-the-bridge step: difficulty (settings.level, Novice..Impossible) and t..."
 role = "production"
 context_files = []
 created_at = "2026-11-21T08:04:38"
-commits = []
+completed_at = "2026-11-24T17:19:24"
+commits = ["34101910f34a8c64e27f6ffe466836e64d48e5cc"]

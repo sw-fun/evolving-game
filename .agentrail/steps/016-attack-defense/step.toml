@@ -1,8 +1,12 @@
 number = 16
 slug = "attack-defense"
-status = "pending"
+status = "completed"
 description = "defend-the-bridge step: Castle Defense as the attacker: pick creeps and when ..."
 role = "production"
 context_files = []
 created_at = "2026-11-18T18:58:12"
-commits = []
+completed_at = "2026-11-24T17:19:24"
+commits = [
+    "5011559303d0d3b007c0a467d88e67c1bc9fb145",
+    "3ae843e46bd7b88b083739c6dc6e5dab928f8026",
+]

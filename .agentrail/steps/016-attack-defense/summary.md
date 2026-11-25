@@ -1,0 +1,1 @@
+Castle Defense as the attacker: mode attack, Storm the Bridge (attack-1, attack-2), on the attacker's road.

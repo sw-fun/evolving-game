@@ -1,0 +1,1 @@
+defend-the-bridge step (the user 2026-11-25 'go'): the 201 games/castle/play-N.svg files tracked by mistake removed and ignored; Esc on the front door no longer swallows the next event; the hill fort's outcome sets its own facts, not the bridge's.

@@ -1,0 +1,1 @@
+The sound strip, Settings heard at once, the pausing settings panel (D22), the keys; the strip taking a person's click.

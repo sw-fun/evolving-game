@@ -1,0 +1,1 @@
+defend-the-bridge step (the user 2026-11-25 'go'): every change of music set is quick: a bridge or a bar-line fade for every pair of sets the castle moves between (explore to calm, into the dungeon, ...); golden and browser check.

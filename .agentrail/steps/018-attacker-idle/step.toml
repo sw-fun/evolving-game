@@ -1,8 +1,12 @@
 number = 18
 slug = "attacker-idle"
-status = "pending"
+status = "completed"
 description = "defend-the-bridge step (the user 2026-11-18: 'we need different idle games fo..."
 role = "production"
 context_files = []
 created_at = "2026-11-18T18:58:12"
-commits = []
+completed_at = "2026-11-24T17:19:24"
+commits = [
+    "0debd1b317b7c4ca0f9d7d07b3275c908f1dece6",
+    "17e2f04590ea78eddc596cd886a963dbba84f261",
+]

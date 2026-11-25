@@ -1,0 +1,9 @@
+number = 27
+slug = "bridge-troll"
+status = "pending"
+description = "defend-the-bridge step (the user 2026-11-24/25): the first talking character:..."
+role = "production"
+context_files = []
+created_at = "2026-11-24T17:21:12"
+commits = []
+reserved_for = "worktree agent: bridge troll"

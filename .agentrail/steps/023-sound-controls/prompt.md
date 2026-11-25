@@ -1,0 +1,1 @@
+defend-the-bridge step (the user 2026-11-22/23): a sound strip on every view (mute, quieter, louder), Settings heard at once, a settings panel that pauses any game (Resume playing, Exit to start menu); keys [ ] \ and , ; M a game's map.

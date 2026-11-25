@@ -1,0 +1,1 @@
+Difficulty (Novice..Impossible) and the callings take effect in Castle Defense (games/defense/effects.toml).

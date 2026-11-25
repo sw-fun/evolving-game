@@ -1,0 +1,1 @@
+The fields walk and the hill fort; M shows a mini map on foot; the picture's tiles joined a band at a time (fields 46 to 28 ms a tick).

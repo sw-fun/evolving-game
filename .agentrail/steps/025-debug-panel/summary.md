@@ -1,0 +1,1 @@
+The Debug button and the key ` show the panel (D23); the game's facts from X_eTaL's status line, the music's from the page's player.

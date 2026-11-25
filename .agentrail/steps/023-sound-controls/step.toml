@@ -1,0 +1,14 @@
+number = 23
+slug = "sound-controls"
+status = "completed"
+description = "defend-the-bridge step (the user 2026-11-22/23): a sound strip on every view ..."
+role = "production"
+context_files = []
+created_at = "2026-11-24T17:21:11"
+completed_at = "2026-11-24T17:21:12"
+commits = [
+    "7f4442d3f42fc6fcbae6f12e70476c69c4a09b1e",
+    "d5fd76eaf58bc929be98595a16ef731b6c5a6d18",
+    "1179f939661b4b57e0a2fb2b5aabcf9cc53dc2e2",
+    "2ae63f04365693ed1c7794510b2e5686fe4a7269",
+]

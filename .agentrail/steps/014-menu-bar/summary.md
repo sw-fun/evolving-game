@@ -1,0 +1,1 @@
+The menu bar (Home, Hall, Settings, Help, Leave; keys H D S ? Q) on the front door and the road, settings as a list; later Hall grayed out with no profile.
