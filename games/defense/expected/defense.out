@@ -360,6 +360,7 @@ Gold 25, lives 10, wave 1 of 5. Building: archer (40 gold). The next wave is com
 won
 outcome: won
 fact.bridge-held 1
+fact.defense-won 1
 resource.gold 91
 resource.xp 68
 1
@@ -367,6 +368,7 @@ resource.xp 68
 lost
 outcome: lost
 zone.battlefield.gate-breached 1
+fact.gate-breached 1
 100 10 5 0 0 0 0
 100 10 0 0 0 0 0
 40.0 70.0 50.0
@@ -389,9 +391,11 @@ zone.battlefield.gate-breached 1
 44 10 3 4 3 19 0
 138 10 5 6 0 42 0
 outcome: won
-fact.bridge-held 1
+fact.hill-fort-held 1
+fact.defense-won 1
 resource.gold 138
 resource.xp 70
 100 0 5 0 32 0 10
 outcome: lost
-zone.battlefield.gate-breached 1
+zone.hill-fort.gate-breached 1
+fact.gate-breached 1

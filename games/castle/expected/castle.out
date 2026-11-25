@@ -164,6 +164,7 @@ outcome: left
 11
 0 0 0 0 0 0 0 0 0 0 0
 fact.bridge-held 1
+fact.defense-won 1
 venue.bridge-1.done 1
 resource.gold 160
 deed.season-summer 1

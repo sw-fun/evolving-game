@@ -74,7 +74,7 @@ _ := u:s_ay sk:o_utcome u:p_lace 1 r_eshape e_nclose "key b"
 # purse, and, with the experience those bring, Veteran.
 dd:c_ount file
 dd:m_et (file, md:nothing)
-earned := dd:a_ward (file, (((md:nothing md:s_et ("fact.bridge-held", 1)) md:s_et ("venue.bridge-1.done", 1)) md:s_et ("resource.gold", 160)) md:s_et ("resource.xp", 70))
+earned := dd:a_ward (file, ((((md:nothing md:s_et ("fact.bridge-held", 1)) md:s_et ("fact.defense-won", 1)) md:s_et ("venue.bridge-1.done", 1)) md:s_et ("resource.gold", 160)) md:s_et ("resource.xp", 70))
 _ := t:l_ines md:l_ines earned
 # Quests done and in all, achievements earned and in all.
 dd:t_ally (file, earned)

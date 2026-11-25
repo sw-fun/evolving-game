@@ -38,6 +38,11 @@ tower-fields = ["name", "cost", "range", "damage", "cooldown", "splash", "slow"]
 enemies = ["runner", "brute", "shield"]
 enemy-fields = ["name", "hp", "speed", "armor", "bounty", "letter"]
 
+# What winning and losing it tell the world (each set to 1), beside
+# fact.defense-won or fact.gate-breached, which every level sets.
+won-facts = ["fact.bridge-held"]
+lost-facts = ["zone.battlefield.gate-breached"]
+
 # A tower: what it costs, how far it reaches (tiles), the damage of a
 # shot, the seconds between shots, how far round its target a shot also
 # hurts (0: the target alone), and the seconds a hit slows an enemy to

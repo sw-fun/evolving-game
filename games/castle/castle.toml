@@ -344,7 +344,7 @@ about = "Find your way through the gate maze and the dungeon to the castle's gol
 [deed.first-win]
 title = "First blood"
 kind = "achievement"
-needs = "fact.bridge-held"
+needs = "fact.defense-won"
 least = "1"
 xp = "10"
 about = "Won a level of Castle Defense."
@@ -384,7 +384,7 @@ about = "Won twelve places."
 [deed.breached]
 title = "The gate fell"
 kind = "achievement"
-needs = "zone.battlefield.gate-breached"
+needs = "fact.gate-breached"
 least = "1"
 xp = "5"
 about = "Lost a level: the enemy reached the gate."

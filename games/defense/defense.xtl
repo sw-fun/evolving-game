@@ -88,7 +88,7 @@ df:c_ount u:e_nd 6 r_eshape e_nclose "key space"
 u:s_ide := { (level, calling) ->
   world := (md:nothing md:s_et ("session.level", level)) md:s_et ("character.calling", calling)
   s := df:n_ew (scenario, world, 1)
-  (_, _, (tt, et, _), _, _, _) := s
+  (_, _, (tt, et, _, _), _, _, _) := s
   _ := p_rint! df:c_ount s
   _ := p_rint! f_irst_2 tt
   _ := p_rint! 3 s_elect_2 tt
