@@ -309,7 +309,23 @@ defaults drawn from the repositories above.
   The page fades the phrase playing out (0.75 s) at its next bar line
   (`seconds('battle', 26.666667, 16)`: 16 bars), starts the bridge
   there, its lead-in swelling over the fade, and the new plan's A at
-  the handoff (0.3 s fade-in), the bridge's tail ringing under it. Known
+  the handoff (0.3 s fade-in), the bridge's tail ringing under it.
+  Every change of set the castle makes is fast (the user, 2026-11-24:
+  a change with no bridge still waited up to ~27 s for the phrase's
+  end; "every transition quick"): `lib/music-plan.xtl` lists every
+  move (each place kind of the kinds lists entered from the map, and
+  left won, lost or left for the road, the atlas or the front door)
+  and its golden requires each change of set to have a link. A link
+  may be `fade`, the fast change with no bridge, for pairs no bridge
+  in music-pipe-rs's catalog fits (five bridges; fall comes from
+  battle or explore, release from battle or sinister): calm to
+  sinister and explore to calm. The line then says `fade()`, and the
+  page fades the phrase out (0.75 s) at its next bar line and starts
+  the new plan's A there at once (0.3 s fade-in). The pairs: calm to
+  explore riddle, calm to sinister fade, calm to battle call-to-arms,
+  explore to calm fade, sinister to calm release, battle to victory
+  to-victory, battle to defeat fall, battle to calm release. The very
+  first music, with nothing playing, starts as before. Known
   risk: Safari's Opus decoding (older versions cannot); an `.m4a`
   (AAC) copy as a fallback is a later option. Sound on the page is
   an ask of X_eTaL-extensions (D15; `docs/xetal-extensions-asks.md`):

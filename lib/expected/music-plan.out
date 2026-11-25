@@ -95,10 +95,23 @@ roads from attack 1: victory then calm, bridge to-victory
 front from defense 3: calm then calm, bridge release
 defense from roads 0: battle then battle, bridge call-to-arms
 roam from roads 0: explore then explore, bridge riddle
-dungeon from roads 0: sinister then sinister, bridge 
+dungeon from roads 0: sinister then sinister, bridge fade
 roads from dungeon 3: calm then calm, bridge release
-roads from roam 1: calm then calm, bridge 
+roads from roam 1: calm then calm, bridge fade
 front from roads 0: calm then calm, bridge 
 music('calm', 'victory-A victory-C victory-B victory-C victory-D calm-A calm-B calm-B calm-C calm-D calm-80bpm-A calm-80bpm-B calm-80bpm-C calm-80bpm-D explore-88bpm-A explore-88bpm-B explore-88bpm-C explore-88bpm-D calm-A calm-B calm-B calm-C calm-B calm-D calm-80bpm-A calm-80bpm-C calm-80bpm-D calm-80bpm-A calm-80bpm-B calm-80bpm-C calm-80bpm-B calm-80bpm-D calm-A calm-B calm-D explore-88bpm-A explore-88bpm-B explore-88bpm-C explore-88bpm-D calm-A calm-B calm-B calm-C calm-B calm-C calm-D calm-80bpm-A calm-80bpm-C calm-80bpm-D calm-A calm-C calm-D calm-A calm-B calm-C calm-D calm-A calm-B calm-B calm-D calm-A calm-B calm-C calm-D calm-A calm-B calm-C calm-D calm-64bpm-A calm-64bpm-B calm-64bpm-C calm-64bpm-B calm-64bpm-C calm-64bpm-B calm-64bpm-D explore-104bpm-A explore-104bpm-B explore-104bpm-C explore-104bpm-D calm-A calm-B calm-C calm-D calm-A calm-B calm-B calm-D calm-A calm-B calm-D calm-A calm-C calm-D calm-64bpm-A calm-64bpm-C calm-64bpm-B calm-64bpm-C calm-64bpm-D')
 bridge('to-victory', 11.75, 1.25, 8.75)
+music('calm', 'calm-A calm-C calm-B calm-C calm-D calm-A calm-B calm-B calm-C calm-D calm-80bpm-A calm-80bpm-B calm-80bpm-C calm-80bpm-D explore-88bpm-A explore-88bpm-B explore-88bpm-C explore-88bpm-D calm-A calm-B calm-B calm-C calm-B calm-D calm-80bpm-A calm-80bpm-C calm-80bpm-D calm-80bpm-A calm-80bpm-B calm-80bpm-C calm-80bpm-B calm-80bpm-D calm-A calm-B calm-D explore-88bpm-A explore-88bpm-B explore-88bpm-C explore-88bpm-D calm-A calm-B calm-B calm-C calm-B calm-C calm-D calm-80bpm-A calm-80bpm-C calm-80bpm-D calm-A calm-C calm-D calm-A calm-B calm-C calm-D calm-A calm-B calm-B calm-D calm-A calm-B calm-C calm-D calm-A calm-B calm-C calm-D calm-64bpm-A calm-64bpm-B calm-64bpm-C calm-64bpm-B calm-64bpm-C calm-64bpm-B calm-64bpm-D explore-104bpm-A explore-104bpm-B explore-104bpm-C explore-104bpm-D calm-A calm-B calm-C calm-D calm-A calm-B calm-B calm-D calm-A calm-B calm-D calm-A calm-C calm-D calm-64bpm-A calm-64bpm-C calm-64bpm-B calm-64bpm-C calm-64bpm-D')
+fade()
+places: idle chest board placeholder roam maze dungeon raycaster defense attack
+100 moves, 60 change set
+calm to explore: riddle
+calm to sinister: fade
+calm to battle: call-to-arms
+explore to calm: fade
+sinister to calm: release
+battle to victory: to-victory
+battle to defeat: fall
+battle to calm: release
+0
 fixtures/bad-music.toml: next-B: it names a phrase not in phrases

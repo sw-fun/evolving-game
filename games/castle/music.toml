@@ -39,16 +39,34 @@ after-lost-battle = ["defeat"]
 # the bridge's handoff starts the new plan's A, the bridge's tail
 # ringing under it. A bridge: its seconds, its lead-in, its handoff
 # (bridge-NAME); links: "FROM TO BRIDGE", the bridge from a set to the
-# first set of the new plan (no link: the change waits for the phrase's
-# end, as before). Each bridge quotes a public-domain tune
-# (docs/music-credits.md).
+# first set of the new plan, or "FROM TO fade", the fast change with no
+# bridge: the phrase playing fades out at its next bar line (0.75 s)
+# and the new plan's A comes in at once (a 0.3 s fade-in). No link: the
+# change waits for the phrase's end. Each bridge quotes a public-domain
+# tune (docs/music-credits.md).
+#
+# The changes of set the castle makes (lib/expected/music-plan.out
+# checks them all; a place entered from the map, the road or the front
+# door, left won, lost or left for them):
+#   calm to explore      riddle        into roam, maze
+#   calm to sinister     fade          into dungeon, raycaster
+#   calm to battle       call-to-arms  into defense, attack
+#   explore to calm      fade          out of roam, maze
+#   sinister to calm     release       out of dungeon, raycaster
+#   battle to victory    to-victory    a battle won
+#   battle to defeat     fall          a battle lost
+#   battle to calm       release       a battle left
+# No bridge fits calm to sinister or explore to calm (music-pipe-rs's
+# catalog: fall comes from battle or explore, release from battle or
+# sinister), so they fade. The other links are for changes the castle
+# does not make yet.
 bridges = ["to-victory", "release", "fall", "call-to-arms", "riddle"]
 bridge-to-victory = ["seconds 11.75", "lead 1.25", "handoff 8.75"]
 bridge-release = ["seconds 14.25", "lead 2.25", "handoff 11.25"]
 bridge-fall = ["seconds 14.667", "lead 1.667", "handoff 11.667"]
 bridge-call-to-arms = ["seconds 11.057", "lead 1.667", "handoff 8.333"]
 bridge-riddle = ["seconds 11.75", "lead 1.25", "handoff 8.75"]
-links = ["battle victory to-victory", "battle defeat fall", "battle calm release", "battle explore release", "battle sinister fall", "sinister calm release", "sinister explore release", "explore sinister fall", "calm battle call-to-arms", "explore battle call-to-arms", "victory battle call-to-arms", "calm explore riddle", "victory explore riddle"]
+links = ["battle victory to-victory", "battle defeat fall", "battle calm release", "battle explore release", "battle sinister fall", "sinister calm release", "sinister explore release", "explore sinister fall", "calm battle call-to-arms", "explore battle call-to-arms", "victory battle call-to-arms", "calm explore riddle", "victory explore riddle", "calm sinister fade", "explore calm fade"]
 
 # A set's phrases, the same four in every set: A establishes (where a
 # round starts), B is the bed (the quietest), C develops, D turns round

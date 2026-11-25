@@ -15,12 +15,14 @@
 ## the world's settings, changed by the strip every picture shows), in
 ## the picture's metadata id="music":
 ##   music('set', 'calm-A calm-B calm-B calm-D calm-80bpm-A ...')
-##   seconds('calm', 26.666667)
-##   seconds('calm-80bpm', 24.0)
+##   bridge('release', 14.25, 2.25, 11.25)   or fade()
+##   seconds('calm', 26.666667, 8)
+##   seconds('calm-80bpm', 24.0, 8)
 ##   volume(0.6)
 ## the plan's phrases, VERSION-PHRASE each (a version is a set or one
-## of its tempos), how long each version's phrases are, and the volume
-## from 0 to 1 (0 is silence). A plan is chosen once, when a place is
+## of its tempos), when the set changes how (a bridge, or the fade: no
+## bridge), how long each version's phrases are and how many bars, and
+## the volume from 0 to 1 (0 is silence). A plan is chosen once, when a place is
 ## entered, not every tick.
 ## Import: "mu:" u_se< "Music"
 
@@ -88,8 +90,8 @@ l:f_irst := { (file, (from, ended), set) ->
 }
 # :: (Char, Char, Char) -> Char
 ## The bridge from one set to another: (file, from, to), the name the
-## file's links give it ("FROM TO BRIDGE"), or "" for none (and for the
-## same set).
+## file's links give it ("FROM TO BRIDGE"; fade, the change with no
+## bridge), or "" for none (and for the same set).
 l:b_ridge := { (file, from, to) ->
   from m_atch to ? ""
   links := '{ r -> e_nclose st:w_ords d_isclose r } e_ach file md:l_ist "links"
@@ -98,9 +100,12 @@ l:b_ridge := { (file, from, to) ->
   d_isclose 3 s_elect d_isclose f_irst fits r_eplicate links
 }
 ## A bridge's line for the page: bridge('NAME', seconds, lead-in,
-## handoff); nothing for none.
+## handoff); fade() for the change with no bridge (the old phrase fades
+## out at its next bar line, the new plan's A comes in at once);
+## nothing for none.
 h:b_ridgeLine := { (file, name) ->
   0 = t_ally name ? ""
+  "fade" m_atch name ? "fade()\n"
   field := "bridge-" c_at name
   n := '{ w -> e_nclose f_ormat file md:r_ule (field, d_isclose w) } e_ach "seconds" "lead" "handoff"
   "bridge('" c_at name c_at "', " c_at (", " st:j_oin n) c_at ")\n"
@@ -300,7 +305,8 @@ l:p_lan := { (file, set, seed) -> (l:n_umbers (file, set, seed)) s_elect l:t_oke
 ## kind, seed, came), came the place left before it (its kind, or "")
 ## and how it ended (lib/Mode's statuses; 0 for none). The plan (its
 ## first round after a battle won or lost the file's victory or
-## defeat), the bridge to it from the set left, if the file links one,
+## defeat), the bridge to it from the set left (or the fade, a change
+## with no bridge), if the file links one,
 ## and how long each version's phrases are and how many bars they have.
 l:l_ine := { (file, kind, seed, came) ->
   (from, _) := came

@@ -109,5 +109,46 @@ _ := t:l_ines u:c_hange ("front", "roads", 0)
 # The map's lines after a battle won: victory's round first, then calm,
 # and the bridge to-victory with its length, lead-in and handoff.
 _ := t:l_ines 2 t_ake st:l_ines mu:l_ine (file, "roads", 1, ("defense", 1))
+# And after a walk left: no bridge fits, so the fade.
+_ := t:l_ines 2 t_ake st:l_ines mu:l_ine (file, "roads", 1, ("roam", 3))
+# Every change of set the castle can make, and how fast it is. The
+# places are the kinds the file's kinds lists name; the screens
+# (splash, front, roads, atlas) are where a place is chosen from and
+# come back to. A place is entered from the map (the road or the
+# atlas; the front door's hall and treasury the same: the music comes
+# from the map's kind, roads) and left, won, lost or left, for the
+# road, the atlas or the front door. Each move whose set changes: the
+# set left, the first set of the new plan, and what plays between
+# (a bridge, or fade: the old phrase fades out at its next bar line
+# and the new A comes in at once); then the pairs of sets, and how
+# many moves change set with neither: none.
+screens := "splash" "front" "roads" "atlas"
+u:k_indsOf := { s ->
+  field := "kinds-" c_at s
+  n_ot file md:h_as field ? ""
+  " " st:j_oin file md:l_ist field
+}
+places := (n_ot (st:w_ords " " st:j_oin '{ s -> e_nclose u:k_indsOf d_isclose s } e_ach mu:s_ets file) m_ember? screens) r_eplicate st:w_ords " " st:j_oin '{ s -> e_nclose u:k_indsOf d_isclose s } e_ach mu:s_ets file
+_ := t:l_ines 1 r_eshape e_nclose "places: " c_at " " st:j_oin places
+## A move: (the kind left, how it ended, the kind come to); the set
+## left, the first set of the plan, and the bridge ("" for none), or
+## "" when the set does not change.
+u:m_ove := { (from, ended, to) ->
+  was := mu:f_or (file, from)
+  first := mu:f_irst (file, (from, ended), mu:f_or (file, to))
+  was m_atch first ? e_nclose ""
+  b := mu:b_ridge (file, was, first)
+  0 = t_ally b ? e_nclose was c_at " to " c_at first c_at ": none"
+  e_nclose was c_at " to " c_at first c_at ": " c_at b
+}
+back := "roads" "atlas" "front"
+np := t_ally places
+into := '{ i -> u:m_ove ("roads", 0, d_isclose i s_elect places) } e_ach r_ange np
+out := '{ i -> u:m_ove (d_isclose (1 + (i - 1) d_iv 9) s_elect places, 1 + (i - 1) m_od 3, d_isclose (1 + ((i - 1) d_iv 3) m_od 3) s_elect back) } e_ach r_ange np * 9
+moves := into c_at out
+changes := ('{ m -> 0 < t_ally d_isclose m } e_ach moves) r_eplicate moves
+_ := t:l_ines 1 r_eshape e_nclose (f_ormat t_ally moves) c_at " moves, " c_at (f_ormat t_ally changes) c_at " change set"
+_ := t:l_ines u_nique changes
+'+ r_/ 0 c_at '{ m -> "none" m_atch -4 t_ake d_isclose m } e_ach changes
 # A music file with a mistake is a message naming the file and field.
 '{ @ -> " " st:j_oin mu:p_lan ("fixtures/bad-music.toml", "calm", 1) } []T_RAP '{ err -> []R_ECOVER []E_MESSAGE err }

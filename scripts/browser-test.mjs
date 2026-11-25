@@ -314,6 +314,21 @@ check(await until("window.game.music().bridge === 'release'", 5000), "the page p
 const bridgeAt = await page("window.game.music().bridgeAt");
 check(bridgeAt - leftAt < remaining - 4, `at the battle's next bar line, not its phrase's end (${(bridgeAt - leftAt).toFixed(2)} s after leaving, ${remaining.toFixed(1)} s before the phrase's end)`);
 check(await until("window.game.music().playing === 'calm'", 5000), "and the map's calm plan follows it");
+// Leaving a walk changes the music as fast with no bridge to fit: the
+// map's lines say fade(), and at the walk's next bar line its phrase
+// fades out and the map's calm A comes in (left, as above, with at least
+// 8 s of the walk's phrase to go).
+await page("window.game.feed('choose 1 2'), 1");
+check(await until("window.game.music().playing === 'explore'", 40000), "the walk's explore music plays");
+await until("(() => { const p = window.game.music().phrase; return !!p && p.name.startsWith('explore-') && p.seconds - p.into > 8; })()", 40000);
+const walkLeft = await page("(() => { const p = window.game.music().phrase; return p.seconds - p.into; })()");
+await page("window.game.feed('choose 0 0'), 1");
+check(/^fade\(\)$/m.test(await tune()) && !(await tune()).includes("bridge("), "left, the map's music lines name the fade, no bridge");
+const walkLeftAt = await page("window.game.music().clock");
+check(await until("window.game.music().bridge === 'fade'", 5000), "the page changes the music at once");
+const fadeAt = await page("window.game.music().bridgeAt");
+check(fadeAt - walkLeftAt < walkLeft - 4, `at the walk's next bar line, not its phrase's end (${(fadeAt - walkLeftAt).toFixed(2)} s after leaving, ${walkLeft.toFixed(1)} s before the phrase's end)`);
+check(await until("window.game.music().playing === 'calm' && window.game.music().phrase.name.startsWith('calm-')", 8000), "and the map's calm plan comes in with it");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");
 check((await caption()).startsWith("The castle and its country: 23 of 23 places known"), "and every place is shown");
 await page("window.game.feed('choose 1 7'), 1");
