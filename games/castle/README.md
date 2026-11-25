@@ -48,7 +48,10 @@ the next. This is the game the others are parts of.
   victory, fall after one lost and then defeat; call-to-arms into a
   battle, riddle into a walk or a maze), and the new set's
   first phrase at its end ([`../../docs/music-credits.md`](../../docs/music-credits.md)
-  names the tunes they quote). The picture names it, and the page plays it, as loud as the
+  names the tunes they quote). Where no bridge fits (into the
+  dungeon or the ray maze, back from a walk or a maze) the phrase
+  playing fades out at its next bar line and the new set's first
+  phrase comes in at once. The picture names it, and the page plays it, as loud as the
   world's `settings.music` (0 to 10; 6 when not set) and silent with
   `settings.mute`. Every picture has a sound strip in a corner (the
   top right; the bottom right of a screen with its own menu): a click

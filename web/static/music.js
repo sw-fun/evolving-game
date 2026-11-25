@@ -3,6 +3,7 @@
 // (lib/Music) and how loud (lib/Mode: the sound strip's level):
 //   music('set', 'calm-A calm-B calm-80bpm-A ... explore-C ...')
 //   bridge('release', 14.25, 2.25, 11.25)   (only when the set changes)
+//   fade()                                  (or this: no bridge)
 //   seconds('calm', 26.666667, 8)
 //   seconds('calm-80bpm', 24.0, 8)
 //   volume(0.6)
@@ -14,8 +15,10 @@
 // fades out (0.75 s) while the bridge (music/bridge-NAME.ogg) starts,
 // its lead-in swelling over the fade; at the bridge's handoff the new
 // plan's first phrase comes in (a 0.3 s fade-in), the bridge's tail
-// ringing under it. A new plan without one starts where the phrase
-// playing ends. A new volume alone is a short ramp. Browsers let sound
+// ringing under it. A new plan with fade() changes as fast with no
+// bridge: at the next bar line the phrase playing fades out and the new
+// plan's first phrase comes in at once (the same 0.3 s fade-in). A new
+// plan with neither starts where the phrase playing ends. A new volume alone is a short ramp. Browsers let sound
 // start only after a key or a click: the first one starts it. A phrase
 // that cannot be fetched or decoded (a browser without Opus) is
 // silence, and nothing is said.
@@ -49,7 +52,8 @@ export function music() {
       set: m[1], plan, key: `${m[1]} ${m[2]}`,
       length: plan.map((t) => seconds[version(t)] || 0),
       bar: plan.map((t) => (seconds[version(t)] || 0) / (bars[version(t)] || 8)),
-      bridge: b && { name: b[1], seconds: +b[2], lead: +b[3], handoff: +b[4] },
+      bridge: b ? { name: b[1], seconds: +b[2], lead: +b[3], handoff: +b[4] }
+        : /^fade\(\)$/m.test(text) ? { name: 'fade', seconds: 0, lead: 0, handoff: 0 } : null,
     };
   };
   // A sound, fetched and decoded once (null until it is; false if it
@@ -78,7 +82,7 @@ export function music() {
   };
   // The fast change: the phrases playing fade out at the next bar line
   // (those not begun are stopped), the bridge starts there, and the new
-  // plan's first phrase at its handoff.
+  // plan's first phrase at its handoff (at once for the fade: no bridge).
   const cross = (plan, bridge, first, t) => {
     const playing = sounding.filter((s) => s.end > t);
     const current = playing.find((s) => s.start <= t) || playing[0];
@@ -90,11 +94,12 @@ export function music() {
       s.source.stop(at + FADE + 0.05);
     }
     sounding.length = 0;
-    play(bridge, at, bridge.duration, 0, 0);
+    if (bridge) play(bridge, at, bridge.duration, 0, 0);
     const seconds = Math.min(plan.length[0] || first.duration, first.duration);
     const start = at + plan.bridge.handoff;
     play(first, start, seconds, FADE_IN, plan.bar[0]);
     now = plan; index = 1 % plan.plan.length; next = start + seconds;
+    heard = [...heard.slice(-2), { name: plan.plan[0], step: 1, steps: plan.plan.length, start, seconds }];
     bridged = { name: plan.bridge.name, at };
   };
   // Schedule the next phrase when the one playing is about to end; a
@@ -104,9 +109,10 @@ export function music() {
     if (!now && volume === 0) return; // silent: nothing to fetch yet
     const t = ctx.currentTime;
     if (now && now.key !== want.key && want.bridge) {
-      const bridge = load(`bridge-${want.bridge.name}`), first = load(want.plan[0]);
+      const fade = want.bridge.name === 'fade';
+      const bridge = fade ? true : load(`bridge-${want.bridge.name}`), first = load(want.plan[0]);
       for (const p of new Set(want.plan.slice(1, 4))) load(p);
-      if (bridge && first) return cross(want, bridge, first, t + 0.05);
+      if (bridge && first) return cross(want, fade ? null : bridge, first, t + 0.05);
       if (bridge !== false && first !== false) return; // not here yet
     }
     if (now && t < next - AHEAD) return;
