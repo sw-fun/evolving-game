@@ -305,11 +305,20 @@ check(await until("window.game.music().playing === 'battle'", 40000), "the first
 // bridge coming well before that end is the fast change, not the old
 // wait for the phrase to end (a loaded machine fetches and decodes the
 // bridge slowly: a fixed bar's wait was flaky)
-await until("(() => { const p = window.game.music().phrase; return !!p && p.seconds - p.into > 8; })()", 40000);
-const remaining = await page("(() => { const p = window.game.music().phrase; return p.seconds - p.into; })()");
-await page("window.game.feed('choose 0 0'), 1");
+// The wait and the leaving are one call, so the time measured is the
+// page's own: (seconds of the phrase to go, the audio clock) when left.
+const leaveWith = (playing) => page(`new Promise((done) => {
+  const end = Date.now() + 40000;
+  const go = () => {
+    const m = window.game.music(), p = m.phrase;
+    if (p && p.name.startsWith('${playing}-') && p.seconds - p.into > 8) { window.game.feed('choose 0 0'); return done([p.seconds - p.into, m.clock]); }
+    if (Date.now() > end) return done([0, 0]);
+    setTimeout(go, 100);
+  };
+  go();
+})`);
+const [remaining, leftAt] = await leaveWith("battle");
 check((await tune()).includes("bridge('release', 14.25, 2.25, 11.25)"), "left, the map's music lines name the bridge release");
-const leftAt = await page("window.game.music().clock");
 check(await until("window.game.music().bridge === 'release'", 5000), "the page plays the bridge at once");
 const bridgeAt = await page("window.game.music().bridgeAt");
 check(bridgeAt - leftAt < remaining - 4, `at the battle's next bar line, not its phrase's end (${(bridgeAt - leftAt).toFixed(2)} s after leaving, ${remaining.toFixed(1)} s before the phrase's end)`);
@@ -320,11 +329,8 @@ check(await until("window.game.music().playing === 'calm'", 5000), "and the map'
 // 8 s of the walk's phrase to go).
 await page("window.game.feed('choose 1 2'), 1");
 check(await until("window.game.music().playing === 'explore'", 40000), "the walk's explore music plays");
-await until("(() => { const p = window.game.music().phrase; return !!p && p.name.startsWith('explore-') && p.seconds - p.into > 8; })()", 40000);
-const walkLeft = await page("(() => { const p = window.game.music().phrase; return p.seconds - p.into; })()");
-await page("window.game.feed('choose 0 0'), 1");
+const [walkLeft, walkLeftAt] = await leaveWith("explore");
 check(/^fade\(\)$/m.test(await tune()) && !(await tune()).includes("bridge("), "left, the map's music lines name the fade, no bridge");
-const walkLeftAt = await page("window.game.music().clock");
 check(await until("window.game.music().bridge === 'fade'", 5000), "the page changes the music at once");
 const fadeAt = await page("window.game.music().bridgeAt");
 check(fadeAt - walkLeftAt < walkLeft - 4, `at the walk's next bar line, not its phrase's end (${(fadeAt - walkLeftAt).toFixed(2)} s after leaving, ${walkLeft.toFixed(1)} s before the phrase's end)`);
