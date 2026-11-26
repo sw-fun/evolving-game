@@ -1,0 +1,9 @@
+number = 29
+slug = "troll-gate-strategy"
+status = "pending"
+description = "defend-the-bridge step (the user 2026-11-26): Grubb gates the long bridge (pa..."
+role = "production"
+context_files = []
+created_at = "2026-11-25T20:17:42"
+commits = []
+reserved_for = "worktree agent: troll gate and strategy"

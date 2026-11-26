@@ -1,0 +1,1 @@
+defend-the-bridge step (the user 2026-11-26): Grubb gates the long bridge (paying or answering to his satisfaction is needed to cross, on the map and on the road; no fighting); talks become state machines passed a state and a strategy per character (Grubb: greed and pride), strategies as data checked by X_eTaL, the interface a decision model could later take.
