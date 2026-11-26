@@ -106,8 +106,8 @@ music('calm', 'victory-A victory-C victory-B victory-C victory-D calm-A calm-B c
 bridge('to-victory', 11.75, 1.25, 8.75)
 music('calm', 'calm-A calm-C calm-B calm-C calm-D calm-A calm-B calm-B calm-C calm-D calm-80bpm-A calm-80bpm-B calm-80bpm-C calm-80bpm-D explore-88bpm-A explore-88bpm-B explore-88bpm-C explore-88bpm-D calm-A calm-B calm-B calm-C calm-B calm-D calm-80bpm-A calm-80bpm-C calm-80bpm-D calm-80bpm-A calm-80bpm-B calm-80bpm-C calm-80bpm-B calm-80bpm-D calm-A calm-B calm-D explore-88bpm-A explore-88bpm-B explore-88bpm-C explore-88bpm-D calm-A calm-B calm-B calm-C calm-B calm-C calm-D calm-80bpm-A calm-80bpm-C calm-80bpm-D calm-A calm-C calm-D calm-A calm-B calm-C calm-D calm-A calm-B calm-B calm-D calm-A calm-B calm-C calm-D calm-A calm-B calm-C calm-D calm-64bpm-A calm-64bpm-B calm-64bpm-C calm-64bpm-B calm-64bpm-C calm-64bpm-B calm-64bpm-D explore-104bpm-A explore-104bpm-B explore-104bpm-C explore-104bpm-D calm-A calm-B calm-C calm-D calm-A calm-B calm-B calm-D calm-A calm-B calm-D calm-A calm-C calm-D calm-64bpm-A calm-64bpm-C calm-64bpm-B calm-64bpm-C calm-64bpm-D')
 fade()
-places: idle chest board placeholder roam maze dungeon raycaster defense attack
-100 moves, 60 change set
+places: idle chest board placeholder talk roam maze dungeon raycaster defense attack
+110 moves, 60 change set
 calm to explore: riddle
 calm to sinister: fade
 calm to battle: call-to-arms
