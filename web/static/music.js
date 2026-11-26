@@ -4,6 +4,7 @@
 //   music('set', 'calm-A calm-B calm-80bpm-A ... explore-C ...')
 //   bridge('release', 14.25, 2.25, 11.25)   (only when the set changes)
 //   fade()                                  (or this: no bridge)
+//   ready('bridge-release', 'calm-A', ...)  (fetched ahead: what a change could need)
 //   seconds('calm', 26.666667, 8)
 //   seconds('calm-80bpm', 24.0, 8)
 //   volume(0.6)
@@ -36,6 +37,7 @@ export function music() {
   let index = 0;      // its next phrase
   let next = 0;       // when that phrase starts, on the audio clock
   let bridged = { name: '', at: 0 };  // the last bridge played, for tests
+  let ready = [];     // the sounds a change could need: fetched ahead
   const sounding = [];  // the phrases scheduled: { source, level, start, end, bar }
   const buffers = new Map();
   let heard = [];     // the phrases scheduled last: { name, step, start, seconds }
@@ -107,6 +109,7 @@ export function music() {
   const tick = () => {
     if (!ctx || !want) return;
     if (!now && volume === 0) return; // silent: nothing to fetch yet
+    if (now) for (const r of ready) load(r); // ahead, once each (load keeps them)
     const t = ctx.currentTime;
     if (now && now.key !== want.key && want.bridge) {
       const fade = want.bridge.name === 'fade';
@@ -155,6 +158,7 @@ export function music() {
       if (text === line) return;
       line = text;
       want = parse(text);
+      ready = ((/^ready\(([^)]*)\)$/m.exec(text) || ['', ''])[1].match(/[^', ]+/g)) || [];
       volume = +((/volume\(([\d.]+)\)/.exec(text) || ['', '0'])[1]);
       if (gain) gain.gain.setTargetAtTime(volume, ctx.currentTime, 0.1);
     },

@@ -315,7 +315,27 @@ l:l_ine := { (file, kind, seed, came) ->
   was := h:w_as (file, from)
   plan := " " st:j_oin (h:n_umbersFrom (file, set, seed, first)) s_elect l:t_okens file
   long := '{ x -> e_nclose h:l_ong (file, d_isclose x) } e_ach l:s_ets file
-  "music('" c_at set c_at "', '" c_at plan c_at "')\n" c_at (h:b_ridgeLine (file, l:b_ridge (file, was, first))) c_at t:j_oin long
+  ready := u_nique (h:r_eady (file, first)) c_at h:r_eady (file, set)
+  "music('" c_at set c_at "', '" c_at plan c_at "')\n" c_at (h:b_ridgeLine (file, l:b_ridge (file, was, first))) c_at (h:r_eadyLine ready) c_at t:j_oin long
+}
+## The sounds a change from a set could need, for the page to have them
+## before it is asked (a bridge fetched only when named came late): each
+## bridge the file links from the set, and the first phrase (A) of each
+## set it links to.
+h:r_eady := { (file, from) ->
+  links := '{ r -> e_nclose st:w_ords d_isclose r } e_ach file md:l_ist "links"
+  fits := '{ l -> from m_atch d_isclose f_irst d_isclose l } e_ach links
+  mine := fits r_eplicate links
+  names := '{ l -> e_nclose d_isclose 3 s_elect d_isclose l } e_ach mine
+  sounding := '{ n -> n_ot "fade" m_atch d_isclose n } e_ach names
+  bridges := '{ n -> e_nclose "bridge-" c_at d_isclose n } e_ach sounding r_eplicate names
+  firsts := '{ l -> e_nclose (d_isclose 2 s_elect d_isclose l) c_at "-A" } e_ach mine
+  bridges c_at firsts
+}
+## The line naming them: ready('NAME', ...), or nothing for none.
+h:r_eadyLine := { names ->
+  0 = t_ally names ? ""
+  "ready('" c_at ("', '" st:j_oin names) c_at "')\n"
 }
 ## The set of the kind of place left, or "" for none.
 h:w_as := { (file, from) -> 0 = t_ally from ? ""; l:f_or (file, from) }

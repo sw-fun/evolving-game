@@ -246,7 +246,7 @@ check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x
 // decodes its phrases at the length the program gives (headless Chrome
 // may play no sound: that is not asked).
 const tune = () => page("(document.querySelector('#flat svg metadata#music') || {}).textContent || ''");
-check(/^music\('calm', 'calm-A( [a-z0-9]+-[A-Za-z0-9-]+)+'\)\n(seconds\('[a-z0-9-]+', [\d.]+, \d+\)\n)+status\('atlas', '', 'debug'\)\nvolume\(0\.6\)$/.test(await tune()) && (await tune()).includes("seconds('calm', 26.666667, 8)"), `the map's picture names its music: a plan from the calm set's A, each version's seconds, the default loudness (${(await tune()).slice(0, 40)}...)`);
+check(/^music\('calm', 'calm-A( [a-z0-9]+-[A-Za-z0-9-]+)+'\)\nready\('[^)]*'\)\n(seconds\('[a-z0-9-]+', [\d.]+, \d+\)\n)+status\('atlas', '', 'debug'\)\nvolume\(0\.6\)$/.test(await tune()) && (await tune()).includes("seconds('calm', 26.666667, 8)"), `the map's picture names its music: a plan from the calm set's A, each version's seconds, the default loudness (${(await tune()).slice(0, 40)}...)`);
 check(await page("window.game.music().line === (document.querySelector('#flat svg metadata#music') || {}).textContent"), "and the page has read it");
 const decoded = await page(`fetch('music/calm-A.ogg').then((r) => r.ok ? r.arrayBuffer() : Promise.reject(r.status))
   .then((b) => new OfflineAudioContext(2, 48000, 48000).decodeAudioData(b)).then((s) => s.duration, (e) => -1)`);
