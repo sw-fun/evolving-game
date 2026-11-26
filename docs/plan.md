@@ -378,8 +378,9 @@ defaults drawn from the repositories above.
   leading nowhere, a node with too few answers, a line too long for
   the picture: a message naming the file and the field). It lives in
   the castle until a second game (a walk) opens a talk, then moves to
-  `lib/`. The model (Characters who talk) will only reword the lines;
-  the tree stays the rules.
+  `lib/`. A character's strategy (Characters who talk) chooses its
+  reaction among the tree's written ones; the tree and the strategy
+  are the rules.
 
 Designed in Saga 1 and proven in Sagas 2 to 4; every later saga must
 keep them.
@@ -1324,15 +1325,30 @@ questions). What the seams already give it:
 Where it goes in the order is open; it is small, and it would give
 the campaign shell (Saga 5) something to do between levels.
 
-## Characters who talk: a model in the browser (the user, 2026-11-24)
+## Characters who talk: a state machine and a strategy (the user, 2026-11-24, 2026-11-26)
 
-The user: "Jeva or Laya-like in-browser model to implement NCPs during
-the game, like a bridge troll." Non-player characters met along the way
-(a troll who keeps a bridge, a gate guard, a merchant in the city), who
-talk with the player in their own words, from a small language model
-run in the page (WebGPU or WASM), with nothing sent to a server. Which
-models "Jeva or Laya-like" means is to be confirmed with the user (Open
-questions); the seams below hold for any of them.
+The user first asked for a "Jeva or Laya-like in-browser model to
+implement NCPs during the game, like a bridge troll", then (2026-11-26)
+made it precise: "Jev-like or Laya-like decision model. This can be done
+in code. It is simpler to write a deterministic program for the NPC
+interactions, as a finite state machine. Jev is overkill, but it is a
+small language model that takes context and predicts what to do next
+based on canned choices, not on producing tokens. We may revisit this
+later, as it could be re-used for many NPC interactions. A short term
+approach is an FSM that is passed a state and a strategy per NPC."
+
+Non-player characters met along the way (a troll who keeps a bridge, a
+gate guard, a merchant in the city) are therefore, now, finite state
+machines in X_eTaL: each is given its state (the talk's node, what has
+been said, its own measures such as mood or patience, what the world
+knows) and a strategy of its own, which chooses its reaction to an
+answer among the written ones (its reply, where the talk goes, what it
+does to the world). A decision model (Jev-like or Laya-like: context
+in, one of the canned choices out, no words generated) may take a
+strategy's place later, behind the same interface, and serve every
+character; it is not planned yet. The bridge troll guards the long
+bridge (the user, 2026-11-26): paying him or answering to his
+satisfaction is needed to cross it; there is no fighting him.
 
 - Talks are dialog trees (the user, 2026-11-24: "the interactions
   with NPCs should be inspired by the classic game Monkey Island. The
@@ -1346,38 +1362,22 @@ questions); the seams below hold for any of them.
   open; every tree is proven to have a way through by a golden. With the
   model, the character's words are said its own way, in character, but
   the answers and where they lead stay the tree's.
-- The model writes words, never rules. What a character can do (let you
-  pass, ask a toll, fight, give a clue) is a mode's rules in X_eTaL, and
-  data (the character's name, nature, what it wants, what it knows, its
-  choices) is TOML, as every other content (rules 1 and 8). The model is
-  asked for a reply and for which of the character's listed choices it
-  means; X_eTaL checks the choice against the list and decides.
-- Deterministic (D6): what the model said enters as an event (a line
-  such as "said TEXT" and "chose N"), like a tick or a key, so a game is
-  replayed, tested and golden from its events alone; goldens give the
-  replies in the event script and never run a model.
-- Without the model (not downloaded yet, no WebGPU, the terminal, a
-  golden) every character has written lines and a menu of answers, so
-  every encounter can be played and won without it (rule 9).
-- The host side (loading the model, asking it, giving back its reply as
-  events) is the page's, as little as can be, asked of X_eTaL-extensions
-  as an extension of its own (an ask in docs/xetal-extensions-asks.md).
-- The model's weights are third-party and large (hundreds of MB): never
-  committed (rule 12); fetched by the page from their publisher's host
-  with their license and checksum named, and kept in the browser's
-  cache, only when the player turns talking characters on (Settings).
-- First: the bridge troll, at a bridge venue, who asks a riddle or a
-  toll before you cross; written lines first, the model second.
-  Done (written lines, D24): Grubb, the venue `troll` (24) on the
-  river beside the long bridge, on both roads before the long bridge;
-  his tree (`games/castle/troll.toml`) has 8 nodes, 4 ways through
-  (the toll paid, the toll haggled down, the riddle answered, a poem
-  of his own name once you have asked it), 3 ways to fail (an insult
-  followed by more, or running for it, twice) and a way to walk off,
-  every ending walked by `talk-check.xtl`. With it the roads have 11
-  and 12 places, so the road of levels is drawn six to a row (it was
-  five, and the eleventh fell on the words at the foot). Next: the
-  model.
+- The strategy decides among written choices, never writes words. What
+  a character can do (let you pass, ask a toll, lower it, lose
+  patience, give a clue) is its TOML tree and its strategy's rules in
+  X_eTaL; the strategy is data too (the character's measures, how each
+  kind of answer moves them, the thresholds at which it reacts
+  otherwise), checked when read.
+- Deterministic (D6): a talk is replayed, tested and golden from its
+  events alone; a decision model, when there is one, would enter as
+  events too (the choice it made), so goldens never run a model.
+- A decision model's weights would be third-party: never committed
+  (rule 12), fetched only when turned on, with their license and
+  checksum named; the host side an extension of X_eTaL-extensions (an
+  ask).
+- First: the bridge troll, Grubb, at the long bridge: written lines, a
+  tree, then his strategy (greed and pride: flattery lowers the toll,
+  insults use up his patience, a wrong riddle opens haggling).
 
 ## Later
 
@@ -1437,10 +1437,10 @@ Still open:
    look, Castle Defense's first level, then the winter approach and
    the medieval town); which world is first.
 
-9. Talking characters (see Characters who talk): which in-browser model
-   "Jeva or Laya-like" means, how large a download is acceptable, and
-   whether the first troll waits for the model or comes first with
-   written lines.
+9. Talking characters (see Characters who talk): answered 2026-11-26:
+   a state machine and a strategy per character now; a Jev-like or
+   Laya-like decision model (canned choices, no words generated) maybe
+   later.
 
 Settled since: the repository exists and is public, and GitHub Pages
 is enabled on it, deploying from GitHub Actions (the user,
