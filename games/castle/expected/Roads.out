@@ -1,11 +1,12 @@
 l:mode : Char
 l:help : Char
-l:n_ew : (Num a, Any b, Num c, Num d, Truthy d, Num e, Truthy e, Num f, Truthy f) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Int, (Box Char, Box Char, Box Char, d, e, f, Int))
-l:c_ount : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any i) => (a, b, (c, d, e, f, g, h, i)) -> Int
-l:c_enters : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any i) => (a, b, (c, d, e, f, g, h, i)) -> Int
-l:s_tep : (Any a, Any b, Any c, Any d, Any e, Any f, Num g, Any h) => (a, Int, (b, c, d, e, f, g, h)) -> (Char, Float, Char) -> (a, Int, (b, c, d, e, f, g, h))
+l:n_ew : (Num a, Any b, Num c, Num d, Truthy d, Num e, Truthy e, Num f, Truthy f, Num g, Truthy g) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Int, (Box Char, Box Char, Box Char, d, e, f, Int, Box Char, g))
+l:p_roblem : Char -> Char
+l:c_ount : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any i, Any j, Any k) => (a, b, (c, d, e, f, g, h, i, j, k)) -> Int
+l:c_enters : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any i, Any j, Any k) => (a, b, (c, d, e, f, g, h, i, j, k)) -> Int
+l:s_tep : (Any a, Any b, Any c, Any d, Any e, Any f, Num g, Any h, Any i, Any j) => (a, Int, (b, c, d, e, f, g, h, i, j)) -> (Char, Float, Char) -> (a, Int, (b, c, d, e, f, g, h, i, j))
 l:l_egal : Any a => a -> Box Char
 l:s_tatus : (Any a, Num b, Any c) => (a, b, c) -> Int
-l:l_ine : (Any a, Any b, Any c, Num d, Num e, Num f, Any g) => (a, b, (c, Box Char, Box Char, d, e, f, g)) -> Int -> Char
-l:v_iew : (Any a, Any b, Num c, Any d) => (a, Int, (b, Box Char, Box Char, c, Int, Int, d)) -> (a, Box Char, Box Char, Float, Char)
-l:o_utcome : (Any a, Any b, Any c, Any d, Any e, Any f, Any g) => (a, Int, (b, c, d, e, f, g, Int)) -> (Int, (Box Char, Int), (Box Char, Int))
+l:l_ine : (Any a, Any b, Any c, Num d, Num e, Num f, Any g, Num h) => (a, b, (c, Box Char, Box Char, d, e, f, g, Box Char, h)) -> Int -> Char
+l:v_iew : (Any a, Any b, Num c, Any d, Num e) => (a, Int, (b, Box Char, Box Char, c, Int, Int, d, Box Char, e)) -> (a, Box Char, Box Char, Float, Char)
+l:o_utcome : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i) => (a, Int, (b, c, d, e, f, g, Int, h, i)) -> (Int, (Box Char, Int), (Box Char, Int))

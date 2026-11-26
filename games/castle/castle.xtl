@@ -36,12 +36,16 @@ t_ally vn:s_cenario (file, 4)
 # What the world says of each venue (known, open, done, a row each): in
 # an empty world two are known and open; with the first level won, what
 # it leads to; with all three levels won and the bridge held, the
-# crossing is open.
+# crossing (venue 9) is known but not open: the bridge troll keeps it.
+# Lost to him (the way barred, -1), it is still not open, and he is
+# (venue 24); got past him (the way open), it is.
 o_\ vn:s_tanding (file, md:nothing)
 one := md:nothing md:s_et ("venue.bridge-1.done", 1)
 o_\ vn:s_tanding (file, one)
 held := (((one md:s_et ("venue.bridge-2.done", 1)) md:s_et ("venue.bridge-3.done", 1)) md:s_et ("fact.bridge-held", 1))
 o_\ vn:s_tanding (file, held)
+o_\ (9 24) s_elect vn:s_tanding (file, held md:s_et ("fact.troll-way", -1))
+o_\ (9 24) s_elect vn:s_tanding (file, held md:s_et ("fact.troll-way", 1))
 
 # The map in an empty world, shown: two places. The fourth is not known,
 # so choosing it does nothing; the second is open, and is chosen.

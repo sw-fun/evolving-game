@@ -91,3 +91,31 @@ _ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "click 555 27", defender)
 vw:c_aption rd:v_iew u:r_oad (1 r_eshape e_nclose "key ?", defender)
 vw:c_aption rd:v_iew u:r_oad ("key ?" "key right", defender)
 vw:c_aption rd:v_iew u:r_oad ("key ?" "click 288 250", defender)
+
+# The long bridge is kept by the bridge troll (its entry needs
+# fact.troll-way, the way he opens): with the hill fort won the troll
+# opens, and the long bridge, two on from the fort, does not; it says
+# why, and its number does not take it.
+fort := ((one md:s_et ("venue.bridge-2.done", 1)) md:s_et ("venue.bridge-3.done", 1)) md:s_et ("venue.hill-fort.done", 1)
+_ := u:l_ines rd:n_ew (file, fort, 1)
+md:s_tatusName rd:s_tatus u:r_oad (1 r_eshape e_nclose "key 6", fort)
+# Lost to him (the way barred, -1), it is still locked; he is still
+# open, to be tried again.
+barred := fort md:s_et ("fact.troll-way", -1)
+_ := u:l_ines rd:n_ew (file, barred, 1)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key 5", barred)
+# Got past him (the talk won: the way open, the troll done), the long
+# bridge opens and is taken (venue 9); attacking, the same, and locked
+# again with the way barred.
+past := (barred md:s_et ("fact.troll-way", 1)) md:s_et ("venue.troll.done", 1)
+_ := u:l_ines rd:n_ew (file, past, 1)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key 6", past)
+fields := (((attacker md:s_et ("venue.on-foot.done", 1)) md:s_et ("venue.fields.done", 1)) md:s_et ("venue.troll.done", 1)) md:s_et ("fact.troll-way", 1)
+_ := u:s_ay rd:o_utcome u:r_oad (1 r_eshape e_nclose "key 7", fields)
+vw:c_aption rd:v_iew rd:n_ew (file, fields md:s_et ("fact.troll-way", -1), 1)
+
+# A road file that is wrong: a level needing a later level of the road,
+# and a level needing something with no word of why.
+t_ally rd:p_roblem file
+rd:p_roblem "fixtures/bad-road-needs.toml"
+rd:p_roblem "fixtures/bad-road-why.toml"

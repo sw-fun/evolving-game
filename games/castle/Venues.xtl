@@ -10,6 +10,7 @@
 ## Import: "vn:" u_se< "Venues"
 
 "md:" u_se< "Mode"
+"st:" u_se< "Strings"
 
 ## The table of a file: a row a venue, its nine fields as texts.
 h:t_able := { file ->
@@ -61,7 +62,8 @@ l:p_laces := { file ->
 ## What the world says of every venue, a row each of three 0s and 1s:
 ## known (it is known from the start, or the venue it comes from has
 ## been won, or it has), open (known, and what it needs is set in the
-## world), done (won).
+## world: each of its names above 0, so a way barred, -1, is not),
+## done (won).
 l:s_tanding := { (file, world) ->
   t := h:t_able file
   ids := l:n_ames file
@@ -69,9 +71,16 @@ l:s_tanding := { (file, world) ->
   done := '{ k -> 0 < world md:g_et l:d_one (file, k) } e_ach r_ange n
   from := ids i_ndexOf 6 s_elect_2 t
   known := done | (from > n) | (from m_in n) s_elect done
-  needs := '{ x -> (0 = t_ally d_isclose x) | 0 < world md:g_et d_isclose x } e_ach 7 s_elect_2 t
+  needs := '{ x -> h:s_et (world, st:w_ords d_isclose x) } e_ach 7 s_elect_2 t
   o_\ (3 c_at n) r_eshape (0 + known) c_at (0 + known & needs) c_at 0 + done
 }
+## Whether every one of some names is set in the world (above 0); yes
+## when there are none.
+h:s_et := { (world, names) ->
+  0 = t_ally names ? 0 = 0
+  0 = '+ r_/ 0 c_at '{ w -> 0 >= world md:g_et d_isclose w } e_ach names
+}
 # :: (Char, Int) -> Char
-## What a venue needs of the world, as a name ("" for nothing).
+## What a venue needs of the world, as names, a space between ("" for
+## nothing).
 l:n_eeds := { fk -> fk h:f_ield 7 }

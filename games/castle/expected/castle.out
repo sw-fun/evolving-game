@@ -33,8 +33,14 @@
 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0
 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 1 0 0 1 0 0 1 1
-1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 1 0 0 1 0 0 1 1
+1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 1 0 0 1 0 0 1 1
 1 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+1 1
+0 1
+0 0
+1 1
+1 1
+0 0
 ........................
 ........................
 ........................
@@ -93,7 +99,7 @@ To do: 2 The battlefield on foot, 4 The winter camp, 5 The town, 7 Siege Enginee
 ...........:............
 .@..@..@...S..@..@......
 The castle and its country: 13 of 24 places known, 3 won. Gold 0, experience 0.
-The long bridge is not open yet: it needs the bridge held (win a Defend the Bridge level).
+The long bridge is not open yet: it needs the bridge held (win a Defend the Bridge level) and the bridge troll got past (pay him, or answer him).
 ........................
 ........................
 ........................
@@ -192,7 +198,7 @@ The hall of deeds. Experience 105, gold 160. Quests 1 of 5; achievements 3 of 6.
 [x] Hold the bridge in summer: Win the first level of Defend the Bridge.
 [ ] Hold the bridge in every season: Win all three levels: summer, snow and the storm.
 [ ] Find the way in: Walk the battlefield on foot to the castle gate.
-[ ] Cross the long bridge: Hold the bridge, then cross to the castle.
+[ ] Cross the long bridge: Hold the bridge, get past its troll, then cross to the castle.
 [ ] Stand in the treasury: Find your way through the gate maze and the dungeon to the castle's gold.
  *  First blood: Won a level of Castle Defense.
  *  A full purse: Held 150 gold at once.
