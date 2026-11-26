@@ -4,6 +4,7 @@
 │ │key KEY│ │click X Y│ │
 │ └───────┘ └─────────┘ │
 └∊──────────────────────┘
+measures: patience 2, toll 10, haggle 0
 The bridge troll.
 Halt! This is Grubb's bridge, and Grubb wants his toll.
 Ten gold, or the answer to Grubb's riddle.
@@ -36,7 +37,6 @@ I sleep over water every night. What am I?
 > 1. A sleepy cat.
   2. A bridge.
   3. You, on a good day.
-  4. Wait, how much was the toll again?
 outcome: won
   changes fact.troll-riddle 1
   changes fact.troll-way 1
@@ -49,10 +49,70 @@ Or Grubb takes the toll. Grubb is flexible.
 > 1. Ask the riddle again.
   2. Is there a cheaper toll for a poor traveler?
   3. I will just run past you.
+The bridge troll.
+You: Ask the riddle again.
+Listen closer this time.
+I have a back but no belly. I am crossed but never cross.
+I sleep over water every night. What am I?
+> 1. A sleepy cat.
+  2. A bridge.
+  3. You, on a good day.
+  4. Forget the riddle. Will you take less gold?
+measures: patience 2, toll 10, haggle 1
+The bridge troll.
+You: Is there a cheaper toll for a poor traveler?
+Cheaper? Grubb's mother says Grubb is too soft.
+For you, a special price: eight gold.
+Do not tell the goats. The goats pay full.
+> 1. Eight it is.
+  2. I do not have eight gold.
+  3. Surely a troll so handsome can do better than that?
+  4. Eight gold for a damp plank? Thief!
 outcome: won
   changes resource.gold 0
   changes fact.troll-way 1
   brings resource.xp 5
+The bridge troll.
+You: It is a little damp, though.
+DAMP? It is a RIVER bridge!
+Halt! This is Grubb's bridge, and Grubb wants his toll.
+Nine gold, or the answer to Grubb's riddle.
+Grubb is not fussy which.
+> 1. Nine gold it is. Here.
+  2. I will take the riddle.
+  3. Before that: what a magnificent bridge!
+  4. Out of my way, you overgrown turnip.
+outcome: won
+  changes resource.gold 11
+  changes fact.troll-way 1
+  brings resource.xp 5
+The bridge troll.
+You: Surely a troll so handsome can do better than that?
+Grubb is handsome. Fine: seven.
+For you, a special price: seven gold.
+Do not tell the goats. The goats pay full.
+> 1. I do not have seven gold.
+  2. Surely a troll so handsome can do better than that?
+  3. Seven gold for a damp plank? Thief!
+The bridge troll.
+You: Surely a troll so handsome can do better than that?
+Grubb is flattered. But six gold is
+as low as Grubb goes, however handsome.
+For you, a special price: six gold.
+Do not tell the goats. The goats pay full.
+> 1. I do not have six gold.
+  2. Surely a troll so handsome can do better than that?
+  3. Six gold for a damp plank? Thief!
+The bridge troll.
+You: Surely a troll so handsome can do better than that?
+Grubb is flattered. But six gold is
+as low as Grubb goes, however handsome.
+For you, a special price: six gold.
+Do not tell the goats. The goats pay full.
+> 1. I do not have six gold.
+  2. Surely a troll so handsome can do better than that?
+  3. Six gold for a damp plank? Thief!
+measures: patience 2, toll 6, haggle 1
 The bridge troll.
 You: It deserves a poem. May I?
 A poem! For Grubb's bridge! Go on, go on.
@@ -73,21 +133,34 @@ outcome: won
   changes fact.troll-way 1
   brings resource.xp 5
 The bridge troll.
+You: So, about this toll.
+Ah. Yes. The toll. Nine gold.
+Halt! This is Grubb's bridge, and Grubb wants his toll.
+Nine gold, or the answer to Grubb's riddle.
+Grubb is not fussy which.
+> 1. I will take the riddle.
+  2. Before that: what a magnificent bridge!
+  3. Out of my way, you overgrown turnip.
+The bridge troll.
 You: Out of my way, you overgrown turnip.
-TURNIP?
+TURNIP? Grubb lets that go. Once.
+Halt! This is Grubb's bridge, and Grubb wants his toll.
+Ten gold, or the answer to Grubb's riddle.
+Grubb is not fussy which.
+> 1. I will take the riddle.
+  2. Before that: what a magnificent bridge!
+  3. Out of my way, you overgrown turnip.
+measures: patience 1, toll 10, haggle 0
+The bridge troll.
+You: Out of my way, you overgrown turnip.
+TURNIP? Grubb lets that go. Once.
 Grubb has thrown travelers in the river for less!
 Say sorry, or say goodbye.
 > 1. Sorry. That was rude of me, and you are very handsome.
   2. Make me, mushroom.
   3. Run for the far bank!
   4. Never mind. I will find another way.
-outcome: lost
-  changes fact.troll-way -1
-outcome: lost
-  changes fact.troll-way -1
-outcome: lost
-  changes fact.troll-way -1
-outcome: left
+measures: patience 0, toll 10, haggle 0
 The bridge troll.
 You: Sorry. That was rude of me, and you are very handsome.
 ...Grubb will allow it.
@@ -97,15 +170,27 @@ Grubb is not fussy which.
 > 1. I will take the riddle.
   2. Before that: what a magnificent bridge!
   3. Out of my way, you overgrown turnip.
+measures: patience 2, toll 10, haggle 0
 The bridge troll.
-You: Wait, how much was the toll again?
-Ten gold. Grubb said it slowly the first time.
+You: Out of my way, you overgrown turnip.
+TURNIP? Grubb lets that go. Once.
 Halt! This is Grubb's bridge, and Grubb wants his toll.
 Ten gold, or the answer to Grubb's riddle.
 Grubb is not fussy which.
 > 1. I will take the riddle.
   2. Before that: what a magnificent bridge!
   3. Out of my way, you overgrown turnip.
+outcome: lost
+  changes fact.troll-way -1
+outcome: lost
+  changes fact.troll-way -1
+outcome: lost
+  changes fact.troll-way -1
+outcome: left
+outcome: won
+  changes fact.troll-riddle 1
+  changes fact.troll-way 1
+  brings resource.xp 5
 The bridge troll.
 Halt! This is Grubb's bridge, and Grubb wants his toll.
 Ten gold, or the answer to Grubb's riddle.
@@ -132,3 +217,6 @@ outcome: left
   changes fact.troll-name 1
 fixtures/bad-talk-next.toml: answer.greet-riddle.next: no node "ridle" (a node, or won, lost or left)
 fixtures/bad-talk-answers.toml: node.riddle.answers: 2 to 4 answers, there are 1
+fixtures/bad-talk-tag.toml: answer.greet-praise.tags: no tag "flatery" in the strategy
+fixtures/bad-talk-measure.toml: tag.flatter.moves: "mood" is no measure (the measures: toll, patience)
+fixtures/bad-talk-shows.toml: answer.greet-pay.says: "{price}" is no measure of the character (the measures: toll)

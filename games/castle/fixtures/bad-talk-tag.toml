@@ -1,0 +1,47 @@
+# A talk that is wrong (talk-check.xtl): an answer of a tag its
+# strategy does not have ("flatery").
+mode = ["talk"]
+title = ["A bad talk"]
+zones = ["../../../world/zones.toml"]
+zone = ["realm"]
+way = ["fact.bad-way"]
+reward = ["xp 1"]
+ends = ["Through.", "Barred.", "Left."]
+nodes = ["greet"]
+node-fields = ["says", "answers"]
+answers = ["greet-praise", "greet-leave"]
+answer-fields = ["says", "reply", "next", "gold", "needs", "learn", "way", "tags", "when"]
+measures = ["toll"]
+measure-fields = ["start", "least", "most"]
+tags = ["flatter", "leave"]
+tag-fields = ["moves"]
+rules = []
+rule-fields = ["tag", "when", "next", "reply"]
+
+[measure.toll]
+start = "5"
+least = "1"
+most = "5"
+
+[tag.flatter]
+moves = "toll -1"
+
+[tag.leave]
+moves = ""
+
+[node.greet]
+says = "Hello. {Toll} gold."
+answers = "greet-praise greet-leave"
+
+[answer.greet-praise]
+says = "Handsome!"
+reply = "Thank you."
+next = "won"
+way = "open"
+tags = "flatery"
+
+[answer.greet-leave]
+says = "Goodbye."
+reply = "Goodbye."
+next = "left"
+tags = "leave"

@@ -1,0 +1,28 @@
+# A road file that is wrong (road-check.xtl): the snow bridge needs the
+# storm bridge won, which comes after it on the road.
+mode = ["roads"]
+title = ["A bad road"]
+zones = ["../../../world/zones.toml"]
+zone = ["realm"]
+castle = ["../castle.toml"]
+defend = ["bridge-1", "bridge-2", "bridge-3"]
+attack = ["camp"]
+entry-fields = ["label", "tier", "coming", "needs", "why"]
+
+[defend-level.bridge-1]
+label = "Summer bridge"
+tier = "tutorial"
+
+[defend-level.bridge-2]
+label = "Snow bridge"
+tier = "easy"
+needs = "bridge-3"
+why = "win the storm bridge"
+
+[defend-level.bridge-3]
+label = "Storm bridge"
+tier = "normal"
+
+[attack-level.camp]
+label = "Winter camp"
+tier = "tutorial"

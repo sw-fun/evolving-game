@@ -1,0 +1,48 @@
+# A talk that is wrong (talk-check.xtl): a line shows a measure the
+# character does not have ("{price}").
+mode = ["talk"]
+title = ["A bad talk"]
+zones = ["../../../world/zones.toml"]
+zone = ["realm"]
+way = ["fact.bad-way"]
+reward = ["xp 1"]
+ends = ["Through.", "Barred.", "Left."]
+nodes = ["greet"]
+node-fields = ["says", "answers"]
+answers = ["greet-pay", "greet-leave"]
+answer-fields = ["says", "reply", "next", "gold", "needs", "learn", "way", "tags", "when"]
+measures = ["toll"]
+measure-fields = ["start", "least", "most"]
+tags = ["pay", "leave"]
+tag-fields = ["moves"]
+rules = []
+rule-fields = ["tag", "when", "next", "reply"]
+
+[measure.toll]
+start = "5"
+least = "1"
+most = "5"
+
+[tag.pay]
+moves = ""
+
+[tag.leave]
+moves = ""
+
+[node.greet]
+says = "Hello. {Toll} gold."
+answers = "greet-pay greet-leave"
+
+[answer.greet-pay]
+says = "Here is {price} gold."
+reply = "Thank you."
+next = "won"
+gold = "toll"
+way = "open"
+tags = "pay"
+
+[answer.greet-leave]
+says = "Goodbye."
+reply = "Goodbye."
+next = "left"
+tags = "leave"

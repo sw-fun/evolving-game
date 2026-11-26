@@ -45,9 +45,11 @@ deed-fields = ["title", "kind", "needs", "least", "xp", "about"]
 # its scenario (a path from
 # this file; none for a placeholder); its row and column on the realm's
 # map; from, the venue whose winning makes it known ("" for one known
-# from the start); needs, a name in the world state that must be set
-# for it to be entered ("" for none); marker, the piece that stands for
-# it on the map; and what it is about.
+# from the start); needs, the names in the world state that must be
+# set (above 0) for it to be entered, a space between ("" for none);
+# marker, the piece that stands for it on the map; and what it is
+# about. The long bridge needs the bridge held and the way past the
+# bridge troll (fact.troll-way, set by winning his talk).
 
 [venue.bridge-1]
 title = "Defend the Bridge: summer"
@@ -144,7 +146,7 @@ scenario = "../walk/crossing.toml"
 row = "9"
 column = "12"
 from = "bridge-3"
-needs = "fact.bridge-held"
+needs = "fact.bridge-held fact.troll-way"
 marker = "walker"
 about = "The crossing to the castle, over the chasm, under the storm: the way from the country to the inside."
 
@@ -346,7 +348,7 @@ kind = "quest"
 needs = "venue.crossing.done"
 least = "1"
 xp = "20"
-about = "Hold the bridge, then cross to the castle."
+about = "Hold the bridge, get past its troll, then cross to the castle."
 
 [deed.inside]
 title = "Stand in the treasury"

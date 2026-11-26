@@ -4,9 +4,21 @@
 ## character replies, and the talk goes on at the node the answer leads
 ## to, or ends: won (the way is open), lost (barred, or chased off), or
 ## left. An answer may change the world: gold paid, a fact learned, the
-## way opened or barred. Which answers are shown depends on the world:
-## one that costs gold only to one who has it, one that needs a fact
-## only to one who knows it.
+## way opened or barred. Which answers are shown depends on the world
+## and on the character: one that costs gold only to one who has it,
+## one that needs a fact only to one who knows it, one with a condition
+## only when the character's measures meet it.
+##
+## A talk is a finite state machine. Its state is the node, the
+## character's measures (patience, the toll asked ...) and what has been
+## said; an answer is a step. The character's strategy (Strategy.xtl,
+## from the same file) is the one function from that state and the
+## answer to the reaction: the measures moved by the answer's tags
+## (flatter, insult, pay ...), and the reply and next node, chosen among
+## the written ones by its rules; the answer's effects on the world
+## follow. A decision model could later stand behind that function. A
+## line may show a measure: {toll} is written as the toll's number in
+## words ("eight"), {Toll} the same capitalized ("Eight").
 ##
 ## Answers are chosen by their number (1 to 4), by Up and Down and then
 ## Enter or space, or by a click on one. Once it has ended, what was
@@ -14,21 +26,27 @@
 ## own command), keeping what was learned.
 ##
 ## The talk's file: mode, title, zones and zone (lib/Mode); way, the
-## name in the world the way is kept under (1 open, -1 barred); reward,
-## the experience winning brings ("xp 5"); ends, what is said at each
-## end; nodes and answers, each a table (node-fields: says, answers;
-## answer-fields: says, reply, next, gold, needs, learn, way). It is
+## name in the world the way is kept under (1 open, -1 barred: a talk
+## lost may be had again, and won later opens it); reward, the
+## experience winning brings ("xp 5"); ends, what is said at each end;
+## nodes and answers, each a table (node-fields: says, answers;
+## answer-fields: says, reply, next, gold, needs, learn, way, tags,
+## when); the strategy (Strategy.xtl); and, if it likes, portrait, the
+## painting in the frame (art/NAME), and cross, the nodes where the
+## character is shown cross (tinted red, as when you have lost). It is
 ## checked when it is read; what is wrong is the error bad-scenario,
 ## naming the file and the field.
 ##
-## The state is (stage, tree, start, changes, at, words): the tree read
-## from the file; the world the talk began in, and what it has changed
-## so far; at, the numbers: the node, the answer chosen, the end (0
-## none, 1 won, 2 lost, 3 left) and 1 once the end has been seen; and
-## words, what you said last and the character's reply.
+## The state is (stage, tree, start, changes, at, words, mind): the
+## tree read from the file; the world the talk began in, and what it
+## has changed so far; at, the numbers: the node, the answer chosen, the
+## end (0 none, 1 won, 2 lost, 3 left) and 1 once the end has been seen;
+## words, what you said last and the character's reply; and mind, the
+## character's measures.
 ## Import: "tk:" u_se< "Talk"
 
 "md:" u_se< "Mode"
+"sg:" u_se< "Strategy"
 "sm:" u_se< "Sim"
 "st:" u_se< "Strings"
 "t:" u_se< "Text"
@@ -47,11 +65,13 @@ l:help := "A talk: the character says something, and you answer.\n1 2 3 4, Up Do
 h:ends := "won" "lost" "left"
 ## The fields of a node and of an answer, as the file must list them.
 h:nodeFields := "says" "answers"
-h:answerFields := "says" "reply" "next" "gold" "needs" "learn" "way"
+h:answerFields := "says" "reply" "next" "gold" "needs" "learn" "way" "tags" "when"
 ## The longest line the character says, and the longest answer: what
-## the picture has room for.
+## the picture has room for (a measure shown counts as its name).
 h:wide := 60
 h:long := 72
+## Numbers in words, from zero.
+h:numerals := "zero" "one" "two" "three" "four" "five" "six" "seven" "eight" "nine" "ten" "eleven" "twelve" "thirteen" "fourteen" "fifteen" "sixteen" "seventeen" "eighteen" "nineteen" "twenty"
 h:f_ail := { (file, field) what -> "bad-scenario" []S_IGNAL file c_at ": " c_at field c_at ": " c_at what }
 ## A table of the file: its rows named by one list, its fields by
 ## another.
@@ -61,8 +81,6 @@ h:f_ields := { (file, field, want) ->
   n_ot want m_atch file md:l_ist field ? (file, field) h:f_ail "the fields must be " c_at " " st:j_oin want
   0
 }
-## The gold an answer costs: its text as a number, 0 for none.
-h:g_old := { text -> 0 = t_ally text ? 0; f_irst f_loor n_umbers text }
 ## Is a text a whole number of gold, or nothing?
 h:w_hole := { text ->
   0 = t_ally text ? 0 = 0
@@ -70,16 +88,27 @@ h:w_hole := { text ->
   n_ot 1 = t_ally n ? 0 = 1
   ((f_irst n) = f_loat f_loor f_irst n) & 0.0 <= f_irst n
 }
+## The measures a text shows, as written between { and }: their names.
+h:s_hows := { text ->
+  pieces := 1 d_rop "{" st:s_plit text
+  '{ p -> e_nclose (('m_in r_/ (1 + t_ally d_isclose p) c_at w_here (d_isclose p) = f_irst "}") - 1) t_ake d_isclose p } e_ach pieces
+}
 ## A text the character or you say, checked: not empty, each line (a |
-## between) at most so long, and none of the characters < > &.
-h:s_aid := { (file, field) (text, most) ->
+## between) at most so long, none of the characters < > &, and every
+## measure it shows ({toll}, or {Toll}) one of the character's.
+h:s_aid := { (file, field, names) (text, most) ->
   0 = t_ally text ? (file, field) h:f_ail "nothing is said"
   lines := "|" st:s_plit text
   long := '{ l -> most < t_ally d_isclose l } e_ach lines
   0 < '+ r_/ 0 c_at long ? (file, field) h:f_ail "a line of more than " c_at (f_ormat most) c_at " characters: " c_at d_isclose f_irst long r_eplicate lines
   0 < '+ r_/ 0 c_at text m_ember? "<>&" ? (file, field) h:f_ail "the characters < > & cannot be said"
+  shown := h:s_hows text
+  unknown := '{ w -> n_ot (e_nclose st:l_ower d_isclose w) m_ember? names } e_ach shown
+  0 < '+ r_/ 0 c_at unknown ? (file, field) h:f_ail "\"{" c_at (d_isclose f_irst unknown r_eplicate shown) c_at "}\" is no measure of the character (the measures: " c_at (", " st:j_oin names) c_at ")"
   0
 }
+## A list the file may leave out (none, then).
+h:o_ptional := { (file, field) -> n_ot file md:h_as field ? 0 t_ake e_nclose ""; file md:l_ist field }
 ## A world name an answer gives (needs, learn): nothing, or one word.
 h:n_ame := { (file, field) text ->
   1 < t_ally st:w_ords text ? (file, field) h:f_ail "\"" c_at text c_at "\" is not a name of the world (one word, as fact.troll-name)"
@@ -87,45 +116,49 @@ h:n_ame := { (file, field) text ->
 }
 ## The answers of a node, by their numbers among the answers.
 h:o_f := { (tree, k) ->
-  (_, nodes, aids, _, _, _, _, _) := tree
+  (_, nodes, aids, _, _, _, _, _, _, _, _, _, _) := tree
   aids i_ndexOf st:w_ords d_isclose 2 s_elect k s_elect nodes
 }
 ## A node checked: what is said; 2 to 4 answers, each one there is; at
-## least one with no needs and no gold.
+## least one with no needs, no gold and no condition.
 h:n_ode := { (file, tree) k ->
-  (ids, nodes, aids, answers, _, _, _, _) := tree
+  (ids, nodes, aids, answers, _, _, _, _, strategy, _, _, _, _) := tree
   n_amed := { f -> "node." c_at (d_isclose k s_elect ids) c_at "." c_at f }
-  _ := (file, n_amed "says") h:s_aid (d_isclose 1 s_elect k s_elect nodes, h:wide)
+  _ := (file, n_amed "says", sg:n_ames strategy) h:s_aid (d_isclose 1 s_elect k s_elect nodes, h:wide)
   words := st:w_ords d_isclose 2 s_elect k s_elect nodes
   ((t_ally words) < 2) | (t_ally words) > 4 ? (file, n_amed "answers") h:f_ail "2 to 4 answers, there are " c_at f_ormat t_ally words
   at := aids i_ndexOf words
   missing := at > t_ally aids
   0 < '+ r_/ missing ? (file, n_amed "answers") h:f_ail "no answer \"" c_at (d_isclose f_irst missing r_eplicate words) c_at "\""
-  free := '{ a -> (0 = t_ally d_isclose 5 s_elect a s_elect answers) & 0 = h:g_old d_isclose 4 s_elect a s_elect answers } e_ach at
-  0 = '+ r_/ 0 c_at free ? (file, n_amed "answers") h:f_ail "every answer needs something (needs or gold): there may be none to give"
+  free := '{ a -> 0 = '+ r_/ '{ f -> t_ally d_isclose f s_elect a s_elect answers } e_ach 4 5 9 } e_ach at
+  0 = '+ r_/ 0 c_at free ? (file, n_amed "answers") h:f_ail "every answer needs something (needs, gold or when): there may be none to give"
   0
 }
 ## An answer checked: what you say and the reply; next, a node or an
-## end; gold, a whole number; needs and learn, names; way, open or
-## barred.
+## end; gold, a whole number or a measure (the toll); needs and learn,
+## names; way, open or barred; tags, the strategy's; when, a condition
+## of the measures.
 h:a_nswer := { (file, tree) j ->
-  (ids, _, aids, answers, _, _, _, _) := tree
+  (ids, _, aids, answers, _, _, _, _, strategy, _, _, _, _) := tree
+  names := sg:n_ames strategy
   row := j s_elect answers
   n_amed := { f -> "answer." c_at (d_isclose j s_elect aids) c_at "." c_at f }
-  _ := (file, n_amed "says") h:s_aid (d_isclose 1 s_elect row, h:long)
-  _ := (file, n_amed "reply") h:s_aid (d_isclose 2 s_elect row, h:wide)
+  _ := (file, n_amed "says", names) h:s_aid (d_isclose 1 s_elect row, h:long)
+  _ := (file, n_amed "reply", names) h:s_aid (d_isclose 2 s_elect row, h:wide)
   next := d_isclose 3 s_elect row
   n_ot (e_nclose next) m_ember? ids c_at h:ends ? (file, n_amed "next") h:f_ail "no node \"" c_at next c_at "\" (a node, or won, lost or left)"
-  n_ot h:w_hole d_isclose 4 s_elect row ? (file, n_amed "gold") h:f_ail "\"" c_at (d_isclose 4 s_elect row) c_at "\" is not a whole number of gold"
+  gold := d_isclose 4 s_elect row
+  n_ot (h:w_hole gold) | (e_nclose gold) m_ember? names ? (file, n_amed "gold") h:f_ail "\"" c_at gold c_at "\" is not a whole number of gold, nor a measure"
   _ := (file, n_amed "needs") h:n_ame d_isclose 5 s_elect row
   _ := (file, n_amed "learn") h:n_ame d_isclose 6 s_elect row
   way := d_isclose 7 s_elect row
   (0 < t_ally way) & n_ot (e_nclose way) m_ember? "open" "barred" ? (file, n_amed "way") h:f_ail "\"" c_at way c_at "\" is not open or barred"
   0
 }
-## The tree read from a file and checked: (node ids, nodes, answer
-## ids, answers, the way's name, the experience winning brings, the
-## title, what each end says).
+## The tree read from a file and checked: (node ids, nodes, answer ids,
+## answers, the way's name, the experience winning brings, the title,
+## what each end says, the strategy, each answer's tags (their numbers),
+## each answer's condition a row, the portrait, the cross nodes).
 h:t_ree := { file ->
   _ := h:f_ields (file, "node-fields", h:nodeFields)
   _ := h:f_ields (file, "answer-fields", h:answerFields)
@@ -135,9 +168,23 @@ h:t_ree := { file ->
   n_ot 3 = t_ally ends ? (file, "ends") h:f_ail "what is said when won, lost and left: three texts"
   _ := (file, "way") h:n_ame file md:f_ield "way"
   xp := 0 m_ax f_loor file md:r_ule ("reward", "xp")
-  tree := (ids, h:t_able (file, "node", "nodes", "node-fields"), file md:l_ist "answers", h:t_able (file, "answer", "answers", "answer-fields"), file md:f_ield "way", xp, file md:f_ield "title", ends)
-  _ := '{ k -> (file, tree) h:n_ode k } e_ach r_ange t_ally ids
-  _ := '{ j -> (file, tree) h:a_nswer j } e_ach r_ange t_ally file md:l_ist "answers"
+  aids := file md:l_ist "answers"
+  answers := h:t_able (file, "answer", "answers", "answer-fields")
+  strategy := sg:r_ead (file, ids c_at h:ends)
+  f_ield := { (j, f) -> "answer." c_at (d_isclose j s_elect aids) c_at "." c_at f }
+  k := r_ange t_ally aids
+  tags := '{ j -> (file, f_ield (j, "tags"), strategy) sg:t_ags d_isclose 8 s_elect j s_elect answers } m_ap k
+  whens := '{ j -> (file, f_ield (j, "when"), sg:n_ames strategy) sg:c_ondition d_isclose 9 s_elect j s_elect answers } m_ap k
+  conds := k '{ j c -> c s_elect d_isclose j s_elect whens } t_able 1 2 3
+  portrait := t:j_oin h:o_ptional (file, "portrait")
+  cross := h:o_ptional (file, "cross")
+  far := w_here n_ot cross m_ember? ids
+  0 < t_ally far ? (file, "cross") h:f_ail "no node \"" c_at (d_isclose (f_irst far) s_elect cross) c_at "\""
+  tree := (ids, h:t_able (file, "node", "nodes", "node-fields"), aids, answers, file md:f_ield "way", xp, file md:f_ield "title", ends, strategy, tags, conds, portrait, cross)
+  _ := '{ n -> (file, tree) h:n_ode n } e_ach r_ange t_ally ids
+  _ := '{ j -> (file, tree) h:a_nswer j } e_ach k
+  rules := sg:r_eplies strategy
+  _ := '{ r -> _ := (file, "rule." c_at (d_isclose r s_elect file md:l_ist "rules") c_at ".reply", sg:n_ames strategy) h:s_aid (d_isclose r s_elect rules, h:wide); 0 } e_ach w_here '{ x -> 0 < t_ally d_isclose x } e_ach rules
   tree
 }
 # :: Char -> Char
@@ -153,26 +200,58 @@ l:p_roblem := { file ->
 
 ### Playing
 
-# :: (Any a, Any b, Num c, Num d) => (Char, a, b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), (Box Char, Box Char, Box Char, Box Char, Char, Int, Char, Box Char), a, (Box Char, Int), d, (Char, Char))
-## The talk from its file, in a world: at its first node.
-l:n_ew := { (file, world, seed) -> (md:s_tage file, h:t_ree file, world, md:nothing, 1 1 0 0, ("", "")) }
+# :: (Any a, Any b, Num c, Num d) => (Char, a, b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), (Box Char, Box Char, Box Char, Box Char, Char, Int, Char, Box Char, (Box Char, Int, Int, Int, Box Char, Int, (Int, Int, Box Char, Box Char)), Box Int, Int, Char, Box Char), a, (Box Char, Int), d, (Char, Char), Int)
+## The talk from its file, in a world: at its first node, the
+## character's measures where its strategy starts them.
+l:n_ew := { (file, world, seed) ->
+  tree := h:t_ree file
+  (_, _, _, _, _, _, _, _, strategy, _, _, _, _) := tree
+  (md:s_tage file, tree, world, md:nothing, 1 1 0 0, ("", ""), sg:s_tart strategy)
+}
 ## The world as it stands in the talk: the one it began in, with what
 ## it has changed.
-h:n_ow := { (_, _, start, changes, _, _) -> start md:m_erge changes }
+h:n_ow := { (_, _, start, changes, _, _, _) -> start md:m_erge changes }
+## A number in words (its figures past twenty).
+h:n_umeral := { n -> (n < 0) | n >= t_ally h:numerals ? f_ormat n; d_isclose (1 + n) s_elect h:numerals }
+## A text with the measures it shows written in: {toll} as the toll in
+## words, {Toll} the same capitalized.
+h:f_ill := { (names, mind) text ->
+  pieces := "{" st:s_plit text
+  1 = t_ally pieces ? text
+  (d_isclose f_irst pieces) c_at t:j_oin '{ p -> e_nclose (names, mind) h:p_iece d_isclose p } e_ach 1 d_rop pieces
+}
+## A piece of a text after a {: the measure it names, in words, and the
+## rest after the }.
+h:p_iece := { (names, mind) piece ->
+  end := f_irst w_here piece = f_irst "}"
+  name := (end - 1) t_ake piece
+  said := h:n_umeral (names i_ndexOf e_nclose st:l_ower name) s_elect mind
+  big := (st:u_pper 1 t_ake said) c_at 1 d_rop said
+  (d_isclose (1 + n_ot name m_atch st:l_ower name) s_elect (e_nclose said) c_at e_nclose big) c_at end d_rop piece
+}
+## The gold an answer costs, by the world and the measures: its text as
+## a number, or the measure it names; 0 for none.
+h:g_old := { (names, mind) text ->
+  0 = t_ally text ? 0
+  (e_nclose text) m_ember? names ? (names i_ndexOf e_nclose text) s_elect mind
+  f_irst f_loor n_umbers text
+}
 ## The answers shown at the node, by their numbers among the answers:
-## those whose gold the world has and whose needs it has set.
+## those whose gold the world has, whose needs it has set, and whose
+## condition the character's measures meet.
 h:s_hown := { s ->
-  (_, tree, _, _, at, _) := s
-  (_, _, _, answers, _, _, _, _) := tree
+  (_, tree, _, _, at, _, mind) := s
+  (_, _, _, answers, _, _, _, _, strategy, _, conds, _, _) := tree
   world := h:n_ow s
   all := h:o_f (tree, f_irst at)
-  ok := '{ a -> ((0 = t_ally d_isclose 5 s_elect a s_elect answers) | 0 < world md:g_et d_isclose 5 s_elect a s_elect answers) & (h:g_old d_isclose 4 s_elect a s_elect answers) <= world md:g_et "resource.gold" } e_ach all
-  ok r_eplicate all
+  ok := '{ a -> ((0 = t_ally d_isclose 5 s_elect a s_elect answers) | 0 < world md:g_et d_isclose 5 s_elect a s_elect answers) & ((sg:n_ames strategy, mind) h:g_old d_isclose 4 s_elect a s_elect answers) <= world md:g_et "resource.gold" } e_ach all
+  met := '{ a -> mind sg:h_olds a s_elect conds } e_ach all
+  (ok & met) r_eplicate all
 }
 ## What an answer does to the changes: the gold paid, the fact
 ## learned, the way opened or barred.
-h:d_oes := { (changes, world, row, way) ->
-  learned := (h:p_ay (changes, world, h:g_old d_isclose 4 s_elect row)) h:l_earn d_isclose 6 s_elect row
+h:d_oes := { (changes, world, row, way, gold) ->
+  learned := (h:p_ay (changes, world, gold)) h:l_earn d_isclose 6 s_elect row
   open := d_isclose 7 s_elect row
   "open" m_atch open ? learned md:s_et (way, 1)
   "barred" m_atch open ? learned md:s_et (way, -1)
@@ -188,21 +267,27 @@ h:l_earn := { changes learn ->
   0 = t_ally learn ? changes
   changes md:s_et (learn, 1)
 }
-## The i-th answer shown said: the reply, what it does, and the node
-## (or end) it leads to.
+## The i-th answer shown said, a step of the machine: the character's
+## strategy reacts to it (sg:r_eact: the measures moved, the reply and
+## where the talk goes, chosen among the written ones); then what it
+## does to the world (the gold paid at the price asked as it was
+## said), and the talk at the node (or end) chosen.
 h:s_ay := { s i ->
-  (stage, tree, start, changes, at, words) := s
-  (ids, _, aids, answers, way, _, _, _) := tree
-  row := (i s_elect h:s_hown s) s_elect answers
-  next := e_nclose d_isclose 3 s_elect row
-  done := h:d_oes (changes, h:n_ow s, row, way)
-  said := (d_isclose 1 s_elect row, d_isclose 2 s_elect row)
-  end := h:ends i_ndexOf next
-  end <= 3 ? (stage, tree, start, done, (f_irst at) c_at 1 c_at end c_at 0, said)
-  (stage, tree, start, done, (ids i_ndexOf next) c_at 1 0 0, said)
+  (stage, tree, start, changes, at, words, mind) := s
+  (ids, _, _, answers, way, _, _, _, strategy, tags, _, _, _) := tree
+  names := sg:n_ames strategy
+  a := i s_elect h:s_hown s
+  row := a s_elect answers
+  written := d_isclose 3 s_elect row
+  (moved, reply, next) := (strategy, mind) sg:r_eact (d_isclose a s_elect tags, written, d_isclose 2 s_elect row, n_ot (e_nclose written) m_ember? h:ends)
+  done := h:d_oes (changes, h:n_ow s, row, way, (names, mind) h:g_old d_isclose 4 s_elect row)
+  said := ((names, mind) h:f_ill d_isclose 1 s_elect row, (names, moved) h:f_ill reply)
+  end := h:ends i_ndexOf e_nclose next
+  end <= 3 ? (stage, tree, start, done, (f_irst at) c_at 1 c_at end c_at 0, said, moved)
+  (stage, tree, start, done, (ids i_ndexOf e_nclose next) c_at 1 0 0, said, moved)
 }
 ## The answer chosen moved to another.
-h:m_ove := { (stage, tree, start, changes, at, words) k -> (stage, tree, start, changes, (f_irst at) c_at k c_at 2 d_rop at, words) }
+h:m_ove := { (stage, tree, start, changes, at, words, mind) k -> (stage, tree, start, changes, (f_irst at) c_at k c_at 2 d_rop at, words, mind) }
 ## Which answer a click is on (by the picture's rows), or 0.
 h:r_ow := { (n, xy) ->
   (x, y) := (f_irst xy, 2 s_elect xy)
@@ -210,13 +295,13 @@ h:r_ow := { (n, xy) ->
   (x < 60.0) | (x > 1140.0) | (k < 1) | k > n ? 0
   k
 }
-# :: (Any a, Any b, Any c, Any d) => (a, (Box Char, Box Char, Box Char, Box Char, Char, b, c, d), (Box Char, Int), (Box Char, Int), Int, (Char, Char)) -> (Char, Float, Char) -> (a, (Box Char, Box Char, Box Char, Box Char, Char, b, c, d), (Box Char, Int), (Box Char, Int), Int, (Char, Char))
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h) => (a, (Box Char, Box Char, Box Char, Box Char, Char, b, c, d, (Box Char, e, Int, Int, f, Int, (Int, Int, Box Char, Box Char)), Box Int, Int, g, h), (Box Char, Int), (Box Char, Int), Int, (Char, Char), Int) -> (Char, Float, Char) -> (a, (Box Char, Box Char, Box Char, Box Char, Char, b, c, d, (Box Char, e, Int, Int, f, Int, (Int, Int, Box Char, Box Char)), Box Int, Int, g, h), (Box Char, Int), (Box Char, Int), Int, (Char, Char), Int)
 ## The state after an event: once ended, any key or click goes on;
 ## else a number, the arrows and Enter or space, or a click, choose
 ## and say an answer.
 l:s_tep := { s e ->
-  (stage, tree, start, changes, at, words) := s
-  0 < 3 s_elect at ? (stage, tree, start, changes, (3 t_ake at) c_at 1, words)
+  (stage, tree, start, changes, at, words, mind) := s
+  0 < 3 s_elect at ? (stage, tree, start, changes, (3 t_ake at) c_at 1, words, mind)
   n := t_ally h:s_hown s
   chosen := 2 s_elect at
   e sm:i_s "click" ? h:c_licked (s, h:r_ow (n, 2 t_ake sm:n_umbers e))
@@ -235,50 +320,59 @@ h:c_licked := { (s, k) -> k = 0 ? s; s h:s_ay k }
 ## keys (the loop takes those, as no key here is named), nor its
 ## choose 4 and choose 5.
 l:l_egal := { s -> "key KEY" "click X Y" }
-# :: (Any a, Any b, Any c, Any d, Any e) => (a, b, c, d, Int, e) -> Int
+# :: (Any a, Any b, Any c, Any d, Any e, Any f) => (a, b, c, d, Int, e, f) -> Int
 ## How it stands: its end once seen; playing until then.
-l:s_tatus := { (_, _, _, _, at, _) -> 0 < 4 s_elect at ? 3 s_elect at; md:playing }
+l:s_tatus := { (_, _, _, _, at, _, _) -> 0 < 4 s_elect at ? 3 s_elect at; md:playing }
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i, Any j, Any k, Any l, Any m, Any n, Any o, Any p, Any q, Any r, Any s, Any t, Any u, Any v, Any w, Any x, Any y) => (a, (b, c, d, e, f, g, h, i, (j, k, l, m, n, o, p), q, r, s, t), u, v, w, x, y) -> (j, y)
+## The character's measures now, by name: (names, values).
+l:m_ind := { (_, tree, _, _, _, _, mind) ->
+  (_, _, _, _, _, _, _, _, strategy, _, _, _, _) := tree
+  (sg:n_ames strategy, mind)
+}
 
 ### The picture
 
 ## What the character says now: the reply to your answer, then (unless
 ## it has ended) what is said at the node; a line each.
 h:l_ines := { s ->
-  (_, tree, _, _, at, words) := s
-  (_, nodes, _, _, _, _, _, _) := tree
+  (_, tree, _, _, at, words, mind) := s
+  (_, nodes, _, _, _, _, _, _, strategy, _, _, _, _) := tree
   (_, reply) := words
   heard := (0 < t_ally reply) r_eplicate "|" st:s_plit reply
   0 < 3 s_elect at ? heard
-  heard c_at "|" st:s_plit d_isclose 1 s_elect (f_irst at) s_elect nodes
+  heard c_at "|" st:s_plit (sg:n_ames strategy, mind) h:f_ill d_isclose 1 s_elect (f_irst at) s_elect nodes
 }
 ## The answers to choose from now, as said (none once it has ended).
 h:c_hoices := { s ->
-  (_, tree, _, _, at, _) := s
-  (_, _, _, answers, _, _, _, _) := tree
+  (_, tree, _, _, at, _, mind) := s
+  (_, _, _, answers, _, _, _, _, strategy, _, _, _, _) := tree
   0 < 3 s_elect at ? 0 t_ake e_nclose ""
-  '{ a -> e_nclose d_isclose 1 s_elect a s_elect answers } e_ach h:s_hown s
+  '{ a -> e_nclose (sg:n_ames strategy, mind) h:f_ill d_isclose 1 s_elect a s_elect answers } e_ach h:s_hown s
 }
 ## What is said at the end, or the empty text.
-h:e_nding := { (_, tree, _, _, at, _) ->
-  (_, _, _, _, _, _, _, ends) := tree
+h:e_nding := { (_, tree, _, _, at, _, _) ->
+  (_, _, _, _, _, _, _, ends, _, _, _, _, _) := tree
   0 = 3 s_elect at ? ""
   d_isclose (3 s_elect at) s_elect ends
 }
-## The character's portrait: a troll's head and shoulders, mossy, with
-## tusks, his eyes red when you have lost.
-h:t_roll := { lost ->
-  eye := d_isclose (1 + lost) s_elect "#f2c14e" "#e0503c"
+## The character's portrait in its frame: the painting the file names
+## (for the bridge troll, art/bridge-troll.webp, the user's own painting
+## docs/images/bridge-troll.webp: Grubb full length with his staff, on a
+## transparent ground), standing at the frame's foot; tinted red when
+## he is cross (at a node the file names cross, as angry) or you have
+## lost.
+h:p_ortrait := { (href, red) ->
   frame := "<rect x=\"60\" y=\"90\" width=\"330\" height=\"380\" rx=\"14\" fill=\"#1a1c26\" stroke=\"#c9a66b\" stroke-width=\"3\"/>"
-  body := "<ellipse cx=\"225\" cy=\"500\" rx=\"150\" ry=\"90\" fill=\"#55633f\"/><path d=\"M75 508 Q225 420 375 508 Z\" fill=\"#3f4a2e\"/>"
-  ears := "<ellipse cx=\"118\" cy=\"285\" rx=\"30\" ry=\"48\" fill=\"#6e7d4e\" stroke=\"#2a2418\" stroke-width=\"3\"/><ellipse cx=\"332\" cy=\"285\" rx=\"30\" ry=\"48\" fill=\"#6e7d4e\" stroke=\"#2a2418\" stroke-width=\"3\"/>"
-  head := "<ellipse cx=\"225\" cy=\"300\" rx=\"108\" ry=\"118\" fill=\"#7d8c5a\" stroke=\"#2a2418\" stroke-width=\"4\"/>"
-  moss := t:j_oin '{ k -> e_nclose "<circle cx=\"" c_at (f_ormat 140 + 34 * k - 1) c_at "\" cy=\"" c_at (f_ormat k s_elect 200 188 182 186 196 208) c_at "\" r=\"26\" fill=\"#4c6b2f\"/>" } e_ach r_ange 6
-  brow := "<path d=\"M160 262 Q192 244 214 266 M236 266 Q258 244 290 262\" stroke=\"#2a2418\" stroke-width=\"9\" fill=\"none\" stroke-linecap=\"round\"/>"
-  eyes := "<circle cx=\"192\" cy=\"284\" r=\"11\" fill=\"" c_at eye c_at "\"/><circle cx=\"258\" cy=\"284\" r=\"11\" fill=\"" c_at eye c_at "\"/><circle cx=\"194\" cy=\"286\" r=\"5\" fill=\"#1a1208\"/><circle cx=\"256\" cy=\"286\" r=\"5\" fill=\"#1a1208\"/>"
-  nose := "<ellipse cx=\"225\" cy=\"330\" rx=\"32\" ry=\"38\" fill=\"#8f9e66\" stroke=\"#2a2418\" stroke-width=\"3\"/><circle cx=\"249\" cy=\"318\" r=\"6\" fill=\"#6b5a2e\"/>"
-  mouth := "<path d=\"M165 382 Q225 410 285 382\" stroke=\"#2a2418\" stroke-width=\"6\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M186 389 L195 356 L204 393 Z M246 393 L255 356 L264 389 Z\" fill=\"#f2ead8\" stroke=\"#2a2418\" stroke-width=\"2\"/>"
-  clip := "<clipPath id=\"portrait\"><rect x=\"60\" y=\"90\" width=\"330\" height=\"380\" rx=\"14\"/></clipPath><g clip-path=\"url(#portrait)\"><g transform=\"translate(0 -30)\">"
-  frame c_at clip c_at body c_at ears c_at head c_at moss c_at brow c_at eyes c_at nose c_at mouth c_at "</g></g>"
+  clip := "<clipPath id=\"portrait\"><rect x=\"60\" y=\"90\" width=\"330\" height=\"380\" rx=\"14\"/></clipPath><g clip-path=\"url(#portrait)\">"
+  image := (0 < t_ally href) r_eplicate "<image class=\"portrait\" href=\"" c_at href c_at "\" x=\"60\" y=\"96\" width=\"330\" height=\"374\" preserveAspectRatio=\"xMidYMax meet\"/>"
+  tint := (0 < red) r_eplicate "<rect class=\"cross\" x=\"60\" y=\"90\" width=\"330\" height=\"380\" fill=\"#c0281c\" opacity=\"0.32\"/><rect x=\"62\" y=\"92\" width=\"326\" height=\"376\" rx=\"12\" fill=\"none\" stroke=\"#e0503c\" stroke-width=\"5\"/>"
+  frame c_at clip c_at image c_at tint c_at "</g>"
+}
+## Whether the character is shown cross: at a node the file names
+## cross, or the talk lost.
+h:c_ross := { (_, tree, _, _, at, _, _) ->
+  (ids, _, _, _, _, _, _, _, _, _, _, _, cross) := tree
+  (2 = 3 s_elect at) | (e_nclose d_isclose (f_irst at) s_elect ids) m_ember? cross
 }
 ## A text written at a place, in a size and color.
 h:w_ords := { (x, y, size, color) text -> "<text x=\"" c_at (f_ormat x) c_at "\" y=\"" c_at (f_ormat y) c_at "\" font-size=\"" c_at (f_ormat size) c_at "\" fill=\"" c_at color c_at "\">" c_at text c_at "</text>" }
@@ -295,8 +389,8 @@ h:c_hoice := { (choices, chosen) k ->
 ## (or, at the end, what is said, and how to go on); how to answer at
 ## the foot.
 h:p_icture := { s ->
-  (_, tree, _, _, at, words) := s
-  (_, _, _, _, _, _, title, _) := tree
+  (_, tree, _, _, at, words, _) := s
+  (_, _, _, _, _, _, title, _, _, _, _, portrait, _) := tree
   (you, _) := words
   lines := h:l_ines s
   choices := h:c_hoices s
@@ -310,13 +404,13 @@ h:p_icture := { s ->
   ended := (0 < t_ally ending) r_eplicate ((90, 575, 26, "#f2c14e") h:w_ords ending) c_at (90, 630, 22, "#c9b98f") h:w_ords "Any key or a click: go on."
   foot := (60, 780, 20, "#a8a08a") h:w_ords "1 to " c_at (f_ormat t_ally choices) c_at ", Up Down and Enter, or a click: answer. Esc: walk away."
   footed := (0 = t_ally ending) r_eplicate foot
-  back c_at (h:t_roll 2 = 3 s_elect at) c_at name c_at head c_at yours c_at said c_at rows c_at ended c_at footed c_at "</svg>"
+  back c_at (h:p_ortrait (portrait, h:c_ross s)) c_at name c_at head c_at yours c_at said c_at rows c_at ended c_at footed c_at "</svg>"
 }
 ## The talk in words: the title, your last words, the character's, and
 ## the answers (the chosen one marked), or the end.
 h:c_aption := { s ->
-  (_, tree, _, _, at, words) := s
-  (_, _, _, _, _, _, title, _) := tree
+  (_, tree, _, _, at, words, _) := s
+  (_, _, _, _, _, _, title, _, _, _, _, _, _) := tree
   (you, _) := words
   choices := h:c_hoices s
   ending := h:e_nding s
@@ -326,20 +420,20 @@ h:c_aption := { s ->
   0 < t_ally ending ? title c_at "." c_at yours c_at said c_at "\n" c_at ending c_at " Any key: go on."
   title c_at "." c_at yours c_at said c_at rows
 }
-# :: (Any a, Any b, Any c, Any d) => (a, (b, Box Char, Box Char, Box Char, c, d, Char, Box Char), (Box Char, Int), (Box Char, Int), Int, (Char, Char)) -> (a, Box Char, Box Char, Float, Char)
+# :: (Any a, Eq b, Any c, Any d, Any e, Any f, Any g, Any h, Any i, Any j, Any k) => (a, (Box b, Box Char, Box Char, Box Char, c, d, Char, Box Char, (Box Char, e, f, g, h, i, j), k, Int, Char, Box b), (Box Char, Int), (Box Char, Int), Int, (Char, Char), Int) -> (a, Box Char, Box Char, Float, Char)
 ## What to show: the talk's picture, and the same in words.
 l:v_iew := { s ->
-  (stage, _, _, _, _, _) := s
+  (stage, _, _, _, _, _, _) := s
   vw:d_rawn (stage, h:p_icture s, h:c_aption s)
 }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i, Any j, Any k) => (a, (b, c, d, e, f, Int, g, h), i, j, Int, k) -> (Int, j, (Box Char, Int))
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i, Any j, Any k, Any l, Any m, Any n, Any o, Any p, Any q) => (a, (b, c, d, e, f, Int, g, h, i, j, k, l, m), n, o, Int, p, q) -> (Int, o, (Box Char, Int))
 ## How it ended, what it changed in the world (the gold paid, the facts
 ## learned, the way), however it ended; won, it brings the experience
 ## the file says. Left (Esc) before an end, it is left, what it changed
 ## kept.
 l:o_utcome := { s ->
-  (_, tree, _, changes, _, _) := s
-  (_, _, _, _, _, xp, _, _) := tree
+  (_, tree, _, changes, _, _, _) := s
+  (_, _, _, _, _, xp, _, _, _, _, _, _, _) := tree
   status := l:s_tatus s
   status = md:playing ? (md:left, changes, md:nothing)
   n_ot status = md:won ? (status, changes, md:nothing)

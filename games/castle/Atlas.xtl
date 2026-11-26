@@ -99,9 +99,13 @@ h:c_aption := { s ->
   (0 = t_ally todo) | 0 < 3 s_elect n ? first c_at "\nClick a place to go there."
   first c_at "\nTo do: " c_at list c_at ". Click one."
 }
-## What a name of the world state asks for, in words.
-h:w_ords := { name ->
+## What the names of the world state a venue needs ask for, in words,
+## an "and" between.
+h:w_ords := { names -> " and " st:j_oin '{ w -> e_nclose h:w_ord d_isclose w } e_ach st:w_ords names }
+## What one name of the world state asks for, in words.
+h:w_ord := { name ->
   name m_atch "fact.bridge-held" ? "the bridge held (win a Defend the Bridge level)"
+  name m_atch "fact.troll-way" ? "the bridge troll got past (pay him, or answer him)"
   name m_atch "resource.gold" ? "gold in the world"
   name
 }

@@ -400,9 +400,9 @@ Ann the Soldier (they). Up and Down choose a line; Left and Right change it; Ent
 Ann the Soldier (they). Level 1. Experience 0, gold 0. Play
 Defend or attack?. Choose your side for this game. Defend the castle: build towers, hold the walls
 How hard?. Your settings say Normal. Normal: as the game is meant
-Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Bridge troll: locked, win 3 or 4 first. 6 Long bridge: locked, win 4 or 5 first. 7 The city: locked, win 5 or 6 first. 8 Gate maze: locked, win 6 or 7 first. 9 The dungeon: locked, win 7 or 8 first. 10 Second maze: locked, win 8 or 9 first. 11 Treasury: locked, win 9 or 10 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
-Help. The road of levels for your side, in order: the first two are open, and each next one opens when one of the two before it is won. Arrows: choose. Enter, space, its number or a click on it: go there. B, Backspace or Esc: back. Menu bar: H home, D hall of deeds, S settings, ? help, Q leave (or click it). Any key or a click closes this.
-Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Bridge troll: locked, win 3 or 4 first. 6 Long bridge: locked, win 4 or 5 first. 7 The city: locked, win 5 or 6 first. 8 Gate maze: locked, win 6 or 7 first. 9 The dungeon: locked, win 7 or 8 first. 10 Second maze: locked, win 8 or 9 first. 11 Treasury: locked, win 9 or 10 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
+Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Bridge troll: locked, win 3 or 4 first. 6 Long bridge: locked, pass the troll first. 7 The city: locked, win 5 or 6 first. 8 Gate maze: locked, win 6 or 7 first. 9 The dungeon: locked, win 7 or 8 first. 10 Second maze: locked, win 8 or 9 first. 11 Treasury: locked, win 9 or 10 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
+Help. The road of levels for your side, in order: the first two are open, and each next one opens when one of the two before it is won; a locked one says what else it needs (the long bridge: the bridge troll). Arrows: choose. Enter, space, its number or a click on it: go there. B, Backspace or Esc: back. Menu bar: H home, D hall of deeds, S settings, ? help, Q leave (or click it). Any key or a click closes this.
+Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Bridge troll: locked, win 3 or 4 first. 6 Long bridge: locked, pass the troll first. 7 The city: locked, win 5 or 6 first. 8 Gate maze: locked, win 6 or 7 first. 9 The dungeon: locked, win 7 or 8 first. 10 Second maze: locked, win 8 or 9 first. 11 Treasury: locked, win 9 or 10 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
 ........................
 ........................
 ........................
@@ -419,7 +419,7 @@ The hall of deeds. Experience 0, gold 0. Quests 0 of 5; achievements 0 of 6.
 [ ] Hold the bridge in summer: Win the first level of Defend the Bridge.
 [ ] Hold the bridge in every season: Win all three levels: summer, snow and the storm.
 [ ] Find the way in: Walk the battlefield on foot to the castle gate.
-[ ] Cross the long bridge: Hold the bridge, then cross to the castle.
+[ ] Cross the long bridge: Hold the bridge, get past its troll, then cross to the castle.
 [ ] Stand in the treasury: Find your way through the gate maze and the dungeon to the castle's gold.
  ?  ? ? ?
  ?  ? ? ?
@@ -432,13 +432,13 @@ Ann the Soldier (he). Level 1. Experience 0, gold 0. Play
 Defend or attack?. Choose your side for this game. Defend the castle: build towers, hold the walls
 How hard?. Your settings say Novice. Novice: you cannot lose, and hints are shown
 How hard?. Your settings say Novice. Normal: as the game is meant
-Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Bridge troll: locked, win 3 or 4 first. 6 Long bridge: locked, win 4 or 5 first. 7 The city: locked, win 5 or 6 first. 8 Gate maze: locked, win 6 or 7 first. 9 The dungeon: locked, win 7 or 8 first. 10 Second maze: locked, win 8 or 9 first. 11 Treasury: locked, win 9 or 10 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
+Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Bridge troll: locked, win 3 or 4 first. 6 Long bridge: locked, pass the troll first. 7 The city: locked, win 5 or 6 first. 8 Gate maze: locked, win 6 or 7 first. 9 The dungeon: locked, win 7 or 8 first. 10 Second maze: locked, win 8 or 9 first. 11 Treasury: locked, win 9 or 10 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
 Settings. Up and Down choose a setting; Left and Right change it. Default difficulty: Novice
 Settings. Up and Down choose a setting; Left and Right change it. Default difficulty: Easy
 Ann the Soldier (he). Level 1. Experience 0, gold 0. Play
 Defend or attack?. Choose your side for this game. Defend the castle: build towers, hold the walls
 How hard?. Your settings say Easy. Easy: fewer and weaker enemies, more gold
 How hard?. Your settings say Easy. Normal: as the game is meant
-Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Bridge troll: locked, win 3 or 4 first. 6 Long bridge: locked, win 4 or 5 first. 7 The city: locked, win 5 or 6 first. 8 Gate maze: locked, win 6 or 7 first. 9 The dungeon: locked, win 7 or 8 first. 10 Second maze: locked, win 8 or 9 first. 11 Treasury: locked, win 9 or 10 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
+Defend the castle. 1 Summer bridge: open, tutorial. 2 Snow bridge: open, easy. 3 Storm bridge: locked, win 1 or 2 first. 4 Hill fort: locked, win 2 or 3 first. 5 Bridge troll: locked, win 3 or 4 first. 6 Long bridge: locked, pass the troll first. 7 The city: locked, win 5 or 6 first. 8 Gate maze: locked, win 6 or 7 first. 9 The dungeon: locked, win 7 or 8 first. 10 Second maze: locked, win 8 or 9 first. 11 Treasury: locked, win 9 or 10 first. Chosen: 1 Summer bridge: open, tutorial. Arrows: choose. Enter, space, a number or a click: go. B or Esc: back. ?: help.
 Who is playing?. Choose a profile, or make a new one. New profile
 A new profile. Type a name (letters and digits), then Enter. Name: _

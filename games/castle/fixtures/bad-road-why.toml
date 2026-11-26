@@ -1,0 +1,23 @@
+# A road file that is wrong (road-check.xtl): the winter camp needs a
+# fact of the world, but says nothing of why it is locked.
+mode = ["roads"]
+title = ["A bad road"]
+zones = ["../../../world/zones.toml"]
+zone = ["realm"]
+castle = ["../castle.toml"]
+defend = ["bridge-1"]
+attack = ["bridge-attack-1", "camp"]
+entry-fields = ["label", "tier", "coming", "needs", "why"]
+
+[defend-level.bridge-1]
+label = "Summer bridge"
+tier = "tutorial"
+
+[attack-level.bridge-attack-1]
+label = "Summer siege"
+tier = "easy"
+
+[attack-level.camp]
+label = "Winter camp"
+tier = "tutorial"
+needs = "fact.camp-found"

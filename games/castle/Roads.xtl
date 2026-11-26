@@ -5,8 +5,12 @@
 ## winding path of numbered circles over a painting. The first two are
 ## open; every next one opens when the one before it is won, or the
 ## one before that (the world's venue.ID.done), so two are always open
-## ahead. An attacker's place with no attack version
-## yet says so, and plays the defender's.
+## ahead; and a level whose entry needs more (needs: a name of the world
+## set above 0, as fact.troll-way, the way past the bridge troll, or an
+## earlier level won) opens only once that is so, and says why while it
+## is locked (why: "locked, pass the troll first"). An
+## attacker's place with no attack version yet says so, and plays the
+## defender's.
 ##
 ## The arrows choose along the road; enter, space, a level's number or
 ## a click on its circle takes it, if it is open (a locked one is only
@@ -38,7 +42,7 @@
 l:mode := "roads"
 # :: Char
 ## How it is used, a line a thing to know.
-l:help := "The road of levels for your side, in order: the first two are open,\nand each next one opens when one of the two before it is won.\nArrows: choose. Enter, space, its number or a click on it: go there.\nB, Backspace or Esc: back.\n" c_at mn:help
+l:help := "The road of levels for your side, in order: the first two are open,\nand each next one opens when one of the two before it is won;\na locked one says what else it needs (the long bridge: the bridge troll).\nArrows: choose. Enter, space, its number or a click on it: go there.\nB, Backspace or Esc: back.\n" c_at mn:help
 
 h:tiers := "tutorial" "easy" "normal" "hard"
 h:f_ail := { (file, field) what -> "bad-scenario" []S_IGNAL file c_at ": " c_at field c_at ": " c_at what }
@@ -72,24 +76,66 @@ h:e_ntries := { (file, name) ->
   coming := '{ x -> "yes" m_atch d_isclose x } e_ach said
   odd := (name, ids, "coming") h:f_irstBad (n_ot coming) & '{ x -> n_ot ("no" m_atch d_isclose x) | 0 = t_ally d_isclose x } e_ach said
   0 < t_ally odd ? (file, odd) h:f_ail "coming is \"yes\" or \"no\""
-  (ids, labels, tiers, 0 + coming, index)
+  needs := '{ k -> (file, name, ids, 4 s_elect_2 t) h:n_eeds k } e_ach r_ange t_ally ids
+  why := 5 s_elect_2 t
+  mute := (name, ids, "why") h:f_irstBad '{ k -> (0 < t_ally d_isclose k s_elect needs) & 0 = t_ally d_isclose k s_elect why } e_ach r_ange t_ally ids
+  0 < t_ally mute ? (file, mute) h:f_ail "a level that needs something says why it is locked (as \"pass the troll\")"
+  (ids, labels, tiers, 0 + coming, index, needs, why)
 }
-# :: (Num a, Any b, Num c, Num d, Truthy d, Num e, Truthy e, Num f, Truthy f) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Int, (Box Char, Box Char, Box Char, d, e, f, Int))
+## A level's needs, checked, as names of the world (a space between): a
+## word with a dot is one already (fact.troll-way); a bare word is an
+## earlier level of the road, won (venue.ID.done).
+h:n_eeds := { (file, name, ids, needs) k ->
+  words := st:w_ords d_isclose k s_elect needs
+  0 = t_ally words ? e_nclose ""
+  at := ids i_ndexOf words
+  bare := '{ w -> 0 = '+ r_/ 0 c_at (f_irst ".") = d_isclose w } e_ach words
+  late := bare & at >= k
+  field := name c_at "." c_at (d_isclose k s_elect ids) c_at ".needs"
+  0 < '+ r_/ 0 c_at late ? (file, field) h:f_ail "\"" c_at (d_isclose f_irst late r_eplicate words) c_at "\" is neither an earlier level of the road nor a name of the world (as fact.troll-way)"
+  named := '{ j -> e_nclose (j s_elect bare) h:w_on d_isclose j s_elect words } e_ach r_ange t_ally words
+  e_nclose " " st:j_oin named
+}
+## A word of a level's needs as a name of the world: a level's id (when
+## bare) is its venue won.
+h:w_on := { bare word -> 0 = bare ? word; "venue." c_at word c_at ".done" }
+## Whether what each level needs is set in the world (every name above
+## 0; a way barred, -1, is not), 1 or 0 each.
+h:m_et := { (world, needs) -> '{ x -> h:a_ll (world, st:w_ords d_isclose x) } e_ach needs }
+## Whether every one of some names is set in the world (none: yes).
+h:a_ll := { (world, names) ->
+  0 = t_ally names ? 0 = 0
+  0 = '+ r_/ 0 c_at '{ w -> 0 >= world md:g_et d_isclose w } e_ach names
+}
+# :: (Num a, Any b, Num c, Num d, Truthy d, Num e, Truthy e, Num f, Truthy f, Num g, Truthy g) => (Char, (Box Char, a), b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), Int, (Box Char, Box Char, Box Char, d, e, f, Int, Box Char, g))
 ## The road of a world, from the file: (stage, numbers, road), the
 ## next level to play chosen (the first open one not done).
 l:n_ew := { (file, world, seed) ->
   side := 1 + 0 + 2 = world md:g_et "session.side"
   name := d_isclose side s_elect "defend" "attack"
-  (ids, labels, tiers, coming, index) := h:e_ntries (file, name)
+  (ids, labels, tiers, coming, index, needs, why) := h:e_ntries (file, name)
   done := 0 + '{ id -> 0 < world md:g_et "venue." c_at (d_isclose id) c_at ".done" } e_ach ids
   k := r_ange t_ally ids
-  open := 0 + (0 < done) | (k <= 2) | (0 < 0 c_at -1 d_rop done) | 0 < 0 0 c_at -2 d_rop done
+  met := 0 + h:m_et (world, needs)
+  near := (k <= 2) | (0 < 0 c_at -1 d_rop done) | 0 < 0 0 c_at -2 d_rop done
+  open := 0 + (0 < done) | near & 0 < met
   next := w_here (0 < open) & 0 = done
-  (md:s_tage file, (f_irst next c_at 1) c_at 0 0 c_at side c_at 0, (ids, labels, tiers, coming, done, open, index))
+  (md:s_tage file, (f_irst next c_at 1) c_at 0 0 c_at side c_at 0, (ids, labels, tiers, coming, done, open, index, why, met))
+}
+# :: Char -> Char
+## What is wrong with a road file, as a message naming the file and the
+## field, or the empty text: the mode's checks, then both roads'.
+l:p_roblem := { file ->
+  wrong := l:mode md:p_roblem file
+  0 < t_ally wrong ? wrong
+  '{ @ -> _ := h:e_ntries (file, "defend"); _ := h:e_ntries (file, "attack"); "" } []T_RAP '{ err ->
+    n_ot "bad-scenario" m_atch []E_CODE err ? []H_ALT err
+    []R_ECOVER []E_MESSAGE err
+  }
 }
 ## The road's open levels, 1 or 0 each.
-h:o_pen := { (_, _, (_, _, _, _, _, open, _)) -> open }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any i) => (a, b, (c, d, e, f, g, h, i)) -> Int
+h:o_pen := { (_, _, (_, _, _, _, _, open, _, _, _)) -> open }
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any i, Any j, Any k) => (a, b, (c, d, e, f, g, h, i, j, k)) -> Int
 ## How many levels the road has.
 l:c_ount := { s -> t_ally h:o_pen s }
 ## The state with the k-th level chosen.
@@ -108,7 +154,7 @@ h:m_ove := { s d ->
   (_, n, _) := s
   s h:c_hoose 1 m_ax (l:c_ount s) m_in d + f_irst n
 }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any i) => (a, b, (c, d, e, f, g, h, i)) -> Int
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any i, Any j, Any k) => (a, b, (c, d, e, f, g, h, i, j, k)) -> Int
 ## Where each level's circle stands in the picture, a row each (x, y):
 ## six to a row, 188 apart, each next row going back the other way, so
 ## the road winds down the picture in order.
@@ -146,7 +192,7 @@ h:c_licked := { s xy ->
   0 < mn:c_lick xy ? s h:m_enu mn:c_lick xy
   s h:c_lick xy
 }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Num g, Any h) => (a, Int, (b, c, d, e, f, g, h)) -> (Char, Float, Char) -> (a, Int, (b, c, d, e, f, g, h))
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Num g, Any h, Any i, Any j) => (a, Int, (b, c, d, e, f, g, h, i, j)) -> (Char, Float, Char) -> (a, Int, (b, c, d, e, f, g, h, i, j))
 ## The state after an event: with the help shown, a key or a click
 ## closes it; the menu bar's items, by a click or a key; the arrows
 ## choose, enter or space takes the chosen level, a number or a click
@@ -177,23 +223,24 @@ l:s_tatus := { (_, n, _) -> 0 < 2 s_elect n ? md:won; 0 < 3 s_elect n ? md:left;
 ## How the k-th level stands, said: done, open (and its tier), or
 ## locked and what opens it.
 h:s_tanding := { s k ->
-  (_, _, (_, _, tiers, _, done, open, _)) := s
+  (_, _, (_, _, tiers, _, done, open, _, why, met)) := s
   0 < k s_elect done ? "done"
   0 < k s_elect open ? "open, " c_at d_isclose k s_elect tiers
+  0 = k s_elect met ? "locked, " c_at (d_isclose k s_elect why) c_at " first"
   @ f_ormat< "locked, win {k - 2} or {k - 1} first"
 }
 ## Whether the k-th level's attack version is coming, said (or nothing).
 h:c_oming := { s k ->
-  (_, _, (_, _, _, coming, _, _, _)) := s
+  (_, _, (_, _, _, coming, _, _, _, _, _)) := s
   0 < k s_elect coming ? ", attack version coming"
   ""
 }
 ## The k-th level's label.
 h:l_abel := { s k ->
-  (_, _, (_, labels, _, _, _, _, _)) := s
+  (_, _, (_, labels, _, _, _, _, _, _, _)) := s
   d_isclose k s_elect labels
 }
-# :: (Any a, Any b, Any c, Num d, Num e, Num f, Any g) => (a, b, (c, Box Char, Box Char, d, e, f, g)) -> Int -> Char
+# :: (Any a, Any b, Any c, Num d, Num e, Num f, Any g, Num h) => (a, b, (c, Box Char, Box Char, d, e, f, g, Box Char, h)) -> Int -> Char
 ## The k-th level's line: its number, label, and how it stands.
 l:l_ine := { s k -> (f_ormat k) c_at " " c_at (s h:l_abel k) c_at ": " c_at (s h:s_tanding k) c_at s h:c_oming k }
 ## The title of the side's road.
@@ -211,7 +258,7 @@ h:t_ext := { (x, y, size, color, middle) words ->
 ## done with a check), its number, its label under it, and how it
 ## stands under that.
 h:l_evel := { s k ->
-  (_, n, (_, _, _, coming, done, open, _)) := s
+  (_, n, (_, _, _, coming, done, open, _, _, _)) := s
   (x, y) := (1 s_elect k s_elect l:c_enters s, 2 s_elect k s_elect l:c_enters s)
   kind := 1 + (k s_elect open) + k s_elect done
   fill := d_isclose kind s_elect "#55524c" "#c9a66b" "#4f7a3a"
@@ -256,7 +303,7 @@ h:p_icture := { s ->
   help := (5 s_elect n) h:i_f mn:o_verlay l:help
   head c_at mn:bar c_at title c_at road c_at levels c_at said c_at how c_at help c_at "</svg>"
 }
-# :: (Any a, Any b, Num c, Any d) => (a, Int, (b, Box Char, Box Char, c, Int, Int, d)) -> (a, Box Char, Box Char, Float, Char)
+# :: (Any a, Any b, Num c, Any d, Num e) => (a, Int, (b, Box Char, Box Char, c, Int, Int, d, Box Char, e)) -> (a, Box Char, Box Char, Float, Char)
 ## What to show: the road's picture, and in words its title, every
 ## level's line, the chosen one and what to do (or the help, when it is
 ## shown).
@@ -266,13 +313,13 @@ l:v_iew := { s ->
   lines := t:j_oin '{ k -> e_nclose (s l:l_ine k) c_at ". " } e_ach r_ange l:c_ount s
   vw:d_rawn (stage, h:p_icture s, (h:t_itle s) c_at ". " c_at lines c_at "Chosen: " c_at (s l:l_ine f_irst n) c_at ". " c_at h:how)
 }
-# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g) => (a, Int, (b, c, d, e, f, g, Int)) -> (Int, (Box Char, Int), (Box Char, Int))
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i) => (a, Int, (b, c, d, e, f, g, Int, h, i)) -> (Int, (Box Char, Int), (Box Char, Int))
 ## A level taken: the campaign goes to its venue (campaign.go, its
 ## number in castle.toml); left, nothing changes, but where the menu
 ## bar sent it (menu.go: 2 the hall of deeds, 3 settings, 4 the
 ## profiles).
 l:o_utcome := { s ->
-  (_, n, (_, _, _, _, _, _, index)) := s
+  (_, n, (_, _, _, _, _, _, index, _, _)) := s
   1 < 3 s_elect n ? (md:left, md:nothing md:s_et ("menu.go", 3 s_elect n), md:nothing)
   n_ot md:won = l:s_tatus s ? (md:left, md:nothing, md:nothing)
   (md:won, md:nothing md:s_et ("campaign.go", (2 s_elect n) s_elect index), md:nothing)

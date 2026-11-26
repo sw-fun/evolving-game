@@ -2,11 +2,15 @@
 ## The bridge troll's talk (Talk.xtl, troll.toml), scripted: every way
 ## through it (the toll paid, the riddle solved, the toll haggled down,
 ## the troll flattered with a poem of his own name) and every way to
-## fail (chased into the river after an insult, or running for it), and
+## fail (thrown in the river after insults, or running for it), and
 ## walking away; answers by number, by the arrows and Enter, and by a
 ## click; the answers the world decides (the toll shown only to one who
-## can pay it, the poem only to one who knows his name); and a talk
-## file that is wrong, which is a message naming the file and the field.
+## can pay it, the poem only to one who knows his name); his strategy
+## (Strategy.xtl): flattery lowering his toll to its floor, insults
+## using up his patience until he is angry, an apology that calms him,
+## a wrong answer to the riddle that makes him willing to haggle, the
+## toll shown in his words; a talk lost had again and won; and talk
+## files that are wrong, each a message naming the file and the field.
 "md:" u_se< "Mode"
 "st:" u_se< "Strings"
 "t:" u_se< "Text"
@@ -19,6 +23,8 @@ u:l_ast := { (_, s) -> s }
 u:t_alk := { (lines, world) -> u:l_ast 'tk:l_egal 'tk:s_tatus 'tk:s_tep md:r_esult (lines, tk:n_ew (file, world, 1)) }
 ## What the talk says after a script: its caption, a line a line.
 u:s_ays := { (lines, world) -> t:l_ines st:l_ines vw:c_aption tk:v_iew u:t_alk (lines, world) }
+## The troll's measures after a script, on one line.
+u:m_ind := { (lines, world) -> p_rint! "measures: " c_at ", " st:j_oin md:l_ines tk:m_ind u:t_alk (lines, world) }
 ## How a script ends: the status, what it changed, what it brought.
 u:e_nd := { (lines, world) ->
   (status, changes, rewards) := tk:o_utcome u:t_alk (lines, world)
@@ -32,9 +38,10 @@ poor := md:nothing
 none := 0 t_ake e_nclose "x"
 
 # The file is right; the events the talk takes (never the sound strip's
-# keys, nor its choose 4 and choose 5).
+# keys, nor its choose 4 and choose 5); his measures at the start.
 t_ally tk:p_roblem file
 tk:l_egal tk:n_ew (file, rich, 1)
+_ := u:m_ind (none, poor)
 
 # Grubb's greeting: with ten gold or more the toll is an answer...
 _ := u:s_ays (none, rich)
@@ -49,10 +56,27 @@ _ := u:e_nd ("key 1" "key space", rich)
 _ := u:s_ays (1 r_eshape e_nclose "key 1", poor)
 _ := u:e_nd ("key 1" "key 2" "key enter", poor)
 
-# Through, by haggling: a wrong answer, the cheaper toll, paid with the
-# eight gold there is.
+# A wrong answer makes him willing to haggle: the haggle is an answer
+# after it, and at the riddle again (not before).
 _ := u:s_ays ("key 1" "key 1", eight)
+_ := u:s_ays ("key 1" "key 1" "key 1", eight)
+_ := u:m_ind ("key 1" "key 1", eight)
+# Through, by haggling: the toll down by two, paid with the eight gold
+# there is.
+_ := u:s_ays ("key 1" "key 1" "key 2", eight)
 _ := u:e_nd ("key 1" "key 1" "key 2" "key 1" "key space", eight)
+
+# Flattery lowers the toll, a gold a time, and his words say it:
+# praising his bridge, then calling it damp (an insult he lets go),
+# the greeting asks nine, and paying pays nine.
+_ := u:s_ays ("key 3" "key 3", rich)
+_ := u:e_nd ("key 3" "key 3" "key 1" "key space", rich)
+# Down to its floor, and no lower: haggled to eight, flattered to seven,
+# to six (his floor, which he says), and again, still six.
+_ := u:s_ays ("key 1" "key 1" "key 2" "key 2", poor)
+_ := u:s_ays ("key 1" "key 1" "key 2" "key 2" "key 2", poor)
+_ := u:s_ays ("key 1" "key 1" "key 2" "key 2" "key 2" "key 2", poor)
+_ := u:m_ind ("key 1" "key 1" "key 2" "key 2" "key 2" "key 2", poor)
 
 # Through, by flattery: not knowing his name, the poem of it is not an
 # answer...
@@ -60,21 +84,35 @@ _ := u:s_ays ("key 2" "key 2", poor)
 # ...asked his name (and about Grandpa, which comes back to it), it is.
 _ := u:s_ays ("key 2" "key 1" "key 1" "key 2", poor)
 _ := u:e_nd ("key 2" "key 1" "key 1" "key 2" "key 1" "key space", poor)
+# Asked about the toll, he says it as it stands (nine: praising his
+# bridge lowered it).
+_ := u:s_ays ("key 2" "key 1" "key 3", poor)
 
-# Failing: an insult (chosen by the arrows and Enter), and then more.
+# Insults use up his patience: the first (chosen by the arrows and
+# Enter) he lets go; the second makes him angry.
 _ := u:s_ays ("key down" "key down" "key enter", poor)
-_ := u:e_nd ("key down" "key down" "key enter" "key 2" "key space", poor)
+_ := u:m_ind (1 r_eshape e_nclose "key 3", poor)
+_ := u:s_ays ("key 3" "key 3", poor)
+_ := u:m_ind ("key 3" "key 3", poor)
+# Angry, an apology calms him: his patience back, the greeting again,
+# and an insult then is let go once more.
+_ := u:s_ays ("key 3" "key 3" "key 1", poor)
+_ := u:m_ind ("key 3" "key 3" "key 1", poor)
+_ := u:s_ays ("key 3" "key 3" "key 1" "key 3", poor)
+
+# Failing: another insult when he is angry.
+_ := u:e_nd ("key 3" "key 3" "key 2" "key space", poor)
+# Failing: running for it when he is angry.
+_ := u:e_nd ("key 3" "key 3" "key 3" "key space", poor)
 # Failing: running for it, after a wrong answer to the riddle.
 _ := u:e_nd ("key 1" "key 3" "key 3" "key space", poor)
-# Failing: running for it when he is angry.
-_ := u:e_nd ("key 3" "key 3" "key space", poor)
 # Walking away when he is angry: left.
-_ := u:e_nd ("key 3" "key 4" "key space", poor)
+_ := u:e_nd ("key 3" "key 3" "key 4" "key space", poor)
 
-# Looping back: sorry for the insult, and the greeting again; and the
-# toll asked about at the riddle, and the greeting again.
-_ := u:s_ays ("key 3" "key 1", poor)
-_ := u:s_ays ("key 1" "key 4", poor)
+# Lost is not for good: with the way barred (-1), the talk is had
+# again, and won, it opens the way.
+_ := u:e_nd ("key 1" "key 2" "key enter", poor md:s_et ("fact.troll-way", -1))
+
 # The arrows go round: Up from the first answer is the last.
 _ := u:s_ays (1 r_eshape e_nclose "key up", poor)
 
@@ -88,6 +126,11 @@ _ := u:s_ays (1 r_eshape e_nclose "click 400 300", poor)
 _ := u:e_nd ("key 2" "key 1" "choose 0 0" "key 1", poor)
 
 # A talk file that is wrong: an answer leading to a node there is not,
-# and a node with one answer.
+# and a node with one answer; an answer of a tag the strategy does not
+# have, a tag moving a measure there is not, and a line showing a
+# measure there is not.
 tk:p_roblem "fixtures/bad-talk-next.toml"
 tk:p_roblem "fixtures/bad-talk-answers.toml"
+tk:p_roblem "fixtures/bad-talk-tag.toml"
+tk:p_roblem "fixtures/bad-talk-measure.toml"
+tk:p_roblem "fixtures/bad-talk-shows.toml"
