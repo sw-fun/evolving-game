@@ -1,0 +1,1 @@
+The bridge troll: a talk mode (Talk.xtl, D24) playing a dialog tree from TOML (troll.toml: 8 nodes, 4 ways through, 3 failures), venue 24 on both roads before the long bridge; written lines, no model yet.

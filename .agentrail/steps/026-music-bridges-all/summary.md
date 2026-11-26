@@ -1,0 +1,1 @@
+Every change of music set is quick: a bridge or the bar-line fade for all 60 set-changing moves (golden), and the sounds a change could need fetched ahead (ready line): battle to map 1.6 s live, a walk to map 2.4 s.
