@@ -1,0 +1,194 @@
+## Strategy: how a character met along the way reacts in a talk
+## (Talk.xtl). A talk is a finite state machine: its state is the node
+## it is at, the character's measures (its patience, the toll it asks
+## ...) and what has been said; an answer said moves it on. The
+## character's strategy is the one function that, given that state and
+## the answer, chooses the reaction (l:r_eact): the measures moved, and
+## the reply and the next node, chosen among the written ones. It never
+## writes words. A decision model (context in, one of the canned
+## choices out) may stand behind the same function later, for every
+## character; the talk would not change.
+##
+## The strategy is data, in the character's file (troll.toml):
+## measures, the ids of its measures, each a table measure.ID of the
+## measure-fields start, least and most (whole numbers: where it starts,
+## and the floor and the ceiling it is kept between); tags, the kinds of
+## answer it knows (flatter, insult, pay ...), each a table tag.ID of
+## the tag-fields moves: how an answer of that kind moves the measures
+## ("toll -1 patience 1", a measure and a whole number, pairs); and
+## rules, in order, each a table rule.ID of the rule-fields tag, when,
+## next and reply: after an answer of that tag ("" any) that leads on
+## to a node, when the condition holds of the measures as moved
+## ("patience <= 0": a measure, one of <= >= < > =, a whole number;
+## "" always), the talk goes to next instead ("" the answer's), and the
+## character says reply instead ("" the answer's). The first rule that
+## holds is the reaction; an answer that ends the talk ends it. A file
+## with no measures has no strategy: the tree alone decides.
+##
+## It is checked when it is read; what is wrong is the error
+## bad-scenario, naming the file and the field.
+##
+## A strategy is (measures, starts, leasts, mosts, tags, moves, rules):
+## the measures' ids and their numbers; the tags' ids and the moves, a
+## row a tag and a column a measure; and the rules, (tags, conditions,
+## nexts, replies): a tag's number (0 any), a condition a row (the
+## measure's number, 0 for always; the comparison's number among <= >=
+## < > =; the number), and the texts.
+## Import: "sg:" u_se< "Strategy"
+
+"md:" u_se< "Mode"
+"st:" u_se< "Strings"
+
+## The comparisons a condition may make, in the order of their numbers.
+h:ops := "<=" ">=" "<" ">" "="
+h:f_ail := { (file, field) what -> "bad-scenario" []S_IGNAL file c_at ": " c_at field c_at ": " c_at what }
+## A table of the file: its rows named by one list, its fields by
+## another (no rows when the list is empty, as rules = []).
+h:t_able := { (file, name, rows, fields) ->
+  0 = t_ally file md:l_ist rows ? (0 c_at t_ally file md:l_ist fields) r_eshape e_nclose ""
+  '{ @ -> ((e_nclose file) c_at e_nclose name) []T_ABLE ((e_nclose rows) c_at e_nclose fields) } []T_RAP '{ err -> "bad-scenario" []S_IGNAL []E_MESSAGE err } }
+## A field's list as the file must have it.
+h:f_ields := { (file, field, want) ->
+  n_ot want m_atch file md:l_ist field ? (file, field) h:f_ail "the fields must be " c_at " " st:j_oin want
+  0
+}
+## A text as a whole number (it may be below 0), or the error for the
+## field.
+h:w_hole := { (file, field) text ->
+  n := '{ @ -> f_loat n_umbers text } []T_RAP '{ err -> []R_ECOVER 0 r_eshape 0.0 }
+  n_ot 1 = t_ally n ? (file, field) h:f_ail "\"" c_at text c_at "\" is not a whole number"
+  n_ot (f_irst n) = f_loat f_loor f_irst n ? (file, field) h:f_ail "\"" c_at text c_at "\" is not a whole number"
+  f_irst f_loor n
+}
+## A measure's number among the measures, or the error for the field.
+h:m_easure := { (file, field, names) word ->
+  k := names i_ndexOf e_nclose word
+  k > t_ally names ? (file, field) h:f_ail "\"" c_at word c_at "\" is no measure (the measures: " c_at (", " st:j_oin names) c_at ")"
+  k
+}
+# :: (Char, Char, Box Char) -> Char -> Int
+## A condition read and checked, as (measure, comparison, number); the
+## empty text is (0, 0, 0), always.
+l:c_ondition := { (file, field, names) text ->
+  words := st:w_ords text
+  0 = t_ally words ? 0 0 0
+  n_ot 3 = t_ally words ? (file, field) h:f_ail "a condition is a measure, one of <= >= < > =, and a whole number (as patience <= 0)"
+  op := h:ops i_ndexOf e_nclose d_isclose 2 s_elect words
+  op > t_ally h:ops ? (file, field) h:f_ail "\"" c_at (d_isclose 2 s_elect words) c_at "\" is not one of <= >= < > ="
+  ((file, field, names) h:m_easure d_isclose f_irst words) c_at op c_at (file, field) h:w_hole d_isclose 3 s_elect words
+}
+# :: Truthy a => Int -> Int -> a
+## Whether a condition holds of the measures (always, with no measure).
+l:h_olds := { measures cond ->
+  (m, op, n) := (f_irst cond, 2 s_elect cond, 3 s_elect cond)
+  m = 0 ? 0 = 0
+  v := m s_elect measures
+  op s_elect (v <= n) c_at (v >= n) c_at (v < n) c_at (v > n) c_at v = n
+}
+## A tag's moves read and checked: a change a measure (0 for most).
+h:m_oves := { (file, names) (id, text) ->
+  field := "tag." c_at id c_at ".moves"
+  words := st:w_ords text
+  n_ot 0 = (t_ally words) m_od 2 ? (file, field) h:f_ail "moves are pairs of a measure and a whole number (as toll -1 patience 1)"
+  k := r_ange f_loor (f_loat t_ally words) / 2.0
+  at := '{ j -> (file, field, names) h:m_easure d_isclose ((2 * j) - 1) s_elect words } e_ach k
+  by := '{ j -> (file, field) h:w_hole d_isclose (2 * j) s_elect words } e_ach k
+  '{ m -> '+ r_/ 0 c_at (at = m) r_eplicate by } e_ach r_ange t_ally names
+}
+## The measures: their ids, and their starts, floors and ceilings, each
+## checked (the floor not above the start, nor the start above the
+## ceiling).
+h:m_easures := { file ->
+  names := file md:l_ist "measures"
+  _ := h:f_ields (file, "measure-fields", "start" "least" "most")
+  t := h:t_able (file, "measure", "measures", "measure-fields")
+  n_umber := { (j, f) -> (file, "measure." c_at (d_isclose j s_elect names) c_at "." c_at d_isclose f s_elect "start" "least" "most") h:w_hole d_isclose f s_elect j s_elect t }
+  k := r_ange t_ally names
+  starts := '{ j -> n_umber (j, 1) } e_ach k
+  leasts := '{ j -> n_umber (j, 2) } e_ach k
+  mosts := '{ j -> n_umber (j, 3) } e_ach k
+  odd := w_here (starts < leasts) | starts > mosts
+  0 < t_ally odd ? (file, "measure." c_at (d_isclose f_irst odd s_elect names) c_at ".start") h:f_ail "the start is between least and most"
+  (names, starts, leasts, mosts)
+}
+## The rules, read and checked against the tags, the measures and the
+## places a talk can go (its nodes and ends).
+h:r_ules := { (file, names, tags, places) ->
+  ids := file md:l_ist "rules"
+  _ := h:f_ields (file, "rule-fields", "tag" "when" "next" "reply")
+  t := h:t_able (file, "rule", "rules", "rule-fields")
+  k := r_ange t_ally ids
+  f_ield := { (j, f) -> "rule." c_at (d_isclose j s_elect ids) c_at "." c_at f }
+  on := '{ j -> (file, f_ield (j, "tag"), tags) h:t_ag d_isclose 1 s_elect j s_elect t } e_ach k
+  when := '{ j -> (file, f_ield (j, "when"), names) l:c_ondition d_isclose 2 s_elect j s_elect t } m_ap k
+  nexts := 3 s_elect_2 t
+  replies := 4 s_elect_2 t
+  far := w_here '{ x -> (0 < t_ally d_isclose x) & n_ot x m_ember? places } e_ach nexts
+  0 < t_ally far ? (file, f_ield (f_irst far, "next")) h:f_ail "no node \"" c_at (d_isclose (f_irst far) s_elect nexts) c_at "\" (a node, or won, lost or left)"
+  idle := w_here '{ j -> (0 = t_ally d_isclose j s_elect nexts) & 0 = t_ally d_isclose j s_elect replies } e_ach k
+  0 < t_ally idle ? (file, "rule." c_at d_isclose (f_irst idle) s_elect ids) h:f_ail "a rule sends the talk elsewhere (next) or says another reply (reply)"
+  (on, h:r_ows (3, when), nexts, replies)
+}
+## Boxed rows, each of n numbers, as a matrix.
+h:r_ows := { (n, rows) -> (r_ange t_ally rows) '{ j m -> m s_elect d_isclose j s_elect rows } t_able r_ange n }
+## A tag's number among the tags (0 for the empty text, any), or the
+## error for the field.
+h:t_ag := { (file, field, tags) word ->
+  0 = t_ally word ? 0
+  k := tags i_ndexOf e_nclose word
+  k > t_ally tags ? (file, field) h:f_ail "no tag \"" c_at word c_at "\" in the strategy"
+  k
+}
+# :: (Char, Box Char) -> (Box Char, Int, Int, Int, Box Char, Int, (Int, Int, Box Char, Box Char))
+## The strategy read from a talk's file and checked; places, the names
+## a rule may send the talk to (its nodes, and won, lost and left).
+l:r_ead := { (file, places) ->
+  n_ot file md:h_as "measures" ? h:n_one
+  (names, starts, leasts, mosts) := h:m_easures file
+  tags := file md:l_ist "tags"
+  _ := h:f_ields (file, "tag-fields", 1 r_eshape e_nclose "moves")
+  t := h:t_able (file, "tag", "tags", "tag-fields")
+  moves := '{ j -> (file, names) h:m_oves (d_isclose j s_elect tags, d_isclose 1 s_elect j s_elect t) } m_ap r_ange t_ally tags
+  (names, starts, leasts, mosts, tags, h:r_ows (t_ally names, moves), h:r_ules (file, names, tags, places))
+}
+## No strategy: no measures, no tags, no rules.
+h:n_one := (0 t_ake e_nclose "", 0 r_eshape 0, 0 r_eshape 0, 0 r_eshape 0, 0 t_ake e_nclose "", (0 0) r_eshape 0, (0 r_eshape 0, (0 3) r_eshape 0, 0 t_ake e_nclose "", 0 t_ake e_nclose ""))
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g) => (a, b, c, d, e, f, g) -> b
+## The measures a talk starts with.
+l:s_tart := { (_, starts, _, _, _, _, _) -> starts }
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g) => (a, b, c, d, e, f, g) -> a
+## The measures' ids.
+l:n_ames := { (names, _, _, _, _, _, _) -> names }
+# :: (Any a, Any b, Any c, Any d, Any e, Any f) => (Char, Char, (a, b, c, d, Box Char, e, f)) -> Char -> Int
+## The tags of an answer read and checked: their numbers among the
+## strategy's tags (the text's words, a space between).
+l:t_ags := { (file, field, strategy) text ->
+  (_, _, _, _, tags, _, _) := strategy
+  '{ w -> (file, field, tags) h:t_ag d_isclose w } e_ach st:w_ords text
+}
+# :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i, Any j) => (a, b, c, d, e, f, (g, h, i, j)) -> j
+## The rules' replies, for the talk to check as it checks every line.
+l:r_eplies := { (_, _, _, _, _, _, (_, _, _, replies)) -> replies }
+# :: (Any a, Any b, Any c, Num e) => ((a, b, Int, Int, c, Int, (Int, Int, Box d, Box d)), Int) -> (Int, d, d, e) -> (Int, d, d)
+## The reaction to an answer: the state is the strategy and the
+## measures; the answer, its tags (their numbers), where it leads, the
+## reply written for it, and 1 if it leads to a node (0 if it ends the
+## talk). The reaction is (measures, reply, next): the measures moved by
+## the answer's tags (kept between their floors and ceilings); then the
+## first rule that holds, of the answer's tags (or any) and of the
+## measures as moved, chooses another next or reply. An answer that ends
+## the talk is never sent elsewhere.
+l:r_eact := { (strategy, measures) (tags, next, reply, on) ->
+  (_, _, leasts, mosts, _, moves, (whom, conds, nexts, replies)) := strategy
+  delta := '{ m -> '+ r_/ 0 c_at tags s_elect m s_elect_2 moves } e_ach r_ange t_ally measures
+  moved := leasts m_ax mosts m_in measures + delta
+  0 = on ? (moved, reply, next)
+  holds := w_here '{ r -> ((0 = r s_elect whom) | (r s_elect whom) m_ember? 0 c_at tags) & moved l:h_olds r s_elect conds } e_ach r_ange t_ally whom
+  0 = t_ally holds ? (moved, reply, next)
+  r := f_irst holds
+  said := d_isclose r s_elect replies
+  goes := d_isclose r s_elect nexts
+  (moved, h:o_r (reply, said), h:o_r (next, goes))
+}
+## A text, or another in its place when that is not empty.
+h:o_r := { (text, other) -> 0 = t_ally other ? text; other }

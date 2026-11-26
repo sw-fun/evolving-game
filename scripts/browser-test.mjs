@@ -439,7 +439,10 @@ if (capture) {
 }
 await page("document.getElementById('leave').click(), 1");
 
-// The long bridge: a card with the bridge painting, then the walk.
+// The long bridge: a card with the bridge painting, then the walk. It
+// needs the bridge held and the way past the bridge troll; the debug
+// profile's map opens every place, so it is walked here without them
+// (the goldens castle.xtl and road-check.xtl prove the gate).
 check(await open("?debug&fresh"), "the map opens for the long bridge");
 await page("window.game.feed('choose 1 9'), 1");
 check((await caption()).startsWith("The long bridge The crossing"), "the long bridge opens with its card");
@@ -469,6 +472,9 @@ await page("window.game.feed('choose 1 24'), 1");
 check(await until("!!document.querySelector('#flat svg#talk')"), "the troll's talk is its own picture");
 check((await caption()).startsWith("The bridge troll Halt! This is Grubb's bridge"), "he greets you and asks his toll");
 check((await caption()).includes("1. I will take the riddle.") && !(await caption()).includes("Ten gold it is"), "the answers are numbered; with no gold, paying is not one of them");
+check(await page("document.querySelector('#flat svg#talk image.portrait')?.getAttribute('href') === 'art/bridge-troll.webp'"), "his portrait is the painting art/bridge-troll.webp");
+check(await page("fetch('art/bridge-troll.webp').then((r) => r.status === 200)"), "which the page serves");
+check(await page("new Promise((ok) => { const i = new Image(); i.onload = () => ok(i.naturalWidth > 0); i.onerror = () => ok(false); i.src = 'art/bridge-troll.webp'; })"), "and which loads as a picture");
 if (capture) {
   await sleep(800);
   const img = await send("Page.captureScreenshot", { format: "png" });

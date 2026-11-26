@@ -378,9 +378,33 @@ defaults drawn from the repositories above.
   leading nowhere, a node with too few answers, a line too long for
   the picture: a message naming the file and the field). It lives in
   the castle until a second game (a walk) opens a talk, then moves to
-  `lib/`. A character's strategy (Characters who talk) chooses its
-  reaction among the tree's written ones; the tree and the strategy
-  are the rules.
+  `lib/`. A talk is a finite state machine (the user, 2026-11-26): its
+  state is the node, what has been said, and the character's measures
+  (Grubb's patience, toll and willingness to haggle); an answer is a
+  step. The character's strategy (`games/castle/Strategy.xtl`, data in
+  the same file) is one function, (state, answer) to reaction: an
+  answer's tags (flatter, insult, pay, riddle-wrong ...) move the
+  measures, kept between a floor and a ceiling; then the first rule
+  that holds (a tag, a condition such as `patience <= 0`) sends the
+  talk to another written node or says another written reply. An
+  answer may be shown only when a condition of the measures holds
+  (`haggle >= 1`), may cost a measure (`gold = "toll"`), and a line may
+  show one (`{toll}`, `{Toll}`: the number in words). The strategy is
+  checked when read (an unknown tag, measure or node: a message naming
+  the file and the field). A decision model (Jev-like or Laya-like:
+  context in, one of the canned choices out) may later stand behind
+  that same function; nothing else would change. Grubb keeps the long
+  bridge (the user, 2026-11-26: "paying or answering to his
+  satisfaction is a pre-req for crossing. Not fighting"): winning his
+  talk sets `fact.troll-way` 1, which the long bridge needs on the map
+  (castle.toml's needs, now names a space between, each above 0, so a
+  way barred, -1, does not count) and on the road (levels.toml's
+  needs and why: a level may need a name of the world or an earlier
+  level won, and says why while locked). Losing bars the way (-1) but
+  not for good: he can be talked to again. There is no fight. His
+  portrait is the user's own painting, `docs/images/bridge-troll.webp`
+  (the file's `portrait`), tinted red at the nodes the file names
+  `cross` and when you have lost.
 
 Designed in Saga 1 and proven in Sagas 2 to 4; every later saga must
 keep them.
@@ -1377,7 +1401,10 @@ satisfaction is needed to cross it; there is no fighting him.
   ask).
 - First: the bridge troll, Grubb, at the long bridge: written lines, a
   tree, then his strategy (greed and pride: flattery lowers the toll,
-  insults use up his patience, a wrong riddle opens haggling).
+  insults use up his patience, a wrong riddle opens haggling). Built
+  (D24): `Talk.xtl` steps the machine, `Strategy.xtl` is the strategy
+  function, `troll.toml` holds both the tree and the strategy, and
+  `talk-check.xtl` proves every ending and every rule.
 
 ## Later
 

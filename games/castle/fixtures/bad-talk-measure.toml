@@ -1,0 +1,52 @@
+# A talk that is wrong (talk-check.xtl): a tag of its strategy moves a
+# measure there is not ("mood").
+mode = ["talk"]
+title = ["A bad talk"]
+zones = ["../../../world/zones.toml"]
+zone = ["realm"]
+way = ["fact.bad-way"]
+reward = ["xp 1"]
+ends = ["Through.", "Barred.", "Left."]
+nodes = ["greet"]
+node-fields = ["says", "answers"]
+answers = ["greet-praise", "greet-leave"]
+answer-fields = ["says", "reply", "next", "gold", "needs", "learn", "way", "tags", "when"]
+measures = ["toll", "patience"]
+measure-fields = ["start", "least", "most"]
+tags = ["flatter", "leave"]
+tag-fields = ["moves"]
+rules = []
+rule-fields = ["tag", "when", "next", "reply"]
+
+[measure.toll]
+start = "5"
+least = "1"
+most = "5"
+
+[measure.patience]
+start = "2"
+least = "0"
+most = "2"
+
+[tag.flatter]
+moves = "toll -1 mood 1"
+
+[tag.leave]
+moves = ""
+
+[node.greet]
+says = "Hello. {Toll} gold."
+answers = "greet-praise greet-leave"
+
+[answer.greet-praise]
+says = "Handsome!"
+reply = "Thank you."
+next = "won"
+way = "open"
+tags = "flatter"
+
+[answer.greet-leave]
+says = "Goodbye."
+reply = "Goodbye."
+next = "left"
+tags = "leave"

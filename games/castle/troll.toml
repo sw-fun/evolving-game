@@ -1,8 +1,11 @@
-# The bridge troll: a talk (Talk.xtl, the mode "talk"), a dialog tree.
-# Grubb keeps the long bridge and wants a toll, or the answer to his
-# riddle, before you cross. Every value is a string, or a list of
-# strings; the talk is checked when it is read, and what is wrong is a
-# message naming this file and the field.
+# The bridge troll: a talk (Talk.xtl, the mode "talk"), a dialog tree
+# and the troll's strategy (Strategy.xtl). Grubb keeps the long bridge
+# and wants a toll, or the answer to his riddle, before you cross:
+# getting past him (paying, the riddle, haggling, or a poem of his own
+# name) sets fact.troll-way, which the long bridge needs. There is no
+# fighting him; a talk lost may be had again. Every value is a string,
+# or a list of strings; the talk is checked when it is read, and what
+# is wrong is a message naming this file and the field.
 mode = ["talk"]
 title = ["The bridge troll"]
 
@@ -12,7 +15,8 @@ zones = ["../../world/zones.toml"]
 zone = ["realm"]
 
 # The name in the world state the way across is kept under: an answer
-# that opens the way sets it to 1, one that bars it to -1.
+# that opens the way sets it to 1, one that bars it to -1 (until a
+# later talk is won).
 way = ["fact.troll-way"]
 # What winning brings (experience), besides what the answers did.
 reward = ["xp 5"]
@@ -23,34 +27,121 @@ ends = ["Grubb waves you over his bridge. The way is open.", "You climb out of t
 # The nodes, the first where the talk starts. A node: what the
 # character says (a | between lines, each 60 characters at most), and
 # its answers (2 to 4 ids of answers below, a space between; at least
-# one with no needs and no gold, so there is always one to give).
+# one with no needs, no gold and no condition, so there is always one
+# to give). A line may show a measure of his: {toll} is the toll in
+# words, {Toll} the same capitalized.
 nodes = ["greet", "riddle", "again", "haggle", "praise", "name", "poem", "angry"]
+# His portrait (art/NAME, served from docs/images: the user's own
+# painting docs/images/bridge-troll.webp), and the nodes where he is
+# shown cross (tinted red, as when you have lost).
+portrait = ["art/bridge-troll.webp"]
+cross = ["angry"]
 node-fields = ["says", "answers"]
 
 # The answers. An answer: what you say (72 characters at most); the
 # character's reply (a | between lines); next, the node it leads to, or
 # an end: won, lost or left; and what it does to the world: gold, paid
-# (shown only to one who has that much); needs, a name the world must
-# have set for it to be shown; learn, a fact it sets; way, "open" or
-# "barred".
-answers = ["greet-pay", "greet-riddle", "greet-praise", "greet-insult", "riddle-cat", "riddle-bridge", "riddle-you", "riddle-toll", "again-retry", "again-haggle", "again-run", "haggle-pay", "haggle-none", "haggle-plank", "praise-who", "praise-poem", "praise-damp", "name-grandpa", "name-poem", "name-toll", "poem-name", "poem-pay", "poem-roses", "poem-riddle", "angry-sorry", "angry-mushroom", "angry-run", "angry-leave"]
-answer-fields = ["says", "reply", "next", "gold", "needs", "learn", "way"]
+# (a number, or a measure: "toll", the toll as it stands; shown only to
+# one who has that much); needs, a name the world must have set for it
+# to be shown; learn, a fact it sets; way, "open" or "barred"; tags,
+# the kinds of answer it is, as the strategy knows them (a space
+# between); when, a condition of his measures for it to be shown.
+answers = ["greet-pay", "greet-riddle", "greet-praise", "greet-insult", "riddle-cat", "riddle-bridge", "riddle-you", "riddle-haggle", "again-retry", "again-haggle", "again-run", "haggle-pay", "haggle-none", "haggle-flatter", "haggle-plank", "praise-who", "praise-poem", "praise-damp", "name-grandpa", "name-poem", "name-toll", "poem-name", "poem-pay", "poem-roses", "poem-riddle", "angry-sorry", "angry-mushroom", "angry-run", "angry-leave"]
+answer-fields = ["says", "reply", "next", "gold", "needs", "learn", "way", "tags", "when"]
+
+# Grubb's strategy: greed and pride. His measures: patience (how many
+# insults he lets go), toll (what he asks: flattery lowers it, and
+# haggling, but never below six) and haggle (1 once a wrong answer to
+# his riddle has made him willing to haggle). Each tag (a kind of
+# answer) moves them: a measure and a whole number, pairs. The rules,
+# in order, then send the talk elsewhere or say another reply, when
+# their condition holds of the measures as moved; the first that holds
+# is his reaction (an answer that ends the talk ends it).
+measures = ["patience", "toll", "haggle"]
+measure-fields = ["start", "least", "most"]
+tags = ["pay", "ask", "ask-name", "flatter", "insult", "apologize", "riddle-right", "riddle-wrong", "haggle", "poem", "run", "leave"]
+tag-fields = ["moves"]
+rules = ["angry", "floor"]
+rule-fields = ["tag", "when", "next", "reply"]
+
+[measure.patience]
+start = "2"
+least = "0"
+most = "2"
+
+[measure.toll]
+start = "10"
+least = "6"
+most = "10"
+
+[measure.haggle]
+start = "0"
+least = "0"
+most = "1"
+
+[tag.pay]
+moves = ""
+
+[tag.ask]
+moves = ""
+
+[tag.ask-name]
+moves = ""
+
+[tag.flatter]
+moves = "toll -1"
+
+[tag.insult]
+moves = "patience -1"
+
+[tag.apologize]
+moves = "patience 2"
+
+[tag.riddle-right]
+moves = ""
+
+[tag.riddle-wrong]
+moves = "haggle 1"
+
+[tag.haggle]
+moves = "toll -2"
+
+[tag.poem]
+moves = ""
+
+[tag.run]
+moves = ""
+
+[tag.leave]
+moves = ""
+
+# Out of patience, an insult makes him angry: apologize, or go.
+[rule.angry]
+tag = "insult"
+when = "patience <= 0"
+next = "angry"
+
+# Flattered down to his floor, he says so (and goes where it led).
+[rule.floor]
+tag = "flatter"
+when = "toll <= 6"
+reply = "Grubb is flattered. But {toll} gold is|as low as Grubb goes, however handsome."
 
 [node.greet]
-says = "Halt! This is Grubb's bridge, and Grubb wants his toll.|Ten gold, or the answer to Grubb's riddle.|Grubb is not fussy which."
+says = "Halt! This is Grubb's bridge, and Grubb wants his toll.|{Toll} gold, or the answer to Grubb's riddle.|Grubb is not fussy which."
 answers = "greet-pay greet-riddle greet-praise greet-insult"
 
 [node.riddle]
 says = "I have a back but no belly. I am crossed but never cross.|I sleep over water every night. What am I?"
-answers = "riddle-cat riddle-bridge riddle-you riddle-toll"
+answers = "riddle-cat riddle-bridge riddle-you riddle-haggle"
 
 [node.again]
 says = "Grubb gives another go, because Grubb is generous.|Or Grubb takes the toll. Grubb is flexible."
 answers = "again-retry again-haggle again-run"
 
 [node.haggle]
-says = "For you, a special price: eight gold.|Do not tell the goats. The goats pay full."
-answers = "haggle-pay haggle-none haggle-plank"
+says = "For you, a special price: {toll} gold.|Do not tell the goats. The goats pay full."
+answers = "haggle-pay haggle-none haggle-flatter haggle-plank"
 
 [node.praise]
 says = "Three hundred years Grubb has kept this bridge,|and nobody ever says one nice thing about it."
@@ -69,31 +160,36 @@ says = "Grubb has thrown travelers in the river for less!|Say sorry, or say good
 answers = "angry-sorry angry-mushroom angry-run angry-leave"
 
 [answer.greet-pay]
-says = "Ten gold it is. Here."
+says = "{Toll} gold it is. Here."
 reply = "Grubb bites every coin. Twice.|Fine. Cross, and wipe your boots on the way."
 next = "won"
-gold = "10"
+gold = "toll"
 way = "open"
+tags = "pay"
 
 [answer.greet-riddle]
 says = "I will take the riddle."
 reply = "Ooh. Grubb loves a riddle. Grubb made this one himself."
 next = "riddle"
+tags = "ask"
 
 [answer.greet-praise]
 says = "Before that: what a magnificent bridge!"
 reply = "...It is, isn't it?"
 next = "praise"
+tags = "flatter"
 
 [answer.greet-insult]
 says = "Out of my way, you overgrown turnip."
-reply = "TURNIP?"
-next = "angry"
+reply = "TURNIP? Grubb lets that go. Once."
+next = "greet"
+tags = "insult"
 
 [answer.riddle-cat]
 says = "A sleepy cat."
 reply = "Cats hate water. Wrong!"
 next = "again"
+tags = "riddle-wrong"
 
 [answer.riddle-bridge]
 says = "A bridge."
@@ -101,80 +197,103 @@ reply = "Grr. Right. Nobody ever gets it right.|Grubb will need a harder riddle.
 next = "won"
 learn = "fact.troll-riddle"
 way = "open"
+tags = "riddle-right"
 
 [answer.riddle-you]
 says = "You, on a good day."
 reply = "Grubb is never crossed on a good day.|Wrong, but funny."
 next = "again"
+tags = "riddle-wrong"
 
-[answer.riddle-toll]
-says = "Wait, how much was the toll again?"
-reply = "Ten gold. Grubb said it slowly the first time."
-next = "greet"
+[answer.riddle-haggle]
+says = "Forget the riddle. Will you take less gold?"
+reply = "Less? Grubb's mother says Grubb is too soft."
+next = "haggle"
+tags = "haggle"
+when = "haggle >= 1"
 
 [answer.again-retry]
 says = "Ask the riddle again."
 reply = "Listen closer this time."
 next = "riddle"
+tags = "ask"
 
 [answer.again-haggle]
 says = "Is there a cheaper toll for a poor traveler?"
 reply = "Cheaper? Grubb's mother says Grubb is too soft."
 next = "haggle"
+tags = "haggle"
+when = "haggle >= 1"
 
 [answer.again-run]
 says = "I will just run past you."
 reply = "Grubb's arm is longer than his bridge.|Splash. Mind the eels."
 next = "lost"
 way = "barred"
+tags = "run"
 
 [answer.haggle-pay]
-says = "Eight it is."
+says = "{Toll} it is."
 reply = "Pleasure doing business.|Cross quick, before Grubb changes his mind."
 next = "won"
-gold = "8"
+gold = "toll"
 way = "open"
+tags = "pay"
 
 [answer.haggle-none]
-says = "I do not have eight gold."
+says = "I do not have {toll} gold."
 reply = "Then you have a riddle to answer."
 next = "riddle"
+tags = "ask"
+
+[answer.haggle-flatter]
+says = "Surely a troll so handsome can do better than that?"
+reply = "Grubb is handsome. Fine: {toll}."
+next = "haggle"
+tags = "flatter"
 
 [answer.haggle-plank]
-says = "Eight gold for a damp plank? Thief!"
-reply = "DAMP PLANK?"
-next = "angry"
+says = "{Toll} gold for a damp plank? Thief!"
+reply = "DAMP PLANK? Mind your tongue."
+next = "haggle"
+tags = "insult"
 
 [answer.praise-who]
 says = "Who are you, keeper?"
 reply = "Grubb Stonebelly, of the under-bridge Stonebellies."
 next = "name"
 learn = "fact.troll-name"
+tags = "ask-name"
 
 [answer.praise-poem]
 says = "It deserves a poem. May I?"
 reply = "A poem! For Grubb's bridge! Go on, go on."
 next = "poem"
+tags = "flatter"
 
 [answer.praise-damp]
 says = "It is a little damp, though."
 reply = "DAMP? It is a RIVER bridge!"
 next = "greet"
+tags = "insult"
 
 [answer.name-grandpa]
 says = "What happened to Grandpa?"
 reply = "He slipped. Fords are slippery. That is why bridges."
 next = "name"
+tags = "ask"
 
 [answer.name-poem]
 says = "Grubb Stonebelly deserves a poem."
 reply = "Grubb does! Go on, go on."
 next = "poem"
+tags = "flatter"
 
 [answer.name-toll]
 says = "So, about this toll."
-reply = "Ah. Yes. The toll."
+reply = "Ah. Yes. The toll. {Toll} gold."
 next = "greet"
+tags = "ask"
 
 [answer.poem-name]
 says = "Grubb Stonebelly, broad and bold, keeps the finest bridge of old!"
@@ -182,40 +301,48 @@ reply = "Grubb... is weeping. Nobody ever rhymed Grubb before.|Cross, friend. Cr
 next = "won"
 needs = "fact.troll-name"
 way = "open"
+tags = "poem"
 
 [answer.poem-pay]
 says = "Oh bridge of stone, so fine, so wide, I'd pay to see the other side."
 reply = "Pay? Grubb liked it until pay.|Now Grubb remembers the toll."
 next = "greet"
+tags = "poem"
 
 [answer.poem-roses]
 says = "Roses are red, the river is gray, please let me cross, I'm on my way."
 reply = "That one is about you, not the bridge. Again."
 next = "poem"
+tags = "poem"
 
 [answer.poem-riddle]
 says = "I am no poet. Ask me your riddle."
 reply = "Riddles Grubb can do."
 next = "riddle"
+tags = "ask"
 
 [answer.angry-sorry]
 says = "Sorry. That was rude of me, and you are very handsome."
 reply = "...Grubb will allow it."
 next = "greet"
+tags = "apologize"
 
 [answer.angry-mushroom]
 says = "Make me, mushroom."
 reply = "Grubb picks you up by the boots and drops you in.|Splash."
 next = "lost"
 way = "barred"
+tags = "insult"
 
 [answer.angry-run]
 says = "Run for the far bank!"
 reply = "You get three steps. Grubb's arm is longer than his bridge.|Splash."
 next = "lost"
 way = "barred"
+tags = "run"
 
 [answer.angry-leave]
 says = "Never mind. I will find another way."
 reply = "There is no other way. That is the point of bridges."
 next = "left"
+tags = "leave"

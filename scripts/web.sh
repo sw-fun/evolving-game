@@ -21,9 +21,10 @@ cp "$from/board.js" "$root/web/ext/"
 cp -R "$from/board" "$root/web/ext/"
 cp -R "$from/vendor/three" "$root/web/ext/vendor/"
 # the art a game shows by name (art/NAME: the paintings in docs/images,
-# the user's own: the bridge, the keep, the treasury)
+# the user's own: the bridge, the keep, the treasury; and the bridge
+# troll's portrait, a .webp with a transparent background)
 rm -rf "$root/web/art"; mkdir -p "$root/web/art"
-cp "$root"/docs/images/*.jpg "$root/web/art/"
+cp "$root"/docs/images/*.jpg "$root"/docs/images/*.webp "$root/web/art/"
 # the music the page plays (music/SET-PHRASE.ogg: the user's own, MIT)
 rm -rf "$root/web/music"; mkdir -p "$root/web/music"
 cp "$root"/assets/music/*.ogg "$root/web/music/"

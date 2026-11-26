@@ -98,7 +98,9 @@ the next. This is the game the others are parts of.
   on, B goes back. The long bridge opens with the bridge painting, the
   city with the keep.
 - **The long bridge.** The walk across the bridge to the castle's gate
-  (the scenario `../walk/crossing.toml`).
+  (the scenario `../walk/crossing.toml`). Its troll keeps it: it opens
+  only once you are past him (`fact.troll-way` 1), on the map (where
+  it also needs the bridge held) and on the road of levels.
 - **The road through the fields.** The attacker's approach, as the
   painting from the tower shows it: out of the forest and along the
   winding road between the fields and their walls to the town's gate
@@ -113,22 +115,46 @@ the next. This is the game the others are parts of.
 - **The bridge troll.** A talk ([`Talk.xtl`](Talk.xtl), `talk`,
   [`troll.toml`](troll.toml)) with Grubb, who keeps the long bridge
   and wants ten gold, or the answer to his riddle, before you cross.
-  He says something; you choose an answer by its number, by Up and
-  Down and Enter, or by a click; he replies, and the talk goes on.
-  Pay him, answer his riddle, haggle, or flatter him; insult him or
-  run for it and you end up in the river; or walk away. Some answers
-  depend on the world: paying is one only with the gold for it, and
-  some are only there once you have learned something earlier in the
-  talk. What you pay or learn is kept in the world
-  (`resource.gold`, `fact.troll-name`, `fact.troll-riddle`), and so is
-  the way: `fact.troll-way` 1 when he lets you over, -1 when he
-  throws you off. Won, the place is done and brings experience. A talk
-  is a dialog tree in TOML: nodes (the character's lines and 2 to 4
-  answers) and answers (your words, the reply, the next node or an
-  end, and what they do); a file that is wrong, such as an answer
-  leading to a node there is not, is a message naming the file and
-  the field. [`talk-check.xtl`](talk-check.xtl) walks every ending;
-  [`images/look/troll.png`](../../images/look/troll.png) shows the talk.
+  Getting past him is what opens the long bridge; there is no fighting
+  him. He says something; you choose an answer by its number, by Up
+  and Down and Enter, or by a click; he replies, and the talk goes on.
+  The ways past him: pay his toll, answer his riddle, haggle (once a
+  wrong answer to the riddle has made him willing), or ask his name and
+  make a poem of it. Insult him past his patience and he is angry;
+  insult him again, or run for it, and you end up in the river; or
+  walk away. Losing is not for good: he is there to be
+  talked to again, and winning later opens the way.
+
+  A talk is a state machine. Its state is where the talk is, what has
+  been said, and the character's measures; each answer is a step, and
+  the character's strategy chooses the reaction among the written
+  ones. Grubb's strategy ([`Strategy.xtl`](Strategy.xtl), its
+  measures, tags and rules in `troll.toml`) is greed and pride: flattery
+  lowers his toll a gold a time, and haggling by two, never below six
+  (his lines say the toll as it stands: "Ten gold" becomes "Eight
+  gold"); each insult uses up his patience, and out of it he is angry
+  until you apologize or go; a wrong answer to the riddle makes him
+  willing to haggle. Some answers depend on the world: paying is one
+  only with the gold for it, and some are only there once you have
+  learned something earlier in the talk. What you pay or learn is kept
+  in the world (`resource.gold`, `fact.troll-name`,
+  `fact.troll-riddle`), and so is the way: `fact.troll-way` 1 when he
+  lets you over, -1 when he throws you off. Won, the place is done and
+  brings experience.
+
+  A talk is TOML: nodes (the character's lines and 2 to 4 answers),
+  answers (your words, the reply, the next node or an end, what they
+  do, their tags and when they are shown), and the strategy (measures
+  with their start, floor and ceiling; how each tag moves them; rules
+  that, when a measure crosses a line, send the talk elsewhere or say
+  another reply). A file that is wrong, such as an answer leading to a
+  node there is not, a tag the strategy lacks or a measure there is
+  not, is a message naming the file and the field. His portrait is the
+  user's own painting, `docs/images/bridge-troll.webp` (served as
+  `art/bridge-troll.webp`), tinted red when he is angry or you have
+  lost. [`talk-check.xtl`](talk-check.xtl) walks every ending and his
+  strategy; [`images/look/troll.png`](../../images/look/troll.png)
+  shows the talk.
 
 - **The treasury.** An idle game ([`Hoard.xtl`](Hoard.xtl), `idle`,
   [`treasury.toml`](treasury.toml)): coins come in by the second;
@@ -163,7 +189,10 @@ the next. This is the game the others are parts of.
   painting (the keep for the defender, the bazaar for the attacker).
   The world's `session.side` says which (1 defends, 2 attacks). The
   first two are open; each next one opens when one of the two before it
-  is won, so two are always open ahead. A done one has a check, an open
+  is won, so two are always open ahead; a level whose entry needs more
+  (the long bridge: `needs = "fact.troll-way"`) opens only once that is
+  so, and says why while it is locked ("locked, pass the troll
+  first"). A done one has a check, an open
   one is gold, a locked one is gray and says what opens it, and an
   attacker's place with no attack version yet says so (the defender's
   is played). The arrows choose; enter, space, a level's number or a

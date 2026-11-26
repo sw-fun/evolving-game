@@ -1,0 +1,8 @@
+l:c_ondition : (Char, Char, Box Char) -> Char -> Int
+l:h_olds : Truthy a => Int -> Int -> a
+l:r_ead : (Char, Box Char) -> (Box Char, Int, Int, Int, Box Char, Int, (Int, Int, Box Char, Box Char))
+l:s_tart : (Any a, Any b, Any c, Any d, Any e, Any f, Any g) => (a, b, c, d, e, f, g) -> b
+l:n_ames : (Any a, Any b, Any c, Any d, Any e, Any f, Any g) => (a, b, c, d, e, f, g) -> a
+l:t_ags : (Any a, Any b, Any c, Any d, Any e, Any f) => (Char, Char, (a, b, c, d, Box Char, e, f)) -> Char -> Int
+l:r_eplies : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i, Any j) => (a, b, c, d, e, f, (g, h, i, j)) -> j
+l:r_eact : (Any a, Any b, Any c, Num e) => ((a, b, Int, Int, c, Int, (Int, Int, Box d, Box d)), Int) -> (Int, d, d, e) -> (Int, d, d)

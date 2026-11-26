@@ -10,7 +10,7 @@ ends = ["Through.", "Barred.", "Left."]
 nodes = ["greet", "riddle"]
 node-fields = ["says", "answers"]
 answers = ["greet-riddle", "greet-leave", "riddle-right", "riddle-back"]
-answer-fields = ["says", "reply", "next", "gold", "needs", "learn", "way"]
+answer-fields = ["says", "reply", "next", "gold", "needs", "learn", "way", "tags", "when"]
 
 [node.greet]
 says = "Hello."
