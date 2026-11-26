@@ -43,6 +43,8 @@ const q = new URLSearchParams(location.search);
 const el = (id) => document.getElementById(id);
 const view = el('view'), flat = el('flat'), stat = el('stat');
 let wasm = null, player = null, timer = 0, cost = 0, frames = '', eyed = false;
+// the WebAssembly's memory, for the debug panel, when its start is seen
+let wasmMemory = null;
 let program = { walk: 'play.xtl', foot: 'explore.xtl', defense: 'defense/play.xtl' }[q.get('game')] || 'castle/play.xtl';
 const held = new Set(), look = [0, 0];
 const tunes = music();
@@ -52,6 +54,14 @@ const store = q.has('fresh') ? null : (() => { try { return window.localStorage;
 let lastKept = '';
 // the events given to the program, but the clock's (for tests to read)
 const said = [];
+// The watchdog's notes: every event given since the program started
+// (a run of the same tick as one entry, with its count), what the save
+// was then, how long the program took, and what stopped it. A program
+// that stops (an error, or a trap in the WebAssembly) or no longer
+// answers keys is told on the stage, with a way back: the save is
+// played again from its start.
+const WATCH = { log: [], kept: '', started: 0, events: 0, ticks: 0, last: '', lastAt: 0, slowest: 0, slowLine: '', fault: '', unanswered: 0, broken: false };
+const REPORT = 'evolving-game/last-report';
 
 // Can this browser draw 3D?
 const solid = !q.has('flat') && (() => {
@@ -68,7 +78,7 @@ function draw() {
   const svg = wasm.picture();
   // only when it changed: a picture swapped under a pressed button eats
   // the click (the press and the release land on different elements)
-  if (svg !== shown) { flat.innerHTML = svg; shown = svg; }
+  if (svg !== shown) { flat.innerHTML = svg; shown = svg; WATCH.unanswered = 0; if (!WATCH.fault) banner.hidden = true; }
   tunes.show(svg);
   const calls = sceneOf(svg);
   // a scene seen through an eye is one the pointer can look round in
@@ -87,15 +97,103 @@ function draw() {
 
 // Give the program an event; when it has ended, stop the clock.
 function feed(line, quiet = false) {
-  if (!wasm) return;
-  if (!line.startsWith('tick ')) said.push(line);
+  if (!wasm || WATCH.broken) return;
+  const ticked = line.startsWith('tick ');
+  if (!ticked) said.push(line);
+  logged(line);
   const before = performance.now();
-  const over = wasm.feed(line);
-  if (line.startsWith('tick ')) cost = cost ? cost * 0.9 + (performance.now() - before) * 0.1 : performance.now() - before;
+  let over;
+  try { over = wasm.feed(line); } catch (e) { stopped(`the WebAssembly stopped: ${safe(() => wasm.stopped()) || e.message || e}`, line); return; }
+  const took = performance.now() - before;
+  if (ticked) cost = cost ? cost * 0.9 + took * 0.1 : took;
+  if (took > WATCH.slowest) { WATCH.slowest = took; WATCH.slowLine = line; }
   keep();
   if (quiet && !over) return;
   draw();
-  if (over) { clearInterval(timer); timer = 0; el('log').open = true; document.body.classList.add('over'); }
+  if (over) { clearInterval(timer); timer = 0; el('log').open = true; document.body.classList.add('over'); ended(line); }
+}
+
+// What a call gives, or nothing when it throws (a stopped WebAssembly).
+function safe(f) { try { return f(); } catch { return ''; } }
+
+// An event into the watchdog's log.
+function logged(line) {
+  const ticked = line.startsWith('tick ');
+  if (ticked) WATCH.ticks += 1; else { WATCH.events += 1; WATCH.last = line; WATCH.lastAt = performance.now(); }
+  const end = WATCH.log[WATCH.log.length - 1];
+  if (ticked && end && end[0] === line) end[1] += 1; else WATCH.log.push([line, 1]);
+  if (WATCH.log.length > 50000) WATCH.log.splice(0, 10000);
+}
+
+// The program has ended: the walk's own programs end when the walk is
+// done (they have no menu), the castle's only on an error. Either way
+// the stage says so, and Esc goes to the castle's menu.
+function ended(line) {
+  const error = safe(() => wasm.stopped());
+  if (error) { stopped(`the program stopped on an error: ${error}`, line); return; }
+  WATCH.fault = `ended (after "${line}")`;
+  stuck('This game is over: it has no menu of its own.', 'Esc or ~ goes to the castle\'s menu (your progress is kept).');
+}
+
+// The program has stopped: say so on the stage, keep the report (it
+// outlives a reload), and stop the clock.
+function stopped(why, line) {
+  WATCH.fault = `${why} (after "${line}")`;
+  WATCH.broken = !why.startsWith('the program stopped on an error');
+  clearInterval(timer); timer = 0;
+  stuck(`The game stopped: ${WATCH.fault}.`, 'Esc or ~ starts the castle again from your save (your progress is kept). Save report keeps what happened, for a bug report.');
+  try { localStorage.setItem(REPORT, report()); } catch { /* too big or no store: only the panel has it */ }
+}
+
+// The banner on the stage, with the way back; nothing hides it.
+const banner = document.createElement('div');
+banner.id = 'stuck';
+banner.hidden = true;
+el('stage').appendChild(banner);
+function stuck(what, how = 'Esc or ~ starts the castle again from your save (your progress is kept).') {
+  banner.replaceChildren(
+    Object.assign(document.createElement('p'), { textContent: what }),
+    Object.assign(document.createElement('p'), { textContent: how }),
+  );
+  const again = Object.assign(document.createElement('button'), { type: 'button', textContent: 'To the castle (~)' });
+  again.addEventListener('click', (e) => { e.currentTarget.blur(); recover(); });
+  const save = Object.assign(document.createElement('button'), { type: 'button', textContent: 'Save report' });
+  save.addEventListener('click', (e) => { e.currentTarget.blur(); download(); });
+  banner.append(again, save);
+  banner.hidden = false;
+}
+
+// Back to playing: the castle started again from the save, at its
+// menu; when the WebAssembly itself is broken (it trapped), the page
+// loaded again, which keeps the save too.
+function recover() {
+  if (WATCH.fault && !WATCH.fault.startsWith('ended')) { try { localStorage.setItem(REPORT, report()); } catch { /* only the panel has it */ } }
+  WATCH.broken = false;
+  program = 'castle/play.xtl';
+  try { start(); } catch { location.reload(); }
+}
+
+// What happened, as a text: the panel, the stop, what was printed, the
+// save the program started from and every event since (a tick a line,
+// as at the command line: the same events give the same game).
+function report() {
+  const events = WATCH.log.flatMap(([line, n]) => Array(n).fill(line));
+  return [
+    'Evolving Game: a debug report',
+    `when     ${new Date().toISOString()}`,
+    `page     ${location.href}`,
+    `browser  ${navigator.userAgent}`,
+    `build    ${safe(() => wasm.build())}`,
+    debugText(),
+    '--- printed (the end)', safe(() => wasm.printed()).slice(-4000),
+    '--- the save it started from', WATCH.kept,
+    `--- the events since (${events.length})`, ...events, '',
+  ].join('\n');
+}
+function download() {
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([report()], { type: 'text/plain' })), download: 'evolving-game-report.txt' });
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
 // Store what the program has kept, when it has changed.
@@ -114,6 +212,7 @@ function point(x, y) { feed(`click ${x.toFixed(1)} ${y.toFixed(1)}`); }
 // (in 3D, only a picture a game draws itself, and the sound strip every
 // picture has: the board takes the rest)
 function pictured(e) {
+  answered('click');
   const svg = flat.querySelector('svg');
   if (!svg) return;
   const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
@@ -163,15 +262,29 @@ function debugText() {
     `phrase   ${p ? `${p.name}  ${p.step} of ${p.steps}  ${p.into.toFixed(1)} of ${p.seconds.toFixed(1)} s` : '-'}`,
     `bridge   ${bridge ? bridge[1] : '-'}${m.bridge && m.bridgeAt > (m.clock - 20) ? `  (played ${(m.clock - m.bridgeAt).toFixed(1)} s ago)` : ''}`,
     `volume   ${m.volume}`,
+    `engine   ${WATCH.fault ? `stopped: ${WATCH.fault}` : 'running'}`,
+    `events   ${WATCH.events} keys and clicks, ${WATCH.ticks} ticks${WATCH.last ? `; last "${WATCH.last}" ${((performance.now() - WATCH.lastAt) / 1000).toFixed(1)} s ago` : ''}`,
+    `unheard  ${WATCH.unanswered} keys or clicks in a row that changed nothing`,
+    `tick     ${cost.toFixed(1)} ms; slowest event ${WATCH.slowest.toFixed(0)} ms ("${WATCH.slowLine}")`,
+    `clock    ${timer ? 'running' : 'stopped'}${document.hidden ? ', page hidden' : ''}; up ${((performance.now() - WATCH.started) / 1000).toFixed(0)} s`,
+    `memory   wasm ${wasmMemory ? (wasmMemory.buffer.byteLength / 1048576).toFixed(0) : '-'} MB${performance.memory ? `, js ${(performance.memory.usedJSHeapSize / 1048576).toFixed(0)} MB` : ''}`,
+    `earlier  ${(() => { try { return (/engine   stopped: (.*)/.exec(localStorage.getItem(REPORT) || '') || ['', '-'])[1]; } catch { return '-'; } })()}`,
   ].join('\n');
 }
 function debugPanel(on) {
   debugOn = on;
   debugBox.hidden = !on;
+  debugTools.hidden = !on;
   el('open-debug').classList.toggle('on', on);
   try { localStorage.setItem(DEBUG, on ? '1' : ''); } catch { /* no store: not kept */ }
   if (on) debugBox.textContent = debugText();
 }
+// The panel's buttons: the report, saved as a file.
+const debugTools = Object.assign(document.createElement('div'), { id: 'debug-tools', hidden: true });
+const saveReport = Object.assign(document.createElement('button'), { type: 'button', textContent: 'Save report' });
+saveReport.addEventListener('click', (e) => { e.currentTarget.blur(); download(); });
+debugTools.append(saveReport);
+el('stage').appendChild(debugTools);
 setInterval(() => { if (debugOn) debugBox.textContent = debugText(); }, 250);
 el('open-debug').addEventListener('click', (e) => { e.currentTarget.blur(); debugPanel(!debugOn); });
 try { if (localStorage.getItem(DEBUG)) debugPanel(true); } catch { /* no store */ }
@@ -179,7 +292,13 @@ try { if (localStorage.getItem(DEBUG)) debugPanel(true); } catch { /* no store *
 // Keys the game may be given; none is a browser's or a system's.
 const NAMES = { ' ': 'space', ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter', Backspace: 'backspace', '[': '[', ']': ']', ',': ',', '\\': '\\' };
 window.addEventListener('keydown', (e) => {
+  // ~ always starts the game again from its save: the page's own key,
+  // answered however stuck the game is
+  if (e.key === '~' && !e.ctrlKey && !e.metaKey) { e.preventDefault(); recover(); return; }
   if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || talking()) return;
+  // a stopped game: Esc is the way back
+  if (e.key === 'Escape' && (WATCH.broken || document.body.classList.contains('over'))) { e.preventDefault(); recover(); return; }
+  answered(e.key);
   // ` shows or hides the debug panel (the page's own: never the game's)
   if (e.key === '`') { e.preventDefault(); debugPanel(!debugOn); return; }
   // Escape leaves any game for the map (the loop's own command)
@@ -191,6 +310,15 @@ window.addEventListener('keydown', (e) => {
   held.add(e.keyCode);
   feed(`choose 2 ${e.keyCode}`);
 });
+// Keys the game does not answer: the picture unchanged after eight
+// keys or clicks in a row (a menu answers every key it knows) is told
+// on the stage. Counted before the key is given; draw() clears it.
+function answered(key) {
+  if (key === 'Shift' || key === '`') return;
+  WATCH.unanswered += 1;
+  if (WATCH.unanswered >= 9 && banner.hidden) stuck(`The game has not answered the last ${WATCH.unanswered - 1} keys or clicks (last "${WATCH.last}"). Stuck?`);
+}
+
 // A key coming up, for a game that holds keys; and every held key let
 // go when the window loses the keyboard, so nothing stays held.
 const release = (code) => { if (held.delete(code)) feed(`choose 3 ${code}`); };
@@ -217,15 +345,18 @@ function start() {
   document.body.classList.remove('over');
   el('log').open = false;
   held.clear();
+  banner.hidden = true;
+  Object.assign(WATCH, { log: [], started: performance.now(), events: 0, ticks: 0, last: '', slowest: 0, slowLine: '', fault: '', unanswered: 0, broken: false });
   if (document.pointerLockElement) document.exitPointerLock();
   for (const b of document.querySelectorAll('.pick button')) b.classList.toggle('on', b.dataset.program === program);
   lastKept = (store && store.getItem(KEPT)) || '';
+  WATCH.kept = lastKept;
   wasm.start(program, lastKept);
   named();
   // ?debug goes past the splash and shows every place at once
   // ?debug goes past the splash and the front door (a profile "debug",
   // played as a defender) and shows every place at once
-  if (q.has('debug') && program === 'castle/play.xtl') { for (const k of ['space', 'enter', 'd', 'e', 'b', 'u', 'g', 'enter', '1', '5', '1', '1', '3', 'd']) wasm.feed(`key ${k}`); }
+  if (q.has('debug') && program === 'castle/play.xtl') { for (const k of ['space', 'enter', 'd', 'e', 'b', 'u', 'g', 'enter', '1', '5', '1', '1', '3', 'd']) { logged(`key ${k}`); wasm.feed(`key ${k}`); } }
   draw();
   if (!q.has('hold')) timer = setInterval(tick, TICK * 1000);
 }
@@ -296,11 +427,11 @@ const ready = () => {
   el('build').textContent = `Build: ${wasm.build()}`;
   el('about-build').textContent = wasm.build();
   el('pins').textContent = wasm.pins().split('\n').join(', ');
-  window.game = { feed, start, said: () => said.slice(-20), program: () => program, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player, music: () => tunes.state(), debug: () => (debugOn ? debugBox.textContent : '') };
+  window.game = { feed, start, said: () => said.slice(-20), program: () => program, picture: () => wasm.picture(), printed: () => wasm.printed(), player: () => player, music: () => tunes.state(), debug: () => (debugOn ? debugBox.textContent : ''), recover, report, stuck: () => (banner.hidden ? '' : banner.textContent) };
   start();
   if (q.has('sources')) sources();
   if (q.has('help')) help();
   if (q.has('about')) el('about').showModal();
 };
-if (window.wasmBindings) ready(); else window.addEventListener('TrunkApplicationStarted', ready, { once: true });
+if (window.wasmBindings) ready(); else window.addEventListener('TrunkApplicationStarted', (e) => { wasmMemory = e.detail?.wasm?.memory || null; ready(); }, { once: true });
 window.addEventListener('error', (e) => { el('err').textContent = String(e.message || e); });

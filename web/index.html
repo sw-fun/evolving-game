@@ -82,6 +82,11 @@
   #debug { position: absolute; left: 8px; bottom: 8px; margin: 0; padding: 6px 9px; background: rgba(14, 15, 21, 0.85); color: #cfe3c8; border: 1px solid #3a4052; border-radius: 6px; font: 12px/1.35 ui-monospace, Menlo, monospace; pointer-events: none; z-index: 2; }
   header button.on { background: #e8e6df; color: #14151c; }
   #err { color: #ff9a9a; white-space: pre-wrap; padding: 0 16px; }
+  /* the watchdog's banner: the game stopped, and the way back */
+  #stuck { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); z-index: 30; max-width: 40em; background: #2a1416ee; border: 2px solid #e0503c; border-radius: 10px; padding: 10px 16px; color: #f2ead8; font: 15px/1.4 system-ui, sans-serif; }
+  #stuck p { margin: 0 0 6px; }
+  #stuck button, #debug-tools button { margin-right: 8px; }
+  #debug-tools { position: absolute; left: 8px; top: 8px; z-index: 21; }
 </style>
 <script type="importmap">{ "imports": { "three": "./ext/vendor/three/three.module.min.js" } }</script>
 </head>

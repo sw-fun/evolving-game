@@ -682,6 +682,26 @@ check((await caption()).includes("Pointing at row 10, column 7: bridge."), "a cl
 check(await open("?game=walk&fresh"), "the page starts with its clock");
 check(await until("document.querySelector('#flat svg text').textContent.includes(' 3 walked')", 8000), "the clock's ticks walk the walker");
 
+// The watchdog: a walk played to its end says so on the stage (the
+// walk's programs have no menu), and Esc goes to the castle's menu; the
+// debug panel tells the engine's state and saves a report with every
+// event; ~ always starts the castle again.
+check(await open("?hold&game=walk&fresh"), "the walk starts held");
+check(await page("(() => { for (let i = 0; i < 20000 && !document.body.classList.contains('over'); i++) window.game.feed('tick 0.05'); return document.body.classList.contains('over'); })()"), "fed ticks, the walk ends");
+check((await page("window.game.stuck()")).includes("This game is over"), `the stage says the game is over and how to go on (${(await page("window.game.stuck()")).slice(0, 60)})`);
+for (const type of ["keyDown", "keyUp"]) await key(type, "Escape", "Escape", 27);
+check((await page("window.game.program()")) === "castle/play.xtl" && !(await page("window.game.stuck()")) && !(await page("document.body.classList.contains('over')")), "Esc then goes to the castle, the banner gone");
+for (const type of ["keyDown", "keyUp"]) await key(type, "`", "Backquote", 192);
+check(/engine +running/.test(await page("window.game.debug()")) && /events +\d+ keys and clicks/.test(await page("window.game.debug()")), "the debug panel tells the engine running and the events given");
+for (const k of ["space", "enter"]) await page(`window.game.feed('key ${k}'), 1`);
+check((await page("window.game.report()")).includes("--- the events since (2)\nkey space\nkey enter"), "the report has every event since the start, for the command line");
+for (const type of ["keyDown", "keyUp"]) await key(type, "`", "Backquote", 192);
+await page("window.game.feed('key enter'), 1");
+const beforeTilde = await caption();
+await send("Input.dispatchKeyEvent", { type: "keyDown", key: "~", code: "Backquote", modifiers: 8, windowsVirtualKeyCode: 192 });
+await send("Input.dispatchKeyEvent", { type: "keyUp", key: "~", code: "Backquote", modifiers: 8, windowsVirtualKeyCode: 192 });
+check((await page("window.game.report()")).includes("--- the events since (0)") && (await caption()) !== beforeTilde, "~ starts the castle again from its start");
+
 // Self-contained: every request was to the page's own address.
 const foreign = asked.filter((u) => !u.startsWith(base) && !u.startsWith("data:") && !u.startsWith("blob:") && u !== "about:blank" && u !== font);
 check(foreign.length === 0, `the game asks nothing of another site${foreign.length ? ": " + foreign.join(" ") : ""}`);

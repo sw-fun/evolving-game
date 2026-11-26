@@ -1,7 +1,27 @@
 //! The page's side of the footer, the About and Help dialogs and the
-//! game's sources.
+//! game's sources; and, for the debug panel, what stopped the program.
+
+use std::cell::RefCell;
 
 use wasm_bindgen::prelude::*;
+
+thread_local! {
+    /// The last panic's message (kept by the hook `start` sets).
+    pub static FAULT: RefCell<String> = const { RefCell::new(String::new()) };
+}
+
+/// What stopped the program: the last panic's message, else the error
+/// it ended on, else nothing (still running, or ended well).
+#[wasm_bindgen]
+#[must_use]
+pub fn stopped() -> String {
+    let fault = FAULT.with(|f| f.try_borrow().map(|f| f.clone()).unwrap_or_default());
+    if fault.is_empty() {
+        crate::with(|g| g.error().to_string())
+    } else {
+        fault
+    }
+}
 
 /// The names of the game's files, a line each.
 #[wasm_bindgen]

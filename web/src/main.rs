@@ -21,6 +21,12 @@ fn with<T: Default>(f: impl FnOnce(&mut Game) -> T) -> T {
 /// none), given back for it to read.
 #[wasm_bindgen]
 pub fn start(program: &str, kept: &str) {
+    // a panic's message kept for the page (in WebAssembly a panic ends
+    // in a trap whose own message, "unreachable", says nothing)
+    std::panic::set_hook(Box::new(|p| {
+        let said = p.to_string();
+        sources::FAULT.with(|f| f.try_borrow_mut().map(|mut f| *f = said).ok());
+    }));
     let known = PROGRAMS.iter().any(|(p, _, _)| *p == program);
     let program = if known { program } else { PROGRAM };
     GAME.with(|g| *g.borrow_mut() = Some(Game::resume(program, 1, SAVE, kept)));

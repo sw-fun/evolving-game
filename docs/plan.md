@@ -361,6 +361,21 @@ defaults drawn from the repositories above.
   names); what it says of the music is the page's player: the phrase
   sounding, its step in the plan, how far into it, and any bridge. It
   decides nothing and shows no rule.
+  A watchdog beside it (the user, 2026-11-26, after a game seemed to
+  hang on an older laptop: "a watchdog timer that detects when the
+  game is not playing or at a menu and somehow allows the user to
+  continue or resume without a shift-reload"): a panic in the
+  WebAssembly keeps its message (`web/src/fault.rs`), an event that
+  throws or a program that ends or stops on an error is told on the
+  stage, and so are eight keys or clicks in a row that change no
+  picture. Esc on a stopped game, and `~` always, start the castle
+  again from its save (the page loaded again when the WebAssembly
+  itself has failed). The panel tells the engine's state, the events,
+  the slowest event and the memory; Save report writes them with the
+  save and every event since the start (the ticks a line each, as at
+  the command line), so the same game can be played again to find the
+  fault. Found with it: the header's walk programs end when the walk
+  is done and have no menu, which looked like a hang.
 - D24. Talks with characters are a mode, `talk` (the user, 2026-11-24:
   dialog trees, the mechanic of the classic point-and-click
   adventures, our own characters and lines). `games/castle/Talk.xtl`
