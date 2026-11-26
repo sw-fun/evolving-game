@@ -18,8 +18,8 @@ castle = ["castle.toml"]
 
 # The roads, a list of venue ids each, in the order they are played:
 # the tutorial first, the hard ones last.
-defend = ["bridge-1", "bridge-2", "bridge-3", "hill-fort", "crossing", "city", "gate-maze", "dungeon", "ray-maze", "treasury"]
-attack = ["camp", "bridge-attack-1", "bridge-attack-2", "on-foot", "fields", "crossing", "city", "gate-maze", "dungeon", "ray-maze", "warchest"]
+defend = ["bridge-1", "bridge-2", "bridge-3", "hill-fort", "troll", "crossing", "city", "gate-maze", "dungeon", "ray-maze", "treasury"]
+attack = ["camp", "bridge-attack-1", "bridge-attack-2", "on-foot", "fields", "troll", "crossing", "city", "gate-maze", "dungeon", "ray-maze", "warchest"]
 
 # An entry of a road (a table defend-level.ID or attack-level.ID, ID
 # the venue's id): its label (short: it is written under its circle),
@@ -45,6 +45,11 @@ coming = "no"
 
 [defend-level.hill-fort]
 label = "Hill fort"
+tier = "normal"
+coming = "no"
+
+[defend-level.troll]
+label = "Bridge troll"
 tier = "normal"
 coming = "no"
 
@@ -101,6 +106,11 @@ coming = "no"
 [attack-level.fields]
 label = "The fields"
 tier = "easy"
+coming = "no"
+
+[attack-level.troll]
+label = "Bridge troll"
+tier = "normal"
 coming = "no"
 
 [attack-level.crossing]

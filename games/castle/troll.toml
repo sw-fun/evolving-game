@@ -1,0 +1,221 @@
+# The bridge troll: a talk (Talk.xtl, the mode "talk"), a dialog tree.
+# Grubb keeps the long bridge and wants a toll, or the answer to his
+# riddle, before you cross. Every value is a string, or a list of
+# strings; the talk is checked when it is read, and what is wrong is a
+# message naming this file and the field.
+mode = ["talk"]
+title = ["The bridge troll"]
+
+# Where: the castle's zones (a path from this file) and the zone the
+# stage is made from.
+zones = ["../../world/zones.toml"]
+zone = ["realm"]
+
+# The name in the world state the way across is kept under: an answer
+# that opens the way sets it to 1, one that bars it to -1.
+way = ["fact.troll-way"]
+# What winning brings (experience), besides what the answers did.
+reward = ["xp 5"]
+# What is said when the talk ends: won (the way is open), lost (barred
+# or chased off), left.
+ends = ["Grubb waves you over his bridge. The way is open.", "You climb out of the river, far downstream. The way is barred.", "You leave Grubb to his bridge."]
+
+# The nodes, the first where the talk starts. A node: what the
+# character says (a | between lines, each 60 characters at most), and
+# its answers (2 to 4 ids of answers below, a space between; at least
+# one with no needs and no gold, so there is always one to give).
+nodes = ["greet", "riddle", "again", "haggle", "praise", "name", "poem", "angry"]
+node-fields = ["says", "answers"]
+
+# The answers. An answer: what you say (72 characters at most); the
+# character's reply (a | between lines); next, the node it leads to, or
+# an end: won, lost or left; and what it does to the world: gold, paid
+# (shown only to one who has that much); needs, a name the world must
+# have set for it to be shown; learn, a fact it sets; way, "open" or
+# "barred".
+answers = ["greet-pay", "greet-riddle", "greet-praise", "greet-insult", "riddle-cat", "riddle-bridge", "riddle-you", "riddle-toll", "again-retry", "again-haggle", "again-run", "haggle-pay", "haggle-none", "haggle-plank", "praise-who", "praise-poem", "praise-damp", "name-grandpa", "name-poem", "name-toll", "poem-name", "poem-pay", "poem-roses", "poem-riddle", "angry-sorry", "angry-mushroom", "angry-run", "angry-leave"]
+answer-fields = ["says", "reply", "next", "gold", "needs", "learn", "way"]
+
+[node.greet]
+says = "Halt! This is Grubb's bridge, and Grubb wants his toll.|Ten gold, or the answer to Grubb's riddle.|Grubb is not fussy which."
+answers = "greet-pay greet-riddle greet-praise greet-insult"
+
+[node.riddle]
+says = "I have a back but no belly. I am crossed but never cross.|I sleep over water every night. What am I?"
+answers = "riddle-cat riddle-bridge riddle-you riddle-toll"
+
+[node.again]
+says = "Grubb gives another go, because Grubb is generous.|Or Grubb takes the toll. Grubb is flexible."
+answers = "again-retry again-haggle again-run"
+
+[node.haggle]
+says = "For you, a special price: eight gold.|Do not tell the goats. The goats pay full."
+answers = "haggle-pay haggle-none haggle-plank"
+
+[node.praise]
+says = "Three hundred years Grubb has kept this bridge,|and nobody ever says one nice thing about it."
+answers = "praise-who praise-poem praise-damp"
+
+[node.name]
+says = "The Stonebellies keep bridges. Grandpa kept a ford,|but nobody talks about Grandpa."
+answers = "name-grandpa name-poem name-toll"
+
+[node.poem]
+says = "Grubb is listening. Make it rhyme. Grubb likes a rhyme."
+answers = "poem-name poem-pay poem-roses poem-riddle"
+
+[node.angry]
+says = "Grubb has thrown travelers in the river for less!|Say sorry, or say goodbye."
+answers = "angry-sorry angry-mushroom angry-run angry-leave"
+
+[answer.greet-pay]
+says = "Ten gold it is. Here."
+reply = "Grubb bites every coin. Twice.|Fine. Cross, and wipe your boots on the way."
+next = "won"
+gold = "10"
+way = "open"
+
+[answer.greet-riddle]
+says = "I will take the riddle."
+reply = "Ooh. Grubb loves a riddle. Grubb made this one himself."
+next = "riddle"
+
+[answer.greet-praise]
+says = "Before that: what a magnificent bridge!"
+reply = "...It is, isn't it?"
+next = "praise"
+
+[answer.greet-insult]
+says = "Out of my way, you overgrown turnip."
+reply = "TURNIP?"
+next = "angry"
+
+[answer.riddle-cat]
+says = "A sleepy cat."
+reply = "Cats hate water. Wrong!"
+next = "again"
+
+[answer.riddle-bridge]
+says = "A bridge."
+reply = "Grr. Right. Nobody ever gets it right.|Grubb will need a harder riddle. Go on, cross."
+next = "won"
+learn = "fact.troll-riddle"
+way = "open"
+
+[answer.riddle-you]
+says = "You, on a good day."
+reply = "Grubb is never crossed on a good day.|Wrong, but funny."
+next = "again"
+
+[answer.riddle-toll]
+says = "Wait, how much was the toll again?"
+reply = "Ten gold. Grubb said it slowly the first time."
+next = "greet"
+
+[answer.again-retry]
+says = "Ask the riddle again."
+reply = "Listen closer this time."
+next = "riddle"
+
+[answer.again-haggle]
+says = "Is there a cheaper toll for a poor traveler?"
+reply = "Cheaper? Grubb's mother says Grubb is too soft."
+next = "haggle"
+
+[answer.again-run]
+says = "I will just run past you."
+reply = "Grubb's arm is longer than his bridge.|Splash. Mind the eels."
+next = "lost"
+way = "barred"
+
+[answer.haggle-pay]
+says = "Eight it is."
+reply = "Pleasure doing business.|Cross quick, before Grubb changes his mind."
+next = "won"
+gold = "8"
+way = "open"
+
+[answer.haggle-none]
+says = "I do not have eight gold."
+reply = "Then you have a riddle to answer."
+next = "riddle"
+
+[answer.haggle-plank]
+says = "Eight gold for a damp plank? Thief!"
+reply = "DAMP PLANK?"
+next = "angry"
+
+[answer.praise-who]
+says = "Who are you, keeper?"
+reply = "Grubb Stonebelly, of the under-bridge Stonebellies."
+next = "name"
+learn = "fact.troll-name"
+
+[answer.praise-poem]
+says = "It deserves a poem. May I?"
+reply = "A poem! For Grubb's bridge! Go on, go on."
+next = "poem"
+
+[answer.praise-damp]
+says = "It is a little damp, though."
+reply = "DAMP? It is a RIVER bridge!"
+next = "greet"
+
+[answer.name-grandpa]
+says = "What happened to Grandpa?"
+reply = "He slipped. Fords are slippery. That is why bridges."
+next = "name"
+
+[answer.name-poem]
+says = "Grubb Stonebelly deserves a poem."
+reply = "Grubb does! Go on, go on."
+next = "poem"
+
+[answer.name-toll]
+says = "So, about this toll."
+reply = "Ah. Yes. The toll."
+next = "greet"
+
+[answer.poem-name]
+says = "Grubb Stonebelly, broad and bold, keeps the finest bridge of old!"
+reply = "Grubb... is weeping. Nobody ever rhymed Grubb before.|Cross, friend. Cross whenever you like."
+next = "won"
+needs = "fact.troll-name"
+way = "open"
+
+[answer.poem-pay]
+says = "Oh bridge of stone, so fine, so wide, I'd pay to see the other side."
+reply = "Pay? Grubb liked it until pay.|Now Grubb remembers the toll."
+next = "greet"
+
+[answer.poem-roses]
+says = "Roses are red, the river is gray, please let me cross, I'm on my way."
+reply = "That one is about you, not the bridge. Again."
+next = "poem"
+
+[answer.poem-riddle]
+says = "I am no poet. Ask me your riddle."
+reply = "Riddles Grubb can do."
+next = "riddle"
+
+[answer.angry-sorry]
+says = "Sorry. That was rude of me, and you are very handsome."
+reply = "...Grubb will allow it."
+next = "greet"
+
+[answer.angry-mushroom]
+says = "Make me, mushroom."
+reply = "Grubb picks you up by the boots and drops you in.|Splash."
+next = "lost"
+way = "barred"
+
+[answer.angry-run]
+says = "Run for the far bank!"
+reply = "You get three steps. Grubb's arm is longer than his bridge.|Splash."
+next = "lost"
+way = "barred"
+
+[answer.angry-leave]
+says = "Never mind. I will find another way."
+reply = "There is no other way. That is the point of bridges."
+next = "left"

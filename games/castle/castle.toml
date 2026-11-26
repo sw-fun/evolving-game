@@ -26,7 +26,7 @@ village = ["seed 7", "wide 35", "deep 21"]
 time = ["10.5"]
 
 # The venues, in the order of their numbers on the map.
-venues = ["bridge-1", "on-foot", "bridge-2", "camp", "town", "bridge-3", "engineer", "commander", "crossing", "gate-maze", "rune-keep", "tactics", "dungeon", "ray-maze", "treasury", "automata", "hall", "city", "warchest", "bridge-attack-1", "bridge-attack-2", "fields", "hill-fort"]
+venues = ["bridge-1", "on-foot", "bridge-2", "camp", "town", "bridge-3", "engineer", "commander", "crossing", "gate-maze", "rune-keep", "tactics", "dungeon", "ray-maze", "treasury", "automata", "hall", "city", "warchest", "bridge-attack-1", "bridge-attack-2", "fields", "hill-fort", "troll"]
 venue-fields = ["title", "kind", "scenario", "row", "column", "from", "needs", "marker", "about"]
 
 # Deeds: quests (known from the start, so you know what to try) and
@@ -39,7 +39,8 @@ deed-fields = ["title", "kind", "needs", "least", "xp", "about"]
 
 # A venue: its title; its kind (the mode that plays it: defense, attack
 # (Castle Defense as the besieger), roam, idle for the treasury, chest
-# for the war chest, board for the hall of deeds, or placeholder for
+# for the war chest, board for the hall of deeds, talk for a talk with
+# a character (Talk.xtl), or placeholder for
 # one not built yet) and
 # its scenario (a path from
 # this file; none for a placeholder); its row and column on the realm's
@@ -300,6 +301,20 @@ from = "bridge-3"
 needs = ""
 marker = "archer"
 about = "The outlying fort on its rise: hold its gate against the waves coming up the road that winds up the hill."
+
+# On the river by the long bridge: the one place off the three rows,
+# two tiles from its neighbors, so a click on its marker or its name is
+# it, and one between it and a neighbor is the neighbor's.
+[venue.troll]
+title = "The bridge troll"
+kind = "talk"
+scenario = "troll.toml"
+row = "8"
+column = "14"
+from = "bridge-3"
+needs = ""
+marker = "brute"
+about = "Grubb keeps the long bridge and wants a toll, or the answer to his riddle. Pay, answer, or talk your way past him."
 
 [deed.season-summer]
 title = "Hold the bridge in summer"

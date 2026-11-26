@@ -35,6 +35,8 @@ const DATA: &[(&str, &str)] = &[
     ("music.toml", "games/castle/music.toml"),
     ("levels.toml", "games/castle/levels.toml"),
     ("maze.toml", "games/castle/maze.toml"),
+    // the bridge troll's talk (Talk.xtl), its zones as the castle's
+    ("troll.toml", "games/castle/troll.toml"),
     ("dungeon.toml", "games/castle/dungeon.toml"),
     ("undercroft.toml", "games/castle/undercroft.toml"),
     ("effects.toml", "games/defense/effects.toml"),

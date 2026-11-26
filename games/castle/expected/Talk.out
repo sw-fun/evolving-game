@@ -1,0 +1,9 @@
+l:mode : Char
+l:help : Char
+l:p_roblem : Char -> Char
+l:n_ew : (Any a, Any b, Num c, Num d) => (Char, a, b) -> (((Char, Int, Int), Float, Box Char, Float, Char, c), (Box Char, Box Char, Box Char, Box Char, Char, Int, Char, Box Char), a, (Box Char, Int), d, (Char, Char))
+l:s_tep : (Any a, Any b, Any c, Any d) => (a, (Box Char, Box Char, Box Char, Box Char, Char, b, c, d), (Box Char, Int), (Box Char, Int), Int, (Char, Char)) -> (Char, Float, Char) -> (a, (Box Char, Box Char, Box Char, Box Char, Char, b, c, d), (Box Char, Int), (Box Char, Int), Int, (Char, Char))
+l:l_egal : Any a => a -> Box Char
+l:s_tatus : (Any a, Any b, Any c, Any d, Any e) => (a, b, c, d, Int, e) -> Int
+l:v_iew : (Any a, Any b, Any c, Any d) => (a, (b, Box Char, Box Char, Box Char, c, d, Char, Box Char), (Box Char, Int), (Box Char, Int), Int, (Char, Char)) -> (a, Box Char, Box Char, Float, Char)
+l:o_utcome : (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any h, Any i, Any j, Any k) => (a, (b, c, d, e, f, Int, g, h), i, j, Int, k) -> (Int, j, (Box Char, Int))

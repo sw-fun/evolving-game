@@ -34,7 +34,7 @@ the next. This is the game the others are parts of.
   ([`Ledger.xtl`](Ledger.xtl), `board`) shows them all.
 
 - **Music.** Every place plays a set of looping phrases: calm at the
-  splash, the front door, the roads, the treasury and the hall;
+  splash, the front door, the roads, the treasury, the hall and a talk;
   explore on foot and in the maze; sinister in the dungeon and the
   ray maze; battle at the bridge ([`music.toml`](music.toml)). The
   order of the phrases is a plan the program works out from the
@@ -110,6 +110,25 @@ the next. This is the game the others are parts of.
   hill: the road winds to and fro up the hill to the fort's gate (the
   scenario `../defense/hill-fort.toml`, its map
   [`world/hill-fort.toml`](../../world/hill-fort.toml)).
+- **The bridge troll.** A talk ([`Talk.xtl`](Talk.xtl), `talk`,
+  [`troll.toml`](troll.toml)) with Grubb, who keeps the long bridge
+  and wants ten gold, or the answer to his riddle, before you cross.
+  He says something; you choose an answer by its number, by Up and
+  Down and Enter, or by a click; he replies, and the talk goes on.
+  Pay him, answer his riddle, haggle, or flatter him; insult him or
+  run for it and you end up in the river; or walk away. Some answers
+  depend on the world: paying is one only with the gold for it, and
+  some are only there once you have learned something earlier in the
+  talk. What you pay or learn is kept in the world
+  (`resource.gold`, `fact.troll-name`, `fact.troll-riddle`), and so is
+  the way: `fact.troll-way` 1 when he lets you over, -1 when he
+  throws you off. Won, the place is done and brings experience. A talk
+  is a dialog tree in TOML: nodes (the character's lines and 2 to 4
+  answers) and answers (your words, the reply, the next node or an
+  end, and what they do); a file that is wrong, such as an answer
+  leading to a node there is not, is a message naming the file and
+  the field. [`talk-check.xtl`](talk-check.xtl) walks every ending;
+  [`images/look/troll.png`](../../images/look/troll.png) shows the talk.
 
 - **The treasury.** An idle game ([`Hoard.xtl`](Hoard.xtl), `idle`,
   [`treasury.toml`](treasury.toml)): coins come in by the second;

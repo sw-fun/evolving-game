@@ -22,7 +22,7 @@ bars = ["calm 8", "explore 8", "sinister 8", "battle 16", "victory 8", "defeat 8
 # Where each set plays: the kinds of place (a venue's kind in
 # castle.toml, or the screens: splash, front, roads, atlas). A kind no
 # set names plays the set in otherwise.
-kinds-calm = ["splash", "front", "roads", "atlas", "idle", "chest", "board", "placeholder"]
+kinds-calm = ["splash", "front", "roads", "atlas", "idle", "chest", "board", "placeholder", "talk"]
 kinds-explore = ["roam", "maze"]
 kinds-sinister = ["dungeon", "raycaster"]
 kinds-battle = ["defense", "attack"]
