@@ -238,7 +238,7 @@ if (capture) {
 // done, which is then counted; ?debug shows every place.
 check(await open("?hold&fresh"), "the page starts with the castle");
 check((await page("document.title")) === "Evolving Game: The castle: ready", "its title is the castle's");
-check((await caption()).startsWith("The castle and its country: 4 of 23 places known, 0 won. Gold 0, experience 0."), "the map shows four places to begin with, and your gold and experience");
+check((await caption()).startsWith("The castle and its country: 4 of 24 places known, 0 won. Gold 0, experience 0."), "the map shows four places to begin with, and your gold and experience");
 await sleep(300);
 check((await page("window.game.player().count().pieces")) === 4, "each a marker on the map");
 check((await page("[...document.querySelectorAll('#flat svg text')].map((x) => x.textContent).join('|')")).includes("2 The battlefield on foot"), "with its number and name written over it");
@@ -294,7 +294,7 @@ check(/mode +roam/.test(shownDebug) && /place +on-foot/.test(shownDebug) && /pro
 for (const type of ["keyDown", "keyUp"]) await key(type, "`", "Backquote", 192);
 check(await page("document.getElementById('debug').hidden") && (await caption()).includes("W A S D walk"), "and hides it, the game not given the key");
 await page("document.getElementById('leave').click(), 1");
-check((await caption()).startsWith("The castle and its country: 4 of 23"), "the Map button comes back to the map");
+check((await caption()).startsWith("The castle and its country: 4 of 24"), "the Map button comes back to the map");
 // Leaving a battle changes the music fast: once the battle's set is
 // playing, the map's lines name a bridge (left: release), and the page
 // fades the battle out at its next bar line and plays the bridge
@@ -315,7 +315,7 @@ const bridgeAt = await page("window.game.music().bridgeAt");
 check(bridgeAt - leftAt < remaining - 4, `at the battle's next bar line, not its phrase's end (${(bridgeAt - leftAt).toFixed(2)} s after leaving, ${remaining.toFixed(1)} s before the phrase's end)`);
 check(await until("window.game.music().playing === 'calm'", 5000), "and the map's calm plan follows it");
 check(await open("?hold&debug&fresh"), "the page starts with ?debug");
-check((await caption()).startsWith("The castle and its country: 23 of 23 places known"), "and every place is shown");
+check((await caption()).startsWith("The castle and its country: 24 of 24 places known"), "and every place is shown");
 await page("window.game.feed('choose 1 7'), 1");
 check((await caption()).startsWith("Siege Engineer (not built yet)."), "a place not built yet says what it will be");
 check((await page("document.querySelectorAll('#flat svg text:not([text-anchor])').length")) === 3, "in three lines under the map");
@@ -439,6 +439,32 @@ if (capture) {
   writeFileSync(join(root, "images/look/bridge-walk.png"), Buffer.from(img.data, "base64"));
 }
 await page("document.getElementById('leave').click(), 1");
+
+// The bridge troll: a talk, drawn as its own picture; answered by a
+// real key, by a click on an answer, and by the arrows and Enter, until
+// a poem of his own name wins the way across.
+check(await open("?debug&fresh&hold"), "the map opens for the bridge troll");
+await page("window.game.feed('choose 1 24'), 1");
+check(await until("!!document.querySelector('#flat svg#talk')"), "the troll's talk is its own picture");
+check((await caption()).startsWith("The bridge troll Halt! This is Grubb's bridge"), "he greets you and asks his toll");
+check((await caption()).includes("1. I will take the riddle.") && !(await caption()).includes("Ten gold it is"), "the answers are numbered; with no gold, paying is not one of them");
+if (capture) {
+  await sleep(800);
+  const img = await send("Page.captureScreenshot", { format: "png" });
+  writeFileSync(join(root, "images/look/troll.png"), Buffer.from(img.data, "base64"));
+}
+for (const type of ["keyDown", "keyUp"]) await key(type, "2", "Digit2", 50);
+check(await until("document.querySelector('#flat svg').textContent.includes('Three hundred years')"), "the key 2 says the second answer, and he replies");
+await click(400, 560);
+check(await until("document.querySelector('#flat svg').textContent.includes('Grubb Stonebelly, of the under-bridge')"), "a click on the first answer says it: you learn his name");
+for (const k of [["ArrowDown", "ArrowDown", 40], ["Enter", "Enter", 13]]) for (const type of ["keyDown", "keyUp"]) await key(type, ...k);
+check(await until("document.querySelector('#flat svg').textContent.includes('Make it rhyme')"), "Down and Enter say the second: a poem");
+check((await caption()).includes("1. Grubb Stonebelly, broad and bold"), "knowing his name, the poem of it is an answer");
+await click(400, 560);
+check(await until("document.querySelector('#flat svg').textContent.includes('The way is open')"), "and it wins the way across");
+await space();
+check(await until("document.querySelector('#flat svg').textContent.includes('The castle and its country')"), "a key goes back to the map");
+check((await caption()).includes("1 won") && /experience 5\./.test(await caption()), "where the talk is counted won, and brought experience");
 
 // The treasury: coins come in with the clock; 1 buys a mint.
 check(await open("?debug&fresh&hold"), "the map opens for the treasury");

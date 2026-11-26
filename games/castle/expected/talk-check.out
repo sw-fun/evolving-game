@@ -1,0 +1,134 @@
+0
+┌→──────────────────────┐
+│ ┌→──────┐ ┌→────────┐ │
+│ │key KEY│ │click X Y│ │
+│ └───────┘ └─────────┘ │
+└∊──────────────────────┘
+The bridge troll.
+Halt! This is Grubb's bridge, and Grubb wants his toll.
+Ten gold, or the answer to Grubb's riddle.
+Grubb is not fussy which.
+> 1. Ten gold it is. Here.
+  2. I will take the riddle.
+  3. Before that: what a magnificent bridge!
+  4. Out of my way, you overgrown turnip.
+The bridge troll.
+Halt! This is Grubb's bridge, and Grubb wants his toll.
+Ten gold, or the answer to Grubb's riddle.
+Grubb is not fussy which.
+> 1. I will take the riddle.
+  2. Before that: what a magnificent bridge!
+  3. Out of my way, you overgrown turnip.
+The bridge troll.
+You: Ten gold it is. Here.
+Grubb bites every coin. Twice.
+Fine. Cross, and wipe your boots on the way.
+Grubb waves you over his bridge. The way is open. Any key: go on.
+outcome: won
+  changes resource.gold 10
+  changes fact.troll-way 1
+  brings resource.xp 5
+The bridge troll.
+You: I will take the riddle.
+Ooh. Grubb loves a riddle. Grubb made this one himself.
+I have a back but no belly. I am crossed but never cross.
+I sleep over water every night. What am I?
+> 1. A sleepy cat.
+  2. A bridge.
+  3. You, on a good day.
+  4. Wait, how much was the toll again?
+outcome: won
+  changes fact.troll-riddle 1
+  changes fact.troll-way 1
+  brings resource.xp 5
+The bridge troll.
+You: A sleepy cat.
+Cats hate water. Wrong!
+Grubb gives another go, because Grubb is generous.
+Or Grubb takes the toll. Grubb is flexible.
+> 1. Ask the riddle again.
+  2. Is there a cheaper toll for a poor traveler?
+  3. I will just run past you.
+outcome: won
+  changes resource.gold 0
+  changes fact.troll-way 1
+  brings resource.xp 5
+The bridge troll.
+You: It deserves a poem. May I?
+A poem! For Grubb's bridge! Go on, go on.
+Grubb is listening. Make it rhyme. Grubb likes a rhyme.
+> 1. Oh bridge of stone, so fine, so wide, I'd pay to see the other side.
+  2. Roses are red, the river is gray, please let me cross, I'm on my way.
+  3. I am no poet. Ask me your riddle.
+The bridge troll.
+You: Grubb Stonebelly deserves a poem.
+Grubb does! Go on, go on.
+Grubb is listening. Make it rhyme. Grubb likes a rhyme.
+> 1. Grubb Stonebelly, broad and bold, keeps the finest bridge of old!
+  2. Oh bridge of stone, so fine, so wide, I'd pay to see the other side.
+  3. Roses are red, the river is gray, please let me cross, I'm on my way.
+  4. I am no poet. Ask me your riddle.
+outcome: won
+  changes fact.troll-name 1
+  changes fact.troll-way 1
+  brings resource.xp 5
+The bridge troll.
+You: Out of my way, you overgrown turnip.
+TURNIP?
+Grubb has thrown travelers in the river for less!
+Say sorry, or say goodbye.
+> 1. Sorry. That was rude of me, and you are very handsome.
+  2. Make me, mushroom.
+  3. Run for the far bank!
+  4. Never mind. I will find another way.
+outcome: lost
+  changes fact.troll-way -1
+outcome: lost
+  changes fact.troll-way -1
+outcome: lost
+  changes fact.troll-way -1
+outcome: left
+The bridge troll.
+You: Sorry. That was rude of me, and you are very handsome.
+...Grubb will allow it.
+Halt! This is Grubb's bridge, and Grubb wants his toll.
+Ten gold, or the answer to Grubb's riddle.
+Grubb is not fussy which.
+> 1. I will take the riddle.
+  2. Before that: what a magnificent bridge!
+  3. Out of my way, you overgrown turnip.
+The bridge troll.
+You: Wait, how much was the toll again?
+Ten gold. Grubb said it slowly the first time.
+Halt! This is Grubb's bridge, and Grubb wants his toll.
+Ten gold, or the answer to Grubb's riddle.
+Grubb is not fussy which.
+> 1. I will take the riddle.
+  2. Before that: what a magnificent bridge!
+  3. Out of my way, you overgrown turnip.
+The bridge troll.
+Halt! This is Grubb's bridge, and Grubb wants his toll.
+Ten gold, or the answer to Grubb's riddle.
+Grubb is not fussy which.
+  1. I will take the riddle.
+  2. Before that: what a magnificent bridge!
+> 3. Out of my way, you overgrown turnip.
+The bridge troll.
+You: Before that: what a magnificent bridge!
+...It is, isn't it?
+Three hundred years Grubb has kept this bridge,
+and nobody ever says one nice thing about it.
+> 1. Who are you, keeper?
+  2. It deserves a poem. May I?
+  3. It is a little damp, though.
+The bridge troll.
+Halt! This is Grubb's bridge, and Grubb wants his toll.
+Ten gold, or the answer to Grubb's riddle.
+Grubb is not fussy which.
+> 1. I will take the riddle.
+  2. Before that: what a magnificent bridge!
+  3. Out of my way, you overgrown turnip.
+outcome: left
+  changes fact.troll-name 1
+fixtures/bad-talk-next.toml: answer.greet-riddle.next: no node "ridle" (a node, or won, lost or left)
+fixtures/bad-talk-answers.toml: node.riddle.answers: 2 to 4 answers, there are 1

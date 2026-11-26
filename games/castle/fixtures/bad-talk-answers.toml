@@ -1,0 +1,42 @@
+# A talk that is wrong (talk-check.xtl): a node with one answer
+# ("riddle").
+mode = ["talk"]
+title = ["A bad talk"]
+zones = ["../../../world/zones.toml"]
+zone = ["realm"]
+way = ["fact.bad-way"]
+reward = ["xp 1"]
+ends = ["Through.", "Barred.", "Left."]
+nodes = ["greet", "riddle"]
+node-fields = ["says", "answers"]
+answers = ["greet-riddle", "greet-leave", "riddle-right", "riddle-back"]
+answer-fields = ["says", "reply", "next", "gold", "needs", "learn", "way"]
+
+[node.greet]
+says = "Hello."
+answers = "greet-riddle greet-leave"
+
+[node.riddle]
+says = "A riddle."
+answers = "riddle-right"
+
+[answer.greet-riddle]
+says = "The riddle."
+reply = "Here it is."
+next = "riddle"
+
+[answer.greet-leave]
+says = "Goodbye."
+reply = "Goodbye."
+next = "left"
+
+[answer.riddle-right]
+says = "The answer."
+reply = "Right."
+next = "won"
+way = "open"
+
+[answer.riddle-back]
+says = "Back."
+reply = "Back."
+next = "greet"

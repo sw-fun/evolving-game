@@ -345,6 +345,25 @@ defaults drawn from the repositories above.
   names); what it says of the music is the page's player: the phrase
   sounding, its step in the plan, how far into it, and any bridge. It
   decides nothing and shows no rule.
+- D24. Talks with characters are a mode, `talk` (the user, 2026-11-24:
+  dialog trees, the mechanic of the classic point-and-click
+  adventures, our own characters and lines). `games/castle/Talk.xtl`
+  plays a dialog tree from TOML (the first, `troll.toml`, the bridge
+  troll): a node is the character's lines and 2 to 4 answers; an
+  answer is your words, the character's reply, the next node or an end
+  (won, lost, left), and what it does to the world (gold paid, a fact
+  learned, the way opened or barred, under a name the file gives).
+  Which answers are shown is the world's: one with gold only to one
+  who has it, one with needs only to one who has that fact; every node
+  must have one that needs nothing. Answers by number, Up Down and
+  Enter, or a click; the end is shown until a key. What it changes is
+  kept however it ends; winning also brings the file's experience and
+  marks the venue done. The file is checked when read (an answer
+  leading nowhere, a node with too few answers, a line too long for
+  the picture: a message naming the file and the field). It lives in
+  the castle until a second game (a walk) opens a talk, then moves to
+  `lib/`. The model (Characters who talk) will only reword the lines;
+  the tree stays the rules.
 
 Designed in Saga 1 and proven in Sagas 2 to 4; every later saga must
 keep them.
@@ -1333,6 +1352,16 @@ questions); the seams below hold for any of them.
   cache, only when the player turns talking characters on (Settings).
 - First: the bridge troll, at a bridge venue, who asks a riddle or a
   toll before you cross; written lines first, the model second.
+  Done (written lines, D24): Grubb, the venue `troll` (24) on the
+  river beside the long bridge, on both roads before the long bridge;
+  his tree (`games/castle/troll.toml`) has 8 nodes, 4 ways through
+  (the toll paid, the toll haggled down, the riddle answered, a poem
+  of his own name once you have asked it), 3 ways to fail (an insult
+  followed by more, or running for it, twice) and a way to walk off,
+  every ending walked by `talk-check.xtl`. With it the roads have 11
+  and 12 places, so the road of levels is drawn six to a row (it was
+  five, and the eleventh fell on the words at the foot). Next: the
+  model.
 
 ## Later
 

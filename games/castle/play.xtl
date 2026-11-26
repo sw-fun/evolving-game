@@ -35,6 +35,7 @@
 "sp:" u_se< "Splash"
 "sm:" u_se< "Sim"
 "t:" u_se< "Text"
+"tk:" u_se< "Talk"
 "vn:" u_se< "Venues"
 
 file := "castle.toml"
@@ -183,6 +184,7 @@ u:v_isit := { (world, k) ->
   kind m_atch "raycaster" ? 'ps:o_utcome u:h_eard tune 'ps:o_utcome 'ps:v_iew 'ps:l_egal 'ps:s_tatus 'ps:s_tep mu:p_lay ps:n_ew (file, world, k)
   kind m_atch "idle" ? u:h_oard (world, k, path)
   kind m_atch "chest" ? 'wc:o_utcome u:h_eard tune 'wc:o_utcome 'wc:v_iew 'wc:l_egal 'wc:s_tatus 'wc:s_tep mu:p_lay wc:n_ew (path, world, k)
+  kind m_atch "talk" ? 'tk:o_utcome u:h_eard tune 'tk:o_utcome 'tk:v_iew 'tk:l_egal 'tk:s_tatus 'tk:s_tep mu:p_lay tk:n_ew (path, world, k)
   kind m_atch "board" ? 'lg:o_utcome u:h_eard tune 'lg:o_utcome 'lg:v_iew 'lg:l_egal 'lg:s_tatus 'lg:s_tep mu:p_lay lg:n_ew (file, world, k)
   'sk:o_utcome u:h_eard tune 'sk:o_utcome 'sk:v_iew 'sk:l_egal 'sk:s_tatus 'sk:s_tep mu:p_lay sk:n_ew (file, world, k)
 }

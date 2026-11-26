@@ -110,15 +110,15 @@ h:m_ove := { s d ->
 }
 # :: (Any a, Any b, Any c, Any d, Any e, Any f, Any g, Any i) => (a, b, (c, d, e, f, g, h, i)) -> Int
 ## Where each level's circle stands in the picture, a row each (x, y):
-## five to a row, 220 apart, each next row going back the other way, so
+## six to a row, 188 apart, each next row going back the other way, so
 ## the road winds down the picture in order.
 l:c_enters := { s ->
   k := (r_ange l:c_ount s) - 1
-  row := f_loor (f_loat k) / 5.0
-  across := k - 5 * row
+  row := f_loor (f_loat k) / 6.0
+  across := k - 6 * row
   back := row - 2 * f_loor (f_loat row) / 2.0
-  column := across + back * 4 - 2 * across
-  o_\ (2 c_at l:c_ount s) r_eshape (160 + 220 * column) c_at 250 + 250 * row
+  column := across + back * 5 - 2 * across
+  o_\ (2 c_at l:c_ount s) r_eshape (100 + 188 * column) c_at 250 + 250 * row
 }
 ## The state after a click at a picture point: the level whose circle is
 ## within 45 of it taken (or chosen), else nothing.
@@ -223,9 +223,9 @@ h:l_evel := { s k ->
   number := (x, y + 12, 34, ink, 1) h:t_ext f_ormat k
   tick := "<circle cx=\"" c_at (f_ormat x + 32) c_at "\" cy=\"" c_at (f_ormat y - 32) c_at "\" r=\"16\" fill=\"#2f5a22\" stroke=\"#f2ead8\" stroke-width=\"2\"/><path d=\"M " c_at (f_ormat x + 24) c_at " " c_at (f_ormat y - 32) c_at " l 6 7 l 11 -13\" fill=\"none\" stroke=\"#f2ead8\" stroke-width=\"4\"/>"
   check := (k s_elect done) h:i_f tick
-  label := (x, y + 72, 22, words, 1) h:t_ext s h:l_abel k
-  stands := (x, y + 98, 17, words, 1) h:t_ext s h:s_tanding k
-  later := (x, y + 120, 16, "#9fc3e8", 1) h:t_ext "attack version coming"
+  label := (x, y + 72, 20, words, 1) h:t_ext s h:l_abel k
+  stands := (x, y + 98, 15, words, 1) h:t_ext s h:s_tanding k
+  later := (x, y + 120, 14, "#9fc3e8", 1) h:t_ext "attack version coming"
   note := (k s_elect coming) h:i_f later
   chosen c_at disc c_at number c_at check c_at label c_at stands c_at note
 }
@@ -236,7 +236,7 @@ h:s_egment := { at k ->
   (x, y) := (1 s_elect k s_elect at, 2 s_elect k s_elect at)
   (x0, y0) := (1 s_elect (k - 1) s_elect at, 2 s_elect (k - 1) s_elect at)
   y = y0 ? " L " c_at (f_ormat x) c_at " " c_at f_ormat y
-  bend := x0 + 150 * (2 * 0 + x0 > 600) - 1
+  bend := x0 + 140 * (2 * 0 + x0 > 600) - 1
   " C " c_at (f_ormat bend) c_at " " c_at (f_ormat y0) c_at " " c_at (f_ormat bend) c_at " " c_at (f_ormat y) c_at " " c_at (f_ormat x) c_at " " c_at f_ormat y
 }
 ## The road's picture: the side's painting darkened, the menu bar, the
