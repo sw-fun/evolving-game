@@ -1,0 +1,8 @@
+number = 16
+slug = "walk-captions-map-key"
+status = "pending"
+description = "Maintenance F23: the city's mini map (M, as every walk) is easy to miss: the ..."
+role = "production"
+context_files = []
+created_at = "2026-11-27T10:22:58"
+commits = []

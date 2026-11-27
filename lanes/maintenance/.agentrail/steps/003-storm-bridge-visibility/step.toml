@@ -6,3 +6,4 @@ role = "production"
 context_files = []
 created_at = "2026-11-27T09:30:45"
 commits = []
+reserved_for = "saga a-year (D26): the storm bridge becomes Spring's showers, dark with lightning"

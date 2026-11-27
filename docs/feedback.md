@@ -19,7 +19,7 @@ commit), won't fix (why), duplicate (of which).
 | F6 | 2026-11-23 | The music and map keys (M for the mini map, \ to mute) and the music's transitions. | fixed: M is the map in every game, \ mutes, [ ] the volume; bridges between music sets (D21, D23) | |
 | F7 | 2026-11-21 | Praise: the look is professional; the order of the places suits the progression; attack and defend both there. | no action | |
 | F8 | 2026-11-21 | The bridges' approaches could branch: more than one path to the bridge. | triaged | 008 |
-| F9 | 2026-11-21 | The storm bridge is hard to see: the path approaching the bridge is lost in the low visibility (summer and snow are fine). | triaged | 003 |
+| F9 | 2026-11-21 | The storm bridge is hard to see: the path approaching the bridge is lost in the low visibility (summer and snow are fine). | moved to the year's saga: the storm becomes Spring's showers, lit by lightning (D26) | 003, reserved |
 | F10 | 2026-11-21 | The gate maze seems made as you play, always as long as it can be. Confirmed in the code: X_eTaL-games' maze puts the way out at the open block farthest from the start, so every maze is its longest walk. | triaged | 006 |
 | F11 | 2026-11-21 | The city needs a map, or a key for a view from above. | fixed: the city's mini map (M) | |
 | F12 | 2026-11-21 | In the city, walking against the white buildings goes into them: a door and a window show inside, with none outside; walking near the buildings is awkward. Keep the walker off the walls. | triaged | 004 |
@@ -33,3 +33,4 @@ commit), won't fix (why), duplicate (of which).
 | F20 | 2026-11-22 | Attacking on foot (the winter camp, the battlefield on foot) you can walk off the path straight to the gate or the bridge; this will matter once defense towers stand along it. | triaged | 014 |
 | F21 | 2026-11-22 | The long bridge has no mouse support. | triaged | 013 |
 | F22 | 2026-11-27 | From F2, the user: a global setting giving every dark scene higher contrast. | triaged | 015 |
+| F23 | 2026-11-27 | The user: the city could use a mini map. It has one (M, as every walk; its help says so), but the caption on the screen does not say so, so it is easy to miss. | triaged | 016 |

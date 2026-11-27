@@ -438,6 +438,32 @@ defaults drawn from the repositories above.
   and done one at a time, each with a failing golden or browser check
   first, as every step.
 
+- D26. The campaign is a year, told as a hero's journey (the user,
+  2026-11-27: "the 3 TD games in a row needs to be re-thought. If we
+  applied a Hero's Journey arc to the game story, there should be
+  setbacks, and the game should take a simulated year to finish").
+  - Time: the world keeps a calendar (a day of the year, its season).
+    Every place played moves it on some days, won or lost; a season is
+    a set number of plays. Deterministic: the same plays, the same
+    year. Places open as the year passes, not only as earlier places
+    are won.
+  - Seasons, in order Winter, Spring, Summer, Fall. The bridge battles
+    become the year's: snow is Winter (early), the storm becomes
+    Spring's showers (dark, lightning showing the field), summer
+    stays, and a new Fall battle (crisp nights, campfires) is added.
+  - Every place has a version for each season (the city in winter,
+    spring, summer and fall): one season machinery (the world's
+    season; the scene's weather, light and ground; data per season),
+    then each place given its seasons in turn, the bridges first.
+  - Setbacks are story events, dealt as the year passes: plague,
+    storm, battle, espionage, famine, flood and the like. One sweeps
+    an attacker back, farther from the keep, to play earlier places
+    again in a new season; defenders have setbacks of their own, the
+    same in kind (a wall lost, a place taken, the line pushed back).
+    Events are data (a deck in TOML), drawn by the seed.
+  - The saga that builds it: "a year in the country", next on the
+    roadmap after Saga 3.
+
 Designed in Saga 1 and proven in Sagas 2 to 4; every later saga must
 keep them.
 
@@ -716,6 +742,28 @@ victory and defeat); the towers and enemies as data; their pieces
 described in `assets/` with idle, fire, walk and hit clips; the
 toolbar and wave display; many seeded games run headless to balance;
 the level in the live demo; docs and retrospective.
+
+## Saga 3b -- a-year (the campaign as a year and a hero's journey, D26)
+
+Planned with the user 2026-11-27; its steps are written when it starts.
+
+1. The calendar: the world's day and season, moved by every place
+   played; shown on the map and the home screen; goldens of a year.
+2. The season machinery: a scene's weather, light and ground by
+   season, through lib/View, for every mode.
+3. The bridges as the year's battles: Winter (snow), Spring (showers:
+   dark, lightning), Summer, and a new Fall (crisp nights, campfires);
+   opened by the season.
+4. Setbacks: a deck of story events (plague, storm, battle,
+   espionage, famine, flood ...) dealt as the year passes, sweeping an
+   attacker back from the keep or pushing a defender's line back;
+   both sides' events, as data.
+5. The hero's journey's arc over the year: the call, the threshold
+   (the long bridge and its troll), trials and setbacks, the ordeal at
+   the keep, the return; the story told at its turns.
+6. Every place in its seasons: the city first, then the others.
+7. Balance the year (it can be finished; setbacks hurt but do not
+   trap), the README and the retrospective.
 
 ## Saga 4 -- rune-keep (first puzzles)
 
