@@ -1,7 +1,7 @@
 number = 2
 slug = "fields-lighting"
 status = "pending"
-description = "Maintenance F2 (docs/feedback.md): the fields are too dark; add lanterns or b..."
+description = "Maintenance F2 (docs/feedback.md): the fields are too dark; the reporter beat..."
 role = "production"
 context_files = []
 created_at = "2026-11-27T09:28:25"

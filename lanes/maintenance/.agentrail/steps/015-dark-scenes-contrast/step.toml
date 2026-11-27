@@ -1,0 +1,8 @@
+number = 15
+slug = "dark-scenes-contrast"
+status = "pending"
+description = "Maintenance F22: a global setting that gives every dark scene higher contrast..."
+role = "production"
+context_files = []
+created_at = "2026-11-27T09:32:28"
+commits = []
