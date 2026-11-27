@@ -1,0 +1,1 @@
+F1 fixed: the page's New game (which erased the whole save, every profile) is gone; a profile's home has Start over, which asks first (No chosen) and forgets only that profile's winnings, keeping its character, settings and every other profile (fr:o_ver, play.xtl front.go 4). Goldens (front-check), browser test (two profiles), docs; live and browser-tested.
