@@ -425,6 +425,18 @@ defaults drawn from the repositories above.
   portrait is the user's own painting, `docs/images/bridge-troll.webp`
   (the file's `portrait`), tinted red at the nodes the file names
   `cross` and when you have lost.
+- D25. Maintenance is a saga of its own, beside the roadmap's (the
+  user, 2026-11-27: "a maintenance saga, the purpose: to incorporate
+  cumulative feedback for things to be fixed or improved"). It lives in
+  a lane, `lanes/maintenance/.agentrail` (run agentrail with `--saga
+  lanes/maintenance`), so the roadmap's saga stays the one active saga
+  and neither waits for the other. Feedback (the user forwards it, as
+  emails) is logged in `docs/feedback.md`, one item an entry: what was
+  reported, in our words, never who reported it (no names or
+  addresses: the repository is public); its status; and the step that
+  fixes it. Each issue is a step of its own, added as it is triaged
+  and done one at a time, each with a failing golden or browser check
+  first, as every step.
 
 Designed in Saga 1 and proven in Sagas 2 to 4; every later saga must
 keep them.
