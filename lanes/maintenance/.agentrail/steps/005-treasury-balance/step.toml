@@ -6,3 +6,4 @@ role = "production"
 context_files = []
 created_at = "2026-11-27T09:30:45"
 commits = []
+reserved_for = "agent: treasury balance"
