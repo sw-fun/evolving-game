@@ -1,0 +1,8 @@
+number = 1
+slug = "new-game-keeps-profiles"
+status = "pending"
+description = "Maintenance F1 (docs/feedback.md): 'starting a new game erased my profile'. T..."
+role = "production"
+context_files = []
+created_at = "2026-11-27T09:28:25"
+commits = []
