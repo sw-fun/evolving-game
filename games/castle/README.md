@@ -71,7 +71,9 @@ the next. This is the game the others are parts of.
 
 - **Kept between visits.** In a browser the world (gold, experience,
   places won, deeds) is saved after every game and read back when the
-  page is opened again; New game forgets it. At the command line
+  page is opened again. A profile's home has Start over, which asks
+  first, then forgets what that profile has won and keeps its character,
+  its settings and every other profile. At the command line
   nothing is kept, so a run is only what its events make it.
 
 - **Three games taken from X_eTaL-games.** The gate maze

@@ -11,7 +11,7 @@ commit), won't fix (why), duplicate (of which).
 
 | Item | Reported | What | Status | Step |
 |------|----------|------|--------|------|
-| F1 | 2026-11-21 | Starting a new game erased the player's profile. New game, clicked by accident while looking for the hall of deeds, erased the profile and its progress and asked for a new profile, where a way back to the main menu was expected. Confirmed in the code: the header's New game button removes the whole save from the browser, so every profile goes, not only the current game's progress. | triaged | 001 |
+| F1 | 2026-11-21 | Starting a new game erased the player's profile. New game, clicked by accident while looking for the hall of deeds, erased the profile and its progress and asked for a new profile, where a way back to the main menu was expected. Confirmed in the code: the header's New game button removes the whole save from the browser, so every profile goes, not only the current game's progress. | fixed: the page's New game is gone; a profile's home has Start over, which asks first (No chosen) and forgets that profile's winnings alone | 001 |
 | F2 | 2026-11-24 | The fields are too dark: not unplayable (beaten), but better if you could see. Suggested: brighter, or a lantern the player carries. The user's answer: lightning that every so often shows the field under light. | triaged | 002 |
 | F3 | 2026-11-21 | Detailed notes on the progression, the bridges, the city, the mazes, the dungeon and the treasury. | split into F7 to F18 (the email's text) | |
 | F4 | 2026-11-22 | Gameplay and navigation issues. | split into F19 to F21 (the email's text) | |

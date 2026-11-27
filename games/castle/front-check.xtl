@@ -97,3 +97,20 @@ u:o_ff := { (lines, save) -> "data-off=\"Hall\"" st:i_nfix? vw:p_icture fr:v_iew
 u:o_ff (none, ann)
 u:o_ff (1 r_eshape e_nclose "key 2", ann)
 u:o_ff (1 r_eshape e_nclose "key 1", ann)
+
+# Starting over (feedback F1: New game, clicked by mistake, erased a
+# profile). Home's last line, Start over, asks first, No chosen; No, or
+# Backspace, goes home and forgets nothing; Yes is going to start over
+# (front.go 4), which the castle's program does to this profile alone.
+t:l_ines fr:l_ines u:f_ront (1 r_eshape e_nclose "key 1", ann)
+u:s_ays ("key 1" "key 6", ann)
+u:s_ays ("key 1" "key 6" "key 1", ann)
+u:s_ays ("key 1" "key 6" "key backspace", ann)
+md:s_tatusName fr:s_tatus u:f_ront ("key 1" "key 6" "key 1", ann)
+_ := u:s_ay fr:o_utcome u:f_ront ("key 1" "key 6" "key 2", ann)
+# What starting over keeps, in a save of two profiles: ann's character,
+# settings and name stay, her gold, experience, places and deeds go;
+# bob's world is as it was.
+won := (((ann md:s_et ("p.ann.resource.gold", 40)) md:s_et ("p.ann.resource.xp", 250)) md:s_et ("p.ann.venue.bridge-1.done", 1)) md:s_et ("p.ann.front.name.ann", 1)
+two := ((won md:s_et ("p.bob.profile", 1)) md:s_et ("p.bob.resource.gold", 7)) md:s_et ("p.bob.venue.bridge-1.done", 1)
+t:l_ines md:l_ines (two, "ann") fr:i_n fr:o_ver two fr:o_ut "ann"

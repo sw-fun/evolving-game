@@ -461,6 +461,17 @@ defaults drawn from the repositories above.
     again in a new season; defenders have setbacks of their own, the
     same in kind (a wall lost, a place taken, the line pushed back).
     Events are data (a deck in TOML), drawn by the seed.
+  - More characters, cast in the journey's roles, as helpers or
+    obstacles (the user, 2026-11-27: "they can give hints, or
+    encouragement, or praise; they can lie, steal coins, insult the
+    player. annoy (slightly)"). A mentor and allies who hint, encourage
+    and praise; tricksters and shadows who lie (a false hint), steal a
+    few coins, insult, or get in the way a little, never so much that
+    the game stops being fun. Each is a talk (D24): a dialog tree and a
+    strategy of its own, its effects on the world (gold taken, a hint
+    known, a mood) through the outcome; Grubb, the threshold's
+    guardian, is the first. They are met on the map and the road, and
+    some come and go with the seasons.
   - The saga that builds it: "a year in the country", next on the
     roadmap after Saga 3.
 
@@ -772,6 +783,10 @@ Planned with the user 2026-11-27; its steps are written when it starts.
 5. The hero's journey's arc over the year: the call, the threshold
    (the long bridge and its troll), trials and setbacks, the ordeal at
    the keep, the return; the story told at its turns.
+5b. The journey's characters: a mentor and allies (hints,
+   encouragement, praise) and tricksters and shadows (lies, stolen
+   coins, insults, small annoyances), each a talk with its own
+   strategy, met on the map and the road through the year.
 6. Every place in its seasons: the city first, then the others.
 7. Balance the year (it can be finished; setbacks hurt but do not
    trap), the README and the retrospective.

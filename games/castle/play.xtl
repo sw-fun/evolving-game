@@ -121,7 +121,9 @@ u:t_une := { (kind, world) ->
 }
 ## The front door (who plays, their character, what to play), over the
 ## whole save; then what was chosen: the castle's map, the hall of
-## deeds, or the treasury, and back to the profile's home after. The
+## deeds, or the treasury, and back to the profile's home after; or
+## starting over, this profile's winnings forgotten (its character and
+## settings kept, every other profile as it was), and home again. The
 ## events ended, the profile's world as it stands.
 u:d_oor := { save -> u:e_nter (save, fr:n_ew ("front.toml", save, 1)) }
 ## The front door played from a state of it (new, or new with an event
@@ -135,6 +137,7 @@ u:e_nter := { (save, start) ->
   go := world md:g_et "front.go"
   go = 2 ? u:t_hen (world, 17)
   go = 3 ? u:t_hen (world, 15)
+  go = 4 ? u:h_ome u:k_eep fr:o_ver world
   u:r_ound world
 }
 ## A venue gone to from home (the hall of deeds, 17, or the treasury,

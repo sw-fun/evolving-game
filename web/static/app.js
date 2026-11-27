@@ -23,7 +23,8 @@
 // What the castle keeps between visits (its world: gold, experience,
 // places won, deeds) is a text the program writes; the page stores it
 // in the browser, under one name, and gives it back when the program
-// starts. New game forgets it. ?fresh neither reads nor stores it.
+// starts. Starting over is the game's own (a profile's home: Start
+// over), never the page's. ?fresh neither reads nor stores it.
 // ?flat shows the flat picture only. ?sources, ?help and ?about open
 // those dialogs. ?hold
 // stops the clock (for tests: events are then given by window.game.feed).
@@ -361,7 +362,6 @@ function start() {
   if (!q.has('hold')) timer = setInterval(tick, TICK * 1000);
 }
 el('again').addEventListener('click', (e) => { e.currentTarget.blur(); start(); });
-el('forget').addEventListener('click', (e) => { e.currentTarget.blur(); if (store) store.removeItem(KEPT); start(); });
 el('leave').addEventListener('click', (e) => { e.currentTarget.blur(); feed('choose 0 0'); });
 for (const b of document.querySelectorAll('.pick button')) b.addEventListener('click', () => { b.blur(); program = b.dataset.program; start(); });
 

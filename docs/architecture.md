@@ -90,7 +90,8 @@ loop's own command `choose 0 0` leaves any game for the map. In a
 browser the world is kept between visits: the program writes it as a
 text after every game and reads it when it starts (`[]N_PUT`,
 `[]N_GET` of `castle.save`); the host holds that text and the page
-stores it in the browser under one name (New game forgets it). At the
+stores it in the browser under one name (a profile's Start over, in
+the game, forgets that profile's winnings). At the
 command line nothing is kept. Every
 game's rules library is on the library path, each with a name of its
 own in the repository.

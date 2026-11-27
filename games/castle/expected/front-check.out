@@ -58,3 +58,35 @@ Ann the Soldier (he). Level 1. Experience 0, gold 0. Play
 1
 1
 0
+Play
+Hall of deeds
+Treasury
+Settings
+Another profile
+Start over
+6
+Start over as Ann?. Your places, deeds, gold and experience are forgotten; your character and settings stay. No, keep my progress
+Ann the Soldier (he). Level 1. Experience 0, gold 0. Play
+Ann the Soldier (he). Level 1. Experience 0, gold 0. Play
+playing
+outcome: won
+  changes character.calling 1
+  changes character.build 1
+  changes character.pronoun 1
+  changes character.title 1
+  changes character.cloak 1
+  changes session.side 1
+  changes session.level 3
+  changes settings.level 4
+  changes front.go 4
+  changes settings.music 6
+  changes settings.mute 0
+  changes front.name.ann 1
+p.bob.profile 1
+p.bob.resource.gold 7
+p.bob.venue.bridge-1.done 1
+p.ann.character.calling 1
+p.ann.settings.level 4
+p.ann.front.name.ann 1
+p.ann.profile 1
+7

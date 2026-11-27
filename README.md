@@ -61,7 +61,10 @@ gone round. One world is carried through: the gold kept at the bridge
 is the next level's to spend, and a place won shows where it leads.
 Winning brings experience; quests and achievements are awarded as you
 earn them, and the hall of deeds shows them. What you have won is
-kept in your browser between visits (New game forgets it).
+kept in your browser between visits, each profile's apart. To start
+over, choose **Start over** on your profile's home: it asks first, then
+forgets what that profile has won (its character and settings stay,
+and every other profile is untouched).
 Add `?debug` to the address to see and open every place.
 
 Behind it: the shared libraries every game will use (seeded chance,

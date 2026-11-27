@@ -604,7 +604,8 @@ await page("document.getElementById('leave').click(), 1");
 check((await caption()).startsWith("Aldra the Witch (he) Level 1."), "and again goes back home");
 
 // What is won is kept: a place called done is still won after the page
-// is loaded again; New game forgets it.
+// is loaded again; starting over (home's Start over, Yes) forgets it,
+// for this profile alone (feedback F1: New game erased a profile).
 await page("try { localStorage.clear(); } catch {} 1");
 check(await open("?hold"), "the page starts, keeping what is won");
 await page("window.game.feed('key d'), window.game.feed('choose 1 7'), 1");
@@ -612,12 +613,21 @@ await space();
 check((await caption()).includes("1 won"), "a place is won");
 check(await open("?hold"), "the page is loaded again");
 check((await caption()).includes("1 won") && /experience 2\b/.test(await caption()), "and it is still won, with its experience");
-await page("document.getElementById('forget').click(), 1");
-await page("window.game.feed('key space'), 1");
-await enter();
-check((await caption()).includes("0 won") && /experience 0\b/.test(await caption()), "New game forgets it");
-check(await open("?hold"), "and loaded again");
-check((await caption()).includes("0 won"), "it stays forgotten");
+check(!(await page("!!document.getElementById('forget')")), "the page has no button of its own that forgets the save");
+// another profile in the same save, which starting over must not touch
+await page("localStorage.setItem('evolving-game/castle.save', localStorage.getItem('evolving-game/castle.save') + '\\np.zed.profile 1\\np.zed.resource.gold 9'), 1");
+check(await open("?hold"), "loaded again, with a second profile stored");
+await page("window.game.feed('choose 0 0'), 1");
+check(/Experience 2\b/.test(await caption()), `the map left, the profile's home (${(await caption()).slice(0, 60)})`);
+await page("window.game.feed('key 6'), 1");
+check((await caption()).startsWith("Start over as") && (await caption()).includes("No, keep my progress"), `Start over asks first, No chosen (${(await caption()).slice(0, 60)})`);
+await page("window.game.feed('key 1'), 1");
+check(/Experience 2\b/.test(await caption()), "No goes home, forgetting nothing");
+await page("window.game.feed('key 6'), window.game.feed('key 2'), 1");
+check(/Experience 0, gold 0\b/.test(await caption()), `Yes starts over: home again, nothing won (${(await caption()).slice(0, 60)})`);
+check(await page("/p\\.zed\\.resource\\.gold 9/.test(localStorage.getItem('evolving-game/castle.save'))"), "and the other profile is kept as it was");
+check(await open("?hold"), "loaded again");
+check(await page("!/^p\\.(?!zed\\.)[^.\\n]+\\.venue\\.[^ ]+\\.done 1$/m.test(localStorage.getItem('evolving-game/castle.save'))"), "it stays forgotten: no place won in the saved profile");
 
 // On foot: the second game, seen through an eye, walked with held keys.
 const ticks = (n) => page(`(() => { for (let i = 0; i < ${n}; i++) window.game.feed('tick 0.05'); return 1; })()`);
