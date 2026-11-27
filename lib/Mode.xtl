@@ -282,7 +282,9 @@ l:p_roblem := { mode file ->
 ### Legal events
 
 ## Does a legal line take the event? Its first word is the kind; a key's
-## second word is its name, unless it is a capital word (any key).
+## second word is its name, unless it is a capital word (any key). The
+## name is read as the host's line is ("key up" is the key UP, as the
+## reader keeps it), so the two are compared alike.
 h:t_akes := { e line ->
   words := st:w_ords line
   0 = t_ally words ? 0 = 1
@@ -291,7 +293,7 @@ h:t_akes := { e line ->
   1 = t_ally words ? 0 = 0
   name := d_isclose 2 s_elect words
   (f_irst name) m_ember? []A ? 0 = 0
-  (sm:l_ine e) m_atch "key " c_at name
+  (sm:l_ine e) m_atch sm:l_ine sm:p_arse "key " c_at name
 }
 # :: Truthy b => Box Char -> (Char, a, Char) -> b
 ## Is the event one of the legal lines? legal md:a_llows event.

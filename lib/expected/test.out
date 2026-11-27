@@ -222,6 +222,7 @@ resource.gold 7
 zone.courtyard.wall 0
 1 1 0 0 0
 1 1 0
+1 1 0
 0
 lights
 Three lights

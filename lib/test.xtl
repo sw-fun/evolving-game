@@ -180,6 +180,9 @@ _ := t:l_ines md:l_ines world md:a_fter (md:lost, change, gift)
 legal := "tick S" "key space" "key K" "choose 1 N"
 '{ l -> ("tick S" "key space") md:a_llows sm:p_arse d_isclose l } e_ach "tick 0.05" "key space" "key a" "click 3 4" "jump"
 '{ l -> legal md:a_llows sm:p_arse d_isclose l } e_ach "key a" "choose 1 2" "click 3 4"
+# An arrow key named in a legal line, as the page sends it (the reader
+# keeps its name in capitals, as the games of X_eTaL-games know it).
+'{ l -> ("key up" "key w") md:a_llows sm:p_arse d_isclose l } e_ach "key up" "key w" "key down"
 (0 t_ake legal) md:a_llows sm:t_ick 0.05
 # A scenario's fields (fixtures/lights.toml): texts, lists, rules (a
 # word and a number; a word alone is 1; one not there is -1), its zones

@@ -373,9 +373,14 @@ defaults drawn from the repositories above.
   itself has failed). The panel tells the engine's state, the events,
   the slowest event and the memory; Save report writes them with the
   save and every event since the start (the ticks a line each, as at
-  the command line), so the same game can be played again to find the
+  the command line), meant to play the same game again to find the
   fault. Found with it: the header's walk programs end when the walk
-  is done and have no menu, which looked like a hang.
+  is done and have no menu, which looked like a hang; and the arrow
+  keys never reached the gate maze or the dungeon (lib/Mode compared
+  a legal line's "key up" with the event's "key UP"; fixed, a test in
+  lib/test.xtl and the browser test). Open: replaying a report
+  natively (web/src Game::resume with the report's save) does not yet
+  give the page's game; the program there never reads its save.
 - D24. Talks with characters are a mode, `talk` (the user, 2026-11-24:
   dialog trees, the mechanic of the classic point-and-click
   adventures, our own characters and lines). `games/castle/Talk.xtl`

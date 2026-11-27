@@ -373,6 +373,14 @@ for (const [n, says, key, shot, art] of [[10, "Steps 0 | Facing", "w", "maze", "
     await space();
   }
   check((await caption()).includes(says), `venue ${n} is a game, which says: ${says}`);
+  // the arrow keys as a player presses them (the user, 2026-11-26: "8
+  // maze ... ignores arrow keys")
+  if (n === 10) {
+    for (const type of ["keyDown", "keyUp"]) await send("Input.dispatchKeyEvent", { type, key: "ArrowUp", code: "ArrowUp", windowsVirtualKeyCode: 38, nativeVirtualKeyCode: 38 });
+    check((await caption()).includes("Steps 1"), `the gate maze takes the Up arrow: a step (${(await caption()).slice(0, 50)})`);
+    for (const type of ["keyDown", "keyUp"]) await send("Input.dispatchKeyEvent", { type, key: "ArrowDown", code: "ArrowDown", windowsVirtualKeyCode: 40, nativeVirtualKeyCode: 40 });
+    check((await caption()).includes("Steps 2"), `and the Down arrow: a step back, the second step (${(await caption()).slice(0, 30)})`);
+  }
   check(await page("(() => { const r = document.querySelector('#flat svg').getBoundingClientRect(); return r.width > 300 && r.height > 200 && getComputedStyle(document.getElementById('flat')).display !== 'none'; })()"), "and its own picture is shown");
   check(await page("getComputedStyle(document.getElementById('view')).visibility === 'hidden'"), "alone, the 3D board hidden behind it");
   await page(`window.game.feed('key ${key}'), 1`);

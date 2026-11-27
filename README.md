@@ -179,8 +179,7 @@ sounding (its step in the plan and its seconds) and any bridge.
 It also tells whether the program is running or has stopped (and
 why), the events given, the slowest event and the memory used, and
 its **Save report** button saves all of that with every event since
-the start and the save it started from, a file that plays the same
-game again. A game that stops (an error, or the WebAssembly failing),
+the start and the save it started from, for a bug report. A game that stops (an error, or the WebAssembly failing),
 or that does not answer eight keys or clicks in a row, says so on the
 stage. **Watch the walk** and **Walk it yourself** end when the walk
 is done (they have no menu), and say so too. Esc then, or the key `~`
