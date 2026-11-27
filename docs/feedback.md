@@ -29,7 +29,7 @@ commit), won't fix (why), duplicate (of which).
 | F16 | 2026-11-21 | The second maze: something chasing you to the exit; its look is too busy (like a screen saver). | triaged | 012 |
 | F17 | 2026-11-21 | The dungeon: more items as letters (armor, health kits, revives), won there and used when attacking the tower. | triaged | 011 |
 | F18 | 2026-11-21 | The treasury gives more gold than playing the games; its rates (or multipliers) need balancing against the battles. | triaged | 005 |
-| F19 | 2026-11-22 | Everything must be done in order before the treasury or the war chest can be reached. Partly so in the data: the treasury is reached from the dungeon (and needs gold); the war chest is reached from the camp. Whether they should open earlier is a design choice. | question for the user | |
+| F19 | 2026-11-22 | Everything must be done in order before the treasury or the war chest can be reached. So in the data: the treasury is made known by winning the dungeon; the war chest by the camp. The user's answer (D27): the idle games are a reward, hidden at first and unlocked by the first early place won on that side. | triaged | 017 |
 | F20 | 2026-11-22 | Attacking on foot (the winter camp, the battlefield on foot) you can walk off the path straight to the gate or the bridge; this will matter once defense towers stand along it. | triaged | 014 |
 | F21 | 2026-11-22 | The long bridge has no mouse support. | triaged | 013 |
 | F22 | 2026-11-27 | From F2, the user: a global setting giving every dark scene higher contrast. | triaged | 015 |

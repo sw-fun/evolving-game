@@ -464,6 +464,17 @@ defaults drawn from the repositories above.
   - The saga that builds it: "a year in the country", next on the
     roadmap after Saga 3.
 
+- D27. The idle games are a reward, unlocked (the user, 2026-11-27:
+  "the idle games should be hidden until a player has played something
+  (like a tutorial or an early level). The idle game is a reward to be
+  unlocked."). The treasury (the defender's) and the war chest (the
+  attacker's) are hidden from a new profile and made known by the
+  first early place won on that side (the first bridge held; the
+  first bridge stormed), not at the end of a long road; their
+  unlocking is said as a reward when it happens. This also answers
+  feedback F19 (the treasury and the war chest came only after
+  everything else, in order).
+
 Designed in Saga 1 and proven in Sagas 2 to 4; every later saga must
 keep them.
 

@@ -1,0 +1,8 @@
+number = 17
+slug = "idle-games-unlocked"
+status = "pending"
+description = "Maintenance F19 and plan D27: the idle games are a reward to be unlocked. The..."
+role = "production"
+context_files = []
+created_at = "2026-11-27T10:26:06"
+commits = []
