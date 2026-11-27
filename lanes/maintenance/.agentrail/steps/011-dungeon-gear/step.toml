@@ -1,0 +1,8 @@
+number = 11
+slug = "dungeon-gear"
+status = "pending"
+description = "Maintenance F17: the dungeon could have more items as letters (armor, health ..."
+role = "production"
+context_files = []
+created_at = "2026-11-27T09:30:45"
+commits = []

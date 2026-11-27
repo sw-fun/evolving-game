@@ -1,0 +1,8 @@
+number = 12
+slug = "second-maze-chaser"
+status = "pending"
+description = "Maintenance F16: the second maze (the raycaster, Passage.xtl): something chas..."
+role = "production"
+context_files = []
+created_at = "2026-11-27T09:30:45"
+commits = []

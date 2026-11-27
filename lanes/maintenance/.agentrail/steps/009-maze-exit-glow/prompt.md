@@ -1,0 +1,1 @@
+Maintenance F15: in the gate maze, a light that grows as you near the way out. Asked for as a strobe; make it a steady glow or a slow pulse (no flashing, for players sensitive to it), brighter the fewer steps from the exit. TDD: the view golden at two distances; screenshot. Log marked fixed. Gate, browser test, publish, live check.

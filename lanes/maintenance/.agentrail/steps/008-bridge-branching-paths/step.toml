@@ -1,0 +1,8 @@
+number = 8
+slug = "bridge-branching-paths"
+status = "pending"
+description = "Maintenance F8: the bridges' approaches could branch, more than one path to t..."
+role = "production"
+context_files = []
+created_at = "2026-11-27T09:30:45"
+commits = []

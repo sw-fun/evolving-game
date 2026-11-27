@@ -1,0 +1,8 @@
+number = 10
+slug = "maze-dead-end-finds"
+status = "pending"
+description = "Maintenance F14: in the gate maze, monsters, gold or gear at the ends of dead..."
+role = "production"
+context_files = []
+created_at = "2026-11-27T09:30:45"
+commits = []

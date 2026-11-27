@@ -1,7 +1,7 @@
 number = 1
 slug = "new-game-keeps-profiles"
 status = "pending"
-description = "Maintenance F1 (docs/feedback.md): 'starting a new game erased my profile'. T..."
+description = "Maintenance F1 (docs/feedback.md): New game erased a player's profile. They c..."
 role = "production"
 context_files = []
 created_at = "2026-11-27T09:28:25"
